@@ -1,12 +1,14 @@
-NAME		= arnatrans
-
+NAME		= ft_transcendance
 
 COMPOSE		:= docker-compose -p ${NAME}
 COMP		:= ${COMPOSE}
 
 all: up
 
-up:
+folder:
+	${shell mkdir -p ./requirements/data}
+
+up: folder
 	${COMP} up -d --build
 
 clean:
@@ -18,6 +20,7 @@ fclean:
 
 prune:	fclean
 	docker system prune --volumes --force --all
+	rm -rf ./requirements/data
 
 image:	prune
 	docker rmi -f ${shell docker images -a -q}

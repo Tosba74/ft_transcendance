@@ -1,0 +1,62 @@
+version: '3'
+services:
+        nginx:
+                image: nginx:stable
+                env_file: .env
+                restart: always
+                networks: [transcendance_network]
+                ports: ["80:80"]
+                # volume: [front:/var/www/, back:/, data:/etc/data/]
+                depends_on: [front]
+
+        front:
+                image: node
+                env_file: .env
+                restart: always
+                networks: [transcendance_network]
+                ports: [3042:3042]
+                volumes: [front:/front]
+                depends_on: [back]
+        back:
+                image: nestjs/cli:286d7b9930ef05f7c32484b48b208233c5f44329
+                env_file: .env
+                restart: always
+                networks: [transcendance_network]
+                ports: ["3000:3000"]
+                volumes: [back:/back]
+                depends_on: [db]
+        db:
+                image: postgres:12.13-alpine3.17
+                env_file: .env
+                restart: always
+                networks: [transcendance_network]
+                ports: ["3306:3306"]
+                volumes: [data:/var/lib/postgresql/data/pgdata:rw]
+
+
+networks:
+        transcendance_network:
+                driver: bridge
+
+volumes:
+        data:
+                name: ${POSTGRES_VOL}
+                driver: local
+                # driver_opts:
+                        # type: none
+                        # device: ${POSTGRES_PATH}
+                        # o: bind
+        back:
+                name: ${NESTJS_VOL}
+                driver: local
+                # driver_opts:
+                        # type: none
+                        # device: ${NESTJS_PATH}
+                        # o: bind
+        front:
+                name: ${NODE_VOL}
+                driver: local
+                # driver_opts:
+                        # type: none
+                        # device: ${NODE_PATH}
+                        # o: bind
