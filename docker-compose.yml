@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+
+  postgres:
+    image: postgres:14.2
+
+    volumes:
+      - pong_db:/var/lib/postgresql/data/
+
+    networks:
+      - netpong
+
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DB}
+
+
+  back:
+    build: ./build/back
+    depends_on:
+      - postgres
+
+    volumes:
+      - ./api:/app
+
+    networks:
+      - netpong
+
+  
+    working_dir: /app
+
+
+  front:
+    build: ./build/front
+
+    volumes:
+      - ./site:/app
+
+    networks:
+      - netpong
+
+    working_dir: /app
+
+
+  nginx:
+    build: ./build/nginx
+    depends_on:
+      - front
+      - back
+
+    ports:
+      - "8080:80"
+      - "8443:443"
+
+    volumes:
+      - ./build/nginx/certs:/certs
+
+    networks:
+      - netpong
+
+networks:
+  netpong:
+
+volumes:
+  pong_db:

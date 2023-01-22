@@ -1,0 +1,21 @@
+
+version: '3.8'
+
+services:
+
+  # postgres:
+
+
+  back:
+    environment:
+      BUILD_TYPE: "Setup" 
+
+
+  front:
+    environment:
+      BUILD_TYPE: "Setup" 
+
+
+  nginx:
+    environment:
+      BUILD_TYPE: "Setup" 
