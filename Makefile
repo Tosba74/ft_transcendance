@@ -2,11 +2,10 @@
 APP_NAME	= ft_transcendance
 
 COMPOSE_DEV		= -f ./docker-compose.yml -f ./docker-compose.dev.yml
-COMPOSE_PROD	= -f ./docker-compose.yml -f ./docker-compose.prod.yml
-ENV_FILE		= --env-file .env
+COMPOSE_PROD	= -f ./docker-compose.yml -f ./docker-compose.override.yml
 
 #Dev
-DOCKER		= docker compose ${COMPOSE_DEV} ${ENV_FILE} -p ${APP_NAME}
+DOCKER		= docker compose ${COMPOSE_DEV} -p ${APP_NAME}
 
 #Prod
 # DOCKER		= docker compose ${COMPOSE_PROD} ${ENV_FILE} -p ${APP_NAME}
@@ -14,10 +13,10 @@ DOCKER		= docker compose ${COMPOSE_DEV} ${ENV_FILE} -p ${APP_NAME}
 all:		start
 
 build:
-			${DOCKER} build ${CACHE}
+			${DOCKER} build
 
 setup:
-			${DOCKER} -f ./docker-compose.setup.yml up -d
+			${DOCKER} -f ./docker-compose.setup.yml up --build -d
 
 
 start:
