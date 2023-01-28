@@ -25,6 +25,10 @@ services:
       ADMINER_DEFAULT_DATABASE: ${DB_DB}
 
 
+    networks:
+      - netpong
+
+
   back:
     restart: "no"
 
