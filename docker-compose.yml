@@ -36,7 +36,8 @@ services:
     build: ./build/front
 
     volumes:
-      - ./site:/app
+      - ./site/chat-client:/app
+      # - ./site:/app
 
     networks:
       - netpong
