@@ -1,8 +1,6 @@
 
 apk add vim
-
-# # Download node_modules
-# yarn install
+npm install socket.io-client
 npm run dev
 
 

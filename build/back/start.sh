@@ -1,34 +1,39 @@
 
-apk add nano vim
-
-# sleep 1000000
-
-yarn global add @nestjs/cli
-
-# # Create application
-if [ "$BUILD_TYPE" = "Setup" ]; 
-then 
-    nest new ./ -p yarn --strict
-
-fi
+apk add vim
+npm global add @nestjs/cli
+nest start
 
 
-# # nest new rest-api --directory ./ -p yarn --strict
+# apk add nano vim
 
-# yarn add json-server
-# json-server ./api/db.json --host 0.0.0.0
+# # sleep 1000000
 
-# Download node_modules
-yarn install
+# yarn global add @nestjs/cli
+
+# # # Create application
+# if [ "$BUILD_TYPE" = "Setup" ]; 
+# then 
+#     nest new ./ -p yarn --strict
+
+# fi
 
 
-if [ "$BUILD_TYPE" = "Production" ]; 
-then 
-    # For start in prod
-    yarn start
+# # # nest new rest-api --directory ./ -p yarn --strict
 
-else 
-    yarn start 
-fi
+# # yarn add json-server
+# # json-server ./api/db.json --host 0.0.0.0
+
+# # Download node_modules
+# yarn install
+
+
+# if [ "$BUILD_TYPE" = "Production" ]; 
+# then 
+#     # For start in prod
+#     yarn start
+
+# else 
+#     yarn start 
+# fi
 
 
