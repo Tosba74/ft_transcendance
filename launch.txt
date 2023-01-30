@@ -1,0 +1,30 @@
+Pour tester le chat
+
+
+	BACK:
+	1. passer le back sur localhost:3001
+
+	dans api/src/main.ts:
+
+		decommenter la ligne:
+			await app.listen(3001); 
+		et commenter:
+			await app.listen(3000)
+	
+	2. cd ./api 
+	3. nest start --watch
+
+
+	FRONT:
+	1. passer le front sur localhost:3000
+		
+	dans site/chat-client/src/App.vue:
+	
+		decommenter la ligne:
+			const socket = io('http://localhost:3001'); 
+		et commenter:
+			const socket = io(import.meta.env.VITE_APP_BACK_URL);
+
+	2. cd ./site/chat-client
+	3. npm install
+	4. npm run dev

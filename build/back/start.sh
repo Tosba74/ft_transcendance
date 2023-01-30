@@ -1,6 +1,6 @@
 
 # !!! server met un certain temps a tout installer + starter (checker avec make logs)
-# tout est ok quand: "Nest application successfully started"
+# tout est ok quand make logs renvoie: "Nest application successfully started"
 apk add vim
 npm i -g @nestjs/cli
 npm install
