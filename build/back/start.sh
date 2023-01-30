@@ -1,5 +1,5 @@
 
-apk add nano
+apk add nano vim
 
 # sleep 1000000
 

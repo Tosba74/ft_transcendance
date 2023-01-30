@@ -52,7 +52,8 @@ services:
       - "3000:3000"
 
     volumes:
-      - ./site:/app
+      - ./site:/app/chat-client
+      # - ./site:/app/
 
 
   nginx:

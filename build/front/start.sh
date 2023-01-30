@@ -1,27 +1,35 @@
 
-apk add nano
+apk add vim
 
-# # Create application
-if [ "$BUILD_TYPE" = "Setup" ]; 
-then 
-    yarn create react-app ./ --template typescript
-    yarn add react-router-dom
-fi
-
-# Download node_modules
-yarn install
+# # Download node_modules
+# yarn install
+npm run dev
 
 
-if [ "$BUILD_TYPE" = "Production" ]; 
-then 
-    # For start in prod
-    yarn global add serve
 
-    yarn build
-    serve -s build 
+# apk add nano
 
-else 
-    yarn start 
-fi
+# # # Create application
+# if [ "$BUILD_TYPE" = "Setup" ]; 
+# then 
+#     yarn create react-app ./ --template typescript
+#     yarn add react-router-dom
+# fi
+
+# # Download node_modules
+# yarn install
+
+
+# if [ "$BUILD_TYPE" = "Production" ]; 
+# then 
+#     # For start in prod
+#     yarn global add serve
+
+#     yarn build
+#     serve -s build 
+
+# else 
+#     yarn start 
+# fi
 
 
