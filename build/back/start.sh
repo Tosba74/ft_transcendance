@@ -1,7 +1,10 @@
 
 apk add vim
-npm global add @nestjs/cli
-nest start
+yarn global add @nestjs/cli
+yarn install
+yarn add @nestjs/websockets @nestjs/platform-socket.io
+yarn start
+# !!! YARN START MET DU TEMPS A LANCER LE SERVER !!!
 
 
 # apk add nano vim
