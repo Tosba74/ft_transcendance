@@ -1,10 +1,17 @@
 
+# !!! server met un certain temps a tout installer + starter (checker avec make logs)
+# tout est ok quand: "Nest application successfully started"
 apk add vim
-yarn global add @nestjs/cli
-yarn install
-yarn add @nestjs/websockets @nestjs/platform-socket.io
-yarn start
-# !!! YARN START MET DU TEMPS A LANCER LE SERVER !!!
+npm i -g @nestjs/cli
+npm install
+npm i --save @nestjs/websockets @nestjs/platform-socket.io
+nest start
+
+
+
+
+
+
 
 
 # apk add nano vim
