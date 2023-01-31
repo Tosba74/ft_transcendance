@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { MessageDto } from './dto/message.dto';
+import { UserDto } from './dto/user.dto';
 
 @Injectable()
 export class ChatService {
@@ -23,12 +24,21 @@ export class ChatService {
 	return this.clientToUser.keys();
   }
 
-  // retourne le nom du client correspondante a la key (socket.id)
-  getClientName(clientId: string): string | undefined {
-	  return this.clientToUser.get(clientId);
+  quitChat(clientId: string) {
+	this.clientToUser.delete(clientId);
   }
 
-  findAll(): MessageDto[] {
+  // retourne le nom du client correspondante a la key (socket.id)
+  getClientName(clientId: string): string | undefined {
+	return this.clientToUser.get(clientId);
+  }
+
+  findAllUsers(): UserDto[] {
+	const users: UserDto[] = Array.from(this.clientToUser, ([id, name]) => ({ id, name }));
+	return users;
+  }
+
+  findAllMessages(): MessageDto[] {
     return this.messages;
   }
 

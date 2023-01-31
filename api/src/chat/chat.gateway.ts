@@ -9,6 +9,7 @@ import {
 } from '@nestjs/websockets';
 import { ChatService } from './chat.service';
 import { MessageDto } from './dto/message.dto';
+import { UserDto } from './dto/user.dto';
 import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway( {cors: { origin: '*' }} ) // a voir pour autoriser une liste de CORS directement via Nginx
@@ -27,29 +28,42 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		this.server.emit('users', this.users);
 	}
 
-	async handleDisconnect(): Promise<void> {
+	async handleDisconnect(@ConnectedSocket() client: Socket): Promise<void> {
 		// A client has disconnected
 		this.users--;
 
 		// Notify connected clients of current users
 		this.server.emit('users', this.users);
+
+		// remove the client from the memory list of people connected
+		this.chatService.quitChat(client.id);
+		
+		// notify the client about the user left
+		this.server.emit('disconect', client.id);
+	}
+
+	@SubscribeMessage('findAllUsers')
+	async findAllUsers(): Promise< UserDto[] > {
+		return this.chatService.findAllUsers();
 	}
 
     // get old messages
 	@SubscribeMessage('findAllMessages')
-	async findAll(): Promise<MessageDto[]> {
-		return this.chatService.findAll();
+	async findAllMessages(): Promise<MessageDto[]> {
+		return this.chatService.findAllMessages();
 	}
   
-	// async joinRoom(@MessageBody('name') name: string, @ConnectedSocket() client: Socket): Promise<void> {
-	// join and identify myself (store name-socket) (VALEUR/EVENT PAS UTILISÉ POUR L'INSTANT)
+	// join and identify myself (store name-socket)
 	@SubscribeMessage('join')
-	joinRoom(@MessageBody('name') name: string, @ConnectedSocket() client: Socket): IterableIterator<string> {
-		return this.chatService.identify(name, client.id);
-		// this.chatService.identify(name, client.id);
-		// this.server.emit('join', name);
+	async joinRoom(@MessageBody('name') name: string, @ConnectedSocket() client: Socket): Promise<boolean> {
+		// inscrit le client et son socket id en memoire
+		this.chatService.identify(name, client.id);
 
-		// return this.chatService.getClientName(client.id);
+		// notifie les autres users du nouvel user connecte
+		const id: string = client.id;
+		this.server.emit('join', {id, name});
+
+		return true;
 	}
 
 	// alert when typing/stop typing
@@ -69,8 +83,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		
 		// notify all the clients connected to the websocket that there is a new msg
 		this.server.emit('message', newMessage);
-
+		
 		return newMessage;
 	}
-
 }
