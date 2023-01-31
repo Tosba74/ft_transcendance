@@ -15,3 +15,10 @@ export default defineConfig({
     }
   }
 })
+
+/*
+	https://vitejs.dev/config/server-options.html#server-hmr
+
+	hmr.clientPort is an advanced option that overrides the port only on the client side, 
+	allowing you to serve the websocket on a different port than the client code looks for it on.
+*/

@@ -2,10 +2,7 @@
 import { io } from 'socket.io-client';
 import { onBeforeMount, ref } from 'vue';
 
-
-// console.log(import.meta.env.VITE_APP_BACK_URL);
-const socket = io(import.meta.env.VITE_APP_BACK_URL);	// COMMENT FAIRE COMMUNIQUER AVEC LE back:3000 ???
-// const socket = io('http://localhost:3001');	// pour tester en local (car le front utilise le 3000)
+const socket = io('http://localhost:4000');
 
 const messages = ref([]);
 const messageText = ref('');

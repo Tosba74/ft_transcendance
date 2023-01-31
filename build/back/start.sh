@@ -1,15 +1,11 @@
 
-# !!! server met un certain temps a tout installer + starter (checker avec make logs)
-# tout est ok quand make logs renvoie: "Nest application successfully started"
 apk add vim
 npm i -g @nestjs/cli
 npm install
 npm i --save @nestjs/websockets @nestjs/platform-socket.io
 nest start
-
-
-
-
+# !!! server met un certain temps a tout installer + starter (checker avec make logs)
+# nest starté quand sur localhost:4000 apparait 'Hello world'
 
 
 
