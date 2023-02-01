@@ -38,10 +38,10 @@ onBeforeMount(() => {
 
 	socket.on('users', (count) => {
 		if (count > 1) {
-			usersCount.value = `${count} users online`;
+			usersCount.value = `${count} users`;
 		}
 		else {
-			usersCount.value = `${count} user online`;
+			usersCount.value = `${count} user`;
 		}
 	})
 
@@ -105,27 +105,32 @@ const emitTyping = () => {
 		
 		<!-- MODULE DE CHATROOM -->
 		<div class="chat-container" v-else>
-			<div class="users-container scrollbar">
+
+			<div class="users-container">
 				<div class="count">{{ usersCount }}</div>
-				<div>
+				<div class="users-wrapper scrollbar">
 					<div class="users" v-for="user in users">
-						<div :socketId="user.id">							
+						<div :socketId="user.id" class="user-wrapper">							
 							<template v-for="userTyping in usersTyping">
 								<span v-if="userTyping !== name && userTyping === user.name" class="typing"></span>
 								<span v-else-if="userTyping === user.name" class="me-typing"></span>
 							</template>
-							<span v-if="user.name === name" class="me">{{ user.name }} [me]</span>
-							<span v-else class="else">{{ user.name }}</span>
+							<span class="lister"></span>
+							<span v-if="user.name === name" class="user me">{{ user.name }} [me]</span>
+							<span v-else class="user else">{{ user.name }}</span>
 						</div>
 					</div>
 				</div>
 			</div>
+
 			<div class="messages-container">
 				<div class="title">Chat</div>
-				<div class="messages scrollbar">
-					<div v-for="message in messages.slice().reverse()">
-						<div v-if="message.name === name" class="name me"><span>{{ message.text }}</span></div>
-						<div v-else class="name else"><span class="else-name">[{{ message.name }}]: </span><span>{{ message.text }}</span></div>
+				<div class="messages-wrapper">
+					<div class="messages scrollbar">
+						<div v-for="message in messages.slice().reverse()" class="message">
+							<div v-if="message.name === name" class="name me"><span>{{ message.text }}</span></div>
+							<div v-else class="name else"><span class="else-name">[{{ message.name }}]: </span><span>{{ message.text }}</span></div>
+						</div>
 					</div>
 				</div>
 				<div class="write">

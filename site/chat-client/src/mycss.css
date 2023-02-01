@@ -40,12 +40,13 @@ html, body {
 	scrollbar-color: var(--main-color04) var(--window-color);
 	scrollbar-width: thin;
 	padding-right: 10px;
+	overflow: auto;
 }
 
 .chat {
 	padding:20px;
 	height: 100vh;
-	width: 800px;
+	width: 1000px;
 	color: var(--main-color1);
 }
 
@@ -72,66 +73,58 @@ html, body {
 }
 
 .users-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: start;
 	width: 25%;
-	height: calc(100vh - 40px);
-	overflow: auto;
-	padding: 0 10px;
+	max-height: 100%;
+	padding: 0 0 5px 0;
+	border: solid 1px var(--main-color015);
+	border-right: 0;
 }
 
-.users-container .me {
+.users-wrapper {
+	padding: 5px 10px 0 10px;
+	height: calc(100% - 36px);
+}
+
+.users {
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+	-webkit-hyphens: auto;
+	-moz-hyphens: auto;
+	hyphens: auto;
+}
+
+.user-wrapper {
+	display: flex;
+	justify-content: start;
+}
+
+.user {
+	padding-left: 5px;
+	display: block;
+}
+
+.users .me {
 	color: var(--main-color05);
 }
 
-.users-container .else {
+.users .else {
+	color: var(--main-color05);
+}
+
+.lister::before {
+	content: '•';
 	color: var(--main-color05);
 }
 
 .count {
-	text-align: center;
 	color: var(--main-color1);
 	background-color: var(--main-color015);
-}
-
-.messages-container {
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	width: 75%;
-	padding: 0 10px;
-	line-break: anywhere;
-	border-left: solid 1px var(--main-color03);
-	border-right: solid 1px var(--main-color03);
-}
-
-.title {
-	text-align: center;
-	background-color: var(--main-color015);
-}
-
-.messages {
-	height: calc(100vh - 100px);
-	overflow: auto;
-	display: flex;
-	flex-direction: column-reverse;
-}
-
-.messages .me {
-	padding-left: 25%;
-	text-align: right;
-}
-
-.messages .else {
-	padding-right: 25%;
-}
-.messages .else-name {
-	opacity: 0.5;
-}
-
-.write {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	height: 60px;
+	height: 36px;
+	padding-left: 10px;
+	text-align: left;
 }
 
 .typing + span, .me-typing + span{
@@ -141,6 +134,59 @@ html, body {
 	font-size: 12px;
 	font-style: italic;
 	content: ' is typing ...';
+}
+
+.messages-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	width: 75%;
+	line-break: anywhere;
+	border: solid 1px var(--main-color015);
+}
+
+.title {
+	background-color: var(--main-color015);
+	height: 36px;
+	text-align: left;
+	padding-left: 10px;
+}
+
+.messages-wrapper {
+	height: calc(100% - 98px);
+	padding: 5px 0 0 10px;
+}
+
+.messages {
+	/* height: calc(100vh - 100px); */
+	max-height: 100%;
+	overflow: auto;
+	display: flex;
+	flex-direction: column-reverse;
+	padding: 0 10px 0 0;
+}
+
+.message .me {
+	padding-left: 25%;
+	text-align: right;
+}
+
+.message .else {
+	padding-right: 25%;
+}
+.message .else-name {
+	opacity: 0.5;
+}
+
+.message {
+	padding-bottom: 5px;
+}
+
+.write {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	height: 60px;
 }
 
 form {
@@ -184,6 +230,10 @@ input:hover, input:active, input:focus {
 button:hover, button:active, button:focus {
 	transition: .15s;
 	background: var(--main-color1);
+}
+
+input:focus, button:focus {
+    outline: none;
 }
 
 @media only screen and (max-width: 600px) {
