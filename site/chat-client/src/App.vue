@@ -7,8 +7,7 @@ import { onBeforeMount, ref } from 'vue';
 const socket = io('http://localhost:4000');
 
 const usersCount = ref('');
-const users = ref([]);
-// const users = ref('');
+const   users = ref([]);
 const messages = ref([]);
 const messageText = ref('');
 const joined = ref(false);
@@ -16,41 +15,43 @@ const name = ref('');
 const typingDisplay = ref('');
 
 /*
+	emit:
 	emit(event, bodyarguments, optional_callback)
 	suite a une interaction avec la page html,
 	mon socket emit un message au server (requete GET POST selon bodyarguments)
-
+	fonction callback appelée que si l'event coté server retourne une valeur
+	
+	on:
 	on(event, optional_callback)
 	suite a un event emit par le server
 	mon socket recoit un message du server suite
-
-	!!! optional_callback appelée que si l'event coté server retourne une valeur
 */
 
-// Called right before the component DOM is actually rendered and mounted
+// onBeforeMount: call right before the component DOM is actually rendered and mounted
 onBeforeMount(() => {
 	socket.emit('findAllUsers', {}, (response) => {
-		console.log(response);
 		users.value = response;
 	})
 
 	socket.emit('findAllMessages', {}, (response) => {
-		console.log(response);
 		messages.value = response;
 	})
 
 	socket.on('users', (count) => {
 		if (count > 1) {
-			usersCount.value = `${count} users connected`;
+			usersCount.value = `${count} users online`;
 		}
 		else {
-			usersCount.value = `${count} user connected`;
+			usersCount.value = `${count} user online`;
 		}
 	})
 
-	socket.on('join', (user) => {
-		console.log(users);
-		users.value.push(user);
+	socket.on('join', ({id, name}) => {
+		users.value.push({id, name});
+	})
+
+	socket.on('disconect', (id) => {
+		users.value = users.value.filter(user => user.id !== id);
 	})
 
 	socket.on('message', (message) => {
@@ -59,7 +60,7 @@ onBeforeMount(() => {
 	
 	socket.on('typing', ({name, isTyping}) => {
 		if (isTyping) {
-			typingDisplay.value = `${name} is typing`;
+			typingDisplay.value = `${name} is typing ...`;
 		}
 		else {
 			typingDisplay.value = '';
@@ -86,7 +87,7 @@ const emitTyping = () => {
 	socket.emit('typing', { isTyping: true});
 	let timeout = setTimeout (() => {
 		socket.emit('typing', { isTyping: false});
-	}, 3500);
+	}, 5000);
 };
 </script>
 
@@ -94,24 +95,27 @@ const emitTyping = () => {
 	<div class ="chat">
 		
 		<!-- MODULE D'IDENTIFICATION -->
-		<div v-if="!joined">
+		<div class="join" v-if="!joined">
 			<form @submit.prevent="join">
-				<label>What's your name?</label>
-				<input v-model="name" />
-				<button type="submit">Send</button>
+				<input v-model="name" autofocus placeholder="Pseudo" />
+				<button type="submit">Enter</button>
 			</form>
 		</div>
 		
 		<!-- MODULE DE CHATROOM -->
 		<div class="chat-container" v-else>
 			<div class="users-container">
+				<div>
+					<div class="users" v-for="user in users">
+						<div :socketId="user.id">{{ user.name }}</div>	 <!-- PAS MIS A JOUR PAR DISCONNECT -->
+					</div>
+				</div>
 				<div class="count">{{ usersCount }}</div>
-				<div v-for="user in users">{{ user }}</div>
 			</div>
 			<div class="messages-container">
 				<div class="messages">
-					<div v-for="message in messages">
-						[{{ message.name }}]: {{  message.text }}
+					<div v-for="message in messages.slice().reverse()">
+						<span class="name">[{{ message.name }}]:</span> <span class="text">{{  message.text }}</span>
 					</div>
 				</div>
 				<div class="write">
@@ -119,8 +123,7 @@ const emitTyping = () => {
 						<div v-if="typingDisplay">{{ typingDisplay }}</div>
 					</div>
 					<form @submit.prevent="sendMessage">
-						<label>Message:</label>
-						<input v-model="messageText" @input="emitTyping" />
+						<input v-model="messageText" @input="emitTyping" autofocus placeholder="Message ..."/>
 						<button type="submit">Send</button>
 					</form>
 				</div>
@@ -133,16 +136,38 @@ const emitTyping = () => {
 <style>
 @import './assets/base.css';
 
+html, body {
+	background-color: rgb(15, 15, 15) !important;
+}
+
 #app {
 	display: flex !important;
 	justify-content: center;
 	width: 100%;
+	font-size: 20px;
+	padding-top: 0!important;
+	padding-bottom: 0!important;
 }
 
 .chat {
 	padding:20px;
 	height: 100vh;
 	width: 800px;
+	color:cornflowerblue;
+}
+
+.join {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	height: 100%;
+}
+
+.join input {
+	max-width: 300px;
+}
+.join button {
+	max-width: 100px;
 }
 
 .chat-container {
@@ -154,9 +179,18 @@ const emitTyping = () => {
 }
 
 .users-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
 	width: 25%;
-	text-align: right;
+	height: calc(100vh - 40px);
+	overflow: auto;
 	padding: 0 10px;
+	opacity: 0.5;
+}
+
+.count {
+	padding-bottom: 5px;
 }
 
 .messages-container {
@@ -165,11 +199,85 @@ const emitTyping = () => {
 	justify-content: space-between;
 	width: 75%;
 	padding: 0 10px;
+	line-break: anywhere;
 }
 
-.count {
-	text-decoration: underline;
-	padding-bottom: 5px;
+.messages {
+	height: calc(100vh - 140px);
+	overflow: auto;
+	display: flex;
+	flex-direction: column-reverse;
 }
 
+.write {
+	display: flex;
+	flex-direction: column;
+	justify-content: end;
+	height: 100px;
+}
+
+span.name {
+	opacity: 0.5;
+}
+
+.typing {
+	opacity: 0.5;
+	font-size: 16px;
+	margin: 5px;
+}
+
+form {
+	display: flex;
+	justify-content: center;
+}
+
+label {
+	opacity: 0.5;
+	padding: 10px 0;
+}
+
+input, button {
+	height: 35px;
+	border: 0;
+	border-radius: 5px;
+	font-size: 20px;
+	cursor: default;
+	margin: 0 5px;
+}
+
+input {
+	background-color:rgba(100, 148, 237, 0.3);
+	color: white;
+	width: calc(75% - 20px);
+	padding: 5px 15px;
+}
+
+button {
+	background:rgba(100, 148, 237, 0.8);
+	color: rgb(5,5,5);
+	width: 25%;
+	padding: 5px;
+}
+
+input:hover, input:active, input:focus {
+background-color:rgba(100, 148, 237, 0.4);
+  transition: .15s;
+}
+
+button:hover, button:active, button:focus {
+  transition: .15s;
+  background:rgba(100, 148, 237, 1);
+}
+
+@media only screen and (max-width: 600px) {
+	#app {
+		padding: 0px!important;
+	}
+	.chat {
+		padding: 20px 10px!important;
+	}
+	button {
+		line-break:normal;
+	}
+}
 </style>

@@ -36,7 +36,8 @@ services:
     tty: true        # docker run -t
 
     ports:
-      - "4000:3000"
+      - "4000:4000"
+      # - "4000:3000"
 
     volumes:
       - ./api:/app
