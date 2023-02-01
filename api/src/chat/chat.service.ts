@@ -34,13 +34,11 @@ export class ChatService {
 	return this.clientToUser.get(clientId);
   }
 
-  async markAsTyping(name: string, isTyping: boolean): Promise<void> {
-	// console.log(this.usersTyping);
+  async userIsTyping(name: string, isTyping: boolean): Promise<void> {
 	if (isTyping === true)
 		this.usersTyping.push(name);
 	else
 		this.usersTyping = this.usersTyping.filter(user => user !== name);
-	// console.log(this.usersTyping);
   }
 
   findAllUsersTyping(): string[] {
