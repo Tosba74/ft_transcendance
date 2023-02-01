@@ -2,7 +2,7 @@
 import { io } from 'socket.io-client';
 
 // vue working-process: https://learnvue.co/tutorials/vue-lifecycle-hooks-guide
-import { onBeforeMount, onMounted, ref } from 'vue';
+import { onBeforeMount, ref } from 'vue';
 
 const socket = io('http://localhost:4000');
 
@@ -37,6 +37,7 @@ onBeforeMount(() => {
 		messages.value = response;
 	})
 
+	// PAS INDISPENSABLE ?
 	socket.on('users', (count) => {
 		if (count > 1) {
 			usersCount.value = `${count} users online`;
@@ -59,7 +60,6 @@ onBeforeMount(() => {
 	})
 	
 	socket.on('typing', (response) => {
-		// $('.typing').prev().addClass("typing");				// FONCTIONNE PAS
 		usersTyping.value = response;
 	})
 });
@@ -113,22 +113,13 @@ const emitTyping = () => {
 				<div class="count">{{ usersCount }}</div>
 				<div>
 					<div class="users" v-for="user in users">
-						<div :socketId="user.id">
+						<div :socketId="user.id">							
+							<template v-for="userTyping in usersTyping">
+								<span v-if="userTyping !== name && userTyping === user.name" class="typing"></span>
+								<span v-else-if="userTyping === user.name" class="me-typing"></span>
+							</template>
 							<span v-if="user.name === name" class="me">{{ user.name }} [me]</span>
 							<span v-else class="else">{{ user.name }}</span>
-							<template v-for="userTyping in usersTyping">
-								<span v-if="userTyping === user.name && userTyping !== name" class="typing"> is typing ...</span>
-							</template>
-
-							<!-- <span v-if="user.name === name" class="me">{{ user.name }} [me]</span> -->
-							<!-- <span v-else class="else">{{ user.name }}</span> -->
-
-							<!-- <span v-for="userTyping in usersTyping">
-								<span v-if="userTyping === name" class="me">{{ user.name }}[me]</span>
-								<span v-else-if="userTyping === user.name && userTyping !== name" class="typing">{{ user.name }} is typing ...</span>
-								<span v-else>{{ user.name }}</span>
-							</span> -->
-
 						</div>
 					</div>
 				</div>
@@ -155,7 +146,9 @@ const emitTyping = () => {
 
 <style>
 @import './assets/base.css';
-
+/*
+	determiner des macros pour les colours (page + text)
+*/
 html, body {
 	background-color: rgb(15, 15, 15) !important;
 	cursor: default;
@@ -206,9 +199,6 @@ html, body {
 }
 
 .users-container {
-	/* display: flex;
-	flex-direction: column;
-	justify-content: space-between; */
 	width: 25%;
 	height: calc(100vh - 40px);
 	overflow: auto;
@@ -271,8 +261,13 @@ html, body {
 	height: 60px;
 }
 
-.typing {
-	color:rgba(100, 148, 237, 1);
+.typing + span, .me-typing + span{
+	color:rgba(100, 148, 237, 1)!important;
+}
+.typing + span:after{
+	font-size: 12px;
+	font-style: italic;
+	content: ' is typing ...';
 }
 
 form {

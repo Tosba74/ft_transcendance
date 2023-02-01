@@ -45,6 +45,7 @@ export class ChatService {
 	return this.usersTyping;
   }
 
+  // vuejs doesnt implement Map (nor Set) type so we must return an array of object in our case
   findAllUsers(): UserDto[] {
 	const users: UserDto[] = Array.from(this.clientToUser, ([id, name]) => ({ id, name }));
 	return users;
