@@ -20,7 +20,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	constructor(private readonly chatService: ChatService) {}
 
 	// handleConnection() and handleDisconnect() hooks will be triggered every time a client connects or disconnects
-	async handleConnection(): Promise<void> {
+	handleConnection(): void {
 		// A client has connected
 		this.users++;
 
@@ -28,7 +28,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		this.server.emit('users', this.users);
 	}
 
-	async handleDisconnect(@ConnectedSocket() client: Socket): Promise<void> {
+	handleDisconnect(@ConnectedSocket() client: Socket): void {
 		// A client has disconnected
 		this.users--;
 
@@ -43,13 +43,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage('findAllUsers')
-	async findAllUsers(): Promise< UserDto[] > {
+	findAllUsers(): UserDto[] {
 		return this.chatService.findAllUsers();
 	}
 
     // get old messages
 	@SubscribeMessage('findAllMessages')
-	async findAllMessages(): Promise<MessageDto[]> {
+	findAllMessages(): MessageDto[] {
 		return this.chatService.findAllMessages();
 	}
   
@@ -57,7 +57,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@SubscribeMessage('join')
 	async joinRoom(@MessageBody('name') name: string, @ConnectedSocket() client: Socket): Promise<boolean> {
 		// inscrit le client et son socket id en memoire
-		this.chatService.identify(name, client.id);
+		await this.chatService.identify(name, client.id);
 
 		// notifie les autres users du nouvel user connecte
 		const id: string = client.id;
@@ -68,12 +68,26 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	// alert when typing/stop typing
 	@SubscribeMessage('typing')
-	async typing(@MessageBody('isTyping') isTyping: boolean, @ConnectedSocket() client: Socket): Promise<void> {
-		const name: string | undefined = await this.chatService.getClientName(client.id);
+	typing(@MessageBody('name') userTyping: string,
+		@MessageBody('isTyping') isTyping: boolean,
+		@ConnectedSocket() client: Socket): string[]
+	{
+		// console.log(userTyping);
+		this.chatService.markAsTyping(userTyping, isTyping);
 		
 		// broadcoast.emit alerts everybody except myself
-		client.broadcast.emit('typing', {name, isTyping});
+		// client.broadcast.emit('typing', userTyping);
+		this.server.emit('typing', this.chatService.findAllUsersTyping());
+		console.log(this.chatService.findAllUsersTyping());
+		return this.chatService.findAllUsersTyping();		// OK, retourne bien un tableau de string
 	}
+	// @SubscribeMessage('typing')
+	// async typing(@MessageBody('isTyping') isTyping: boolean, @ConnectedSocket() client: Socket): Promise<void> {
+	// 	const name: string | undefined = await this.chatService.getClientName(client.id);
+		
+	// 	// broadcoast.emit alerts everybody except myself
+	// 	client.broadcast.emit('typing', {name, isTyping});
+	// }
 
 	// create and send message
 	@SubscribeMessage('createMessage')
@@ -83,7 +97,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		
 		// notify all the clients connected to the websocket that there is a new msg
 		this.server.emit('message', newMessage);
-		
+
 		return newMessage;
 	}
 }

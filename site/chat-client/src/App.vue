@@ -11,9 +11,10 @@ const users = ref([]);
 const messages = ref([]);
 const messageText = ref('');
 const joined = ref(false);
-const me = ref(false);
 const name = ref('');
-const typingDisplay = ref('');
+
+const usersTyping = ref([]);
+// const typingDisplay = ref('');
 
 /*
 	emit:
@@ -31,6 +32,7 @@ const typingDisplay = ref('');
 // onBeforeMount: call right before the component DOM is actually rendered and mounted
 onBeforeMount(() => {
 	socket.emit('findAllUsers', {}, (response) => {
+		console.log(response);
 		users.value = response;
 	})
 
@@ -47,7 +49,7 @@ onBeforeMount(() => {
 		}
 	})
 
-	socket.on('join', ({id, name}) => {
+	socket.on('join', ( {id, name} ) => {
 		users.value.push({id, name});
 	})
 
@@ -59,14 +61,19 @@ onBeforeMount(() => {
 		messages.value.push(message);
 	})
 	
-	socket.on('typing', ({name, isTyping}) => {
-		if (isTyping) {
-			typingDisplay.value = `${name} is typing ...`;
-		}
-		else {
-			typingDisplay.value = '';
-		}
+	socket.on('typing', (response) => {
+		console.log(response);					// KO, lit un string apres l'autre
+		// alert(`someone is typing ...`);
+		usersTyping.value = response;
 	})
+	// socket.on('typing', ( {name, isTyping} ) => {
+	// 	if (isTyping) {
+	// 		typingDisplay.value = `${name} is typing ...`;
+	// 	}
+	// 	else {
+	// 		typingDisplay.value = '';
+	// 	}
+	// })
 });
 
 const join = () => {
@@ -84,12 +91,31 @@ const sendMessage = () => {
 	})
 };
 
+let typing = false;
 const emitTyping = () => {
-	socket.emit('typing', { isTyping: true});
-	let timeout = setTimeout (() => {
-		socket.emit('typing', { isTyping: false});
-	}, 5000);
+	const val = name.value;
+	// const found = usersTyping.value.find((user) => user === val);
+	// console.log(`index = ${found}`);
+
+	// if (found === undefined)
+	if (typing === false)
+	{
+		typing = true;
+		console.log(`${val} is typing`);
+		socket.emit('typing', { name: val, isTyping: true } );
+		
+		let timeout = setTimeout (() => {
+			socket.emit('typing', { name: val, isTyping: false } );
+			typing = false;
+		}, 50000);
+	}
 };
+// const emitTyping = () => {
+// 	socket.emit('typing', { isTyping: true});
+// 	let timeout = setTimeout (() => {
+// 		socket.emit('typing', { isTyping: false});
+// 	}, 5000);
+// };
 </script>
 
 <template>
@@ -111,7 +137,14 @@ const emitTyping = () => {
 						<div :socketId="user.id">
 							<span v-if="user.name === name" class="me">{{ user.name }}</span>
 							<span v-else class="else">{{ user.name }}</span>
-						</div>	 <!-- PAS MIS A JOUR PAR DISCONNECT -->
+							
+							<!-- NOUVELLE FONCTION A TESTER -->
+							<span v-for="userTyping in usersTyping">
+								<span v-if="userTyping === user.name"> ...</span>
+								<span v-else></span>
+							</span>
+
+						</div>
 					</div>
 				</div>
 				<div class="count">{{ usersCount }}</div>
@@ -119,16 +152,22 @@ const emitTyping = () => {
 			<div class="messages-container">
 				<div class="messages scrollbar">
 					<div v-for="message in messages.slice().reverse()">
-						<div v-if="message.name === name" class="name me"><span>{{  message.text }}</span></div>
-						<div v-else class="name else"><span class="else-name">[{{ message.name }}]:</span><span>{{  message.text }}</span></div>
+						<div v-if="message.name === name" class="name me"><span>{{ message.text }}</span></div>
+						<div v-else class="name else"><span class="else-name">[{{ message.name }}]: </span><span>{{ message.text }}</span></div>
 					</div>
 				</div>
 				<div class="write">
-					<div class="typing">
+					<!-- <div class="typing">
 						<div v-if="typingDisplay">{{ typingDisplay }}</div>
+					</div> -->
+					<div class="typing">
+						<span v-for="userTyping in usersTyping">
+							<span>{{ userTyping }},</span>
+						</span>
+						is typing
 					</div>
 					<form @submit.prevent="sendMessage">
-						<input v-model="messageText" @input="emitTyping" autofocus placeholder="Message ..."/>
+						<input v-model="messageText" @input="emitTyping" autofocus placeholder="Message..."/>
 						<button type="submit">Send</button>
 					</form>
 				</div>
