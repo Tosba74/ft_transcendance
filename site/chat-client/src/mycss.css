@@ -102,7 +102,7 @@ html, body {
 }
 
 .user {
-	padding-left: 5px;
+	padding-left: 10px;
 	display: block;
 }
 
@@ -114,9 +114,11 @@ html, body {
 	color: var(--main-color05);
 }
 
-.lister::before {
-	content: '•';
+.lister {
 	color: var(--main-color05);
+	position: absolute;
+	left: 5px;
+	transform: translateX(-100%);
 }
 
 .count {
@@ -127,13 +129,16 @@ html, body {
 	text-align: left;
 }
 
-.typing + span, .me-typing + span{
+.typing + span, .me-typing + span {
 	color: var(--main-color1)!important;
 }
 .typing + span:after{
 	font-size: 12px;
 	font-style: italic;
 	content: ' is typing ...';
+}
+.typing + span, .me-typing + span, .typing + span:after {
+	transition: .25s;
 }
 
 .messages-container {

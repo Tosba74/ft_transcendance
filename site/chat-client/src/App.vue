@@ -115,9 +115,9 @@ const emitTyping = () => {
 								<span v-if="userTyping !== name && userTyping === user.name" class="typing"></span>
 								<span v-else-if="userTyping === user.name" class="me-typing"></span>
 							</template>
-							<span class="lister"></span>
 							<span v-if="user.name === name" class="user me">{{ user.name }} [me]</span>
 							<span v-else class="user else">{{ user.name }}</span>
+							<span class="lister">•</span>
 						</div>
 					</div>
 				</div>
