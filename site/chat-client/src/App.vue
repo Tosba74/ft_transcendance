@@ -2,7 +2,7 @@
 import { io } from 'socket.io-client';
 
 // vue working-process: https://learnvue.co/tutorials/vue-lifecycle-hooks-guide
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, onMounted, ref } from 'vue';
 
 const socket = io('http://localhost:4000');
 
@@ -12,9 +12,7 @@ const messages = ref([]);
 const messageText = ref('');
 const joined = ref(false);
 const name = ref('');
-
 const usersTyping = ref([]);
-// const typingDisplay = ref('');
 
 /*
 	emit:
@@ -32,7 +30,6 @@ const usersTyping = ref([]);
 // onBeforeMount: call right before the component DOM is actually rendered and mounted
 onBeforeMount(() => {
 	socket.emit('findAllUsers', {}, (response) => {
-		console.log(response);
 		users.value = response;
 	})
 
@@ -62,23 +59,15 @@ onBeforeMount(() => {
 	})
 	
 	socket.on('typing', (response) => {
-		console.log(response);					// KO, lit un string apres l'autre
-		// alert(`someone is typing ...`);
+		// $('.typing').prev().addClass("typing");				// FONCTIONNE PAS
 		usersTyping.value = response;
 	})
-	// socket.on('typing', ( {name, isTyping} ) => {
-	// 	if (isTyping) {
-	// 		typingDisplay.value = `${name} is typing ...`;
-	// 	}
-	// 	else {
-	// 		typingDisplay.value = '';
-	// 	}
-	// })
 });
 
 const join = () => {
 	if (name.value.length > 0)
 	{
+		// fonction callback de emit appelée que si l'event coté server retourne une valeur
 		socket.emit('join', { name: name.value }, () => {
 			joined.value = true;
 		})
@@ -94,28 +83,17 @@ const sendMessage = () => {
 let typing = false;
 const emitTyping = () => {
 	const val = name.value;
-	// const found = usersTyping.value.find((user) => user === val);
-	// console.log(`index = ${found}`);
-
-	// if (found === undefined)
 	if (typing === false)
 	{
 		typing = true;
-		console.log(`${val} is typing`);
 		socket.emit('typing', { name: val, isTyping: true } );
 		
 		let timeout = setTimeout (() => {
 			socket.emit('typing', { name: val, isTyping: false } );
 			typing = false;
-		}, 50000);
+		}, 5000);
 	}
 };
-// const emitTyping = () => {
-// 	socket.emit('typing', { isTyping: true});
-// 	let timeout = setTimeout (() => {
-// 		socket.emit('typing', { isTyping: false});
-// 	}, 5000);
-// };
 </script>
 
 <template>
@@ -132,24 +110,31 @@ const emitTyping = () => {
 		<!-- MODULE DE CHATROOM -->
 		<div class="chat-container" v-else>
 			<div class="users-container scrollbar">
+				<div class="count">{{ usersCount }}</div>
 				<div>
 					<div class="users" v-for="user in users">
 						<div :socketId="user.id">
-							<span v-if="user.name === name" class="me">{{ user.name }}</span>
+							<span v-if="user.name === name" class="me">{{ user.name }} [me]</span>
 							<span v-else class="else">{{ user.name }}</span>
-							
-							<!-- NOUVELLE FONCTION A TESTER -->
-							<span v-for="userTyping in usersTyping">
-								<span v-if="userTyping === user.name"> ...</span>
-								<span v-else></span>
-							</span>
+							<template v-for="userTyping in usersTyping">
+								<span v-if="userTyping === user.name && userTyping !== name" class="typing"> is typing ...</span>
+							</template>
+
+							<!-- <span v-if="user.name === name" class="me">{{ user.name }} [me]</span> -->
+							<!-- <span v-else class="else">{{ user.name }}</span> -->
+
+							<!-- <span v-for="userTyping in usersTyping">
+								<span v-if="userTyping === name" class="me">{{ user.name }}[me]</span>
+								<span v-else-if="userTyping === user.name && userTyping !== name" class="typing">{{ user.name }} is typing ...</span>
+								<span v-else>{{ user.name }}</span>
+							</span> -->
 
 						</div>
 					</div>
 				</div>
-				<div class="count">{{ usersCount }}</div>
 			</div>
 			<div class="messages-container">
+				<div class="title">Chat</div>
 				<div class="messages scrollbar">
 					<div v-for="message in messages.slice().reverse()">
 						<div v-if="message.name === name" class="name me"><span>{{ message.text }}</span></div>
@@ -157,15 +142,6 @@ const emitTyping = () => {
 					</div>
 				</div>
 				<div class="write">
-					<!-- <div class="typing">
-						<div v-if="typingDisplay">{{ typingDisplay }}</div>
-					</div> -->
-					<div class="typing">
-						<span v-for="userTyping in usersTyping">
-							<span>{{ userTyping }},</span>
-						</span>
-						is typing
-					</div>
 					<form @submit.prevent="sendMessage">
 						<input v-model="messageText" @input="emitTyping" autofocus placeholder="Message..."/>
 						<button type="submit">Send</button>
@@ -230,9 +206,9 @@ html, body {
 }
 
 .users-container {
-	display: flex;
+	/* display: flex;
 	flex-direction: column;
-	justify-content: space-between;
+	justify-content: space-between; */
 	width: 25%;
 	height: calc(100vh - 40px);
 	overflow: auto;
@@ -240,16 +216,17 @@ html, body {
 }
 
 .users-container .me {
-	opacity: 1;
+	color:rgba(100, 148, 237, 0.5);
 }
 
 .users-container .else {
-	opacity: 0.5;
+	color:rgba(100, 148, 237, 0.5);
 }
 
 .count {
-	padding-bottom: 5px;
-	opacity: 0.5;
+	text-align: center;
+	color:rgba(100, 148, 237, 1);
+	background-color:rgba(100, 148, 237, 0.15);
 }
 
 .messages-container {
@@ -259,10 +236,17 @@ html, body {
 	width: 75%;
 	padding: 0 10px;
 	line-break: anywhere;
+	border-left: solid 1px rgba(100, 148, 237, 0.3);
+	border-right: solid 1px rgba(100, 148, 237, 0.3);
+}
+
+.title {
+	text-align: center;
+	background-color:rgba(100, 148, 237, 0.15);
 }
 
 .messages {
-	height: calc(100vh - 140px);
+	height: calc(100vh - 100px);
 	overflow: auto;
 	display: flex;
 	flex-direction: column-reverse;
@@ -283,13 +267,12 @@ html, body {
 .write {
 	display: flex;
 	flex-direction: column;
-	justify-content: end;
-	height: 100px;
+	justify-content: center;
+	height: 60px;
 }
 
 .typing {
-	opacity: 0.5;
-	margin: 10px 5px;
+	color:rgba(100, 148, 237, 1);
 }
 
 form {
