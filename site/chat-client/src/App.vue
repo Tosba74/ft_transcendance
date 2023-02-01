@@ -7,10 +7,11 @@ import { onBeforeMount, ref } from 'vue';
 const socket = io('http://localhost:4000');
 
 const usersCount = ref('');
-const   users = ref([]);
+const users = ref([]);
 const messages = ref([]);
 const messageText = ref('');
 const joined = ref(false);
+const me = ref(false);
 const name = ref('');
 const typingDisplay = ref('');
 
@@ -104,18 +105,22 @@ const emitTyping = () => {
 		
 		<!-- MODULE DE CHATROOM -->
 		<div class="chat-container" v-else>
-			<div class="users-container">
+			<div class="users-container scrollbar">
 				<div>
 					<div class="users" v-for="user in users">
-						<div :socketId="user.id">{{ user.name }}</div>	 <!-- PAS MIS A JOUR PAR DISCONNECT -->
+						<div :socketId="user.id">
+							<span v-if="user.name === name" class="me">{{ user.name }}</span>
+							<span v-else class="else">{{ user.name }}</span>
+						</div>	 <!-- PAS MIS A JOUR PAR DISCONNECT -->
 					</div>
 				</div>
 				<div class="count">{{ usersCount }}</div>
 			</div>
 			<div class="messages-container">
-				<div class="messages">
+				<div class="messages scrollbar">
 					<div v-for="message in messages.slice().reverse()">
-						<span class="name">[{{ message.name }}]:</span> <span class="text">{{  message.text }}</span>
+						<div v-if="message.name === name" class="name me"><span>{{  message.text }}</span></div>
+						<div v-else class="name else"><span class="else-name">[{{ message.name }}]:</span><span>{{  message.text }}</span></div>
 					</div>
 				</div>
 				<div class="write">
@@ -138,6 +143,7 @@ const emitTyping = () => {
 
 html, body {
 	background-color: rgb(15, 15, 15) !important;
+	cursor: default;
 }
 
 #app {
@@ -149,11 +155,17 @@ html, body {
 	padding-bottom: 0!important;
 }
 
+.scrollbar {
+	scrollbar-color: rgba(100, 148, 237, 0.4) rgb(15, 15, 15);
+	scrollbar-width: thin;
+	padding-right: 10px;
+}
+
 .chat {
 	padding:20px;
 	height: 100vh;
 	width: 800px;
-	color:cornflowerblue;
+	color:rgba(100, 148, 237, 1);
 }
 
 .join {
@@ -186,11 +198,19 @@ html, body {
 	height: calc(100vh - 40px);
 	overflow: auto;
 	padding: 0 10px;
+}
+
+.users-container .me {
+	opacity: 1;
+}
+
+.users-container .else {
 	opacity: 0.5;
 }
 
 .count {
 	padding-bottom: 5px;
+	opacity: 0.5;
 }
 
 .messages-container {
@@ -209,6 +229,18 @@ html, body {
 	flex-direction: column-reverse;
 }
 
+.messages .me {
+	padding-left: 25%;
+	text-align: right;
+}
+
+.messages .else {
+	padding-right: 25%;
+}
+.messages .else-name {
+	opacity: 0.5;
+}
+
 .write {
 	display: flex;
 	flex-direction: column;
@@ -216,14 +248,9 @@ html, body {
 	height: 100px;
 }
 
-span.name {
-	opacity: 0.5;
-}
-
 .typing {
 	opacity: 0.5;
-	font-size: 16px;
-	margin: 5px;
+	margin: 10px 5px;
 }
 
 form {
@@ -260,13 +287,13 @@ button {
 }
 
 input:hover, input:active, input:focus {
-background-color:rgba(100, 148, 237, 0.4);
-  transition: .15s;
+	background-color:rgba(100, 148, 237, 0.4);
+	transition: .15s;
 }
 
 button:hover, button:active, button:focus {
-  transition: .15s;
-  background:rgba(100, 148, 237, 1);
+	transition: .15s;
+	background:rgba(100, 148, 237, 1);
 }
 
 @media only screen and (max-width: 600px) {
