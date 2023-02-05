@@ -26,9 +26,31 @@ ps:
 			${DOCKER} ps -a
 
 logs:
-			${DOCKER} logs $2
+			${DOCKER} logs $@
 flogs:
-			${DOCKER} logs -f $2
+			${DOCKER} logs -f $@
+
+logsfront:
+			${DOCKER} logs front
+logsapi:
+			${DOCKER} logs back
+logsnginx:
+			${DOCKER} logs nginx
+
+flogsfront:
+			${DOCKER} logs -f front
+flogsapi:
+			${DOCKER} logs -f back
+flogsnginx:
+			${DOCKER} logs -f nginx
+
+refront:
+			${DOCKER} restart front
+reapi:
+			${DOCKER} restart back
+renginx:
+			${DOCKER} restart nginx
+
 
 run:		
 			${DOCKER} exec front sh
@@ -36,6 +58,10 @@ runapi:
 			${DOCKER} exec back sh
 runnginx:		
 			${DOCKER} exec nginx bash
+runpostg:		
+			${DOCKER} exec postgres bash
+rundb:		
+			${DOCKER} exec postgres psql --host=postgres --dbname=test_db --username=user -W
 
 
 down:

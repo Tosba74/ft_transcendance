@@ -18,7 +18,7 @@ services:
 
 
   back:
-    build: ./build/back
+    build: ./_build/back
     depends_on:
       - postgres
 
@@ -33,7 +33,7 @@ services:
 
 
   front:
-    build: ./build/front
+    build: ./_build/front
 
     volumes:
       - ./site:/app
@@ -45,7 +45,7 @@ services:
 
 
   nginx:
-    build: ./build/nginx
+    build: ./_build/nginx
     depends_on:
       - front
       - back
@@ -55,7 +55,7 @@ services:
       - "8443:443"
 
     volumes:
-      - ./build/nginx/certs:/certs
+      - ./_build/nginx/certs:/certs
 
     networks:
       - netpong

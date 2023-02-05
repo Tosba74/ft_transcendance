@@ -10,7 +10,8 @@ services:
 
 
   adminer:
-    image: mcaubrey/adminer
+    image: adminer
+    # image: mcaubrey/adminer
     depends_on:
       - postgres
 

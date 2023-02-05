@@ -10,6 +10,7 @@ if [ "$BUILD_TYPE" = "Setup" ];
 then 
     nest new ./ -p yarn --strict
 
+    yarn add @nestjs/websockets @nestjs/platform-socket.io
 fi
 
 
@@ -28,7 +29,7 @@ then
     yarn start
 
 else 
-    yarn start 
+    yarn start:dev 
 fi
 
 

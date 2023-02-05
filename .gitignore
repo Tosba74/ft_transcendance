@@ -1,4 +1,4 @@
-build/nginx/certs/
+_build/nginx/certs/
 
 # misc
 .DS_Store
