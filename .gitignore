@@ -1,4 +1,5 @@
-_build/nginx/certs/
+_build/nginx/certs/*.crt
+_build/nginx/certs/*.key
 
 # misc
 .DS_Store
