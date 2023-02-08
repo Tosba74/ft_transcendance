@@ -36,7 +36,7 @@ onBeforeMount(() => {
 		messages.value = response;
 	})
 
-	socket.on('users', (count) => {
+	socket.on('usercount', (count) => {
 		if (count > 1) {
 			usersCount.value = `${count} users`;
 		}

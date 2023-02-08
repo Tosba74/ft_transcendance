@@ -16,24 +16,24 @@ import { Server, Socket } from 'socket.io';
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   
 	@WebSocketServer() server: Server;
-	users: number = 0;
+	usercount: number = 0;
 	constructor(private readonly chatService: ChatService) {}
 
 	// handleConnection() and handleDisconnect() hooks will be triggered every time a client connects or disconnects
 	handleConnection(): void {
 		// A client has connected
-		this.users++;
+		this.usercount++;
 
 		// Notify connected clients of current users
-		this.server.emit('users', this.users);
+		this.server.emit('usercount', this.usercount);
 	}
 
 	handleDisconnect(@ConnectedSocket() client: Socket): void {
 		// A client has disconnected
-		this.users--;
+		this.usercount--;
 
 		// Notify connected clients of current users
-		this.server.emit('users', this.users);
+		this.server.emit('usercount', this.usercount);
 
 		// remove the client from the memory list of people connected
 		this.chatService.quitChat(client.id);
@@ -55,7 +55,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   
 	// join and identify myself (store name-socket)
 	@SubscribeMessage('join')
-	async joinRoom(@MessageBody('name') name: string, @ConnectedSocket() client: Socket): Promise<boolean> {
+	async join(@MessageBody('name') name: string, @ConnectedSocket() client: Socket): Promise<boolean> {
 		// inscrit le client et son socket id en memoire
 		await this.chatService.identify(name, client.id);
 
