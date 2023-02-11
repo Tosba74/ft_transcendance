@@ -46,6 +46,42 @@ label {
   text-decoration: underline;
 }
 
+.separator span {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  color: rgba(0, 0, 0, 0.3);
+}
+.separator span::before,
+.separator span::after {
+  content: "";
+  display: block;
+  width: 100%;
+  border-top: 1px solid rgba(0, 0, 0, 0.3);
+  position: relative;
+  top: 50%;
+}
+.separator span::before {
+  margin-right: 10px;
+}
+.separator span::after {
+  margin-left: 10px;
+}
+
+.profile42, .profile42:disabled {
+  color: white;
+  background: rgba(0, 0, 0, 0.4)!important;
+  border:none!important;
+}
+.profile42:hover {
+  background: rgba(0, 0, 0, 0.45)!important;
+  border:none!important;
+}
+.profile42:active {
+  background: rgba(0, 0, 0, 0.5)!important;
+  border:none!important;
+}
+
 .message {
   height: 22px;
 }

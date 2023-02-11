@@ -25,10 +25,29 @@ export class UsersService {
     });
   }
 
+  // YOUR WEBSITE MUST BE PROTECTED AGAINST SQL INJECTIONS.
+  // YOU MUST IMPLEMENT SOME KIND OF SERVER-SIDE VALIDATION FOR FORMS AND ANY USER INPUT
   create(createUserDto: CreateUserDto): Promise<UserModel | null> {
     const newuser = new UserModel();
-    newuser.display_name = createUserDto.display_name;
+
+    // id = db autoincrement
+
     newuser.login_name = createUserDto.login_name;
+    newuser.password = createUserDto.password;
+    newuser.pseudo = createUserDto.pseudo;
+
+    // avatar = null at creation
+    
+    newuser.tfa_enabled = false;
+    newuser.tfa_email = createUserDto.tfa_email;
+    newuser.tfa_code = createUserDto.tfa_code;
+    
+    newuser.status_id = 0;
+    newuser.status_updated_at = new Date();
+    
+    newuser.creation_date = new Date();
+    // validate_date = null at creation
+    
     return this.usersRepository.save(newuser);
   }
 
