@@ -3,7 +3,8 @@ import { ApiOkResponse, ApiNotFoundResponse, ApiCreatedResponse, ApiUnprocessabl
 import { UsersService } from './users.service';
 
 import { UserModel } from "./models/user.model";
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto, UpdateUserDto } from './dto/create-user.dto';
+import { FindOneParams } from './dto/find-one-params.dto';
 
 @Controller('users')
 @ApiTags('users')
@@ -19,8 +20,8 @@ export class UsersController {
   @Get(':id')
   @ApiOkResponse({ description: 'User retrieved successfully' })
   @ApiNotFoundResponse({ description: 'User not found' })
-  public findOne(@Param('id') id: number): Promise<UserModel | null> {
-    return this.usersService.findOne(id);
+  public findOne(@Param('id') id: FindOneParams): Promise<UserModel | null> {
+    return this.usersService.findOne(id.id);
   }
 
   @Post()

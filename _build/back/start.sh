@@ -1,5 +1,5 @@
 
-apk add nano
+apk add nano 
 
 # sleep 1000000
 
@@ -15,6 +15,8 @@ then
 	yarn add @nestjs/websockets@9.2.1 @nestjs/platform-socket.io@9.2.1
 	yarn add @nestjs/typeorm typeorm pg 
     yarn add @nestjs/swagger 
+    yarn add bcrypt @types/bcrypt
+    yarn add class-validator class-transformer
 fi
 
 

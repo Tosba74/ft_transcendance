@@ -1,9 +1,11 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { UserModel } from "./models/user.model";
 import { CreateUserDto } from './dto/create-user.dto';
+
+// HOW TO PREVENT SQL INJECTIONS WITH TYPEORM ?
 
 @Injectable()
 export class UsersService {
@@ -25,15 +27,24 @@ export class UsersService {
     });
   }
 
-  // YOUR WEBSITE MUST BE PROTECTED AGAINST SQL INJECTIONS.
-  // YOU MUST IMPLEMENT SOME KIND OF SERVER-SIDE VALIDATION FOR FORMS AND ANY USER INPUT
+  // findByLoginName(login_name: string): Promise<UserModel | null> {
+  //   return this.usersRepository.findOne({
+  //     where: {
+  //       login_name,
+  //     },
+  //   });
+  // }
+
   create(createUserDto: CreateUserDto): Promise<UserModel | null> {
     const newuser = new UserModel();
 
     // id = db autoincrement
 
     newuser.login_name = createUserDto.login_name;
-    newuser.password = createUserDto.password;
+    const bcrypt = require('bcrypt');
+    const saltRounds: number = 10;
+    const hash: string = bcrypt.hashSync(createUserDto.password, saltRounds);     // ESSAYER D'ECRIRE EN ASYNC
+    newuser.password = hash;
     newuser.pseudo = createUserDto.pseudo;
 
     // avatar = null at creation

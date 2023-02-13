@@ -22,23 +22,19 @@ export default function (props:any) {
 
 	// Send new user to API with axios
 	axios.post('http://localhost:8080/api/users', {
-		login_name: login_name.value,
+		login_name: login_name.value,		// MUST BE UNIQUE (make a request to the db to check if unique)
+		password: password.value,
+		pseudo: pseudo.value,				// MUST BE UNIQUE (make a request to the db to check if unique)
 
-		// validations
-		password: password.value,			// must be hashed (using a strong password hashing algorithm), here or serverside ?
-
-		// make a request to the db to check if unique
-		pseudo: pseudo.value,				// MUST BE UNIQUE 
-
-		tfa_email: email.value,				// provisory
+		tfa_email: email.value,				// provisory (UNIQUE)
 		tfa_code: "tfa",					// provisory
 	})
-	.then(function (response:any) {
+	.then(function(response:any) {
 		// Display success message
 		setIsSubmitted(true);
 		setDisable(true)
 	})
-	.catch(function (error:any) {
+	.catch(function(error:any) {
 		console.log(error);			// handle errors in a better way
 	});
   };
