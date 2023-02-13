@@ -5,7 +5,8 @@ apk add nano
 if [ "$BUILD_TYPE" = "Setup" ]; 
 then 
     yarn create react-app ./ --template typescript
-    yarn add react-router-dom
+    yarn add react-router-dom@6.8.1
+    yarn add mini.ccss@3.0.1
 fi
 
 # Download node_modules
