@@ -1,4 +1,6 @@
-export class MessageDto {
-	name: string | undefined;
-	text: string;
+export class Message {
+	id: number;
+	senderId: number;
+	senderDiplayName: string;
+	content: string;
 }
