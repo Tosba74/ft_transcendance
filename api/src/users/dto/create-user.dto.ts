@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsAlphanumeric, IsEmail, IsNotEmpty, IsStrongPassword, Length, MinLength, MaxLength } from 'class-validator';
 import { PartialType, PickType, OmitType } from '@nestjs/mapped-types';
-import { IsLoginNameAlreadyExist, IsPseudoAlreadyExist } from '../validation/is-user-already-exist';
+// import { IsLoginNameAlreadyExist, IsPseudoAlreadyExist, IsEmailAlreadyExist } from '../validation/is-user-already-exist';
 
 
 export class CreateUserDto {
