@@ -43,10 +43,11 @@ export class UsersService {
     }
   }
 
+  // EXCEPTION MARCHE PAS ???
   async delete(id: number): Promise<void> {
     try {
       const user: UserModel = await this.findOneById(id);
-      await this.usersRepository.delete(id);
+      this.usersRepository.delete(id);
     } catch(error) {
       throw new NotFoundException();
     }
@@ -69,7 +70,7 @@ export class UsersService {
       if (updateUserDto.pseudo)
         user.pseudo = updateUserDto.pseudo;
 
-      this.usersRepository.save(user);
+      await this.usersRepository.save(user);
       return user;
     } catch(error) {
       throw new NotFoundException();
@@ -99,8 +100,9 @@ export class UsersService {
   
     newuser.creation_date = new Date();
     // validate_date = null at creation
-  
-    return this.usersRepository.save(newuser);
+
+    await this.usersRepository.save(newuser);
+    return newuser;
   }
 
 }
