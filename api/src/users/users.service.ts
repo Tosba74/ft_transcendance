@@ -29,10 +29,8 @@ export class UsersService {
   async delete(id: number): Promise<UserModel> {
     try {
       const user: UserModel = await this.findOneById(id);
-      await this.usersRepository.remove(user);
-      return user;
+      return await this.usersRepository.remove(user);
     } catch (error) {
-      // console.log(error);
       throw error;
     }
   }
@@ -54,16 +52,15 @@ export class UsersService {
       if (updateUserDto.pseudo)
         user.pseudo = updateUserDto.pseudo;
 
-      await this.usersRepository.save(user);
-      return user;
+      return await this.usersRepository.save(user);
     } catch(error) {
-      // console.log(error);
       throw error;
     }
   }
 
   async create(createUserDto: CreateUserDto): Promise<UserModel> {
-    const newuser = new UserModel();
+    // const newuser = new UserModel();
+    const newuser = this.usersRepository.create();
   
     // id = db autoincrement
   
