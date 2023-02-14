@@ -1,9 +1,10 @@
-import { Controller, Param, Body, Get, Post, UseFilters, } from '@nestjs/common';
-import { ApiOkResponse, ApiNotFoundResponse, ApiCreatedResponse, ApiUnprocessableEntityResponse, ApiTags } from '@nestjs/swagger';
+import { Controller, Param, Body, Get, Post, Put, Delete, UseFilters, ParseIntPipe, } from '@nestjs/common';
+import { ApiOkResponse, ApiNotFoundResponse, ApiCreatedResponse, ApiUnprocessableEntityResponse, ApiTags, ApiBadRequestResponse } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { HttpExceptionFilter } from './filters/http-exception.filter';
 import { UserModel } from "./models/user.model";
-import { CreateUserDto, UpdateUserDto } from './dto/create-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('api/users')
 @ApiTags('api/users')
@@ -18,17 +19,33 @@ export class UsersController {
   }
 
   @Get(':id')
-  @UseFilters(HttpExceptionFilter)
   @ApiOkResponse({ description: 'User retrieved successfully', type: UserModel })
   @ApiNotFoundResponse({ description: 'User not found' })
-  public findOne(@Param('id') id: number): Promise<UserModel | null> {
-    return this.usersService.findOne(id);
+  @ApiBadRequestResponse({ description: 'User validation error' })
+  public findOne(@Param('id', ParseIntPipe) id: number): Promise<UserModel> {
+    return this.usersService.findOneById(id);
   }
 
   @Post()
   @ApiCreatedResponse({ description: 'User created successfully', type: UserModel })
-  @ApiUnprocessableEntityResponse({ description: 'User creation error' })
-  public create(@Body() createUserDto: CreateUserDto): Promise<UserModel | null> {
+  @ApiBadRequestResponse({ description: 'User validation error' })
+  public create(@Body() createUserDto: CreateUserDto): Promise<UserModel> {
     return this.usersService.create(createUserDto);
   }
+
+  @Put(':id')
+  @ApiCreatedResponse({ description: 'Password updated successfully', type: UpdateUserDto })
+  @ApiNotFoundResponse({ description: 'User not found' })
+  @ApiBadRequestResponse({ description: 'User validation error' })
+  public update(@Param('id', ParseIntPipe) id: number, @Body() updateUserDto: UpdateUserDto): Promise<UserModel> {
+    return this.usersService.update(id, updateUserDto);
+  }
+
+  @Delete(':id')
+	@ApiOkResponse({ description: 'Post deleted successfully.'})
+	@ApiNotFoundResponse({ description: 'Post not found.' })
+	public delete(@Param('id', ParseIntPipe) id: number): void {  
+		this.usersService.delete(id);
+	}
+
 }

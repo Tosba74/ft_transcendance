@@ -3,16 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserModel } from "./models/user.model";
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 // HOW TO PREVENT SQL INJECTIONS WITH TYPEORM ?
 
 @Injectable()
 export class UsersService {
 
-  constructor(
-    @InjectRepository(UserModel)
-    private usersRepository: Repository<UserModel>,
-  ) { }
+  constructor(@InjectRepository(UserModel)private usersRepository: Repository<UserModel>)
+  {}
   
   findAll(): Promise<UserModel[]> {
     return this.usersRepository.find();
@@ -35,23 +34,49 @@ export class UsersService {
 	// 	return !user;
 	// }
 
-  async findOne(id: number): Promise<UserModel | null> {
+  async findOneById(id: number): Promise<UserModel> {
     try {
-      const user: UserModel | null = await this.usersRepository.findOne({
-        where: {
-          id,
-        },
-      });
-      if (user === null) {
-        throw new NotFoundException();
-      }
+      const user: UserModel = await this.usersRepository.findOneOrFail({where: {id} });
       return user;
-    } catch (error) {
-      throw error;
+    } catch(error) {
+      throw new NotFoundException();
     }
   }
 
-  async create(createUserDto: CreateUserDto): Promise<UserModel | null> {
+  async delete(id: number): Promise<void> {
+    try {
+      const user: UserModel = await this.findOneById(id);
+      await this.usersRepository.delete(id);
+    } catch(error) {
+      throw new NotFoundException();
+    }
+  }
+
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<UserModel>
+  {
+    try {
+      let user: UserModel = await this.findOneById(id);
+
+      if (updateUserDto.login_name)
+        user.login_name = updateUserDto.login_name;
+      if (updateUserDto.password)
+      {
+        const bcrypt = require('bcrypt');
+        const saltRounds: number = 10;
+        const hash: string = await bcrypt.hash(updateUserDto.password, saltRounds);
+        user.password = hash;
+      }
+      if (updateUserDto.pseudo)
+        user.pseudo = updateUserDto.pseudo;
+
+      this.usersRepository.save(user);
+      return user;
+    } catch(error) {
+      throw new NotFoundException();
+    }
+  }
+
+  async create(createUserDto: CreateUserDto): Promise<UserModel> {
     const newuser = new UserModel();
   
     // id = db autoincrement
@@ -76,10 +101,6 @@ export class UsersService {
     // validate_date = null at creation
   
     return this.usersRepository.save(newuser);
-  }
-
-  async remove(id: string): Promise<void> {
-    await this.usersRepository.delete(id);
   }
 
 }
