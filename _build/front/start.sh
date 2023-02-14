@@ -5,7 +5,11 @@ apk add nano
 if [ "$BUILD_TYPE" = "Setup" ]; 
 then 
     yarn create react-app ./ --template typescript
-    yarn add react-router-dom
+    yarn add react-router-dom 
+    yarn add axios 
+    
+    # For testing auth module
+    yarn add --dev bootstrap
 fi
 
 # Download node_modules

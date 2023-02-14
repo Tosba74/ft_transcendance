@@ -7,7 +7,7 @@ export interface UserModel {
     login_name: string;
     password: string;
 
-    avatar_url: string;
+    avatar_url: string | undefined;
 
     tfa_enabled: boolean;
     tfa_email: string;
@@ -15,4 +15,7 @@ export interface UserModel {
 
     status_id: number;
     status_updated_at: Date;
+
+    submit_date: Date;
+    validate_date: Date | undefined;
 }

@@ -1,0 +1,90 @@
+.App {
+  background-color: white;
+}
+
+.Auth-form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+}
+
+.Auth-form {
+  width: 420px;
+  box-shadow: rgb(0 0 0 / 16%) 1px 1px 10px;
+  padding-top: 30px;
+  padding-bottom: 20px;
+  border-radius: 8px;
+  background-color: white;
+}
+
+.Auth-form-content {
+  padding-left: 12%;
+  padding-right: 12%;
+}
+
+.Auth-form-title {
+  text-align: center;
+  margin-bottom: 1em;
+  font-size: 24px;
+  color: rgb(34, 34, 34);
+  font-weight: 800;
+}
+
+label {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgb(34, 34, 34);
+}
+
+.link-primary, a {
+  text-decoration: none;
+  cursor: pointer;
+}
+.link-primary:hover, a:hover {
+  text-decoration: underline;
+}
+
+.separator span {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  color: rgba(0, 0, 0, 0.3);
+}
+.separator span::before,
+.separator span::after {
+  content: "";
+  display: block;
+  width: 100%;
+  border-top: 1px solid rgba(0, 0, 0, 0.3);
+  position: relative;
+  top: 50%;
+}
+.separator span::before {
+  margin-right: 10px;
+}
+.separator span::after {
+  margin-left: 10px;
+}
+
+.profile42, .profile42:disabled {
+  color: white;
+  background: rgba(0, 0, 0, 0.4)!important;
+  border:none!important;
+}
+.profile42:hover {
+  background: rgba(0, 0, 0, 0.45)!important;
+  border:none!important;
+}
+.profile42:active {
+  background: rgba(0, 0, 0, 0.5)!important;
+  border:none!important;
+}
+
+.message {
+  height: 22px;
+}
+.success-message {
+  color: green;
+}

@@ -1,42 +1,48 @@
+import { ApiResponseProperty } from "@nestjs/swagger";
 import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 @Entity()
 export class UserModel {
 
-    @ApiPropertyOptional({ type: Number })
+    @ApiResponseProperty({ type: Number })
     @PrimaryGeneratedColumn()
     id?: number;
-
     
-    @ApiProperty({ type: String })
-    @Column()
-    display_name: string;
-
-    @ApiProperty({ type: String })
+    @ApiResponseProperty({ type: String })
     @Column()
     login_name: string;
-
-    @ApiProperty({ type: String })
-    @Column({ nullable: true, default: null })
-    password: string; 
-    
-
-    @ApiProperty({ type: String })
+    @ApiResponseProperty({ type: String })
     @Column()
-    avatar_url: string;
-
-
+    password: string; 
+    @ApiResponseProperty({ type: String })
+    @Column()
+    pseudo: string;
+    
+    @ApiResponseProperty({ type: String })
+    @Column({ nullable: true, default: null })
+    avatar_url?: string;
+    
+    @ApiResponseProperty({ type: Boolean })
     @Column()
     tfa_enabled: boolean;
+    @ApiResponseProperty({ type: String })
     @Column()
     tfa_email: string;
+    @ApiResponseProperty({ type: String })
     @Column()
     tfa_code: string;
-
+    
+    @ApiResponseProperty({ type: Number })
     @Column()
     status_id: number;
+    @ApiResponseProperty({ type: Date })
     @Column()
     status_updated_at: Date;
-
+    
+    @ApiResponseProperty({ type: Date })
+    @Column()
+    creation_date: Date;
+    @ApiResponseProperty({ type: Date })
+    @Column({ nullable: true, default: null })
+    validate_date?: Date;
 }

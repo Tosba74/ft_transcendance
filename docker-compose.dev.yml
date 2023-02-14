@@ -30,6 +30,26 @@ services:
       - netpong
 
 
+  chat:
+    build: ./_build/chat-client
+
+    restart: "no"
+
+    stdin_open:  true # docker run -i
+    tty: true        # docker run -t
+
+    ports:
+      - "3001:3001"
+
+    volumes:
+      - ./chat-client:/app
+
+    networks:
+      - netpong
+
+    working_dir: /app
+
+
   back:
     restart: "no"
 
@@ -37,7 +57,7 @@ services:
     tty: true        # docker run -t
 
     ports:
-      - "4000:3000"
+      - "4000:4000"
 
     volumes:
       - ./api:/app
