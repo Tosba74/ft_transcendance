@@ -26,9 +26,9 @@ ps:
 			${DOCKER} ps -a
 
 logs:
-			${DOCKER} logs $@
+			${DOCKER} logs
 flogs:
-			${DOCKER} logs -f $@
+			${DOCKER} logs -f
 
 logsfront:
 			${DOCKER} logs front
