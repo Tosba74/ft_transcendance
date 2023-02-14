@@ -1,4 +1,4 @@
-import { ApiResponseProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { ApiResponseProperty } from "@nestjs/swagger";
 import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
 
 @Entity()
