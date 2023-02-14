@@ -6,7 +6,7 @@ import {
 	ValidationArguments,
 } from 'class-validator';
 
-import { UserModel } from "../models/user.model";
+import { User } from "../user.entity";
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UsersService } from '../users.service';
@@ -18,12 +18,12 @@ export class IsLoginNameAlreadyExistConstraint implements ValidatorConstraintInt
 	// [Nest] 581  - 02/13/2023, 11:31:44 PM   ERROR [ExceptionsHandler] Cannot read properties of undefined (reading 'findOne')
 	// TypeError: Cannot read properties of undefined (reading 'findOne')
 	constructor(
-		@InjectRepository(UserModel)
-		private readonly usersRepository: Repository<UserModel>,
+		@InjectRepository(User)
+		private readonly usersRepository: Repository<User>,
 	  ) { }
 
 	  async validate(login_name: string, args: ValidationArguments): Promise<boolean> {
-		const user: UserModel | null = await this.usersRepository.findOne({
+		const user: User | null = await this.usersRepository.findOne({
 			where: {
 				login_name,
 			},

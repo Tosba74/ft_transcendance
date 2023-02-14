@@ -2,7 +2,7 @@ import { ApiResponseProperty } from "@nestjs/swagger";
 import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
 
 @Entity()
-export class UserModel {
+export class User {
 
     @ApiResponseProperty({ type: Number })
     @PrimaryGeneratedColumn()

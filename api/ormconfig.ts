@@ -1,5 +1,5 @@
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
-import { UserModel } from './src/users/models/user.model';
+import { User } from './src/users/user.entity';
 
 const config: PostgresConnectionOptions = {
 	type: "postgres",
@@ -10,7 +10,7 @@ const config: PostgresConnectionOptions = {
 	database: "test_db",
 	synchronize: true,
 	logging: false,
-	entities: [UserModel],
+	entities: [User],
 	migrations: [],
 	subscribers: [],
 }

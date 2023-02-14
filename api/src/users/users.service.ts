@@ -1,44 +1,42 @@
 import { Injectable, NotFoundException} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UserModel } from "./models/user.model";
+import { User } from "./user.entity";
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-
-// HOW TO PREVENT SQL INJECTIONS WITH TYPEORM ?
 
 @Injectable()
 export class UsersService {
 
-  constructor(@InjectRepository(UserModel)private usersRepository: Repository<UserModel>)
+  constructor(@InjectRepository(User)private usersRepository: Repository<User>)
   {}
   
-  findAll(): Promise<UserModel[]> {
+  findAll(): Promise<User[]> {
     return this.usersRepository.find();
   }
 
-  async findOneById(id: number): Promise<UserModel> {
+  async findOneById(id: number): Promise<User> {
     try {
-      const user: UserModel = await this.usersRepository.findOneOrFail({where: {id} });
+      const user: User = await this.usersRepository.findOneOrFail({where: {id} });
       return user;
     } catch(error) {
       throw new NotFoundException();
     }
   }
 
-  async delete(id: number): Promise<UserModel> {
+  async delete(id: number): Promise<User> {
     try {
-      const user: UserModel = await this.findOneById(id);
+      const user: User = await this.findOneById(id);
       return await this.usersRepository.remove(user);
     } catch (error) {
       throw error;
     }
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<UserModel>
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<User>
   {
     try {
-      let user: UserModel = await this.findOneById(id);
+      let user: User = await this.findOneById(id);
       
       if (updateUserDto.login_name)
         user.login_name = updateUserDto.login_name;
@@ -58,8 +56,8 @@ export class UsersService {
     }
   }
 
-  async create(createUserDto: CreateUserDto): Promise<UserModel> {
-    // const newuser = new UserModel();
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    // const newuser = new User();
     const newuser = this.usersRepository.create();
   
     // id = db autoincrement
