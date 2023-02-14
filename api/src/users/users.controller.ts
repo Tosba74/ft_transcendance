@@ -1,14 +1,12 @@
-import { Controller, Param, Body, Get, Post, Put, Delete, UseFilters, ParseIntPipe, } from '@nestjs/common';
+import { Controller, Param, Body, Get, Post, Put, Delete, UseFilters, ParseIntPipe,NotFoundException } from '@nestjs/common';
 import { ApiOkResponse, ApiNotFoundResponse, ApiCreatedResponse, ApiUnprocessableEntityResponse, ApiTags, ApiBadRequestResponse } from '@nestjs/swagger';
 import { UsersService } from './users.service';
-import { HttpExceptionFilter } from './filters/http-exception.filter';
 import { UserModel } from "./models/user.model";
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('api/users')
 @ApiTags('api/users')
-@UseFilters(HttpExceptionFilter)
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
   
@@ -29,6 +27,7 @@ export class UsersController {
   @Post()
   @ApiCreatedResponse({ description: 'User created successfully', type: UserModel })
   @ApiBadRequestResponse({ description: 'User validation error' })
+  // @ApiUnprocessableEntityResponse({ description: 'User already exists' })
   public create(@Body() createUserDto: CreateUserDto): Promise<UserModel> {
     return this.usersService.create(createUserDto);
   }
@@ -42,10 +41,10 @@ export class UsersController {
   }
 
   @Delete(':id')
-	@ApiOkResponse({ description: 'Post deleted successfully.'})
-	@ApiNotFoundResponse({ description: 'Post not found.' })
-	public delete(@Param('id', ParseIntPipe) id: number): void {  
-		this.usersService.delete(id);
+	@ApiOkResponse({ description: 'User deleted successfully'})
+	@ApiNotFoundResponse({ description: 'User not found' })
+	public delete(@Param('id', ParseIntPipe) id: number): Promise<UserModel> {  
+		return this.usersService.delete(id);
 	}
 
 }

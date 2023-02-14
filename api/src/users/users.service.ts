@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, } from '@nestjs/common';
+import { Injectable, NotFoundException} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserModel } from "./models/user.model";
@@ -17,23 +17,6 @@ export class UsersService {
     return this.usersRepository.find();
   }
 
-  // async findOneByName(login_name: string): Promise<UserModel | null> {
-  //   return await this.usersRepository.findOne({
-  //     where: {
-  //       login_name,
-  //     },
-  //   });
-  // }
-
-  // async findOneByName(login_name: string): Promise<boolean> {
-	// 	const user: UserModel | null = await this.usersRepository.findOne({
-	// 		where: {
-	// 			login_name,
-	// 		},
-	// 	});	
-	// 	return !user;
-	// }
-
   async findOneById(id: number): Promise<UserModel> {
     try {
       const user: UserModel = await this.usersRepository.findOneOrFail({where: {id} });
@@ -43,13 +26,14 @@ export class UsersService {
     }
   }
 
-  // EXCEPTION MARCHE PAS ???
-  async delete(id: number): Promise<void> {
+  async delete(id: number): Promise<UserModel> {
     try {
       const user: UserModel = await this.findOneById(id);
-      this.usersRepository.delete(id);
-    } catch(error) {
-      throw new NotFoundException();
+      await this.usersRepository.remove(user);
+      return user;
+    } catch (error) {
+      // console.log(error);
+      throw error;
     }
   }
 
@@ -57,7 +41,7 @@ export class UsersService {
   {
     try {
       let user: UserModel = await this.findOneById(id);
-
+      
       if (updateUserDto.login_name)
         user.login_name = updateUserDto.login_name;
       if (updateUserDto.password)
@@ -73,7 +57,8 @@ export class UsersService {
       await this.usersRepository.save(user);
       return user;
     } catch(error) {
-      throw new NotFoundException();
+      // console.log(error);
+      throw error;
     }
   }
 
