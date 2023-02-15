@@ -39,10 +39,9 @@ export default function (props:any) {
 	});
   };
 
-  const use42Profile = (event:any) => {
-	event.preventDefault();
-	alert("hello");
-  }
+//   const oauth2 = 'https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-92527af718df5ec672ac565eec9bc3dedac11d0dd2feb5091af42ac01ccff32b&redirect_uri=https%3A%2F%2Flocalhost%3A8443%2Fauth&response_type=code';
+  const oauth2 = '/login/42-profile';
+
 
   	if (authMode === "signup") {
 		return (
@@ -105,9 +104,9 @@ export default function (props:any) {
             			</div>
 
 						<div className="d-grid gap-2 mt-3">
-							<button type="submit" className="btn btn-primary profile42" disabled>
-							Continue with 42-profile
-							</button>
+							<a className="btn btn-primary profile42" href={oauth2}>
+								Continue with 42-profile
+							</a>
 						</div>
 						<div className="text-center mt-2 message">
 							{isSubmitted ? <span className="success-message">Success: account created</span> : false}

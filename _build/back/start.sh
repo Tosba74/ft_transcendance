@@ -17,6 +17,7 @@ then
     yarn add @nestjs/swagger 
     yarn add bcrypt @types/bcrypt
     yarn add class-validator class-transformer
+    yarn add passport passport-42
 fi
 
 

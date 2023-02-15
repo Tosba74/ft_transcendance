@@ -8,8 +8,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 @Injectable()
 export class UsersService {
 
-  constructor(@InjectRepository(User)private usersRepository: Repository<User>)
-  {}
+  constructor(@InjectRepository(User)private usersRepository: Repository<User>) { }
   
   findAll(): Promise<User[]> {
     return this.usersRepository.find();
@@ -18,6 +17,15 @@ export class UsersService {
   async findOneById(id: number): Promise<User> {
     try {
       const user: User = await this.usersRepository.findOneOrFail({where: {id} });
+      return user;
+    } catch(error) {
+      throw new NotFoundException();
+    }
+  }
+
+  async findOneByPseudo(pseudo: string): Promise<User> {
+    try {
+      const user: User = await this.usersRepository.findOneOrFail({where: {pseudo} });
       return user;
     } catch(error) {
       throw new NotFoundException();

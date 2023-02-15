@@ -76,10 +76,12 @@ label {
 .profile42:hover {
   background: rgba(0, 0, 0, 0.45)!important;
   border:none!important;
+  text-decoration: none;
 }
 .profile42:active {
   background: rgba(0, 0, 0, 0.5)!important;
   border:none!important;
+  text-decoration: none;
 }
 
 .message {
