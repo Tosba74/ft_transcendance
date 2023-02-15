@@ -3,45 +3,43 @@ import axios from 'axios';
 
 export default function (props:any) {
 
-  let [authMode, setAuthMode] = useState("signup")
+	const oauth2 = 'api/auth';
 
-  const changeAuthMode = () => {
-    setAuthMode(authMode === "login" ? "signup" : "login")
-  }
+	let [authMode, setAuthMode] = useState("signup")
 
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [disable, setDisable] = useState(false);
+	const changeAuthMode = () => {
+		setAuthMode(authMode === "login" ? "signup" : "login")
+	}
 
-  // USER MUST LOGIN USING THE OAUTH SYSTEM OF 42 INTRANET
-  const handleSubmit = (event:any) => {
-	// Prevent page reload
-	event.preventDefault();
+	const [isSubmitted, setIsSubmitted] = useState(false);
+	const [disable, setDisable] = useState(false);
 
-	// Get form datas
-	let { login_name, password, email, pseudo } = document.forms[0];
+	// USER MUST LOGIN USING THE OAUTH SYSTEM OF 42 INTRANET
+	const handleSubmit = (event:any) => {
+		// Prevent page reload
+		event.preventDefault();
 
-	// Send new user to API with axios
-	axios.post('http://localhost:8080/api/users', {
-		login_name: login_name.value,		// MUST BE UNIQUE (make a request to the db to check if unique)
-		password: password.value,
-		pseudo: pseudo.value,				// MUST BE UNIQUE (make a request to the db to check if unique)
+		// Get form datas
+		let { login_name, password, email, pseudo } = document.forms[0];
 
-		tfa_email: email.value,				// provisory (UNIQUE)
-		tfa_code: "tfa",					// provisory
-	})
-	.then(function(response:any) {
-		// Display success message
-		setIsSubmitted(true);
-		setDisable(true)
-	})
-	.catch(function(error:any) {
-		console.log(error);			// handle errors in a better way
-	});
-  };
+		// Send new user to API with axios
+		axios.post('http://localhost:8080/api/users', {
+			login_name: login_name.value,		// MUST BE UNIQUE (make a request to the db to check if unique)
+			password: password.value,
+			pseudo: pseudo.value,				// MUST BE UNIQUE (make a request to the db to check if unique)
 
-//   const oauth2 = 'https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-92527af718df5ec672ac565eec9bc3dedac11d0dd2feb5091af42ac01ccff32b&redirect_uri=https%3A%2F%2Flocalhost%3A8443%2Fauth&response_type=code';
-  const oauth2 = '/login/42-profile';
-
+			tfa_email: email.value,				// provisory (UNIQUE)
+			tfa_code: "tfa",					// provisory
+		})
+		.then(function(response:any) {
+			// Display success message
+			setIsSubmitted(true);
+			setDisable(true)
+		})
+		.catch(function(error:any) {
+			console.log(error);			// handle errors in a better way
+		});
+	};
 
   	if (authMode === "signup") {
 		return (
