@@ -25,13 +25,13 @@ export class AppController {
   auth(): void { }
 
   // 3. after user grants permission, oauth2 redirige sur localhost:8443/api/login avec un code en queryparam + le random string. Exemple:
-  // https://localhost:8443/api/login?code=2c561ed28edb547c93332106302341278ab52c84ca7f5814df125cfc5443366b&state=66j0APa8PEp4Tgq
   @Get('api/login')
-  async login(@Query('code') code: any, @Query('state') state: any): Promise<JSON> {
+  async login(@Query('code') code: any, @Query('state') state: any): Promise<any> {
     // If the state don't match the state state generated, the request has been created by a third party and the process should be aborted.
+    // ... compare random string with state
 
     // This authorization code is then exchanged for an access token using a server-to-server call from the application to the authorization server.
-    const user: any = await axios.post('https://api.intra.42.fr/oauth/token', {
+    const token_request: any = await axios.post('https://api.intra.42.fr/oauth/token', {
         grant_type: 'authorization_code',
         client_id: 'u-s4t2ud-92527af718df5ec672ac565eec9bc3dedac11d0dd2feb5091af42ac01ccff32b',
         client_secret: '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',
@@ -41,34 +41,17 @@ export class AppController {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
+    });
+
+    // This access token is used by the client to make API calls.
+    const access_token: string = token_request.data.access_token;
+  
+    const datas: any = await axios.get('https://api.intra.42.fr/v2/me', {
+      headers: {
+        'Authorization': `Bearer ${access_token}`
       }
-    )
-		.then(function(response:any) {
-      // This access token is used by the client to make API calls.
-      const access_token: string = response.data.access_token;
-
-      // curl -H "Authorization: Bearer YOUR_ACCESS_TOKEN" "https://api.intra.42.fr/v2/me"
-      axios.get('https://api.intra.42.fr/v2/me', {
-        headers: {
-          'Authorization': `Bearer ${access_token}`
-        }
-      })
-      .then(function (response) {
-        console.log(response.data);
-        return response.data;
-      })
-      .catch(function (error) {
-        console.log(error);
-      })
-
-      return JSON.parse(response.response.data);
-      // return response;
-		})
-    .catch(function(error:any) {
-			console.log(error);
-		});
-
-    return user;
+    })
+    return datas.data; 
   }
 
 }
