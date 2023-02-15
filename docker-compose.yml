@@ -28,6 +28,10 @@ services:
     networks:
       - netpong
 
+    environment:
+      DATABASE_USER: ${DB_USERNAME}
+      DATABASE_PASSWORD: ${DB_PASSWORD}
+      DATABASE_DB: ${DB_DB}
   
     working_dir: /app
 
