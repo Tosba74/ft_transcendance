@@ -14,7 +14,7 @@ const config: PostgresConnectionOptions = {
 	synchronize: false,
 	logging: false,
 
-	entities: [UserStatusModel],
+	entities: [UserStatusModel, UserModel],
 	migrations: ['dist/typeorm/migrations/*.js'],
 	subscribers: [],
 }

@@ -1,8 +1,10 @@
 import { Controller, Param, Body, Get, Post, Put, Delete, UseFilters, ParseIntPipe, } from '@nestjs/common';
 import { ApiOkResponse, ApiNotFoundResponse, ApiCreatedResponse, ApiUnprocessableEntityResponse, ApiTags, ApiBadRequestResponse } from '@nestjs/swagger';
+import { HttpExceptionFilter } from '../common/filters/http-exception.filter';
+
 import { UsersService } from './users.service';
-import { HttpExceptionFilter } from './filters/http-exception.filter';
 import { UserModel } from "./models/user.model";
+
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 

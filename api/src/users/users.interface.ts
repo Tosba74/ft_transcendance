@@ -1,5 +1,5 @@
 import internal from "stream";
-
+/*
 export interface UserModel {
     id?: number;
 
@@ -19,3 +19,4 @@ export interface UserModel {
     submit_date: Date;
     validate_date: Date | undefined;
 }
+*/
