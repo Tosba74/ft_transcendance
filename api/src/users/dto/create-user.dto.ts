@@ -21,15 +21,4 @@ export class CreateUserDto {
     // @IsPseudoAlreadyExist() // Custom validation decorators (FONCTIONNE PAS)
     // ... plus de validation ? 
     pseudo: string;
-
-    
-    
-    @ApiProperty({ type: String })
-    @IsEmail()
-    // @IsEmailAlreadyExist() // Custom validation decorators (FONCTIONNE PAS)
-    tfa_email: string;
-    
-    @ApiProperty({ type: String })
-    @IsNotEmpty()
-    tfa_code: string;
 }

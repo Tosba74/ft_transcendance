@@ -1,10 +1,12 @@
 import { Injectable, NotFoundException, } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
 import { UserModel } from "./models/user.model";
+import { UserStatusModel } from 'src/user_status/models/user_status.model';
+
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-
 // HOW TO PREVENT SQL INJECTIONS WITH TYPEORM ?
 
 @Injectable()
@@ -92,13 +94,14 @@ export class UsersService {
     // avatar = null at creation
   
     newuser.tfa_enabled = false;
-    newuser.tfa_email = createUserDto.tfa_email;
-    newuser.tfa_code = createUserDto.tfa_code;
+    // newuser.tfa_email = createUserDto.tfa_email;
+    // newuser.tfa_code = createUserDto.tfa_code;
+    newuser.tfa_email = '';
+    newuser.tfa_code = '';
   
-    newuser.status_id = 0;
+    newuser.status = new UserStatusModel(UserStatusModel.OFFLINE_STATUS);
     newuser.status_updated_at = new Date();
   
-    newuser.creation_date = new Date();
     // validate_date = null at creation
 
     await this.usersRepository.save(newuser);

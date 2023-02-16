@@ -6,7 +6,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 
 // export class UpdateUserDto extends PartialType(CreateUserDto) {}
 // export class UpdateUserDto extends OmitType(CreateUserDto, ['tfa_email', 'tfa_code'] as const,) {}
-export class UpdateUserDto extends PartialType(OmitType(CreateUserDto, ['tfa_email', 'tfa_code'] as const)) {
+export class UpdateUserDto extends PartialType(OmitType(CreateUserDto, [] as const)) {
 	@ApiPropertyOptional({ type: String })
     login_name?: string;
     
