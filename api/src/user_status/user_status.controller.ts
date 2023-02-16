@@ -34,7 +34,7 @@ export class UserStatusController {
   // }
 
   // @Put(':id')
-  // @ApiCreatedResponse({ description: 'Password updated successfully', type: UpdateUserDto })
+  // @ApiCreatedResponse({ description: 'Password updated successfully', type: UserStatusModel })
   // @ApiNotFoundResponse({ description: 'User not found' })
   // @ApiBadRequestResponse({ description: 'User validation error' })
   // public update(@Param('id', ParseIntPipe) id: number, @Body() updateUserDto: UpdateUserDto): Promise<UserStatusModel> {

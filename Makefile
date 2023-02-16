@@ -65,13 +65,12 @@ rundb:
 
 
 migrate-create:
+			@echo "Usage: make migrate-create DEST=name";
 			@if [ ! -z ${DEST} ]; then\
-				${DOCKER} exec back yarn migration:create src/typeorm/migrations/${DEST}\
-			else\
-				echo "Usage: make migrate-create DEST=name";\
+				${DOCKER} exec back yarn migration:create src/typeorm/migrations/${DEST} ;\
 			fi
 migrate-gen:
-			@echo "Usage: make migrate-create DEST=name";
+			@echo "Usage: make migrate-gen DEST=name";
 			@if [ ! -z ${DEST} ]; then \
 				${DOCKER} exec back yarn migration:generate src/typeorm/migrations/${DEST} ;\
 			fi

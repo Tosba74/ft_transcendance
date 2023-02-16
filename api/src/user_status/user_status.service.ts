@@ -8,18 +8,18 @@ import { UserStatusModel } from "./models/user_status.model";
 @Injectable()
 export class UserStatusService {
 
-  constructor(@InjectRepository(UserStatusModel)private userStatusRepository: Repository<UserStatusModel>)
-  {}
-  
+  constructor(@InjectRepository(UserStatusModel) private userStatusRepository: Repository<UserStatusModel>) { }
+
   findAll(): Promise<UserStatusModel[]> {
     return this.userStatusRepository.find();
   }
 
   async findOneById(id: number): Promise<UserStatusModel> {
     try {
-      const user: UserStatusModel = await this.userStatusRepository.findOneOrFail({where: {id} });
+      const user: UserStatusModel = await this.userStatusRepository.findOneOrFail({ where: { id } });
       return user;
-    } catch(error) {
+    } 
+    catch (error) {
       throw new NotFoundException();
     }
   }
