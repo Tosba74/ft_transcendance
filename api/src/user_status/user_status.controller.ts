@@ -1,6 +1,6 @@
 import { Controller, Param, Body, Get, Post, Put, Delete, UseFilters, ParseIntPipe, } from '@nestjs/common';
 import { ApiOkResponse, ApiNotFoundResponse, ApiCreatedResponse, ApiUnprocessableEntityResponse, ApiTags, ApiBadRequestResponse } from '@nestjs/swagger';
-import { HttpExceptionFilter } from '../common/filters/http-exception.filter';
+import { HttpExceptionFilter } from '../_common/filters/http-exception.filter';
 
 import { UserStatusService } from './user_status.service';
 import { UserStatusModel } from "./models/user_status.model";

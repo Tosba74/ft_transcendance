@@ -10,7 +10,7 @@ import { FriendTypesModule } from './friend_types/friend_types.module';
 import { FriendsModule } from './friends/friends.module';
 
 import { TypeOrmModule } from '@nestjs/typeorm';
-import config from './typeorm/ormconfig';
+import config from './_typeorm/ormconfig';
 
 @Module({
   imports: [TypeOrmModule.forRoot(config), 
