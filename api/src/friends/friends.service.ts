@@ -90,4 +90,35 @@ export class FriendsService {
     const createdfriend = await this.friendsRepository.save(newfriend);
     return await this.findOneById(createdfriend.id);
   }
+
+
+  async delete(id: number, friendDto: FriendDto): Promise<void> {
+
+    if (id == friendDto.friend_id)
+      throw new BadRequestException();
+
+
+    const reverseFriend = await this.friendsRepository.findOne({
+      where: {
+        first_user: { id: friendDto.friend_id },
+        second_user: { id: id },
+      }
+    });
+
+    if (reverseFriend != null) 
+      await this.friendsRepository.delete(reverseFriend);
+    
+
+
+    const goodDirection = await this.friendsRepository.findOne({
+      where: {
+        first_user: { id: id },
+        second_user: { id: friendDto.friend_id },
+      }
+    });
+
+    if (goodDirection != null) {
+      await this.friendsRepository.delete(goodDirection);
+    }
+  }
 }

@@ -42,11 +42,11 @@ export class FriendsController {
   //   return this.friendsService.update(id, updateUserDto);
   // }
 
-  // @Delete(':id')
-	// @ApiOkResponse({ description: 'Friend deleted successfully.'})
-	// @ApiNotFoundResponse({ description: 'Friend not found.' })
-	// public delete(@Param('id', ParseIntPipe) id: number): void {  
-	// 	this.friendsService.delete(id);
-	// }
+  @Delete(':id')
+	@ApiOkResponse({ description: 'Friend deleted successfully.'})
+	@ApiNotFoundResponse({ description: 'Friend not found.' })
+	public delete(@Param('id', ParseIntPipe) id: number, @Body() friendDto: FriendDto): void {  
+		this.friendsService.delete(id, friendDto);
+	}
 
 }
