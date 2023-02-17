@@ -11,7 +11,7 @@ export class CreateUserDto {
     login_name: string;
     
     @ApiProperty({ type: String })
-    @IsStrongPassword()
+    // @IsStrongPassword()
     // ... plus de validation ? 
     password: string;
     

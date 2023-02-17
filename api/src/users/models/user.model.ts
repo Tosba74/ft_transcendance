@@ -15,7 +15,7 @@ export class UserModel {
     login_name: string;
 
     @ApiResponseProperty({ type: String })
-    @Column()
+    @Column({ select: false })
     password: string; 
 
     @ApiResponseProperty({ type: String })
