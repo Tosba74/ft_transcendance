@@ -2,7 +2,8 @@ import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConne
 
 import { UserModel } from '../users/models/user.model';
 import { UserStatusModel } from '../user_status/models/user_status.model';
-import { FriendTypesModel } from 'src/friend_types/models/friend_type.model';
+import { FriendTypeModel } from 'src/friend_types/models/friend_type.model';
+import { FriendModel } from 'src/friends/models/friend.model';
 
 const config: PostgresConnectionOptions = {
 	type: "postgres",
@@ -15,7 +16,7 @@ const config: PostgresConnectionOptions = {
 	synchronize: false,
 	logging: false,
 
-	entities: [UserStatusModel, UserModel, FriendTypesModel],
+	entities: [UserStatusModel, UserModel, FriendTypeModel, FriendModel ],
 	migrations: ['dist/typeorm/migrations/*.js'],
 	subscribers: [],
 }
