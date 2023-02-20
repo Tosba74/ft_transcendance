@@ -9,12 +9,17 @@ import { UserStatusModule } from './user_status/user_status.module';
 import { FriendTypesModule } from './friend_types/friend_types.module';
 import { FriendsModule } from './friends/friends.module';
 
+import { ChatTypesModule } from './chat_types/chat_types.module';
+import { ChatRolesModule } from './chat_roles/chat_roles.module';
+import { ChatsModule } from './chats/chats.module';
+
 import { TypeOrmModule } from '@nestjs/typeorm';
 import config from './_typeorm/ormconfig';
 
 @Module({
   imports: [TypeOrmModule.forRoot(config), 
-    UsersModule, UserStatusModule, FriendTypesModule, FriendsModule,
+    UsersModule, UserStatusModule, FriendTypesModule, FriendsModule, FriendTypesModule, 
+    ChatTypesModule, ChatRolesModule, ChatsModule,
     ChatModule,
   ],
   controllers: [AppController],

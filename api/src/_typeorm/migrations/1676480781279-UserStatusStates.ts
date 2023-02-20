@@ -9,9 +9,9 @@ export class UserStatusStates1676480781279 implements MigrationInterface {
     }
     
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DELETE FROM "user_status" WHERE id == 1`);
-        await queryRunner.query(`DELETE FROM "user_status" WHERE id == 2`);
-        await queryRunner.query(`DELETE FROM "user_status" WHERE id == 3`);
+        await queryRunner.query(`DELETE FROM "user_status" WHERE id = 1`);
+        await queryRunner.query(`DELETE FROM "user_status" WHERE id = 2`);
+        await queryRunner.query(`DELETE FROM "user_status" WHERE id = 3`);
     }
 
 }
