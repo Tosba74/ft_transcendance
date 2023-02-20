@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -18,7 +18,7 @@ export class BlockedsService {
     try {
       const blockeds: BlockedModel = await this.blockedsRepository.findOneOrFail({ where: { id } });
       return blockeds;
-    } 
+    }
     catch (error) {
       throw new NotFoundException();
     }
@@ -27,14 +27,14 @@ export class BlockedsService {
 
   async blockedUsers(id: number): Promise<BlockedModel[]> {
     return this.blockedsRepository.find({
-      where: { blocker: { id: id} },
+      where: { blocker: { id: id } },
     });
   }
 
 
   async blockedBy(id: number): Promise<BlockedModel[]> {
     return this.blockedsRepository.find({
-      where: { blocked: { id: id} },
+      where: { blocked: { id: id } },
     });
   }
 
@@ -62,11 +62,16 @@ export class BlockedsService {
       blocked: { id: blockedDto.blocked_id }
     });
 
-    return this.blockedsRepository.save(newBlocked);
+    try {
+      return this.blockedsRepository.save(newBlocked);
+    }
+    catch (error) {
+      throw new BadRequestException();
+    }
   }
 
-	async unblockUser(id: number, blockedDto: BlockedDto): Promise<void> {  
-		const blocked = await this.blockedsRepository.findOne({
+  async unblockUser(id: number, blockedDto: BlockedDto): Promise<void> {
+    const blocked = await this.blockedsRepository.findOne({
       where: {
         blocker: { id: id },
         blocked: { id: blockedDto.blocked_id },
@@ -75,6 +80,8 @@ export class BlockedsService {
 
     if (blocked != null)
       this.blockedsRepository.delete(blocked);
-	}
+    else
+      throw new NotFoundException();
+  }
 
 }

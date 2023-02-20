@@ -58,8 +58,9 @@ export class FriendsService {
       if (reverseFriend.friend_type.id == FriendTypeModel.ASKED_TYPE) {
         reverseFriend.friend_type.id = FriendTypeModel.FRIEND_TYPE;
       }
-      
+
       await this.friendsRepository.save(reverseFriend);
+
       return this.findOneById(reverseFriend.id);
     }
 
@@ -87,8 +88,14 @@ export class FriendsService {
       friend_type: { id: FriendTypeModel.ASKED_TYPE },
     });
 
-    const createdfriend = await this.friendsRepository.save(newfriend);
-    return await this.findOneById(createdfriend.id);
+    try {
+      const createdfriend = await this.friendsRepository.save(newfriend);
+      return await this.findOneById(createdfriend.id);
+
+    }
+    catch (error) {
+      throw new BadRequestException();
+    }
   }
 
 
@@ -105,9 +112,9 @@ export class FriendsService {
       }
     });
 
-    if (reverseFriend != null) 
+    if (reverseFriend != null) {
       await this.friendsRepository.delete(reverseFriend);
-    
+    }
 
 
     const goodDirection = await this.friendsRepository.findOne({
