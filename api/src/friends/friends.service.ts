@@ -36,16 +36,16 @@ export class FriendsService {
   }
 
 
-  async create(id: number, friendDto: FriendDto): Promise<FriendModel> {
+  async createFriendship(friender_id: number, newfriend_id: number): Promise<FriendModel> {
 
-    if (id == friendDto.friend_id)
+    if (friender_id == newfriend_id)
       throw new BadRequestException();
 
 
     const reverseFriend = await this.friendsRepository.findOne({
       where: {
-        first_user: { id: friendDto.friend_id },
-        second_user: { id: id },
+        first_user: { id: newfriend_id },
+        second_user: { id: friender_id },
       },
       relations: {
         // first_user: true,
@@ -67,8 +67,8 @@ export class FriendsService {
 
     const alreadyExists = await this.friendsRepository.findOne({
       where: {
-        first_user: { id: id },
-        second_user: { id: friendDto.friend_id },
+        first_user: { id: friender_id },
+        second_user: { id: newfriend_id},
       },
       relations: {
         // first_user: true,
@@ -83,8 +83,8 @@ export class FriendsService {
 
 
     const newfriend = this.friendsRepository.create({
-      first_user: { id: id },
-      second_user: { id: friendDto.friend_id },
+      first_user: { id: friender_id },
+      second_user: { id: newfriend_id },
       friend_type: { id: FriendTypeModel.ASKED_TYPE },
     });
 
@@ -99,16 +99,17 @@ export class FriendsService {
   }
 
 
-  async delete(id: number, friendDto: FriendDto): Promise<void> {
 
-    if (id == friendDto.friend_id)
+  async deleteFriendship(friender_id: number, newfriend_id: number): Promise<void> {
+
+    if (friender_id == newfriend_id)
       throw new BadRequestException();
 
 
     const reverseFriend = await this.friendsRepository.findOne({
       where: {
-        first_user: { id: friendDto.friend_id },
-        second_user: { id: id },
+        first_user: { id: newfriend_id },
+        second_user: { id: friender_id },
       }
     });
 
@@ -119,8 +120,8 @@ export class FriendsService {
 
     const goodDirection = await this.friendsRepository.findOne({
       where: {
-        first_user: { id: id },
-        second_user: { id: friendDto.friend_id },
+        first_user: { id: friender_id },
+        second_user: { id: newfriend_id },
       }
     });
 

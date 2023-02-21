@@ -3,6 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 
 import { ChatTypeModel } from "src/chat_types/models/chat_type.model";
 import { UserModel } from "src/users/models/user.model";
+import { ChatMessageModel } from "src/chat_messages/models/chat_message.model";
 
 @Entity("chats")
 export class ChatModel {
@@ -22,6 +23,10 @@ export class ChatModel {
     @ApiResponseProperty({ type: ChatTypeModel })
     @ManyToOne(() => ChatTypeModel)
     type: ChatTypeModel;
+
+    // @ApiResponseProperty({ type: [ChatMessageModel] })
+    // @OneToMany(() => ChatMessageModel, chatMessage => chatMessage.room)
+    // messages: ChatMessageModel[];
 
     // messages
 

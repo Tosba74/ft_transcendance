@@ -1,10 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsAlphanumeric, IsEmail, IsNotEmpty, IsStrongPassword, Length, MinLength, MaxLength } from 'class-validator';
+import { IsAlphanumeric, IsEmail, IsNumber, IsNotEmpty, IsStrongPassword, Length, MinLength, MaxLength } from 'class-validator';
 
 export class CreateChatDto {
     @ApiProperty({ type: Number })
-    type: number;
+    @IsNumber()
+    type_id: number;
 
     @ApiPropertyOptional({ type: String })
     @IsNotEmpty()

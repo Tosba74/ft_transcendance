@@ -30,8 +30,8 @@ export class FriendsController {
   @Post(':id')
   @ApiCreatedResponse({ description: 'Friend created successfully', type: FriendModel })
   @ApiBadRequestResponse({ description: 'Friend validation error' })
-  public create(@Param('id', ParseIntPipe) id: number, @Body() friendDto: FriendDto): Promise<FriendModel> {
-    return this.friendsService.create(id, friendDto);
+  public createFriendship(@Param('id', ParseIntPipe) id: number, @Body() friendDto: FriendDto): Promise<FriendModel> {
+    return this.friendsService.createFriendship(id, friendDto.friend_id);
   }
 
   // @Put(':id')
@@ -45,8 +45,8 @@ export class FriendsController {
   @Delete(':id')
 	@ApiOkResponse({ description: 'Friend deleted successfully.'})
 	@ApiNotFoundResponse({ description: 'Friend not found.' })
-	public delete(@Param('id', ParseIntPipe) id: number, @Body() friendDto: FriendDto): void {  
-		this.friendsService.delete(id, friendDto);
+	public deleteFriendship(@Param('id', ParseIntPipe) id: number, @Body() friendDto: FriendDto): void {  
+		this.friendsService.deleteFriendship(id, friendDto.friend_id);
 	}
 
 }
