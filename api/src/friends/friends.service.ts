@@ -20,15 +20,15 @@ export class FriendsService {
 
   async findOneById(id: number): Promise<FriendModel> {
     try {
-      const friends: FriendModel = await this.friendsRepository.findOneOrFail({
-        where: { id },
+      const friend = await this.friendsRepository.findOneOrFail({
+        where: { id: id },
         relations: {
           // first_user: true,
           // second_user: true,
           friend_type: true,
         }
       });
-      return friends;
+      return friend;
     }
     catch (error) {
       throw new NotFoundException();

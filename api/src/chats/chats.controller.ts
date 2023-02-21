@@ -1,5 +1,5 @@
-import { Controller, Param, Body, Get, Post, Put, Delete, UseFilters, ParseIntPipe, } from '@nestjs/common';
-import { ApiOkResponse, ApiNotFoundResponse, ApiCreatedResponse, ApiUnprocessableEntityResponse, ApiTags, ApiBadRequestResponse } from '@nestjs/swagger';
+import { Controller, HttpCode, Param, Body, Get, Post, Put, Delete, UseFilters, ParseIntPipe, } from '@nestjs/common';
+import { ApiOkResponse, ApiNotFoundResponse, ApiNoContentResponse, ApiCreatedResponse, ApiUnprocessableEntityResponse, ApiTags, ApiBadRequestResponse } from '@nestjs/swagger';
 import { HttpExceptionFilter } from '../_common/filters/http-exception.filter';
 
 import { ChatsService } from './chats.service';
@@ -22,7 +22,7 @@ export class ChatsController {
 
   @Get(':id')
   @ApiOkResponse({ description: 'Chat retrieved successfully', type: ChatModel })
-  @ApiNotFoundResponse({ description: 'Chat not found' })
+  // @ApiNotFoundResponse({ description: 'Chat not found' })
   @ApiBadRequestResponse({ description: 'Chat validation error' })
   public findOne(@Param('id', ParseIntPipe) id: number): Promise<ChatModel> {
     return this.chatsService.findOneById(id);
@@ -35,19 +35,13 @@ export class ChatsController {
     return this.chatsService.create(createChatDto);
   }
 
-  // @Put(':id')
-  // @ApiCreatedResponse({ description: 'Password updated successfully', type: ChatModel })
-  // @ApiNotFoundResponse({ description: 'Chat not found' })
-  // @ApiBadRequestResponse({ description: 'Chat validation error' })
-  // public update(@Param('id', ParseIntPipe) id: number, @Body() updateUserDto: UpdateUserDto): Promise<ChatModel> {
-  //   return this.chatsService.update(id, updateUserDto);
-  // }
-
   @Delete(':id')
-	@ApiOkResponse({ description: 'Chat deleted successfully.'})
+  @HttpCode(204)
+	@ApiNoContentResponse({ description: 'Chat deleted successfully.'})
 	@ApiNotFoundResponse({ description: 'Chat not found.' })
-	public delete(@Param('id', ParseIntPipe) id: number): void {  
-		this.chatsService.delete(id);
+	public delete(@Param('id', ParseIntPipe) id: number): Promise<void> {  
+		return this.chatsService.delete(id);
 	}
 
 }
+ 

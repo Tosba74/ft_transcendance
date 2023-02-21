@@ -42,7 +42,9 @@ export class UsersService {
 
   async findOneById(id: number): Promise<UserModel> {
     try {
-      const user: UserModel = await this.usersRepository.findOneOrFail({ where: { id } });
+      const user = await this.usersRepository.findOneOrFail({ 
+        where: { id: id } 
+      });
       return user;
     }
     catch (error) {
@@ -87,7 +89,7 @@ export class UsersService {
     }
     catch (error) {
       throw new NotFoundException();
-    }
+    } 
   }
 
 

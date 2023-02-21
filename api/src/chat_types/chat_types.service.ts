@@ -16,8 +16,10 @@ export class ChatTypesService {
 
   async findOneById(id: number): Promise<ChatTypeModel> {
     try {
-      const chat_types: ChatTypeModel = await this.chatTypesRepository.findOneOrFail({ where: { id } });
-      return chat_types;
+      const chatType = await this.chatTypesRepository.findOneOrFail({ 
+        where: { id } 
+      });
+      return chatType;
     } 
     catch (error) {
       throw new NotFoundException();

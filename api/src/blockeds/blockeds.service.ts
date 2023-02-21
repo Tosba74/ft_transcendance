@@ -16,8 +16,10 @@ export class BlockedsService {
 
   async findOneById(id: number): Promise<BlockedModel> {
     try {
-      const blockeds: BlockedModel = await this.blockedsRepository.findOneOrFail({ where: { id } });
-      return blockeds;
+      const blocked = await this.blockedsRepository.findOneOrFail({ 
+        where: { id: id } 
+      });
+      return blocked;
     }
     catch (error) {
       throw new NotFoundException();
@@ -71,6 +73,7 @@ export class BlockedsService {
   }
 
   async unblockUser(id: number, blockedDto: BlockedDto): Promise<void> {
+
     const blocked = await this.blockedsRepository.findOne({
       where: {
         blocker: { id: id },

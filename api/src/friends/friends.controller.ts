@@ -1,5 +1,5 @@
-import { Controller, Param, Body, Get, Post, Put, Delete, UseFilters, ParseIntPipe, } from '@nestjs/common';
-import { ApiOkResponse, ApiNotFoundResponse, ApiCreatedResponse, ApiUnprocessableEntityResponse, ApiTags, ApiBadRequestResponse } from '@nestjs/swagger';
+import { Controller, HttpCode, Param, Body, Get, Post, Put, Delete, UseFilters, ParseIntPipe, } from '@nestjs/common';
+import { ApiOkResponse, ApiNotFoundResponse, ApiCreatedResponse, ApiNoContentResponse, ApiUnprocessableEntityResponse, ApiTags, ApiBadRequestResponse } from '@nestjs/swagger';
 import { HttpExceptionFilter } from '../_common/filters/http-exception.filter';
 
 import { FriendsService } from './friends.service';
@@ -43,10 +43,11 @@ export class FriendsController {
   // }
 
   @Delete(':id')
-	@ApiOkResponse({ description: 'Friend deleted successfully.'})
+  @HttpCode(204)
+	@ApiNoContentResponse({ description: 'Friend deleted successfully.'})
 	@ApiNotFoundResponse({ description: 'Friend not found.' })
-	public deleteFriendship(@Param('id', ParseIntPipe) id: number, @Body() friendDto: FriendDto): void {  
-		this.friendsService.deleteFriendship(id, friendDto.friend_id);
+	public deleteFriendship(@Param('id', ParseIntPipe) id: number, @Body() friendDto: FriendDto): Promise<void> {  
+		return this.friendsService.deleteFriendship(id, friendDto.friend_id);
 	}
 
 }

@@ -16,8 +16,10 @@ export class FriendTypesService {
 
   async findOneById(id: number): Promise<FriendTypeModel> {
     try {
-      const user: FriendTypeModel = await this.friendTypesRepository.findOneOrFail({ where: { id } });
-      return user;
+      const friendType = await this.friendTypesRepository.findOneOrFail({ 
+        where: { id } 
+      });
+      return friendType;
     } 
     catch (error) {
       throw new NotFoundException();

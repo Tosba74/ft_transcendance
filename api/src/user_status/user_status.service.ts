@@ -16,8 +16,10 @@ export class UserStatusService {
 
   async findOneById(id: number): Promise<UserStatusModel> {
     try {
-      const user: UserStatusModel = await this.userStatusRepository.findOneOrFail({ where: { id } });
-      return user;
+      const userStatus = await this.userStatusRepository.findOneOrFail({ 
+        where: { id } 
+      });
+      return userStatus;
     } 
     catch (error) {
       throw new NotFoundException();

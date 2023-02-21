@@ -18,8 +18,10 @@ export class ChatsService {
 
   async findOneById(id: number): Promise<ChatModel> {
     try {
-      const chats: ChatModel = await this.chatsRepository.findOneOrFail({ where: { id } });
-      return chats;
+      const chat = await this.chatsRepository.findOneOrFail({ 
+        where: { id: id } 
+      });
+      return chat;
     }
     catch (error) {
       throw new NotFoundException();
@@ -31,7 +33,6 @@ export class ChatsService {
 
     const res = new ChatModel();
 
-
     if (createChatDto.name) {
       res.name = createChatDto.name;
     }
@@ -39,7 +40,7 @@ export class ChatsService {
       res.name = 'Temp default name';
     }
 
-    res.type = new ChatTypeModel(createChatDto.type);
+    res.type = new ChatTypeModel(createChatDto.type_id);
 
     if (createChatDto.password) {
       const bcrypt = require('bcrypt');
@@ -52,8 +53,6 @@ export class ChatsService {
     try {
       const created = await this.chatsRepository.save(res);
 
-      
-
       return created;
     }
     catch (error) {
@@ -63,8 +62,8 @@ export class ChatsService {
 
   async delete(id: number): Promise<void> {
     try {
-      const user = await this.findOneById(id);
-      this.chatsRepository.delete(user);
+      const chat = await this.findOneById(id);
+      this.chatsRepository.delete({ id: id });
     }
     catch (error) {
       throw new NotFoundException();

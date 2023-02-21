@@ -16,8 +16,10 @@ export class ChatRolesService {
 
   async findOneById(id: number): Promise<ChatRoleModel> {
     try {
-      const chat_roles: ChatRoleModel = await this.chatRolesRepository.findOneOrFail({ where: { id } });
-      return chat_roles;
+      const chatRole = await this.chatRolesRepository.findOneOrFail({ 
+        where: { id } 
+      });
+      return chatRole;
     } 
     catch (error) {
       throw new NotFoundException();

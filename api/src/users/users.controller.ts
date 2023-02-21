@@ -1,5 +1,5 @@
-import { Controller, Param, Body, Get, Post, Put, Patch, Delete, UseFilters, ParseIntPipe, } from '@nestjs/common';
-import { ApiOkResponse, ApiNotFoundResponse, ApiCreatedResponse, ApiUnprocessableEntityResponse, ApiTags, ApiBadRequestResponse } from '@nestjs/swagger';
+import { Controller, HttpCode, Param, Body, Get, Post, Put, Patch, Delete, UseFilters, ParseIntPipe, } from '@nestjs/common';
+import { ApiOkResponse, ApiNotFoundResponse, ApiCreatedResponse, ApiNoContentResponse, ApiUnprocessableEntityResponse, ApiTags, ApiBadRequestResponse } from '@nestjs/swagger';
 import { HttpExceptionFilter } from 'src/_common/filters/http-exception.filter';
 
 import { UsersService } from './users.service';
@@ -54,10 +54,11 @@ export class UsersController {
   }
   
   @Delete(':id')
-	@ApiOkResponse({ description: 'Post deleted successfully.'})
+  @HttpCode(204)
+	@ApiNoContentResponse({ description: 'Post deleted successfully.'})
 	@ApiNotFoundResponse({ description: 'Post not found.' })
-	public delete(@Param('id', ParseIntPipe) id: number): void {  
-		this.usersService.delete(id);
+	public delete(@Param('id', ParseIntPipe) id: number): Promise<void> {  
+		return this.usersService.delete(id);
 	}
 
 }
