@@ -15,13 +15,15 @@ import NavBar from './components/NavBar';
 export default function App() {
   return (
     <Router>
-      <NavBar />
       <div className="container">
+      {/* <NavBar /> */}
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/players" element={<ProfilePage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/profile/:id" element={<ProfilePage />} />
           <Route path="/game" element={<GamePage />} />
-          <Route path="/reacttest" element={<ReactPage />} />
+          <Route path="/history" element={<ReactPage />} />
           <Route path="/login" element={<LogPage />} />
         </Routes>
       </div>
