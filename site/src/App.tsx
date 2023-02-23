@@ -15,8 +15,8 @@ import NavBar from './components/NavBar';
 export default function App() {
   return (
     <Router>
-      <div className="container">
-      {/* <NavBar /> */}
+      <div className="bg_white">
+        <NavBar />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/players" element={<ProfilePage />} />

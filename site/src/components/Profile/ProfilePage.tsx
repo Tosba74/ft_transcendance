@@ -15,7 +15,7 @@ export default function ProfilesPage() {
 
     return (
         <Fragment>
-            <div className="bg-cyan-500">
+            <div>
             <h2>Profiles !!</h2>
             <ProfileList onSave={saveProfile} profiles={profiles} />
             </div>

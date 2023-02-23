@@ -20,7 +20,7 @@ export default function ProfileList({ profiles, onSave }: ProfileListProps) {
   };
 
   return (
-    <div className="row">
+    <div>
       {profiles.map((profile) => (
         <div key={profile.id} className="cols-sm">
           {profile === profileBeingEdited ? (
