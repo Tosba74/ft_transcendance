@@ -2,6 +2,7 @@ import { ApiResponseProperty } from "@nestjs/swagger";
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne } from "typeorm"
 
 import { UserStatusModel } from "src/user_status/models/user_status.model";
+import { ChatMessageModel } from "src/chat_messages/models/chat_message.model";
 
 @Entity("users")
 export class UserModel {
@@ -39,6 +40,12 @@ export class UserModel {
     @ApiResponseProperty({ type: String })
     @Column({ nullable: true, default: null })
     tfa_code: string;
+
+    //--------------------------------------------
+    
+    @ApiResponseProperty({ type: () => [ChatMessageModel] })
+    @OneToMany(() => ChatMessageModel, (chatMessage) => chatMessage.sender)
+    messages: ChatMessageModel[];
     
     //--------------------------------------------
     

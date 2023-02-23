@@ -23,12 +23,12 @@ export class ChatModel {
     @ApiResponseProperty({ type: ChatTypeModel })
     @ManyToOne(() => ChatTypeModel)
     type: ChatTypeModel;
+    
+    //--------------------------------------------
 
-    // @ApiResponseProperty({ type: [ChatMessageModel] })
-    // @OneToMany(() => ChatMessageModel, chatMessage => chatMessage.room)
-    // messages: ChatMessageModel[];
-
-    // messages
+    @ApiResponseProperty({ type: () => [ChatMessageModel] })
+    @OneToMany(() => ChatMessageModel, (chatMessage) => chatMessage.room)
+    messages: ChatMessageModel[];
 
     // @ApiResponseProperty({ type: [UserModel] }, {
     //     cascade: true,
