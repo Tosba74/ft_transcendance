@@ -10,9 +10,16 @@ import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import config from "../ormconfig"
 
+// import { APP_GUARD } from '@nestjs/core';
+
 @Module({
   imports: [TypeOrmModule.forRoot(config), UsersModule, ChatModule, AuthModule],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, 
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: RolesGuard,
+    // },
+  ]
 })
 export class AppModule { }

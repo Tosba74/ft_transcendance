@@ -6,11 +6,8 @@ export class User {
 
     @ApiResponseProperty({ type: Number })
     @PrimaryGeneratedColumn()
-    id?: number;
+    id: number;
     
-    @ApiResponseProperty({ type: String })
-    @Column()
-    login_name: string;
     @ApiResponseProperty({ type: String })
     @Column()
     password: string; 
@@ -29,20 +26,23 @@ export class User {
     @Column()
     tfa_email: string;
     @ApiResponseProperty({ type: String })
-    @Column()
-    tfa_code: string;
-    
-    @ApiResponseProperty({ type: Number })
-    @Column()
-    status_id: number;
-    @ApiResponseProperty({ type: Date })
-    @Column()
-    status_updated_at: Date;
-    
+    @Column({ nullable: true, default: null })
+    tfa_code?: string;
+
     @ApiResponseProperty({ type: Date })
     @Column()
     creation_date: Date;
-    @ApiResponseProperty({ type: Date })
+    @ApiResponseProperty({ type: String })
+    @Column()
+    state: string;
+    @ApiResponseProperty({ type: String })
     @Column({ nullable: true, default: null })
-    validate_date?: Date;
+    token?: string;
+
+    @ApiResponseProperty({ type: Number })
+    @Column()
+    status_id: number;    // 0 = logged-out, 1 = logged-in, 2 = logged-in and playing
+    @ApiResponseProperty({ type: Date })
+    @Column()
+    status_updated_at: Date;
 }

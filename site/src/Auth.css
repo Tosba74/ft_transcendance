@@ -69,19 +69,24 @@ label {
 }
 
 .profile42, .profile42:disabled {
-  color: white;
-  background: rgba(0, 0, 0, 0.4)!important;
+  /* color: white;
+  background: rgba(0, 0, 0, 0.4)!important; */
   border:none!important;
 }
 .profile42:hover {
-  background: rgba(0, 0, 0, 0.45)!important;
-  border:none!important;
+  /* background: rgba(0, 0, 0, 0.45)!important;
+  border:none!important; */
   text-decoration: none;
 }
 .profile42:active {
-  background: rgba(0, 0, 0, 0.5)!important;
-  border:none!important;
+  /* background: rgba(0, 0, 0, 0.5)!important;
+  border:none!important; */
   text-decoration: none;
+}
+
+.require::before {
+  content: "*";
+  color: red;
 }
 
 .message {

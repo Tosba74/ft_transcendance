@@ -8,6 +8,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app
+    // .useGlobalGuards(new RolesGuard())   //doesn't set up guards for gateways and micro services by default
     .useGlobalPipes(new ValidationPipe())
     .useGlobalFilters(new HttpExceptionFilter());
 

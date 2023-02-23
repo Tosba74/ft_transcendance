@@ -1,17 +1,32 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { User } from '../users/user.entity';
+import { CreateUserDto } from '../users/dto/create-user.dto';
+import { UpdateUserDto } from '../users/dto/update-user.dto';
 
 @Injectable()
 export class AuthService {
-	constructor(private usersService: UsersService) { }
+	@Inject(UsersService)
+	private readonly usersService: UsersService;
 
-	async validateUser(pseudo: string, password: string): Promise<any> {
-		try {
-			const user: User = await this.usersService.findOneByPseudo(pseudo);
-			// ... check password
-		} catch (error) {
-			throw error;
-		}
+	async createUser(createUserDto: CreateUserDto): Promise<User> {
+		return this.usersService.create(createUserDto);
 	}
+
+	async updateUser(id:number, updateUserDto: UpdateUserDto): Promise<User> {
+		return this.usersService.update(id, updateUserDto);
+	}
+
+	async findOne(state: string): Promise<User> {
+		return this.usersService.findOneByState(state);
+	}
+
+	// async validateUser(pseudo: string, password: string): Promise<any> {
+	// 	try {
+	// 		const user: User = await this.usersService.findOneByPseudo(pseudo);
+	// 		// ... check password
+	// 	} catch (error) {
+	// 		throw error;
+	// 	}
+	// }
 }
