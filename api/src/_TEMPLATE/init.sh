@@ -15,6 +15,9 @@ SINGLE_UPPER_CAMEL_CASE="NewModel"
 # userTypes
 LOWER_CAMEL_CASE="newModel"
 
+# userType
+SINGLE_LOWER_CAMEL_CASE="newModel"
+
 # user types
 OBJECT_NAME="Models"
 
@@ -37,6 +40,9 @@ SINGLE_UPPER_CAMEL_CASE="Friend"
 
 # userTypes
 LOWER_CAMEL_CASE="friends"
+
+# userType
+SINGLE_LOWER_CAMEL_CASE="friend"
 
 # user types
 OBJECT_NAME="Friends"
@@ -68,7 +74,7 @@ else
 	sed -i '' "s/template_table/${PASCAL_CASE}/g" *.ts **/*.ts
 
 
-	sed -i '' "s#api/template#api/${PASCAL_CASE}#g" *.ts **/*.ts
+	sed -i '' "s#api/template#api/${SINGLE_LOWER_CAMEL_CASE}#g" *.ts **/*.ts
 
 	sed -i '' "s/templateVar/${PASCAL_CASE}/g" *.ts **/*.ts
 

@@ -3,8 +3,8 @@
 NAME="newModel"
 SINGLE_NAME="newModel"
 
-NAME="friends"
-SINGLE_NAME="friend"
+NAME="chat_messages"
+SINGLE_NAME="chat_message"
 
 
 DEST_FOLDER="../$NAME"

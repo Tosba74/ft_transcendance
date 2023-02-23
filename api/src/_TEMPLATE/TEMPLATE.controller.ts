@@ -1,5 +1,5 @@
-import { Controller, Param, Body, Get, Post, Put, Delete, UseFilters, ParseIntPipe, } from '@nestjs/common';
-import { ApiOkResponse, ApiNotFoundResponse, ApiCreatedResponse, ApiUnprocessableEntityResponse, ApiTags, ApiBadRequestResponse } from '@nestjs/swagger';
+import { Controller, HttpCode, Param, Body, Get, Post, Put, Delete, UseFilters, ParseIntPipe, } from '@nestjs/common';
+import { ApiOkResponse, ApiNotFoundResponse, ApiNoContentResponse, ApiCreatedResponse, ApiUnprocessableEntityResponse, ApiTags, ApiBadRequestResponse } from '@nestjs/swagger';
 import { HttpExceptionFilter } from '../_common/filters/http-exception.filter';
 
 import { TemplateService } from './TEMPLATE.service';
@@ -42,10 +42,11 @@ export class TemplateController {
   // }
 
   // @Delete(':id')
-	// @ApiOkResponse({ description: 'template_name deleted successfully.'})
+  // @HttpCode(204)
+	// @ApiNoContentResponse({ description: 'template_name deleted successfully.'})
 	// @ApiNotFoundResponse({ description: 'template_name not found.' })
-	// public delete(@Param('id', ParseIntPipe) id: number): void {  
-	// 	this.templateService.delete(id);
+	// public delete(@Param('id', ParseIntPipe) id: number): Promise<void> {  
+	// 	return this.templateService.delete(id);
 	// }
 
 }

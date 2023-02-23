@@ -6,7 +6,7 @@ export class TemplateModel {
 
     @ApiResponseProperty({ type: Number })
     @PrimaryGeneratedColumn()
-    id?: number;
+    id: number;
 
     @ApiResponseProperty({ type: String })
     @Column()

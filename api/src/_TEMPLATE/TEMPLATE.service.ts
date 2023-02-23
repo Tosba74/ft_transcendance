@@ -16,7 +16,9 @@ export class TemplateService {
 
   async findOneById(id: number): Promise<TemplateModel> {
     try {
-      const templateVar: TemplateModel = await this.templateRepository.findOneOrFail({ where: { id } });
+      const templateVar = await this.templateRepository.findOneOrFail({ 
+        where: { id } 
+      });
       return templateVar;
     } 
     catch (error) {
