@@ -1,16 +1,31 @@
-import "bootstrap/dist/css/bootstrap.min.css"
-import "./Auth.css"
-import { BrowserRouter, Routes, Route } from "react-router-dom"
-import Auth from "./Auth"
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 
-function App() {
+import './App.css';
+
+import ReactPage from './components/ReactPage';
+import GamePage from './components/Game/GamePage';
+import HomePage from './components/Home/HomePage';
+import ProfilePage from './components/Profile/ProfilePage';
+import LogPage from './components/Profile/LogPage';
+import NavBar from './components/NavBar';
+
+
+export default function App () {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/auth" element={<Auth />} />
-      </Routes>
-    </BrowserRouter>
-  )
+    <Router>
+      <div className="bg_white">
+        <NavBar />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/players" element={<ProfilePage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/profile/:id" element={<ProfilePage />} />
+          <Route path="/game" element={<GamePage />} />
+          <Route path="/history" element={<ReactPage />} />
+          <Route path="/login" element={<LogPage />} />
+        </Routes>
+      </div>
+    </Router>
+  );
 }
-
-export default App

@@ -1,12 +1,14 @@
 
 apk add nano
+# yarn tailwindcss init -p
 
 # # Create application
-if [ "$BUILD_TYPE" = "Setup" ]; 
-then 
+if [ "$BUILD_TYPE" = "Setup" ];
+then
     yarn create react-app ./ --template typescript
     yarn add react-router-dom 
     yarn add axios 
+    yarn add tailwindcss postcss autoprefixer
     
     # For testing auth module
     yarn add --dev bootstrap
@@ -16,16 +18,16 @@ fi
 yarn install
 
 
-if [ "$BUILD_TYPE" = "Production" ]; 
-then 
+if [ "$BUILD_TYPE" = "Production" ];
+then
     # For start in prod
     yarn global add serve
 
     yarn build
-    serve -s build 
+    serve -s build
 
-else 
-    yarn start 
+else
+    yarn start
 fi
 
 
