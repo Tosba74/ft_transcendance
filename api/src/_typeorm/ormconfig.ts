@@ -9,6 +9,7 @@ import { ChatTypeModel } from 'src/chat_types/models/chat_type.model';
 import { ChatRoleModel } from 'src/chat_roles/models/chat_role.model';
 import { ChatModel } from 'src/chats/models/chat.model';
 import { ChatMessageModel } from 'src/chat_messages/models/chat_message.model';
+import { ChatParticipantModel } from 'src/chat_participants/models/chat_participant.model';
 
 const config: PostgresConnectionOptions = {
 	type: "postgres",
@@ -22,7 +23,7 @@ const config: PostgresConnectionOptions = {
 	logging: false,
 
 	entities: [ UserStatusModel, UserModel, FriendTypeModel, FriendModel, 
-		ChatTypeModel, ChatRoleModel, ChatModel, ChatMessageModel,
+		ChatTypeModel, ChatRoleModel, ChatModel, ChatMessageModel, ChatParticipantModel,
 	],
 	migrations: ['dist/_typeorm/migrations/*.js'],
 	subscribers: [],

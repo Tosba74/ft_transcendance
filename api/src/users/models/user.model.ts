@@ -3,6 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 
 import { UserStatusModel } from "src/user_status/models/user_status.model";
 import { ChatMessageModel } from "src/chat_messages/models/chat_message.model";
+import { ChatParticipantModel } from "src/chat_participants/models/chat_participant.model";
 
 @Entity("users")
 export class UserModel {
@@ -46,6 +47,10 @@ export class UserModel {
     @ApiResponseProperty({ type: () => [ChatMessageModel] })
     @OneToMany(() => ChatMessageModel, (chatMessage) => chatMessage.sender)
     messages: ChatMessageModel[];
+
+    @ApiResponseProperty({ type: () => [ChatParticipantModel] })
+    @OneToMany(() => ChatParticipantModel, (chatParticipant) => chatParticipant.participant)
+    rooms: ChatParticipantModel[];
     
     //--------------------------------------------
     

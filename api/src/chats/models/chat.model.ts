@@ -4,6 +4,7 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import { ChatTypeModel } from "src/chat_types/models/chat_type.model";
 import { UserModel } from "src/users/models/user.model";
 import { ChatMessageModel } from "src/chat_messages/models/chat_message.model";
+import { ChatParticipantModel } from "src/chat_participants/models/chat_participant.model";
 
 @Entity("chats")
 export class ChatModel {
@@ -30,11 +31,9 @@ export class ChatModel {
     @OneToMany(() => ChatMessageModel, (chatMessage) => chatMessage.room)
     messages: ChatMessageModel[];
 
-    // @ApiResponseProperty({ type: [UserModel] }, {
-    //     cascade: true,
-    // })
-    // @OneToMany(() => UserModel, )
-    // users: User[]
+    @ApiResponseProperty({ type: () => [ChatParticipantModel] })
+    @OneToMany(() => ChatParticipantModel, (chatParticipant) => chatParticipant.room)
+    participants: ChatParticipantModel[];
 
     //--------------------------------------------
 
