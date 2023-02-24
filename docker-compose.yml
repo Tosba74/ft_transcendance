@@ -32,7 +32,9 @@ services:
       DATABASE_USER: ${DB_USERNAME}
       DATABASE_PASSWORD: ${DB_PASSWORD}
       DATABASE_DB: ${DB_DB}
-  
+
+      JWT_SECRET: ${JWT_SECRET}
+
     working_dir: /app
 
 

@@ -1,5 +1,8 @@
 import { Module } from '@nestjs/common';
 
+import { TypeOrmModule } from '@nestjs/typeorm';
+import config from './_typeorm/ormconfig';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
@@ -15,16 +18,26 @@ import { ChatsModule } from './chats/chats.module';
 import { ChatMessagesModule } from './chat_messages/chat_messages.module';
 import { ChatParticipantsModule } from './chat_participants/chat_participants.module';
 
-import { TypeOrmModule } from '@nestjs/typeorm';
-import config from './_typeorm/ormconfig';
+import { AuthModule } from './auth/auth.module';
+
+import { JwtStrategy } from './auth/jwt.strategy';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
+
 
 @Module({
-  imports: [TypeOrmModule.forRoot(config), 
-    UsersModule, UserStatusModule, FriendTypesModule, FriendsModule, FriendTypesModule, 
+  imports: [TypeOrmModule.forRoot(config),
+    UsersModule, UserStatusModule, FriendTypesModule, FriendsModule, FriendTypesModule,
     ChatTypesModule, ChatRolesModule, ChatsModule, ChatMessagesModule, ChatParticipantsModule,
+    AuthModule,
     ChatModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: JwtAuthGuard
+    // }
+  ],
 })
 export class AppModule { }
