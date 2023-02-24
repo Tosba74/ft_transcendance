@@ -1,5 +1,5 @@
 import React, { SyntheticEvent, useState } from "react";
-import { Profile } from "./Profile";
+import { Profile } from './Profile';
 
 interface ProfileFormProps {
 	profile: Profile;

@@ -4,8 +4,7 @@ import ProfileButton from "./Profile/ProfileButton";
 
 export default function NavBar() {
     return (
-        <header className=":w
-        z-50 top-0 w-full">
+        <header className="z-50 top-0 w-full">
             <nav className="bg-cyan-500 border-gray-200 px-2 sm:px-4 py-2.5 dark:bg-gray-600">
                 <div className="container flex flex-wrap items-center justify-between mx-auto">
                     <a href="/home" className="flex items-center">
@@ -18,3 +17,4 @@ export default function NavBar() {
         </header>
     );
 }
+
