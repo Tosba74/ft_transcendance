@@ -1,16 +1,17 @@
 import { ApiResponseProperty } from "@nestjs/swagger";
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne, Unique } from "typeorm"
 
 import { UserStatusModel } from "src/user_status/models/user_status.model";
 import { ChatMessageModel } from "src/chat_messages/models/chat_message.model";
 import { ChatParticipantModel } from "src/chat_participants/models/chat_participant.model";
 
 @Entity("users")
+@Unique('unique_constraint', ['login_name'])
 export class UserModel {
 
     @ApiResponseProperty({ type: Number })
     @PrimaryGeneratedColumn()
-    id?: number;
+    id: number;
     
     @ApiResponseProperty({ type: String })
     @Column()

@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 import { UserModel } from "./models/user.model";
 import { UserStatusModel } from 'src/user_status/models/user_status.model';
@@ -52,17 +53,32 @@ export class UsersService {
     }
   }
 
+  async findOneByLoginName(login: string): Promise<UserModel> {
+    try {
+      const user = await this.usersRepository.findOneOrFail({ 
+        select: [ 'id', 'login_name', 'pseudo', 'avatar_url', 'password' ],
+        where: { login_name: login } 
+      });
+      return user;
+    }
+    catch (error) {
+      throw new NotFoundException();
+    }
+  }
+
   async create(createUserDto: CreateUserDto): Promise<UserModel> {
     const newuser = new UserModel();
 
     // id = db autoincrement
 
+    newuser.pseudo = createUserDto.pseudo;
     newuser.login_name = createUserDto.login_name;
+
     const bcrypt = require('bcrypt');
     const saltRounds: number = 10;
     const hash: string = await bcrypt.hash(createUserDto.password, saltRounds);
     newuser.password = hash;
-    newuser.pseudo = createUserDto.pseudo;
+    
 
     // avatar = null at creation
 
@@ -99,16 +115,18 @@ export class UsersService {
 
       if (updateUserDto.login_name)
         user.login_name = updateUserDto.login_name;
+
       if (updateUserDto.password) {
-        const bcrypt = require('bcrypt');
         const saltRounds: number = 10;
         const hash: string = await bcrypt.hash(updateUserDto.password, saltRounds);
         user.password = hash;
       }
+
       if (updateUserDto.pseudo)
         user.pseudo = updateUserDto.pseudo;
 
       await this.usersRepository.save(user);
+
       return user;
     }
     catch (error) {
