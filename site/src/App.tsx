@@ -1,10 +1,8 @@
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+
 import './App.css';
-import {BrowserRouter as Router,
-  Routes, 
-  Route,
-  Link
-} from "react-router-dom";
+
 import ReactPage from './components/ReactPage';
 import GamePage from './components/Game/GamePage';
 import HomePage from './components/Home/HomePage';
@@ -12,7 +10,8 @@ import ProfilePage from './components/Profile/ProfilePage';
 import LogPage from './components/Profile/LogPage';
 import NavBar from './components/NavBar';
 
-export default function App() {
+
+export default function App () {
   return (
     <Router>
       <div className="bg_white">

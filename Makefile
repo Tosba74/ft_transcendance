@@ -64,6 +64,29 @@ rundb:
 			${DOCKER} exec postgres psql --host=postgres --dbname=test_db --username=user -W
 
 
+migrate-create:
+			@echo "Usage: make migrate-create DEST=name";
+			@if [ ! -z ${DEST} ]; then\
+				${DOCKER} exec back yarn migration:create src/_typeorm/migrations/${DEST} ;\
+			fi
+migrate-gen:
+			@echo "Usage: make migrate-gen DEST=name";
+			@if [ ! -z ${DEST} ]; then \
+				${DOCKER} exec back yarn migration:generate src/_typeorm/migrations/${DEST} ;\
+			fi
+migrate-run:
+			${DOCKER} exec back yarn migration:run
+migrate-revert:
+			${DOCKER} exec back yarn migration:revert
+
+# package-json yarn commands for migrations
+# "typeorm": "yarn ts-node ./node_modules/typeorm/cli -d ./dist/typeorm/data-source.js",
+# "migration:generate": "yarn build && yarn typeorm migration:generate",
+# "migration:run": "yarn build && yarn typeorm migration:run",
+# "migration:revert": "yarn build && yarn typeorm migration:revert"
+
+
+
 down:
 			${DOCKER} down
 

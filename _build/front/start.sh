@@ -1,13 +1,17 @@
 
 apk add nano
-yarn tailwindcss init -p
+# yarn tailwindcss init -p
 
 # # Create application
 if [ "$BUILD_TYPE" = "Setup" ];
 then
     yarn create react-app ./ --template typescript
-    yarn add react-router-dom@6.8.1
-    yarn add -D tailwindcss postcss autoprefixer
+    yarn add react-router-dom 
+    yarn add axios 
+    yarn add tailwindcss postcss autoprefixer
+    
+    # For testing auth module
+    yarn add --dev bootstrap
 fi
 
 # Download node_modules
