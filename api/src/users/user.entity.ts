@@ -36,11 +36,8 @@ export class User {
     @Column()
     created_at: Date;
     @ApiResponseProperty({ type: String })
-    @Column({ nullable: true, default: null })
-    state?: string;
-    @ApiResponseProperty({ type: String })
-    @Column({ nullable: true, default: null })
-    token?: string;
+    @Column()
+    token: string;
 
     @ApiResponseProperty({ type: Number })
     @Column()

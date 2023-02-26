@@ -22,9 +22,10 @@ export default function (props:any) {
 		// Send new user to API with axios
 		axios.post('https://localhost:8443/api/signup-manual', {
 			login_name: login_name.value,
-			password: password.value,
 			pseudo: pseudo.value,
-			tfa_email: tfa_email.value
+			tfa_email: tfa_email.value,
+			password: password.value,
+			token: 'notoken'
 		})
 		.then(function(response:any) {
 			// Display success message

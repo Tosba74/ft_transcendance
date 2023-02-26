@@ -32,15 +32,6 @@ export class UsersService {
     }
   }
 
-  async findOneByState(state: string): Promise<User> {
-    try {
-      const user: User = await this.usersRepository.findOneOrFail({where: {state} });
-      return user;
-    } catch(error) {
-      throw new NotFoundException();
-    }
-  }
-
   async delete(id: number): Promise<User> {
     try {
       const user: User = await this.findOneById(id);
@@ -80,45 +71,33 @@ export class UsersService {
         user.token = updateUserDto.token;
 
       return await this.usersRepository.save(user);
-
     } catch(error) {
       throw error;
     }
   }
 
-  async createApi42(state: string): Promise<User> {
-    const newuser = this.usersRepository.create();
-    
-    newuser.tfa_enabled = false;
-  
-    newuser.status = 0;
-    newuser.status_updated_at = new Date();
-  
-    newuser.created_at = new Date();
-
-    newuser.state = state;
-
-    await this.usersRepository.save(newuser);
-    return newuser;
-  }
-
   async create(createUserDto: CreateUserDto): Promise<User> {
     const newuser = this.usersRepository.create();
     
-    const bcrypt = require('bcrypt');
-    const saltRounds: number = 10;
-    const hash: string = await bcrypt.hash(createUserDto.password, saltRounds);
-    newuser.password = hash;
     newuser.login_name = createUserDto.login_name;
     newuser.pseudo = createUserDto.pseudo;
     
     newuser.tfa_enabled = false;
-    newuser.tfa_email = createUserDto.tfa_email;
-  
     newuser.status = 0;
     newuser.status_updated_at = new Date();
-  
     newuser.created_at = new Date();
+
+    if (createUserDto.password)
+    {
+      const bcrypt = require('bcrypt');
+      const saltRounds: number = 10;
+      const hash: string = await bcrypt.hash(createUserDto.password, saltRounds);
+      newuser.password = hash;
+    }
+    if (createUserDto.tfa_email)
+      newuser.tfa_email = createUserDto.tfa_email;
+    if (createUserDto.token)
+      newuser.token = createUserDto.token;
 
     await this.usersRepository.save(newuser);
     return newuser;

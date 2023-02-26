@@ -1,17 +1,16 @@
-import { Controller, Get, Post, Request, UseGuards, Redirect, Query, Body, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Request, UseGuards, Redirect, Query, Body, HttpStatus, BadRequestException } from '@nestjs/common';
 import axios from 'axios';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UpdateUserDto } from '../users/dto/update-user.dto';
 import { User } from '../users/user.entity';
 
-// import { Passport42AuthGuard } from './auth/passport42-auth.guard';
-
 const oauth2 = process.env.API_42_LINK;
 
 @Controller()
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+  private states: Array<string> = [];
 
   // lors du click sur 'Continue with 42-profile' button de la page localhost:8443/auth:
   // 1. localhost:8443/auth redirige sur localhost:8443/api/signup
@@ -19,20 +18,16 @@ export class AuthController {
   @Get('api/signup')
   @Redirect()
   async signup(): Promise<any> {
-    console.log('test');
-    // if user not exists create a user with createUserDto
-    // CHECK IF USER EXISTS
     var randomstring = require('randomstring');
     var state: string = randomstring.generate(15);
-    this.authService.createUser(state);
-
+    this.states.push(state);
     const url = `${oauth2}` + '&scope=public' + '&state=' + `${state}`;
     return { statusCode: HttpStatus.FOUND, url };
   }
 
   // 3. after user grants permission, API 42 ($oauth2) redirige sur localhost:8443/api/signup2 avec un code en queryparam + le random string
   @Get('api/signup2')
-  async signup42(@Query('code') code: any, @Query('state') state: any): Promise<any> {
+  async signupApi42(@Query('code') code: any, @Query('state') state: any): Promise<any> {
 
     // This authorization code is then exchanged for an access token using a server-to-server call from the application to the authorization server.
     const token_request: any = await axios.post('https://api.intra.42.fr/oauth/token', {
@@ -57,16 +52,20 @@ export class AuthController {
     })
 
     // If the state don't match the randomstring generated, the request has been created by a third party and the process should be aborted.
-    const user: User = await this.authService.findOne(state);
-    // COMPARE STATE WITH THE RANDOMSTRING FROM THE DB
-    // if (User === null)
-    // 	return null;
-    const id: number = user.id;
-    const updateUserDto: UpdateUserDto = new UpdateUserDto();
-    updateUserDto.login_name = datas.data.login;
-    updateUserDto.pseudo = datas.data.displayname;
-    updateUserDto.token = access_token;
-    this.authService.updateUser(id, updateUserDto);
+    const index: number = this.states.findIndex(el => el === state);
+		if (index == -1) {
+      throw new BadRequestException();
+		}
+    this.states.splice(index, 1);
+
+    // CHECK IF USER EXISTS
+    // ...
+
+    const createUserDto: CreateUserDto = new CreateUserDto();
+    createUserDto.login_name = datas.data.login;
+    createUserDto.pseudo = datas.data.displayname;
+    createUserDto.token = access_token;
+    this.authService.createUser(createUserDto);
 
     // return datas.data;
     return "thank you" 	// PROVISOIRE
@@ -74,12 +73,10 @@ export class AuthController {
 
   @Post('api/signup-manual')
   async signupManual(@Body() createUserDto: CreateUserDto): Promise<any> {
-    // if user not exists create a user with createUserDto
     // CHECK IF USER EXISTS
-    var randomstring = require('randomstring');
-    var state: string = randomstring.generate(15);
-    this.authService.createUserManual(createUserDto);
-
+    // ...
+    
+    this.authService.createUser(createUserDto);
     return "thank you" 	// PROVISOIRE
   }
   
