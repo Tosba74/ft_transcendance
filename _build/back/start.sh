@@ -31,6 +31,10 @@ fi
 # Download node_modules
 yarn install
 
+yarn build 
+yarn typeorm migration:run
+
+
 
 if [ "$BUILD_TYPE" = "Production" ]; 
 then 
