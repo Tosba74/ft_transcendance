@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import BurgerButton from './BurgerButton'
-import ProfileButton from "./Profile/ProfileButton";
+import ProfileButton from "./ProfileButton";
 
 export default function NavBar() {
     return (

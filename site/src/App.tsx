@@ -8,7 +8,7 @@ import GamePage from './components/Game/GamePage';
 import HomePage from './components/Home/HomePage';
 import ProfilePage from './components/Profile/ProfilePage';
 import LogPage from './components/Profile/LogPage';
-import NavBar from './components/NavBar';
+import NavBar from './components/NavBar/NavBar';
 
 
 export default function App () {
