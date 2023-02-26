@@ -16,13 +16,4 @@ export class AuthService {
 	async updateUser(id:number, updateUserDto: UpdateUserDto): Promise<User> {
 		return this.usersService.update(id, updateUserDto);
 	}
-
-	// async validateUser(pseudo: string, password: string): Promise<any> {
-	// 	try {
-	// 		const user: User = await this.usersService.findOneByPseudo(pseudo);
-	// 		// ... check password
-	// 	} catch (error) {
-	// 		throw error;
-	// 	}
-	// }
 }
