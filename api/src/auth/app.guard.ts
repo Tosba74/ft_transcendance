@@ -4,10 +4,10 @@ import { Reflector } from '@nestjs/core';
 
 import { ALLOW_LOGGED, ALLOW_PUBLIC } from './auth.decorators';
 import { LoggedUserDto } from './dto/logged_user.dto';
-import { JwtAuthGuard } from './jwt-auth.guard';
+import { JwtAuthGuard } from './auth-strategy/jwt-auth.guard';
 
 @Injectable()
-export class ApiGuard extends JwtAuthGuard implements CanActivate {
+export class AppGuard extends JwtAuthGuard implements CanActivate {
   constructor(private reflector: Reflector) {
     super(reflector)
   }

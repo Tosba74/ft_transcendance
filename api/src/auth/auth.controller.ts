@@ -2,8 +2,10 @@
 import { Controller, Request, Get, Post, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
+import { LocalAuthGuard } from './auth-strategy/local-auth.guard';
+import { ApiAuthGuard } from './auth-strategy/api-auth.guard';
+
 import { LoggedUserDto } from './dto/logged_user.dto';
-import { LocalAuthGuard } from './local-auth.guard';
 import { AuthService } from './auth.service';
 
 import { AllowLogged, AllowPublic } from './auth.decorators';
@@ -16,7 +18,15 @@ export class AuthController {
     @AllowPublic()
     @UseGuards(LocalAuthGuard)
     @Post('basic')
-    async login(@Request() req: any): Promise<LoggedUserDto> {
+    async basicLogin(@Request() req: any): Promise<LoggedUserDto> {
+        return this.authService.login(req.user);
+    }
+
+
+    @AllowPublic()
+    @UseGuards(ApiAuthGuard) 
+    @Post('apicallback')
+    async apiLogin(@Request() req: any): Promise<LoggedUserDto> {
         return this.authService.login(req.user);
     }
     

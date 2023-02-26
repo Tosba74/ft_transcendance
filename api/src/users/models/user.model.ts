@@ -18,8 +18,8 @@ export class UserModel {
     login_name: string;
 
     @ApiResponseProperty({ type: String })
-    @Column({ select: false })
-    password: string; 
+    @Column({ nullable: true, select: false })
+    password?: string; 
 
     @ApiResponseProperty({ type: String })
     @Column()
