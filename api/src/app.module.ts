@@ -20,9 +20,8 @@ import { ChatParticipantsModule } from './chat_participants/chat_participants.mo
 
 import { AuthModule } from './auth/auth.module';
 
-import { JwtStrategy } from './auth/jwt.strategy';
 import { APP_GUARD } from '@nestjs/core';
-import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { ApiGuard } from './auth/api.guard';
 
 
 @Module({
@@ -34,10 +33,10 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
   ],
   controllers: [AppController],
   providers: [AppService,
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: JwtAuthGuard
-    // }
+    {
+      provide: APP_GUARD,
+      useClass: ApiGuard
+    } 
   ],
 })
 export class AppModule { }

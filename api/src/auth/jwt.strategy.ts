@@ -16,17 +16,19 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: any) {
+  async validate(payload: LoggedUserDto) {
 
-    const loggedUser: LoggedUserDto = {
-        id: payload.id,
-        login_name: payload.login_name,
-        pseudo: payload.pseudo,
-        avatar_url: payload.avatar_url,
-    };
-    // return { userId: payload.sub, username: payload.username };
+    // const loggedUser: LoggedUserDto = {
+    //     id: payload.id,
+    //     login_name: payload.login_name,
+    //     pseudo: payload.pseudo,
+    //     avatar_url: payload.avatar_url,
+    //     is_admin: payload.is_admin,
+    // };
 
-    return loggedUser;
+    // const loggedUser = payload as LoggedUserDto;
+
+    return payload;
   }
 }
 

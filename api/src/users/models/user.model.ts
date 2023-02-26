@@ -28,6 +28,10 @@ export class UserModel {
     @ApiResponseProperty({ type: String })
     @Column({ nullable: true, default: null })
     avatar_url?: string;
+
+    @ApiResponseProperty({ type: Boolean })
+    @Column({ default: false })
+    is_admin: boolean;
     
     //--------------------------------------------
     

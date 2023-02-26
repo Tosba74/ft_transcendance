@@ -15,12 +15,15 @@ export class AuthService {
         const user = await this.usersService.findOneByLoginName(loginname);
         
         if (user && await bcrypt.compare(password, user.password)) {
-            
+
+            // const loggedUser = user as LoggedUserDto;
+
             const loggedUser: LoggedUserDto = {
                 id: user.id,
                 login_name: user.login_name,
                 pseudo: user.pseudo,
                 avatar_url: user.avatar_url,
+                is_admin: user.is_admin,
             };
 
             return loggedUser;
@@ -29,11 +32,10 @@ export class AuthService {
         return null;
     }
 
-    async login(user: LoggedUserDto) {
+    async login(user: any) {
         const access_token = this.jwtService.sign(user);
 
         return {...user, access_token: access_token};
-        // return { access_token: access_token} ;
       }
 
 }

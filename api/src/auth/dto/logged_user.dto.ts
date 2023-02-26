@@ -13,4 +13,7 @@ export class LoggedUserDto {
 
     @ApiProperty({ type: String })
     avatar_url?: string;
+
+    @ApiProperty({ type: Boolean })
+    is_admin: boolean;
 }
