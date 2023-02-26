@@ -97,6 +97,26 @@ export class UsersService {
     return newuser;
   }
 
+
+  async apiCreate(loginName: string): Promise<UserModel> {
+    const newuser = new UserModel();
+
+    newuser.pseudo = loginName;
+    newuser.login_name = loginName;
+
+    newuser.password = undefined;
+    
+    newuser.tfa_enabled = false;
+    newuser.tfa_email = '';
+    newuser.tfa_code = '';
+
+    newuser.status = new UserStatusModel(UserStatusModel.OFFLINE_STATUS);
+    newuser.status_updated_at = new Date();
+
+    await this.usersRepository.save(newuser);
+    return newuser;
+  }
+
   // EXCEPTION MARCHE PAS ???
   async delete(id: number): Promise<void> {
     try {

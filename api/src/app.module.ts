@@ -21,7 +21,7 @@ import { ChatParticipantsModule } from './chat_participants/chat_participants.mo
 import { AuthModule } from './auth/auth.module';
 
 import { APP_GUARD } from '@nestjs/core';
-import { ApiGuard } from './auth/api.guard';
+import { AppGuard } from './auth/app.guard';
 
 
 @Module({
@@ -35,7 +35,7 @@ import { ApiGuard } from './auth/api.guard';
   providers: [AppService,
     {
       provide: APP_GUARD,
-      useClass: ApiGuard
+      useClass: AppGuard
     } 
   ],
 })

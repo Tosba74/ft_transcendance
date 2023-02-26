@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { NotFoundException } from '@nestjs/common';
 
 import { LoggedUserDto } from './dto/logged_user.dto';
 
@@ -14,7 +15,7 @@ export class AuthService {
 
         const user = await this.usersService.findOneByLoginName(loginname);
         
-        if (user && await bcrypt.compare(password, user.password)) {
+        if (user && user.password && await bcrypt.compare(password, user.password)) {
 
             // const loggedUser = user as LoggedUserDto;
 
@@ -30,6 +31,38 @@ export class AuthService {
         }
 
         return null;
+    }
+
+
+    async validateOrCreateUser(loginname: string): Promise<LoggedUserDto | null> {
+
+        try {
+            const user = await this.usersService.findOneByLoginName(loginname);
+            
+            const loggedUser: LoggedUserDto = {
+                id: user.id,
+                login_name: user.login_name,
+                pseudo: user.pseudo,
+                avatar_url: user.avatar_url,
+                is_admin: user.is_admin,
+            };
+            
+            return loggedUser;
+        }
+        catch ( NotFoundException ) {
+            const user = await this.usersService.apiCreate(loginname);
+            
+            const loggedUser: LoggedUserDto = {
+                id: user.id,
+                login_name: user.login_name,
+                pseudo: user.pseudo,
+                avatar_url: user.avatar_url,
+                is_admin: user.is_admin,
+            };
+
+            return loggedUser;
+        }
+        return null
     }
 
     async login(user: any) {
