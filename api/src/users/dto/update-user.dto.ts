@@ -6,8 +6,11 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 
 // export class UpdateUserDto extends PartialType(CreateUserDto) {
 // export class UpdateUserDto extends OmitType(CreateUserDto, ['tfa_email', 'tfa_code'] as const,) {}
-export class UpdateUserDto extends PartialType(OmitType(User, ['id','tfa_code','creation_date','state'] as const)) {
+export class UpdateUserDto extends PartialType(OmitType(User, ['id','tfa_code','created_at','state'] as const)) {
     
+    @ApiPropertyOptional({ type: String })
+    login_name?: string;
+
     @ApiPropertyOptional({ type: String })
     password?: string;
     
@@ -24,7 +27,7 @@ export class UpdateUserDto extends PartialType(OmitType(User, ['id','tfa_code','
     tfa_email?: string;
     
     @ApiPropertyOptional({ type: Number })
-    status_id?: number;
+    status?: number;
     
     @ApiPropertyOptional({ type: Date })
     status_updated_at?: Date;

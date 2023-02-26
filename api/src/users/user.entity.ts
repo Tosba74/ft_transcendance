@@ -9,11 +9,14 @@ export class User {
     id: number;
     
     @ApiResponseProperty({ type: String })
-    @Column()
-    password: string; 
+    @Column({ nullable: true, default: null })
+    login_name?: string;
     @ApiResponseProperty({ type: String })
-    @Column()
-    pseudo: string;
+    @Column({ nullable: true, default: null })
+    password?: string; 
+    @ApiResponseProperty({ type: String })
+    @Column({ nullable: true, default: null })
+    pseudo?: string;
     
     @ApiResponseProperty({ type: String })
     @Column({ nullable: true, default: null })
@@ -23,25 +26,25 @@ export class User {
     @Column()
     tfa_enabled: boolean;
     @ApiResponseProperty({ type: String })
-    @Column()
-    tfa_email: string;
+    @Column({ nullable: true, default: null })
+    tfa_email?: string;
     @ApiResponseProperty({ type: String })
     @Column({ nullable: true, default: null })
     tfa_code?: string;
 
     @ApiResponseProperty({ type: Date })
     @Column()
-    creation_date: Date;
+    created_at: Date;
     @ApiResponseProperty({ type: String })
-    @Column()
-    state: string;
+    @Column({ nullable: true, default: null })
+    state?: string;
     @ApiResponseProperty({ type: String })
     @Column({ nullable: true, default: null })
     token?: string;
 
     @ApiResponseProperty({ type: Number })
     @Column()
-    status_id: number;    // 0 = logged-out, 1 = logged-in, 2 = logged-in and playing
+    status: number;    // 0 = logged-out, 1 = logged-in, 2 = logged-in and playing
     @ApiResponseProperty({ type: Date })
     @Column()
     status_updated_at: Date;

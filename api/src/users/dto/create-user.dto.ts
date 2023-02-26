@@ -4,6 +4,11 @@ import { IsPseudoAlreadyExist } from '../validation/is-user-already-exist';
 
 export class CreateUserDto {
     @ApiProperty({ type: String })
+    @IsNotEmpty()
+    @IsAlphanumeric()
+    login_name: string;
+    
+    @ApiProperty({ type: String })
     @IsStrongPassword()
     // ... plus de validation ? 
     password: string;
@@ -19,7 +24,4 @@ export class CreateUserDto {
     @IsEmail()
     // @IsEmailAlreadyExist() // Custom validation decorators (FONCTIONNE PAS)
     tfa_email: string;
-
-    @ApiProperty({ type: String })
-    state: string;
 }

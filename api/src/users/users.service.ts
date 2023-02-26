@@ -62,6 +62,8 @@ export class UsersService {
         const hash: string = await bcrypt.hash(updateUserDto.password, saltRounds);
         user.password = hash;
       }
+      if (updateUserDto.login_name)
+        user.login_name = updateUserDto.login_name;
       if (updateUserDto.pseudo)
         user.pseudo = updateUserDto.pseudo;
       if (updateUserDto.avatar_url)
@@ -70,8 +72,8 @@ export class UsersService {
         user.tfa_enabled = updateUserDto.tfa_enabled;
       if (updateUserDto.tfa_email)
         user.tfa_email = updateUserDto.tfa_email;
-      if (updateUserDto.status_id)
-        user.status_id = updateUserDto.status_id;
+      if (updateUserDto.status)
+        user.status = updateUserDto.status;
       if (updateUserDto.status_updated_at)
         user.status_updated_at = updateUserDto.status_updated_at;
       if (updateUserDto.token)
@@ -84,6 +86,22 @@ export class UsersService {
     }
   }
 
+  async createApi42(state: string): Promise<User> {
+    const newuser = this.usersRepository.create();
+    
+    newuser.tfa_enabled = false;
+  
+    newuser.status = 0;
+    newuser.status_updated_at = new Date();
+  
+    newuser.created_at = new Date();
+
+    newuser.state = state;
+
+    await this.usersRepository.save(newuser);
+    return newuser;
+  }
+
   async create(createUserDto: CreateUserDto): Promise<User> {
     const newuser = this.usersRepository.create();
     
@@ -91,17 +109,16 @@ export class UsersService {
     const saltRounds: number = 10;
     const hash: string = await bcrypt.hash(createUserDto.password, saltRounds);
     newuser.password = hash;
+    newuser.login_name = createUserDto.login_name;
     newuser.pseudo = createUserDto.pseudo;
     
     newuser.tfa_enabled = false;
     newuser.tfa_email = createUserDto.tfa_email;
   
-    newuser.status_id = 0;
+    newuser.status = 0;
     newuser.status_updated_at = new Date();
   
-    newuser.creation_date = new Date();
-
-    newuser.state = createUserDto.state;
+    newuser.created_at = new Date();
 
     await this.usersRepository.save(newuser);
     return newuser;

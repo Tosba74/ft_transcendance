@@ -62,6 +62,9 @@ services:
     volumes:
       - ./api:/app
 
+    env_file:
+      - .env
+
 
   front:
     restart: "no"

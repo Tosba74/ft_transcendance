@@ -9,7 +9,11 @@ export class AuthService {
 	@Inject(UsersService)
 	private readonly usersService: UsersService;
 
-	async createUser(createUserDto: CreateUserDto): Promise<User> {
+	async createUser(state: string): Promise<User> {
+		return this.usersService.createApi42(state);
+	}
+
+	async createUserManual(createUserDto: CreateUserDto): Promise<User> {
 		return this.usersService.create(createUserDto);
 	}
 

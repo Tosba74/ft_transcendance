@@ -12,36 +12,35 @@ export default function (props:any) {
 	const [isSubmitted, setIsSubmitted] = useState(false);
 	const [disable, setDisable] = useState(false);
 
-	// USER MUST LOGIN USING THE OAUTH SYSTEM OF 42 INTRANET
 	const handleSubmit = (event:any) => {
 		// Prevent page reload
 		event.preventDefault();
 
 		// Get form datas
-		let { login_name, password, email, pseudo } = document.forms[0];
+		let {login_name, password, tfa_email, pseudo } = document.forms[0];
 
 		// Send new user to API with axios
-		const oauth2 = 'api/signup';
-		axios.post(`http://localhost:8080/${oauth2}`, {
+		axios.post('https://localhost:8443/api/signup-manual', {
+			login_name: login_name.value,
 			password: password.value,
-			pseudo: pseudo.value,				// MUST BE UNIQUE (make a request to the db to check if unique)
-			tfa_email: email.value,				// MUST BE UNIQUE (make a request to the db to check if unique)
+			pseudo: pseudo.value,
+			tfa_email: tfa_email.value
 		})
-		// .then(function(response:any) {
-		// 	// Display success message
-		// 	setIsSubmitted(true);
-		// 	setDisable(true)
-		// })
-		// .catch(function(error:any) {
-		// 	console.log(error);			// handle errors in a better way
-		// });
+		.then(function(response:any) {
+			// Display success message
+			setIsSubmitted(true);
+			setDisable(true)
+		})
+		.catch(function(error:any) {
+			console.log(error);
+		});
 	};
 
   	if (authMode === "signup") {
 		return (
 			<div className="Auth-form-container">
-				{/* <form action="my_redirect_url" method="post" className="Auth-form" onSubmit={handleSubmit}> */}
-				<form action="https://localhost:8443/api/signup" method="post" className="Auth-form">
+				<form action="https://localhost:8443/api/signup" method="post" className="Auth-form" onSubmit={handleSubmit}>
+				{/* <form action="https://localhost:8443/api/signup" method="post" className="Auth-form"> */}
 					<div className="Auth-form-content">
 						<h3 className="Auth-form-title">Create your account</h3>
 						<div className="text-center">
@@ -51,13 +50,22 @@ export default function (props:any) {
 							</span>
 						</div>
 						<div className="form-group mt-3 require">
-							<label>Email address (to enable double-authentication)</label>
+							<label>Email address</label>
 							<input
 							type="email"
 							className="form-control mt-1"
 							placeholder="Email Address"
 							name="tfa_email"
 							required
+							/>
+						</div>
+						<div className="form-group mt-3 require">
+							<label>Login name</label>
+							<input
+							type="text"
+							className="form-control mt-1"
+							placeholder="e.g Jaane"
+							name="login_name"
 							/>
 						</div>
 						<div className="form-group mt-3 require">
@@ -70,8 +78,8 @@ export default function (props:any) {
 							required
 							/>
 						</div>
-						<div className="form-group mt-3">
-							<label>Pseudo (by default your 42 login)</label>
+						<div className="form-group mt-3 require">
+							<label>Pseudo</label>
 							<input
 							type="text"
 							className="form-control mt-1"
@@ -82,19 +90,19 @@ export default function (props:any) {
 
 						<div className="d-grid gap-2 mt-3">
 							<button type="submit" className="btn btn-primary" disabled={disable}>
-							Complete with 42-profile
+							Submit
 							</button>
 						</div>
 
-						{/* <div className="d-grid gap-2 mt-3 separator">
+						<div className="d-grid gap-2 mt-3 separator">
              				<span>Or</span>
-            			</div> */}
+            			</div>
 
-						{/* <div className="d-grid gap-2 mt-3">
-							<a className="btn btn-primary profile42" href={oauth2}>
+						<div className="d-grid gap-2 mt-3">
+							<a className="btn btn-primary profile42" href='https://localhost:8443/api/signup'>
 								Complete with 42-profile
 							</a>
-						</div> */}
+						</div>
 
 						<div className="text-center mt-2 message">
 							{isSubmitted ? <span className="success-message">Success: account created</span> : false}
