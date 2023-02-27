@@ -32,6 +32,10 @@ export class UserModel {
     @ApiResponseProperty({ type: Boolean })
     @Column({ default: false })
     is_admin: boolean;
+
+    @ApiResponseProperty({ type: String })
+    @Column({ nullable: true, default: null })
+    access_token?: string;
     
     //--------------------------------------------
     

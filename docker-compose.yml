@@ -34,6 +34,9 @@ services:
       DATABASE_DB: ${DB_DB}
 
       JWT_SECRET: ${JWT_SECRET}
+
+      API_AUTHORIZE: ${API_AUTHORIZE}
+      API_REDIRECT_URL: ${API_REDIRECT_URL}
       API_UID: ${API_UID}
       API_SECRET: ${API_SECRET}
 

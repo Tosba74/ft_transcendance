@@ -18,7 +18,10 @@ then
     yarn add bcrypt @types/bcrypt
     yarn add class-validator class-transformer
 
-    yarn add  @nestjs/passport passport passport-local @types/passport-local
+    yarn add axios
+    yarn add randomstring
+
+    yarn add @nestjs/passport passport passport-local @types/passport-local
     yarn add @nestjs/jwt passport-jwt @types/passport-jwt
 fi
 

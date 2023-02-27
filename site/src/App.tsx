@@ -10,6 +10,8 @@ import HomePage from './components/Home/HomePage';
 import ProfilePage from './components/Profile/ProfilePage';
 import LogPage from './components/Profile/LogPage';
 import NavBar from './components/NavBar';
+import LoginApi from './components/Profile/LoginApi';
+import Logout from './components/Profile/Logout';
 
 
 export default function App() {
@@ -24,23 +26,25 @@ export default function App() {
       try {
         const token = localStorage.getItem('token');
 
-        axios.get('http://localhost:4000/api/login/profile',
-          {
-            headers: ({
-              Authorization: 'Bearer ' + token,
+        if (token != null) {
+          axios.get('/api/login/profile',
+            {
+              headers: ({
+                Authorization: 'Bearer ' + token,
+              })
             })
-          })
-          .then(res => {
-            if (res.status === 200) {
+            .then(res => {
+              if (res.status === 200) {
 
-              console.log(res.data);
-              setUserInfos(res.data);
-              setLogged(true)
-              return;
-            }
-          })
-          .catch(error => {
-          });
+                console.log(res.data);
+                setUserInfos(res.data);
+                setLogged(true);
+                return;
+              }
+            })
+            .catch(error => {
+            });
+        }
       }
       catch {
       }
@@ -64,6 +68,8 @@ export default function App() {
           <Route path="/game" element={<GamePage />} />
           <Route path="/history" element={<ReactPage />} />
           <Route path="/login" element={<LogPage setLogged={setLogged} />} />
+          <Route path="/loginapi" element={<LoginApi setLogged={setLogged} />} />
+          <Route path="/logout" element={<Logout />} />
         </Routes>
       </div>
     </Router>

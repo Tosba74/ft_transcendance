@@ -8,7 +8,7 @@ async function bootstrap() {
 
   app.enableCors();
 
-  app.useGlobalPipes(new ValidationPipe());
+  // app.useGlobalPipes(new ValidationPipe());
   // app.useGlobalPipes(new ValidationPipe({
   //     whitelist: true, // filter out properties that should not be received by the method handler (strip all properties that don't have any decorators)
   //   }),

@@ -17,7 +17,7 @@ export default function LogPage({ setLogged }: LogPageProps) {
     const handleSubmit = async (event: SyntheticEvent) => {
         event.preventDefault();
 
-        axios.post("http://localhost:4000/api/login/basic",
+        axios.post("/api/login/basic",
             {
                 'username': loginName,
                 'password': password,
