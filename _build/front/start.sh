@@ -8,7 +8,7 @@ then
     yarn create react-app ./ --template typescript
     yarn add react-router-dom 
     yarn add axios 
-    yarn add tailwindcss postcss autoprefixer
+    yarn add tailwindcss postcss autoprefixer classnames
     
     # For testing auth module
     yarn add --dev bootstrap

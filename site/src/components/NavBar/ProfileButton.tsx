@@ -1,4 +1,4 @@
-import LogoInconnu from './inconnu.jpeg'
+import LogoInconnu from '../../assets/img/inconnu.jpeg'
 import { useState } from 'react';
 
 export default function ProfileButton() {
@@ -9,8 +9,11 @@ export default function ProfileButton() {
 	};
 	
 	return (
-		<div className="flex items-center md:order-2">
-    	    <button type="button" onClick={handleClick} className="flex mr-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
+		<div className="flex items-between md:order-2">
+    	    <button 
+			type="button"
+			onClick={handleClick}
+			className="flex mr-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
     	        <span className="sr-only">Open user menu</span>
     	        <img className="w-8 h-8 rounded-full" height="8" src={LogoInconnu} alt="user photo" />
     	    </button>

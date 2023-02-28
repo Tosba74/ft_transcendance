@@ -1,5 +1,5 @@
 import { Profile } from "./Profile";
-import LogoInconnu from './inconnu.jpeg'
+import LogoInconnu from '../../assets/img/inconnu.jpeg'
 
 export const Mock_Profile = [
   new Profile({
