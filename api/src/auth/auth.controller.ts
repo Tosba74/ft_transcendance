@@ -15,14 +15,23 @@ import { AllowLogged, AllowPublic } from './auth.decorators';
 export class AuthController {
     constructor(private authService: AuthService) { }
 
+    // @AllowPublic()
+    // @UseGuards(LocalAuthGuard)
+    // @Post('basic')
+    // async basicLogin(@Request() req: any): Promise<string> {
+    //     // 2FA
+    //     console.log(this.authService.login(req.user));
+    //     return 'logged in';
+    // }
+
     @AllowPublic()
     @UseGuards(LocalAuthGuard)
     @Post('basic')
     async basicLogin(@Request() req: any): Promise<LoggedUserDto> {
+        // 2FA
         return this.authService.login(req.user);
     }
-
-
+    
     @AllowPublic()
     @UseGuards(ApiAuthGuard) 
     @Post('apicallback')

@@ -23,7 +23,7 @@ services:
     environment:
       ADMINER_DEFAULT_SYSTEM: pgsql
       ADMINER_DEFAULT_SERVER: postgres
-      ADMINER_DEFAULT_DATABASE: ${DB_DB}
+      ADMINER_DEFAULT_DATABASE: ${DATABASE_DB}
 
 
     networks:
