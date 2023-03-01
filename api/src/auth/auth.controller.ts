@@ -47,7 +47,7 @@ export class AuthController {
 
     //--------------------------------------------
 
-    // genere tfa_code associe a un qrcode pour ajouter l'app a google authenticator
+    // generate a tfa_secret associated with a qrcode provided by tfa/generate endpoint to add the app in google authenticator
     @AllowLogged()
     @Post('tfa/generate')
     async register(@Response() res: any, @Request() req: any) {
@@ -55,7 +55,9 @@ export class AuthController {
         return this.authService.pipeQrCodeStream(res, otpAuthUrl);
     }
 
-    // activate 2fa sending a first valid code to the /tfa/turn-on endpoint
+    // first tfa needs to set user.tfa_enabled in db
+    // user looks up the Authenticator application code and sends it to the /tfa/turn-on endpoint
+    // we respond with a new JWT token with full access
     @AllowLogged()
     @UseGuards(LocalAuthGuard)
     @Post('tfa/turn-on')
@@ -68,7 +70,7 @@ export class AuthController {
         return this.authService.login(req.user, true);
     }
 
-    // the user looks up the Authenticator application code and sends it to the /tfa/authenticate endpoint
+    // user looks up the Authenticator application code and sends it to the /tfa/authenticate endpoint
     // we respond with a new JWT token with full access
     @AllowLogged()
     @UseGuards(LocalAuthGuard)
