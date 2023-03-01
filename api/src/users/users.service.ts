@@ -205,7 +205,7 @@ export class UsersService {
     }
   }
 
-  async getTfaSecret(id: number): Promise<string> {
+  async getTfaSecret(id: number): Promise<string | undefined> {
     try {
       let user: UserModel = await this.findOneById(id);
       return user.tfa_secret

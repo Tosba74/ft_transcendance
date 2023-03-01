@@ -1,5 +1,5 @@
 
-import { Controller, Request, Response, Get, Post, UseGuards, UnauthorizedException, Body, BadRequestException } from '@nestjs/common';
+import { Controller, Request, Response, Get, Post, UseGuards, UnauthorizedException, Body, Param, BadRequestException, Redirect } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { LocalAuthGuard } from './auth-strategy/local-auth.guard';
@@ -19,21 +19,43 @@ export class AuthController {
     @AllowPublic()
     @UseGuards(LocalAuthGuard)
     @Post('basic')
-    async basicLogin(@Request() req: any): Promise<LoggedUserDto> {
+    async basicLogin(@Request() req: any): Promise<any> {
+
+    // if the 2FA is turned off, we give full access to the user
+
+        if (req.user.tfa_enabled === false)
+            return this.authService.login(req.user);
         
-        // si user.tfa_enabled === true && user.tfa_secret
-            // recevoir les username et password (local.strategy)
-            // checker que ca match avec la db (local.strategy)
-
-            // rediriger sur /api/login/tfa/authenticate sans AppGuard (ou en modifiant AppGuard) mais avec un autre mechanisme de verification (juste LocalAuthGuard ?)
+            const secret: string | undefined = await this.usersService.getTfaSecret(req.user.id);
+            if (secret === '' || secret === undefined)
+            throw new BadRequestException('Tfa error: tfa is enabled but secret is not defined');
             
+    // otherwise, ask 6 digits auth code and send it to /api/login/tfa/authenticate
 
-        // if the 2FA is turned off, we give full access to the user
-        return this.authService.login(req.user);
+        // retourne null au front pour lui indiquer de demander le tfaCode de google auth
+        return null;
+        // le front POST sur localhost:8080/api/login/tfa/authenticate :
+            // username: tnanchen
+            // password: password
+            // tfaCode: 946013
+    }
+
+    // user looks up the Authenticator application code and sends it to the /tfa/authenticate endpoint
+    // we respond with a new JWT token with full access
+    // @AllowLogged()
+    @AllowPublic()
+    @UseGuards(LocalAuthGuard)
+    @Post('tfa/authenticate')
+    async authenticate(@Request() req: any, @Body() body: any): Promise<LoggedUserDto> {
+        const isCodeValid: boolean = await this.authService.isTfaValid(body.tfaCode, req.user);
+        if (!isCodeValid) {
+            throw new UnauthorizedException('Wrong authentication code');
+        }
+        return this.authService.login(req.user, true);
     }
     
     @AllowPublic()
-    @UseGuards(ApiAuthGuard) 
+    @UseGuards(ApiAuthGuard)
     @Post('apicallback')
     async apiLogin(@Request() req: any): Promise<LoggedUserDto> {
         return this.authService.login(req.user);
@@ -45,10 +67,9 @@ export class AuthController {
         return req.user;
     }
 
-    //--------------------------------------------
-
     // generate a tfa_secret associated with a qrcode responded by tfa/generate endpoint to add the app in google authenticator
     // and set user.tfa_enabled in db
+    // actually allows to regenerate qrcode-secret (maybe set another route for that)
     @AllowLogged()
     @UseGuards(LocalAuthGuard)
     @Post('tfa/activate')
@@ -61,18 +82,5 @@ export class AuthController {
     }
 
     // async turnOffTfa (@Request() req: any, @Body() body: any): Promise<LoggedUserDto> {}
-
-    // user looks up the Authenticator application code and sends it to the /tfa/authenticate endpoint
-    // we respond with a new JWT token with full access
-    @AllowLogged()
-    @UseGuards(LocalAuthGuard)
-    @Post('tfa/authenticate')
-    async authenticate(@Request() req: any, @Body() body: any): Promise<LoggedUserDto> {
-        const isCodeValid: boolean = await this.authService.isTfaValid(body.tfaCode, req.user);
-        if (!isCodeValid) {
-            throw new UnauthorizedException('Wrong authentication code');
-        }
-        return this.authService.login(req.user, true);
-    }
 
 }

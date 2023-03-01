@@ -108,9 +108,9 @@ export class AuthService {
     }
 
     async isTfaValid(tfaCode: string, user: UserModel) {
-        const tfa_secret: string = await this.usersService.getTfaSecret(user.id);
+        const tfa_secret: string | undefined = await this.usersService.getTfaSecret(user.id);
         
-        if (!tfa_secret || user.tfa_enabled === false)
+        if (tfa_secret === '' || tfa_secret === undefined || user.tfa_enabled === false)
             throw new UnauthorizedException('TFA not activated');
 
         return authenticator.verify({
