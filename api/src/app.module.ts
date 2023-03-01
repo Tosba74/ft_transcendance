@@ -22,13 +22,14 @@ import { AuthModule } from './auth/auth.module';
 
 import { APP_GUARD } from '@nestjs/core';
 import { AppGuard } from './auth/app.guard';
+import { MeModule } from './me/me.module';
 
 
 @Module({
   imports: [TypeOrmModule.forRoot(config),
     UsersModule, UserStatusModule, FriendTypesModule, FriendsModule, FriendTypesModule,
     ChatTypesModule, ChatRolesModule, ChatsModule, ChatMessagesModule, ChatParticipantsModule,
-    AuthModule,
+    AuthModule, MeModule,
     ChatModule,
   ],
   controllers: [AppController],

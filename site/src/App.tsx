@@ -27,7 +27,7 @@ export default function App() {
         const token = localStorage.getItem('token');
 
         if (token != null) {
-          axios.get('/api/login/profile',
+          axios.get('/api/me',
             {
               headers: ({
                 Authorization: 'Bearer ' + token,

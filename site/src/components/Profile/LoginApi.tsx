@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { SyntheticEvent, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 
 interface LoginApiProps {
@@ -11,6 +11,7 @@ interface LoginApiProps {
 export default function LoginApi({ setLogged }: LoginApiProps) {
 
     const [pageMessage, setPageMessage] = React.useState('Logging...');
+    const navigate = useNavigate()
 
     const [searchParams] = useSearchParams();
 
@@ -30,18 +31,19 @@ export default function LoginApi({ setLogged }: LoginApiProps) {
                         localStorage.setItem('token', res.data['access_token']);
     
                         setLogged(true);
-                        setPageMessage('Login success');
+                        setPageMessage('Login success, redirecting');
+                        setTimeout(() => { navigate('/') }, 3000);
                     }
                     else {
                         setPageMessage('Login error');
                         // console.log('error', res.statusText);
                     }
     
-                })
-                .catch(error => {
-                    setPageMessage('Login error');
-                    // console.log('error', error);
                 });
+                // .catch(error => {
+                //     setPageMessage('Login error22');
+                //     // console.log('error', error);
+                // });
         }
         else {
             setPageMessage('Missing infos');
