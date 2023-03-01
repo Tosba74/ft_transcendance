@@ -16,13 +16,12 @@ import { AllowLogged, AllowPublic } from './auth.decorators';
 export class AuthController {
     constructor(private authService: AuthService, private readonly usersService: UsersService) { }
 
-    //--------------------------------------------
-    // if the 2FA is turned off, we give full access to the user
-
     @AllowPublic()
     @UseGuards(LocalAuthGuard)
     @Post('basic')
     async basicLogin(@Request() req: any): Promise<LoggedUserDto> {
+
+        // if the 2FA is turned off, we give full access to the user
         return this.authService.login(req.user);
 
         // si user.tfa_enabled === true && user.tfa_secret
@@ -68,7 +67,6 @@ export class AuthController {
     @UseGuards(LocalAuthGuard)
     @Post('tfa/authenticate')
     async authenticate(@Request() req: any, @Body() body: any): Promise<LoggedUserDto> {
-        // const isCodeValid: boolean = await this.authService.isTfaValid(body.tfaCode, req.user, false);
         const isCodeValid: boolean = await this.authService.isTfaValid(body.tfaCode, req.user);
         if (!isCodeValid) {
             throw new UnauthorizedException('Wrong authentication code');
