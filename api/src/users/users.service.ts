@@ -86,7 +86,7 @@ export class UsersService {
     // newuser.tfa_email = createUserDto.tfa_email;
     // newuser.tfa_code = createUserDto.tfa_code;
     newuser.tfa_email = '';
-    newuser.tfa_code = '';
+    newuser.tfa_secret = '';
 
     newuser.status = new UserStatusModel(UserStatusModel.OFFLINE_STATUS);
     newuser.status_updated_at = new Date();
@@ -108,7 +108,7 @@ export class UsersService {
     
     newuser.tfa_enabled = false;
     newuser.tfa_email = '';
-    newuser.tfa_code = '';
+    newuser.tfa_secret = '';
 
     newuser.status = new UserStatusModel(UserStatusModel.OFFLINE_STATUS);
     newuser.status_updated_at = new Date();
@@ -183,10 +183,10 @@ export class UsersService {
     }
   }
 
-  async setTfaCode(code: string, id: number): Promise<UserModel> {
+  async setTfaSecret(secret: string, id: number): Promise<UserModel> {
     try {
       let user: UserModel = await this.findOneById(id);
-      user.tfa_code = code;
+      user.tfa_secret = secret;
       await this.usersRepository.save(user);
       return user;
     }
@@ -195,10 +195,10 @@ export class UsersService {
     }
   }
 
-  async getTfaCode(id: number): Promise<string> {
+  async getTfaSecret(id: number): Promise<string> {
     try {
       let user: UserModel = await this.findOneById(id);
-      return user.tfa_code
+      return user.tfa_secret
     }
     catch (error) {
       throw new NotFoundException();

@@ -75,18 +75,14 @@ export class AuthService {
     
     // isTfa allows to distinguish between tokens created with and without two-factor authentication
     async login(user: any, is_tfa: boolean = false) {   
-        // const access_token = this.jwtService.sign(user);
-
-        // console.log(`tfa: ${is_tfa}`);
-
-        const payload: any = { user, is_tfa };
-
-        // const payload: LoggedUserDto = user;
-        // payload.is_tfa = is_tfa;
-
-        // console.log(payload);
-        const access_token = this.jwtService.sign(payload);
-
+        if (is_tfa == true)
+        {
+            // allows replacement of token datas
+            user.is_tfa = true;
+            delete user.exp;
+            delete user.iat;
+        }
+        const access_token = this.jwtService.sign(user);
         return {...user, access_token: access_token};
     }
     
@@ -102,7 +98,7 @@ export class AuthService {
             const otpauthUrl: string = authenticator.keyuri(user.tfa_email, appname, secret);
 
             // save the generated secret in the database
-            await this.usersService.setTfaCode(secret, user.userId);
+            await this.usersService.setTfaSecret(secret, user.userId);
 
             return otpauthUrl;
         }
@@ -112,11 +108,11 @@ export class AuthService {
         return toFileStream(stream, otpauthUrl);
     }
 
-    async isTfaCodeValid(tfaCode: string, user: UserModel) {
-        const tfa_db: string = await this.usersService.getTfaCode(user.id);
+    async isTfaValid(tfaCode: string, user: UserModel) {
+        const tfa_secret: string = await this.usersService.getTfaSecret(user.id);
         return authenticator.verify({
             token: tfaCode,
-            secret:  tfa_db
+            secret:  tfa_secret
         });
     }
 

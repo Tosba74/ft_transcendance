@@ -20,24 +20,17 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
    // isTfa allows to distinguish between tokens created with and without two-factor authentication
-  async validate(payload: LoggedUserDto) {
-    // console.log('validate');
-    // console.log(payload);
-    // const user = await this.usersService.findOneById(payload.id);
+   // async validate(payload: TokenPayloadDto) {
+    async validate(payload: LoggedUserDto) {
     
-    // if (!user.tfa_enabled) {
-    //   console.log('NO TFA');
-    //   return user;
-    // }
-    // console.log(payload.is_tfa);
+      // const user = await this.usersService.findOneById(payload.id);
 
     if (payload.is_tfa) {
       console.log('AUTH WITH TFA');
-      return payload;
+      // return payload;
     }
-
-    // if (payload.is_tfa === true)
-    //   console.log('TFA');
+    else
+      console.log('NO TFA');
 
     // const loggedUser: LoggedUserDto = {
     //     id: payload.id,
@@ -49,7 +42,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     // const loggedUser = payload as LoggedUserDto;
 
-    // console.log('NO TFA');
     return payload;
   }
 }

@@ -58,7 +58,7 @@ export class AuthController {
     @Post('tfa/turn-on')
     async turnOnTfa(@Request() req: any, @Body() body: any) {
         // console.log(`1: ${body.tfaCode}`);
-        const isCodeValid: boolean = await this.authService.isTfaCodeValid(body.tfaCode, req.user);
+        const isCodeValid: boolean = await this.authService.isTfaValid(body.tfaCode, req.user);
         // console.log(`valid: ${isCodeValid}`);
         if (!isCodeValid) {
             throw new UnauthorizedException('Wrong authentication code');
@@ -73,15 +73,14 @@ export class AuthController {
     @Post('tfa/authenticate')
     @HttpCode(200)
     async authenticate(@Request() req: any, @Body() body: any): Promise<LoggedUserDto> {
-        const isCodeValid: boolean = await this.authService.isTfaCodeValid(body.tfaCode, req.user);
+
+        // d'abord checker que le user a tfa_enabled a true
+
+        const isCodeValid: boolean = await this.authService.isTfaValid(body.tfaCode, req.user);
 
         if (!isCodeValid) {
             throw new UnauthorizedException('Wrong authentication code');
         }
-
-        // const login = this.authService.login(req.user, true);
-        // // console.log(login);
-        // return login;
 
         return this.authService.login(req.user, true);
     }
