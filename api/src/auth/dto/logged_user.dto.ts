@@ -11,6 +11,9 @@ export class LoggedUserDto {
     @ApiProperty({ type: String })
     pseudo: string;
 
+    @ApiProperty({ type: Number })
+    color: number;
+
     @ApiProperty({ type: String })
     avatar_url?: string;
 

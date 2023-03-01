@@ -36,6 +36,10 @@ export class UserModel {
     @ApiResponseProperty({ type: String })
     @Column({ nullable: true, default: null })
     access_token?: string;
+
+    @ApiResponseProperty({ type: Number })
+    @Column({ default: -1 })
+    color: number;
     
     //--------------------------------------------
     

@@ -98,13 +98,16 @@ export class UsersService {
   }
 
 
-  async apiCreate(loginName: string): Promise<UserModel> {
+  async apiCreate(loginName: string, displayName: string, color: number, avatar?: string): Promise<UserModel> {
     const newuser = new UserModel();
 
-    newuser.pseudo = loginName;
+    newuser.pseudo = displayName;
     newuser.login_name = loginName;
 
     newuser.password = undefined;
+
+    newuser.avatar_url = avatar;
+    newuser.color = color;
     
     newuser.tfa_enabled = false;
     newuser.tfa_email = '';
