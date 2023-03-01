@@ -20,15 +20,16 @@ export class AuthController {
     @UseGuards(LocalAuthGuard)
     @Post('basic')
     async basicLogin(@Request() req: any): Promise<LoggedUserDto> {
+        
+        // si user.tfa_enabled === true && user.tfa_secret
+            // recevoir les username et password (local.strategy)
+            // checker que ca match avec la db (local.strategy)
+
+            // rediriger sur /api/login/tfa/authenticate
+
 
         // if the 2FA is turned off, we give full access to the user
         return this.authService.login(req.user);
-
-        // si user.tfa_enabled === true && user.tfa_secret
-            // recevoir les username et password
-            // checker que ca match avec la db
-
-            // rediriger sur /api/login/tfa/authenticate
     }
     
     @AllowPublic()
