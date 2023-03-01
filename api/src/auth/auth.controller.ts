@@ -25,7 +25,7 @@ export class AuthController {
             // recevoir les username et password (local.strategy)
             // checker que ca match avec la db (local.strategy)
 
-            // rediriger sur /api/login/tfa/authenticate
+            // rediriger sur /api/login/tfa/authenticate sans AppGuard (ou en modifiant AppGuard) mais avec un autre mechanisme de verification (juste LocalAuthGuard ?)
 
 
         // if the 2FA is turned off, we give full access to the user
