@@ -96,7 +96,6 @@ export class AuthService {
                 is_admin: user.is_admin,
             };
 
-            console.log(loggedUser);
             return loggedUser;
         }
         return null
