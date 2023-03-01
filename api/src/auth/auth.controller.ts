@@ -35,53 +35,44 @@ export class AuthController {
     
     @AllowLogged()
     @Get('profile')
+    @UseGuards(LocalAuthGuard)
     getProfile(@Request() req: any) {
         return req.user;
     }
 
     //--------------------------------------------
-    // if the 2FA is turned on, we provide the access just to the /tfa/authenticate endpoint
-    // typer les fonctions
 
     // genere tfa_code associe a un qrcode pour ajouter l'app a google authenticator
     @AllowLogged()
     @Post('tfa/generate')
     async register(@Response() res: any, @Request() req: any) {
-        // console.log(req.user);
         const otpAuthUrl: string = await this.authService.generateTfaSecret(req.user);
-        
         return this.authService.pipeQrCodeStream(res, otpAuthUrl);
     }
 
     // activate 2fa sending a first valid code to the /tfa/turn-on endpoint
     @AllowLogged()
+    @UseGuards(LocalAuthGuard)
     @Post('tfa/turn-on')
-    async turnOnTfa(@Request() req: any, @Body() body: any) {
-        // console.log(`1: ${body.tfaCode}`);
-        const isCodeValid: boolean = await this.authService.isTfaValid(body.tfaCode, req.user);
-        // console.log(`valid: ${isCodeValid}`);
+    async turnOnTfa(@Request() req: any, @Body() body: any): Promise<LoggedUserDto> {
+        const isCodeValid: boolean = await this.authService.isTfaValid(body.tfaCode, req.user, true);
         if (!isCodeValid) {
             throw new UnauthorizedException('Wrong authentication code');
         }
-
         await this.usersService.turnOnTfa(req.user.id);
+        return this.authService.login(req.user, true);
     }
 
     // the user looks up the Authenticator application code and sends it to the /tfa/authenticate endpoint
     // we respond with a new JWT token with full access
     @AllowLogged()
+    @UseGuards(LocalAuthGuard)
     @Post('tfa/authenticate')
-    @HttpCode(200)
     async authenticate(@Request() req: any, @Body() body: any): Promise<LoggedUserDto> {
-
-        // d'abord checker que le user a tfa_enabled a true
-
-        const isCodeValid: boolean = await this.authService.isTfaValid(body.tfaCode, req.user);
-
+        const isCodeValid: boolean = await this.authService.isTfaValid(body.tfaCode, req.user, false);
         if (!isCodeValid) {
             throw new UnauthorizedException('Wrong authentication code');
         }
-
         return this.authService.login(req.user, true);
     }
 

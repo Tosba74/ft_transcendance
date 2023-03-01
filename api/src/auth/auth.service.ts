@@ -1,5 +1,5 @@
 
-import { Injectable, UnauthorizedException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, InternalServerErrorException, BadRequestException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
@@ -18,8 +18,8 @@ export class AuthService {
 
     async validateUser(loginname: string, password: string): Promise<LoggedUserDto | null> {
 
-        const user = await this.usersService.findOneByLoginName(loginname);
-        
+        const user: UserModel = await this.usersService.findOneByLoginName(loginname);
+
         if (user && user.password && await bcrypt.compare(password, user.password)) {
 
             // const loggedUser = user as LoggedUserDto;
@@ -29,8 +29,8 @@ export class AuthService {
                 login_name: user.login_name,
                 pseudo: user.pseudo,
                 avatar_url: user.avatar_url,
+                tfa_enabled: user.tfa_enabled,
                 is_admin: user.is_admin,
-                is_tfa: false
             };
 
             return loggedUser;
@@ -44,46 +44,46 @@ export class AuthService {
 
         try {
             const user = await this.usersService.findOneByLoginName(loginname);
-            
+
             const loggedUser: LoggedUserDto = {
                 id: user.id,
                 login_name: user.login_name,
                 pseudo: user.pseudo,
                 avatar_url: user.avatar_url,
+                tfa_enabled: user.tfa_enabled,
                 is_admin: user.is_admin,
-                is_tfa: false
             };
             
             return loggedUser;
         }
         catch ( NotFoundException ) {
             const user = await this.usersService.apiCreate(loginname);
-            
+
             const loggedUser: LoggedUserDto = {
                 id: user.id,
                 login_name: user.login_name,
                 pseudo: user.pseudo,
                 avatar_url: user.avatar_url,
+                tfa_enabled: user.tfa_enabled,
                 is_admin: user.is_admin,
-                is_tfa: false
             };
 
             return loggedUser;
         }
-        return null
+        return null;
     }
     
     // isTfa allows to distinguish between tokens created with and without two-factor authentication
+    // 1
     async login(user: any, is_tfa: boolean = false) {   
         if (is_tfa == true)
         {
             // allows replacement of token datas
-            user.is_tfa = true;
             delete user.exp;
             delete user.iat;
         }
         const access_token = this.jwtService.sign(user);
-        return {...user, access_token: access_token};
+        return {...user, is_tfa: is_tfa, access_token: access_token};
     }
     
     //--------------------------------------------
@@ -99,7 +99,6 @@ export class AuthService {
 
             // save the generated secret in the database
             await this.usersService.setTfaSecret(secret, user.userId);
-
             return otpauthUrl;
         }
     }
@@ -108,8 +107,21 @@ export class AuthService {
         return toFileStream(stream, otpauthUrl);
     }
 
-    async isTfaValid(tfaCode: string, user: UserModel) {
+    async isTfaValid(tfaCode: string, user: UserModel, activation: boolean) {
         const tfa_secret: string = await this.usersService.getTfaSecret(user.id);
+        
+        if (!tfa_secret)
+            throw new UnauthorizedException('TFA not registered');
+
+        if (activation) {
+            if (user.tfa_enabled === true)
+                throw new BadRequestException('TFA already activated');
+        }
+        else {
+            if (user.tfa_enabled === false)
+                throw new UnauthorizedException('TFA not activated');
+        }
+
         return authenticator.verify({
             token: tfaCode,
             secret:  tfa_secret

@@ -56,7 +56,7 @@ export class UsersService {
   async findOneByLoginName(login: string): Promise<UserModel> {
     try {
       const user = await this.usersRepository.findOneOrFail({ 
-        select: [ 'id', 'login_name', 'pseudo', 'avatar_url', 'is_admin', 'password' ],
+        select: [ 'id', 'login_name', 'pseudo', 'avatar_url', 'tfa_enabled', 'is_admin', 'password' ],
         where: { login_name: login } 
       });
       return user;
@@ -171,12 +171,22 @@ export class UsersService {
 
   //--------------------------------------------
 
-  async turnOnTfa(id: number) {
+  async turnOnTfa(id: number): Promise<UserModel> {
     try {
       let user: UserModel = await this.findOneById(id);
       user.tfa_enabled = true;
       await this.usersRepository.save(user);
       return user;
+    }
+    catch (error) {
+      throw new NotFoundException();
+    }
+  }
+
+  async isTfaEnabled(id: number): Promise<boolean> {
+    try {
+      let user: UserModel = await this.findOneById(id);
+      return user.tfa_enabled;
     }
     catch (error) {
       throw new NotFoundException();

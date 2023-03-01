@@ -15,8 +15,8 @@ export class LoggedUserDto {
     avatar_url?: string;
 
     @ApiProperty({ type: Boolean })
-    is_admin: boolean;
+    tfa_enabled: boolean;
 
     @ApiProperty({ type: Boolean })
-    is_tfa: boolean;
+    is_admin: boolean;
 }
