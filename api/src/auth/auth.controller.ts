@@ -21,7 +21,7 @@ export class AuthController {
     @Post('basic')
     async basicLogin(@Request() req: any): Promise<any> {
 
-    // if the 2FA is turned off, we give full access to the user
+        // IF THE 2FA IS TURNED OFF, DIRECTLY RESPOND WITH A NEW JWT TOKEN WITH FULL ACCESS
 
         if (req.user.tfa_enabled === false)
             return this.authService.login(req.user);
@@ -30,19 +30,18 @@ export class AuthController {
             if (secret === '' || secret === undefined)
             throw new BadRequestException('Tfa error: tfa is enabled but secret is not defined');
             
-    // otherwise, ask 6 digits auth code and send it to /api/login/tfa/authenticate
+        
+        // OTHERWISE, ASK 6 DIGITS AUTH CODE AND SEND IT TO /API/LOGIN/TFA/AUTHENTICATE
 
         // retourne null au front pour lui indiquer de demander le tfaCode de google auth
         return null;
-        // le front POST sur localhost:8080/api/login/tfa/authenticate :
+        // le front peut ensuite faire un POST sur localhost:8080/api/login/tfa/authenticate avec en body:
             // username: tnanchen
             // password: password
             // tfaCode: 946013
     }
 
     // user looks up the Authenticator application code and sends it to the /tfa/authenticate endpoint
-    // we respond with a new JWT token with full access
-    // @AllowLogged()
     @AllowPublic()
     @UseGuards(LocalAuthGuard)
     @Post('tfa/authenticate')
@@ -51,6 +50,8 @@ export class AuthController {
         if (!isCodeValid) {
             throw new UnauthorizedException('Wrong authentication code');
         }
+
+        // respond with a new JWT token with full access
         return this.authService.login(req.user, true);
     }
     
@@ -67,17 +68,18 @@ export class AuthController {
         return req.user;
     }
 
-    // generate a tfa_secret associated with a qrcode responded by tfa/generate endpoint to add the app in google authenticator
-    // and set user.tfa_enabled in db
-    // actually allows to regenerate qrcode-secret (maybe set another route for that)
+    // (actually allows to re-generate multiple secret-qrcode, maybe externalise this possibility in another route)
     @AllowLogged()
     @UseGuards(LocalAuthGuard)
     @Post('tfa/activate')
     async activate(@Response() res: any, @Request() req: any) {
+        // generate a tfa_secret and store it in db
         const otpAuthUrl: string = await this.authService.generateTfaSecret(req.user);
-
-        await this.usersService.turnOnTfa(req.user.id);
-
+        
+        // set tfa_enable to true
+        await this.usersService.enableTfa(req.user.id);
+        
+        // generate and return a qrcode associated with the tfa_secret
         return this.authService.pipeQrCodeStream(res, otpAuthUrl);
     }
 

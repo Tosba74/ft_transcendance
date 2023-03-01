@@ -73,8 +73,6 @@ export class AuthService {
         return null;
     }
     
-    // isTfa allows to distinguish between tokens created with and without two-factor authentication
-    // 1
     async login(user: any, is_tfa: boolean = false) {   
         if (is_tfa == true)
         {
@@ -85,6 +83,9 @@ export class AuthService {
         const access_token = this.jwtService.sign(user);
         return {...user, is_tfa: is_tfa, access_token: access_token};
     }
+
+    // revoke jwt token ?
+    // async logout(user: any) { }
     
     //--------------------------------------------
 
