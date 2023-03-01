@@ -76,8 +76,14 @@ export class AuthService {
     // isTfa allows to distinguish between tokens created with and without two-factor authentication
     async login(user: any, is_tfa: boolean = false) {   
         // const access_token = this.jwtService.sign(user);
+
         // console.log(`tfa: ${is_tfa}`);
+
         const payload: any = { user, is_tfa };
+
+        // const payload: LoggedUserDto = user;
+        // payload.is_tfa = is_tfa;
+
         // console.log(payload);
         const access_token = this.jwtService.sign(payload);
 

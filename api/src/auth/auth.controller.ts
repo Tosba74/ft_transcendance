@@ -41,18 +41,20 @@ export class AuthController {
 
     //--------------------------------------------
     // if the 2FA is turned on, we provide the access just to the /tfa/authenticate endpoint
-    // checker si tfa_enable pour les routes tfa
     // typer les fonctions
 
     // genere tfa_code associe a un qrcode pour ajouter l'app a google authenticator
+    @AllowLogged()
     @Post('tfa/generate')
     async register(@Response() res: any, @Request() req: any) {
+        // console.log(req.user);
         const otpAuthUrl: string = await this.authService.generateTfaSecret(req.user);
         
         return this.authService.pipeQrCodeStream(res, otpAuthUrl);
     }
 
-    // activate 2fa and send a valid code to the /tfa/turn-on endpoint
+    // activate 2fa sending a first valid code to the /tfa/turn-on endpoint
+    @AllowLogged()
     @Post('tfa/turn-on')
     async turnOnTfa(@Request() req: any, @Body() body: any) {
         // console.log(`1: ${body.tfaCode}`);
@@ -67,6 +69,7 @@ export class AuthController {
 
     // the user looks up the Authenticator application code and sends it to the /tfa/authenticate endpoint
     // we respond with a new JWT token with full access
+    @AllowLogged()
     @Post('tfa/authenticate')
     @HttpCode(200)
     async authenticate(@Request() req: any, @Body() body: any): Promise<LoggedUserDto> {
@@ -76,11 +79,11 @@ export class AuthController {
             throw new UnauthorizedException('Wrong authentication code');
         }
 
-        const login = this.authService.login(req.user, true);
-        // console.log(login);
-        return login;
+        // const login = this.authService.login(req.user, true);
+        // // console.log(login);
+        // return login;
 
-        // return this.authService.login(req.user, true);
+        return this.authService.login(req.user, true);
     }
 
 }

@@ -23,17 +23,19 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload: LoggedUserDto) {
     // console.log('validate');
     // console.log(payload);
-    const user = await this.usersService.findOneById(payload.id);
+    // const user = await this.usersService.findOneById(payload.id);
     
     // if (!user.tfa_enabled) {
     //   console.log('NO TFA');
     //   return user;
     // }
     // console.log(payload.is_tfa);
+
     if (payload.is_tfa) {
-      console.log('TFA');
-      return user;
+      console.log('AUTH WITH TFA');
+      return payload;
     }
+
     // if (payload.is_tfa === true)
     //   console.log('TFA');
 
@@ -47,6 +49,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     // const loggedUser = payload as LoggedUserDto;
 
+    // console.log('NO TFA');
     return payload;
   }
 }
