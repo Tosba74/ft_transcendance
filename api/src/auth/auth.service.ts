@@ -25,6 +25,7 @@ export class AuthService {
                 id: user.id,
                 login_name: user.login_name,
                 pseudo: user.pseudo,
+                color: user.color,
                 avatar_url: user.avatar_url,
                 is_admin: user.is_admin,
             };
@@ -45,6 +46,7 @@ export class AuthService {
                 id: user.id,
                 login_name: user.login_name,
                 pseudo: user.pseudo,
+                color: user.color,
                 avatar_url: user.avatar_url,
                 is_admin: user.is_admin,
             };
@@ -92,6 +94,7 @@ export class AuthService {
                 id: user.id,
                 login_name: user.login_name,
                 pseudo: user.pseudo,
+                color: color,
                 avatar_url: user.avatar_url,
                 is_admin: user.is_admin,
             };

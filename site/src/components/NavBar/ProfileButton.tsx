@@ -35,9 +35,16 @@ export default function ProfileButton({ logged }: ProfileButtonProps) {
 							</li>
 						</>
 					}
-					<li>
-						<a href="/login" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Log in</a>
-					</li>
+					{!logged &&
+						<>
+							<li>
+								<a href="/login" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Log in</a>
+							</li>
+							<li>
+								<a href="/api/login/apisignin" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Log in api</a>
+							</li>
+						</>
+					}
 					{logged &&
 						<li>
 							<a href="/logout" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Log out</a>
