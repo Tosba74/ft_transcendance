@@ -97,7 +97,7 @@ export class AuthService {
         {
             const otpauthUrl: string = authenticator.keyuri(user.tfa_email, appname, secret);
 
-            // save the generated secret in the database
+            // save the secret (associated with the qrcode) in the database
             await this.usersService.setTfaSecret(secret, user.userId);
             return otpauthUrl;
         }
@@ -107,20 +107,11 @@ export class AuthService {
         return toFileStream(stream, otpauthUrl);
     }
 
-    async isTfaValid(tfaCode: string, user: UserModel, activation: boolean) {
+    async isTfaValid(tfaCode: string, user: UserModel) {
         const tfa_secret: string = await this.usersService.getTfaSecret(user.id);
         
-        if (!tfa_secret)
-            throw new UnauthorizedException('TFA not registered');
-
-        if (activation) {
-            if (user.tfa_enabled === true)
-                throw new BadRequestException('TFA already activated');
-        }
-        else {
-            if (user.tfa_enabled === false)
-                throw new UnauthorizedException('TFA not activated');
-        }
+        if (!tfa_secret || user.tfa_enabled === false)
+            throw new UnauthorizedException('TFA not activated');
 
         return authenticator.verify({
             token: tfaCode,
