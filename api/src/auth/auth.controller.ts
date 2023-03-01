@@ -24,6 +24,11 @@ export class AuthController {
     @Post('basic')
     async basicLogin(@Request() req: any): Promise<LoggedUserDto> {
         return this.authService.login(req.user);
+
+        // si user.tfa_enabled === true
+            // recevoir username et password
+            // checker que ca match avec la db
+            // rediriger sur /api/login/tfa/authenticate
     }
     
     @AllowPublic()

@@ -22,19 +22,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
    // isTfa allows to distinguish between tokens created with and without two-factor authentication
     async validate(payload: LoggedUserDto) {
       // console.log("VALIDATE");
-
       // const user = await this.usersService.findOneById(payload.id);
-
       // console.log(payload);
-      // payload.tfa_enabled = await this.usersService.isTfaEnabled(user.id);
-      // console.log(payload);
-
-      // if (payload.is_tfa) {
-      //   console.log('AUTH WITH TFA');
-      //   // return payload;
-      // }
-      // else
-      //   console.log('NO TFA');
 
       // const loggedUser: LoggedUserDto = {
       //     id: payload.id,
