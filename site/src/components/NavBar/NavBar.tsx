@@ -14,7 +14,7 @@ export default function NavBar({ logged }: NavBarProps) {
                     <a href="/home" className="flex items-center">
                         <img src="https://42lausanne.ch/wp-content/uploads/2021/01/42_logo.svg" height="50" className="h-6 mr-3 sm:h-9" alt="" />
                     </a>
-                    <ProfileButton />
+                    <ProfileButton logged={logged}/>
                     <BurgerButton logged={logged} />
                 </div>
             </nav>
