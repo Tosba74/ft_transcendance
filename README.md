@@ -7,3 +7,5 @@ Create certificates in build/nginx/certs folder, must be named nginx.crt and ngi
 They can be generated automatically by executing `make setup`.
 
 Create the .env file by copying the .env.example file
+
+To create the database run `make migrate-run`

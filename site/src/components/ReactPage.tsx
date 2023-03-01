@@ -1,5 +1,5 @@
 import react from 'react'
-import logo from './logo.svg';
+import logo from '../assets/img/logo.svg';
 
 export default function ReactPage() {
     return (
