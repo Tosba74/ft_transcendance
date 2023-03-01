@@ -1,6 +1,7 @@
 import { Profile } from "./Profile";
 import React from "react";
-import logoInconnu from './inconnu.jpeg';
+import logoInconnu from '../../assets/img/inconnu.jpeg';
+
 function formatDescription(description: string): string {
   return description.substring(0, 60) + "...";
 }

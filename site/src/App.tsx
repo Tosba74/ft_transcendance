@@ -8,7 +8,8 @@ import GamePage from './components/Game/GamePage';
 import HomePage from './components/Home/HomePage';
 import ProfilePage from './components/Profile/ProfilePage';
 import LogPage from './components/Profile/LogPage';
-import NavBar from './components/NavBar';
+import NavBar from './components/NavBar/NavBar';
+import ChatPage from './components/Chat/ChatPage';
 
 
 export default function App () {
@@ -22,6 +23,7 @@ export default function App () {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/profile/:id" element={<ProfilePage />} />
           <Route path="/game" element={<GamePage />} />
+          <Route path="/chat" element={<ChatPage/>} />
           <Route path="/history" element={<ReactPage />} />
           <Route path="/login" element={<LogPage />} />
         </Routes>
