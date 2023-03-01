@@ -2,13 +2,17 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import classNames from "classnames";
 
-export default function BurgerButton() {
+interface BurgerButtonProps {
+    logged: boolean,
+}
+
+export default function BurgerButton({ logged }: BurgerButtonProps) {
     const [isOpen, setOpen] = useState(false);
 
     const handleClick = () => {
         setOpen(!isOpen);
     };
-    
+
     return (
         <div>
             <button data-collapse-toggle="mobile-menu" type="button" onClick={handleClick} className="inline-flex items-center p-2 ml-1 text-sm text-gray-500 md:hidden rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="mobile-menu" aria-expanded="false">
@@ -29,6 +33,11 @@ export default function BurgerButton() {
                     <Link to="/players" className="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
                         Players
                     </Link>
+                    {logged &&
+                        <Link to="/profile" className="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
+                            Profile
+                        </Link>
+                    }
                 </ul>
             </div>
         </div>

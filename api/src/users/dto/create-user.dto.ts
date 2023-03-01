@@ -6,19 +6,12 @@ export class CreateUserDto {
     @ApiProperty({ type: String })
     @IsNotEmpty()
     @IsAlphanumeric()
-    // @IsLoginNameAlreadyExist() // Custom validation decorators (FONCTIONNE PAS)
-    // ... plus de validation ? 
     login_name: string;
     
     @ApiProperty({ type: String })
-    // @IsStrongPassword()
-    // ... plus de validation ? 
-    password: string;
+    @IsNotEmpty()
+    pseudo: string;
     
     @ApiProperty({ type: String })
-    @IsNotEmpty()
-    @IsAlphanumeric()
-    // @IsPseudoAlreadyExist() // Custom validation decorators (FONCTIONNE PAS)
-    // ... plus de validation ? 
-    pseudo: string;
+    password: string;
 }

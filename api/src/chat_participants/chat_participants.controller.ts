@@ -9,8 +9,8 @@ import { UpdateRoleDto } from './dto/update-role';
 import { ChatParticipantModel } from "./models/chat_participant.model";
 
 
-@Controller('api/chatParticipant')
-@ApiTags('api/chatParticipant')
+@Controller('api/chat_participant')
+@ApiTags('api/chat_participant')
 @UseFilters(HttpExceptionFilter)
 export class ChatParticipantsController {
   constructor(private readonly chatParticipantsService: ChatParticipantsService) { }

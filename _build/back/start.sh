@@ -17,6 +17,12 @@ then
     yarn add @nestjs/swagger 
     yarn add bcrypt @types/bcrypt
     yarn add class-validator class-transformer
+
+    yarn add axios
+    yarn add randomstring
+
+    yarn add @nestjs/passport passport passport-local @types/passport-local
+    yarn add @nestjs/jwt passport-jwt @types/passport-jwt
 fi
 
 
@@ -27,6 +33,10 @@ fi
 
 # Download node_modules
 yarn install
+
+yarn build 
+yarn typeorm migration:run
+
 
 
 if [ "$BUILD_TYPE" = "Production" ]; 
