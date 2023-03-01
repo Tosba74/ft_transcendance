@@ -16,4 +16,7 @@ export class LoggedUserDto {
 
     @ApiProperty({ type: Boolean })
     is_admin: boolean;
+
+    @ApiProperty({ type: Boolean })
+    is_tfa: boolean;
 }

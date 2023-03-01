@@ -20,6 +20,9 @@ then
 
     yarn add  @nestjs/passport passport passport-local @types/passport-local
     yarn add @nestjs/jwt passport-jwt @types/passport-jwt
+
+    yarn add otplib 
+    yarn add qrcode @types/qrcode
 fi
 
 

@@ -3,12 +3,15 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 
+import { UsersService } from '../../users/users.service';
+
 
 import { LoggedUserDto } from '../dto/logged_user.dto';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor() {
+
+  constructor(private readonly  usersService: UsersService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -16,7 +19,23 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
+   // isTfa allows to distinguish between tokens created with and without two-factor authentication
   async validate(payload: LoggedUserDto) {
+    // console.log('validate');
+    // console.log(payload);
+    const user = await this.usersService.findOneById(payload.id);
+    
+    // if (!user.tfa_enabled) {
+    //   console.log('NO TFA');
+    //   return user;
+    // }
+    // console.log(payload.is_tfa);
+    if (payload.is_tfa) {
+      console.log('TFA');
+      return user;
+    }
+    // if (payload.is_tfa === true)
+    //   console.log('TFA');
 
     // const loggedUser: LoggedUserDto = {
     //     id: payload.id,
@@ -31,4 +50,3 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     return payload;
   }
 }
-

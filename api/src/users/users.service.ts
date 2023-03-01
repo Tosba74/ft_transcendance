@@ -154,8 +154,6 @@ export class UsersService {
     }
   }
 
-
-
   async updatePseudo(id: number, updatePseudo: UpdatePseudoDto): Promise<UserModel> {
     try {
       let user: UserModel = await this.findOneById(id);
@@ -170,4 +168,41 @@ export class UsersService {
       throw new NotFoundException();
     }
   }
+
+  //--------------------------------------------
+
+  async turnOnTfa(id: number) {
+    try {
+      let user: UserModel = await this.findOneById(id);
+      user.tfa_enabled = true;
+      await this.usersRepository.save(user);
+      return user;
+    }
+    catch (error) {
+      throw new NotFoundException();
+    }
+  }
+
+  async setTfaCode(code: string, id: number): Promise<UserModel> {
+    try {
+      let user: UserModel = await this.findOneById(id);
+      user.tfa_code = code;
+      await this.usersRepository.save(user);
+      return user;
+    }
+    catch (error) {
+      throw new NotFoundException();
+    }
+  }
+
+  async getTfaCode(id: number): Promise<string> {
+    try {
+      let user: UserModel = await this.findOneById(id);
+      return user.tfa_code
+    }
+    catch (error) {
+      throw new NotFoundException();
+    }
+  }
+
 }
