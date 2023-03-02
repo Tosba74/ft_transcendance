@@ -26,7 +26,30 @@ export default function LogPage({ setLogged }: LogPageProps) {
                 if (res.status === 201) {
                     console.log(res.data['access_token']);
                     localStorage.setItem('token', res.data['access_token']);
-                    setLogged(true)
+                    setLogged(true);
+                }
+                else if (res.status === 206) {
+                    
+                    // replace inputs or add an input to ask for tfa_code
+                    console.log('send me your google authentication code ...');
+
+                    // handleSubmit2: after submit send it like this
+                    
+                    // axios.post("/api/login/basic",
+                    // {
+                    //     'username': loginName,
+                    //     'password': password,
+                    //     'tfa_code': tfa_code,
+                    // })
+                    // .then(res => {
+                        // if (res.status === 201) {
+                        //     console.log(res.data['access_token']);
+                        //     localStorage.setItem('token', res.data['access_token']);
+                        //     setLogged(true);
+                        // }
+                    // })
+                    // .catch(error => {
+                    // });
                 }
                 else {
                     // console.log('error', res.statusText);

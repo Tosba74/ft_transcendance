@@ -1,5 +1,6 @@
 
-import { Controller, Request, Response, Get, Post, UseGuards, UnauthorizedException, Body, BadRequestException, Redirect, HttpStatus } from '@nestjs/common';
+import { Controller, Request, Response, Res, Get, Post, UseGuards, UnauthorizedException, Body, BadRequestException, Redirect, HttpStatus } from '@nestjs/common';
+// import { Response } from 'express'; // get express types
 import { ApiTags } from '@nestjs/swagger';
 import axios from 'axios';
 
@@ -25,26 +26,19 @@ export class AuthController {
     @AllowPublic()
     @UseGuards(LocalAuthGuard)
     @Post('basic')
-    async basicLogin(@Request() req: any): Promise<any> {
+    async basicLogin(@Request() req: any, @Res({ passthrough: true }) response: any): Promise<any> {
 
-        // IF THE 2FA IS TURNED OFF, DIRECTLY RESPOND WITH A NEW JWT TOKEN WITH FULL ACCESS
-
+        // if the 2fa is turned off, directly respond with a new jwt token with full access
         if (req.user.tfa_enabled === false)
-            return this.authService.login(req.user);
+            return this.authService.login(req.user);;
         
         const secret: string | undefined = await this.usersService.getTfaSecret(req.user.id);
         if (secret === '' || secret === undefined)
             throw new BadRequestException('Tfa error: tfa is enabled but secret is not defined');
-            
-        
-        // OTHERWISE, ASK 6 DIGITS AUTH CODE AND SEND IT TO /API/LOGIN/TFA/AUTHENTICATE
 
-        // retourne null au front pour lui indiquer de demander le tfaCode de google auth
+        // retourne status 206 'partial content' au front pour lui indiquer de demander le tfa_code de google auth
+        response.status(206);
         return null;
-        // le front peut ensuite faire un POST sur localhost:8080/api/login/tfa/authenticate avec en body:
-            // username: tnanchen
-            // password: password
-            // tfaCode: 946013
     }
 
 

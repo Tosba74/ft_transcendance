@@ -20,7 +20,7 @@ export class AuthService {
     async validateUser(loginname: string, password: string): Promise<LoggedUserDto | null> {
 
         const user: UserModel = await this.usersService.findOneByLoginName(loginname);
-
+        
         if (user && user.password && await bcrypt.compare(password, user.password)) {
 
             // const loggedUser = user as LoggedUserDto;
