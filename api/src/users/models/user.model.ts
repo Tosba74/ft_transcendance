@@ -53,7 +53,7 @@ export class UserModel {
     
     @ApiResponseProperty({ type: String })
     @Column({ nullable: true, default: null })
-    tfa_code: string;
+    tfa_secret: string;
 
     //--------------------------------------------
     

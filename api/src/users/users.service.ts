@@ -56,7 +56,7 @@ export class UsersService {
   async findOneByLoginName(login: string): Promise<UserModel> {
     try {
       const user = await this.usersRepository.findOneOrFail({ 
-        select: [ 'id', 'login_name', 'pseudo', 'avatar_url', 'is_admin', 'password' ],
+        select: [ 'id', 'login_name', 'pseudo', 'avatar_url', 'tfa_enabled', 'is_admin', 'password' ],
         where: { login_name: login } 
       });
       return user;
@@ -86,7 +86,7 @@ export class UsersService {
     // newuser.tfa_email = createUserDto.tfa_email;
     // newuser.tfa_code = createUserDto.tfa_code;
     newuser.tfa_email = '';
-    newuser.tfa_code = '';
+    newuser.tfa_secret = '';
 
     newuser.status = new UserStatusModel(UserStatusModel.OFFLINE_STATUS);
     newuser.status_updated_at = new Date();
@@ -111,7 +111,7 @@ export class UsersService {
     
     newuser.tfa_enabled = false;
     newuser.tfa_email = '';
-    newuser.tfa_code = '';
+    newuser.tfa_secret = '';
 
     newuser.status = new UserStatusModel(UserStatusModel.OFFLINE_STATUS);
     newuser.status_updated_at = new Date();
@@ -157,8 +157,6 @@ export class UsersService {
     }
   }
 
-
-
   async updatePseudo(id: number, updatePseudo: UpdatePseudoDto): Promise<UserModel> {
     try {
       let user: UserModel = await this.findOneById(id);
@@ -173,4 +171,50 @@ export class UsersService {
       throw new NotFoundException();
     }
   }
+
+  //--------------------------------------------
+
+  async enableTfa(id: number) {
+    try {
+      let user: UserModel = await this.findOneById(id);
+      user.tfa_enabled = true;
+      await this.usersRepository.save(user);
+    }
+    catch (error) {
+      throw new NotFoundException();
+    }
+  }
+
+  async isTfaEnabled(id: number): Promise<boolean> {
+    try {
+      let user: UserModel = await this.findOneById(id);
+      return user.tfa_enabled;
+    }
+    catch (error) {
+      throw new NotFoundException();
+    }
+  }
+
+  async setTfaSecret(secret: string, id: number): Promise<UserModel> {
+    try {
+      let user: UserModel = await this.findOneById(id);
+      user.tfa_secret = secret;
+      await this.usersRepository.save(user);
+      return user;
+    }
+    catch (error) {
+      throw new NotFoundException();
+    }
+  }
+
+  async getTfaSecret(id: number): Promise<string | undefined> {
+    try {
+      let user: UserModel = await this.findOneById(id);
+      return user.tfa_secret
+    }
+    catch (error) {
+      throw new NotFoundException();
+    }
+  }
+
 }

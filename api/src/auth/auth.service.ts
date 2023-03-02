@@ -1,10 +1,14 @@
 
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException, InternalServerErrorException, BadRequestException, NotFoundException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { NotFoundException } from '@nestjs/common';
 import axios from 'axios';
+
+import { authenticator } from 'otplib';
+import { toFileStream } from 'qrcode';
+import { Response } from 'express';
+import { UserModel } from '../users/models/user.model';
 
 import { LoggedUserDto } from './dto/logged_user.dto';
 import { title } from 'process';
@@ -15,7 +19,7 @@ export class AuthService {
 
     async validateUser(loginname: string, password: string): Promise<LoggedUserDto | null> {
 
-        const user = await this.usersService.findOneByLoginName(loginname);
+        const user: UserModel = await this.usersService.findOneByLoginName(loginname);
 
         if (user && user.password && await bcrypt.compare(password, user.password)) {
 
@@ -27,6 +31,7 @@ export class AuthService {
                 pseudo: user.pseudo,
                 color: user.color,
                 avatar_url: user.avatar_url,
+                tfa_enabled: user.tfa_enabled,
                 is_admin: user.is_admin,
             };
 
@@ -48,6 +53,7 @@ export class AuthService {
                 pseudo: user.pseudo,
                 color: user.color,
                 avatar_url: user.avatar_url,
+                tfa_enabled: user.tfa_enabled,
                 is_admin: user.is_admin,
             };
 
@@ -96,18 +102,60 @@ export class AuthService {
                 pseudo: user.pseudo,
                 color: color,
                 avatar_url: user.avatar_url,
+                tfa_enabled: user.tfa_enabled,
                 is_admin: user.is_admin,
             };
 
             return loggedUser;
         }
-        return null
+        return null;
+    }
+    
+    async login(user: any, is_tfa: boolean = false) {   
+        if (is_tfa == true)
+        {
+            // allows replacement of token datas
+            delete user.exp;
+            delete user.iat;
+        }
+        const access_token = this.jwtService.sign(user);
+        return {...user, is_tfa: is_tfa, access_token: access_token};
     }
 
-    async login(user: LoggedUserDto) {
-        const access_token = this.jwtService.sign(user);
+    // revoke jwt token ?
+    // async logout(user: any) { }
+    
+    //--------------------------------------------
 
-        return { ...user, access_token: access_token };
+    async generateTfaSecret(user: any): Promise<string> {
+        const secret: string = authenticator.generateSecret();
+        const appname: string | undefined = process.env.AUTH_APP_NAME;
+        if (!appname)
+            throw new InternalServerErrorException();
+        else
+        {
+            const otpauthUrl: string = authenticator.keyuri(user.tfa_email, appname, secret);
+
+            // save the secret (associated with the qrcode) in the database
+            await this.usersService.setTfaSecret(secret, user.userId);
+            return otpauthUrl;
+        }
+    }
+
+    async pipeQrCodeStream(stream: Response, otpauthUrl: string) {
+        return toFileStream(stream, otpauthUrl);
+    }
+
+    async isTfaValid(tfaCode: string, user: UserModel) {
+        const tfa_secret: string | undefined = await this.usersService.getTfaSecret(user.id);
+        
+        if (tfa_secret === '' || tfa_secret === undefined || user.tfa_enabled === false)
+            throw new UnauthorizedException('TFA not activated');
+
+        return authenticator.verify({
+            token: tfaCode,
+            secret:  tfa_secret
+        });
     }
 
 }
