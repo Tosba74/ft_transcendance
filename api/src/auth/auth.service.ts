@@ -127,20 +127,6 @@ export class AuthService {
     
     //--------------------------------------------
 
-    // async generateTfaSecret(user: any): Promise<string> {
-    //     const secret: string = authenticator.generateSecret();
-    //     const appname: string | undefined = process.env.AUTH_APP_NAME;
-    //     if (!appname)
-    //         throw new InternalServerErrorException();
-    //     else
-    //     {
-    //         const otpauthUrl: string = authenticator.keyuri(user.tfa_email, appname, secret);
-
-    //         // save the secret (associated with the qrcode) in the database
-    //         await this.usersService.setTfaSecret(secret, user.userId);
-    //         return otpauthUrl;
-    //     }
-    // }
     async generateTfaSecret(id: number): Promise<string> {
         const secret: string = authenticator.generateSecret();
         const appname: string | undefined = process.env.AUTH_APP_NAME;
