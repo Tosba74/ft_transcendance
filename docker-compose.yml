@@ -11,13 +11,10 @@ services:
     networks:
       - netpong
 
-    # environment:
-    #   POSTGRES_USER: ${DB_USERNAME}
-    #   POSTGRES_PASSWORD: ${DB_PASSWORD}
-    #   POSTGRES_DB: ${DB_DB}
-    env_file:
-      - .env
-
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DB}
 
   back:
     build: ./_build/back
@@ -30,19 +27,19 @@ services:
     networks:
       - netpong
 
-    # environment:
-    #   DATABASE_USER: ${DB_USERNAME}
-    #   DATABASE_PASSWORD: ${DB_PASSWORD}
-    #   DATABASE_DB: ${DB_DB}
+    environment:
+      DATABASE_USER: ${DB_USERNAME}
+      DATABASE_PASSWORD: ${DB_PASSWORD}
+      DATABASE_DB: ${DB_DB}
 
-    #   JWT_SECRET: ${JWT_SECRET}
+      JWT_SECRET: ${JWT_SECRET}
 
-    #   API_AUTHORIZE: ${API_AUTHORIZE}
-    #   API_REDIRECT_URL: ${API_REDIRECT_URL}
-    #   API_UID: ${API_UID}
-    #   API_SECRET: ${API_SECRET}
-    env_file:
-      - .env
+      API_AUTHORIZE: ${API_AUTHORIZE}
+      API_REDIRECT_URL: ${API_REDIRECT_URL}
+      API_UID: ${API_UID}
+      API_SECRET: ${API_SECRET}
+
+      AUTH_APP_NAME: ${AUTH_APP_NAME}
 
     working_dir: /app
 
