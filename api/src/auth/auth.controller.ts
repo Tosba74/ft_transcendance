@@ -67,7 +67,7 @@ export class AuthController {
 
     @Post('apicallback')
     @AllowPublic()
-    async apiLogin(@Body() oauth2Dto: Oauth2Dto): Promise<LoggedUserDto> {
+    async apiLogin(@Body() oauth2Dto: Oauth2Dto): Promise<any> {
 
         const api_uid = process.env.API_UID;
         const api_secret = process.env.API_SECRET;
@@ -135,7 +135,6 @@ export class AuthController {
 
     // (actually allows to re-generate multiple secret-qrcode, maybe externalise this possibility in another route)
     @AllowLogged()
-    @UseGuards(LocalAuthGuard)
     @Post('tfa/activate')
     async activate(@Response() res: any, @Request() req: any) {
         // generate a tfa_secret and store it in db
@@ -156,7 +155,7 @@ export class AuthController {
     @AllowPublic()
     @UseGuards(LocalAuthGuard)
     @Post('tfa/authenticate')
-    async authenticate(@Request() req: any, @Body() body: any): Promise<LoggedUserDto> {
+    async authenticate(@Request() req: any, @Body() body: any): Promise<any> {
         const isCodeValid: boolean = await this.authService.isTfaValid(body.tfaCode, req.user);
         if (!isCodeValid) {
             throw new UnauthorizedException('Wrong authentication code');

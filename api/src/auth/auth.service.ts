@@ -119,11 +119,10 @@ export class AuthService {
             delete user.iat;
         }
         const access_token = this.jwtService.sign(user);
-        return {...user, is_tfa: is_tfa, access_token: access_token};
+        // return access_token;
+        return {...user, is_tfa: is_tfa, access_token: access_token};   // est-ce qu'on renvoie pas juste le token vu qu il contient deja les info du user ?
     }
 
-    // revoke jwt token ?
-    // async logout(user: any) { }
     
     //--------------------------------------------
 
