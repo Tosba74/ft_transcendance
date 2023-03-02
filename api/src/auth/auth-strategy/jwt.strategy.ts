@@ -31,7 +31,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     // };
 
     // const loggedUser = payload as LoggedUserDto;
-
     return payload;
   }
 }

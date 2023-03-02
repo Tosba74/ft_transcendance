@@ -133,9 +133,8 @@ export class AuthController {
     //--------------------------------------------
 
 
-    // (actually allows to re-generate multiple secret-qrcode, maybe externalise this possibility in another route)
     @AllowLogged()
-    @Post('tfa/activate')
+    @Get('tfa/activate')
     async activate(@Response() res: any, @Request() req: any) {
         // generate a tfa_secret and store it in db
         const otpAuthUrl: string = await this.authService.generateTfaSecret(req.user.id);
@@ -156,12 +155,11 @@ export class AuthController {
     @UseGuards(LocalAuthGuard)
     @Post('tfa/authenticate')
     async authenticate(@Request() req: any, @Body() body: any): Promise<any> {
-        const isCodeValid: boolean = await this.authService.isTfaValid(body.tfaCode, req.user);
+        const isCodeValid: boolean = await this.authService.isTfaValid(body.tfa_code, req.user);
         if (!isCodeValid) {
             throw new UnauthorizedException('Wrong authentication code');
         }
 
-        // respond with a new JWT token with full access
         return this.authService.login(req.user, true);
     }
 

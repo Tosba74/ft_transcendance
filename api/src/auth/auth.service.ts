@@ -119,8 +119,8 @@ export class AuthService {
             delete user.iat;
         }
         const access_token = this.jwtService.sign(user);
-        // return access_token;
-        return {...user, is_tfa: is_tfa, access_token: access_token};   // est-ce qu'on renvoie pas juste le token vu qu il contient deja les info du user ?
+        return {access_token: access_token};
+        // return {...user, is_tfa: is_tfa, access_token: access_token};   // est-ce qu'on renvoie pas juste le token vu qu il contient deja les info du user ?
     }
 
     
@@ -146,14 +146,14 @@ export class AuthService {
         return toFileStream(stream, otpauthUrl);
     }
 
-    async isTfaValid(tfaCode: string, user: UserModel) {
+    async isTfaValid(tfa_code: string, user: UserModel) {
         const tfa_secret: string | undefined = await this.usersService.getTfaSecret(user.id);
         
         if (tfa_secret === '' || tfa_secret === undefined || user.tfa_enabled === false)
             throw new UnauthorizedException('TFA not activated');
 
         return authenticator.verify({
-            token: tfaCode,
+            token: tfa_code,
             secret:  tfa_secret
         });
     }
