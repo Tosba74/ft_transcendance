@@ -32,8 +32,8 @@ export class AuthController {
         if (req.user.tfa_enabled === false)
             return this.authService.login(req.user);
         
-            const secret: string | undefined = await this.usersService.getTfaSecret(req.user.id);
-            if (secret === '' || secret === undefined)
+        const secret: string | undefined = await this.usersService.getTfaSecret(req.user.id);
+        if (secret === '' || secret === undefined)
             throw new BadRequestException('Tfa error: tfa is enabled but secret is not defined');
             
         
@@ -139,7 +139,7 @@ export class AuthController {
     @Post('tfa/activate')
     async activate(@Response() res: any, @Request() req: any) {
         // generate a tfa_secret and store it in db
-        const otpAuthUrl: string = await this.authService.generateTfaSecret(req.user);
+        const otpAuthUrl: string = await this.authService.generateTfaSecret(req.user.id);
         
         // set tfa_enable to true
         await this.usersService.enableTfa(req.user.id);
@@ -148,7 +148,7 @@ export class AuthController {
         return this.authService.pipeQrCodeStream(res, otpAuthUrl);
     }
 
-    
+
     // async turnOffTfa (@Request() req: any, @Body() body: any): Promise<LoggedUserDto> {}
 
 
