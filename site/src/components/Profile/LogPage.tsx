@@ -34,8 +34,8 @@ export default function LogPage({ setLogged }: LogPageProps) {
                     console.log('send me your google authentication code ...');
 
                     // handleSubmit2: after submit send it like this
-                    
-                    // axios.post("/api/login/basic",
+
+                    // axios.post("/api/login/tfa/authenticate",
                     // {
                     //     'username': loginName,
                     //     'password': password,
