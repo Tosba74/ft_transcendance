@@ -12,6 +12,7 @@ import LogPage from './components/Profile/LogPage';
 
 import NavBar from './components/NavBar/NavBar';
 import ChatPage from './components/Chat/ChatPage';
+import ExempleChat from './components/Chat/exemple';
 
 import LoginApi from './components/Profile/LoginApi';
 import Logout from './components/Profile/Logout';
@@ -70,6 +71,7 @@ export default function App() {
           <Route path="/profile/:id" element={<ProfilePage />} />
           <Route path="/game" element={<GamePage />} />
           <Route path="/chat" element={<ChatPage/>} />
+          <Route path="/exemplechat" element={<ExempleChat />} />
           <Route path="/history" element={<ReactPage />} />
           <Route path="/login" element={<LogPage setLogged={setLogged} />} />
           <Route path="/loginapi" element={<LoginApi setLogged={setLogged} />} />

@@ -1,7 +1,11 @@
 import React from "react";
+import ChatIcon from '../Chat/ChatIcon'
 
-export default function  HomePage() {
+export default function HomePage() {
     return (
-        <h2>Home !!</h2>
+        <div>
+            <h2>Home !!</h2>
+            <ChatIcon />
+        </div>
     );
 }

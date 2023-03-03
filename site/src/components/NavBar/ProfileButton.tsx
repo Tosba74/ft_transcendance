@@ -1,5 +1,6 @@
 import LogoInconnu from '../../assets/img/inconnu.jpeg'
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 interface ProfileButtonProps {
 	logged: boolean,
@@ -26,29 +27,29 @@ export default function ProfileButton({ logged }: ProfileButtonProps) {
 				</div>
 				<ul className="py-2" aria-labelledby="user-menu-button">
 					{logged &&
-						<>
-							<li>
-								<a href="/history" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">History</a>
-							</li>
-							<li>
-								<a href="/profile/:id" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Settings</a>
-							</li>
-						</>
+						<ul>
+							<Link to="/history" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+								History
+							</Link>
+							<Link to="/profile/:id" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+								Settings
+							</Link>
+						</ul>
 					}
 					{!logged &&
-						<>
-							<li>
-								<a href="/login" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Log in</a>
-							</li>
-							<li>
-								<a href="/api/login/apisignin" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Log in api</a>
-							</li>
-						</>
+						<ul>
+							<Link to="/login" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+								Log in
+							</Link>
+							<Link to="/api/login/apisignin" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+								Log in api
+							</Link>
+						</ul>
 					}
 					{logged &&
-						<li>
-							<a href="/logout" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Log out</a>
-						</li>
+						<Link to="/logout" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+							Log out
+						</Link>
 					}
 				</ul>
 			</div>
