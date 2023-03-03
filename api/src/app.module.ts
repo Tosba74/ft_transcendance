@@ -11,6 +11,7 @@ import { UsersModule } from './users/users.module';
 import { UserStatusModule } from './user_status/user_status.module';
 import { FriendTypesModule } from './friend_types/friend_types.module';
 import { FriendsModule } from './friends/friends.module';
+import { BlockedsModule } from './blockeds/blockeds.module';
 
 import { ChatTypesModule } from './chat_types/chat_types.module';
 import { ChatRolesModule } from './chat_roles/chat_roles.module';
@@ -27,7 +28,7 @@ import { MeModule } from './me/me.module';
 
 @Module({
   imports: [TypeOrmModule.forRoot(config),
-    UsersModule, UserStatusModule, FriendTypesModule, FriendsModule, FriendTypesModule,
+    UsersModule, UserStatusModule, FriendTypesModule, FriendsModule, FriendTypesModule, BlockedsModule,
     ChatTypesModule, ChatRolesModule, ChatsModule, ChatMessagesModule, ChatParticipantsModule,
     AuthModule, MeModule,
     ChatModule,

@@ -92,7 +92,7 @@ export class AuthController {
             // If the state don't match the randomstring generated, the request has been created by a third party and the process should be aborted.
             const index: number = this.states.findIndex(el => el === oauth2Dto.state);
             if (index == -1) {
-                throw new BadRequestException();
+                throw new BadRequestException('State doesn\'t exists');
             }
             this.states.splice(index, 1);
 
@@ -102,10 +102,10 @@ export class AuthController {
             if (user) {
                 return this.authService.login(user);
             }
-            throw new UnauthorizedException();
+            throw new UnauthorizedException('Api user validation error');
         }
         catch (AxiosError) {
-            throw new UnauthorizedException();
+            throw new UnauthorizedException('Api 42 connection error');
         }
 
     }

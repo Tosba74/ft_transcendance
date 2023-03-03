@@ -4,6 +4,7 @@ import { UserModel } from 'src/users/models/user.model';
 import { UserStatusModel } from 'src/user_status/models/user_status.model';
 import { FriendTypeModel } from 'src/friend_types/models/friend_type.model';
 import { FriendModel } from 'src/friends/models/friend.model';
+import { BlockedModel } from 'src/blockeds/models/blocked.model';
 
 import { ChatTypeModel } from 'src/chat_types/models/chat_type.model';
 import { ChatRoleModel } from 'src/chat_roles/models/chat_role.model';
@@ -22,7 +23,7 @@ const config: PostgresConnectionOptions = {
 	synchronize: false,
 	logging: false,
 
-	entities: [ UserStatusModel, UserModel, FriendTypeModel, FriendModel, 
+	entities: [ UserStatusModel, UserModel, FriendTypeModel, FriendModel, BlockedModel,
 		ChatTypeModel, ChatRoleModel, ChatModel, ChatMessageModel, ChatParticipantModel,
 	],
 	migrations: ['dist/_typeorm/migrations/*.js'],
