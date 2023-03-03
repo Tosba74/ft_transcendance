@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -21,26 +21,26 @@ export class UsersService {
 
   async findOneById(id: number): Promise<UserModel> {
     try {
-      const user = await this.usersRepository.findOneOrFail({ 
-        where: { id: id } 
+      const user = await this.usersRepository.findOneOrFail({
+        where: { id: id }
       });
       return user;
     }
     catch (error) {
-      throw new NotFoundException();
+      throw new NotFoundException('User id not found');
     }
   }
 
   async findOneByLoginName(login: string): Promise<UserModel> {
     try {
-      const user = await this.usersRepository.findOneOrFail({ 
-        select: [ 'id', 'login_name', 'pseudo', 'avatar_url', 'tfa_enabled', 'is_admin', 'password' ],
-        where: { login_name: login } 
+      const user = await this.usersRepository.findOneOrFail({
+        select: ['id', 'login_name', 'pseudo', 'avatar_url', 'tfa_enabled', 'is_admin', 'password'],
+        where: { login_name: login }
       });
       return user;
     }
     catch (error) {
-      throw new NotFoundException('hey');
+      throw new NotFoundException('User login not found');
     }
   }
 
@@ -78,7 +78,7 @@ export class UsersService {
 
     newuser.avatar_url = avatar;
     newuser.color = color;
-    
+
     newuser.tfa_enabled = false;
     newuser.tfa_secret = '';
 
@@ -87,17 +87,6 @@ export class UsersService {
 
     await this.usersRepository.save(newuser);
     return newuser;
-  }
-
-  // EXCEPTION MARCHE PAS ???
-  async delete(id: number): Promise<void> {
-    try {
-      const user: UserModel = await this.findOneById(id);
-      this.usersRepository.delete(id);
-    }
-    catch (error) {
-      throw new NotFoundException();
-    } 
   }
 
 
@@ -117,12 +106,15 @@ export class UsersService {
       if (updateUserDto.pseudo)
         user.pseudo = updateUserDto.pseudo;
 
-      await this.usersRepository.save(user);
+
+      await this.usersRepository.save(user).catch((err: any) => {
+        throw new BadRequestException('User update error');
+      });
 
       return user;
     }
     catch (error) {
-      throw new NotFoundException();
+      throw new NotFoundException('User id not found');
     }
   }
 
@@ -133,11 +125,24 @@ export class UsersService {
       if (updatePseudo.pseudo)
         user.pseudo = updatePseudo.pseudo;
 
-      await this.usersRepository.save(user);
+      await this.usersRepository.save(user).catch((err: any) => {
+        throw new BadRequestException('User pseudo update error');
+      });
       return user;
     }
     catch (error) {
-      throw new NotFoundException();
+      throw new NotFoundException('User id not found');
+    }
+  }
+
+  // EXCEPTION MARCHE PAS ???
+  async delete(id: number): Promise<void> {
+    try {
+      const user: UserModel = await this.findOneById(id);
+      this.usersRepository.delete(id);
+    }
+    catch (error) {
+      throw new NotFoundException('User id not found');
     }
   }
 
@@ -150,7 +155,7 @@ export class UsersService {
       await this.usersRepository.save(user);
     }
     catch (error) {
-      throw new NotFoundException();
+      throw new NotFoundException('User id not found');
     }
   }
 
@@ -160,7 +165,7 @@ export class UsersService {
       return user.tfa_enabled;
     }
     catch (error) {
-      throw new NotFoundException();
+      throw new NotFoundException('User id not found');
     }
   }
 
@@ -172,7 +177,7 @@ export class UsersService {
       return user;
     }
     catch (error) {
-      throw new NotFoundException();
+      throw new NotFoundException('User id not found');
     }
   }
 
@@ -182,7 +187,7 @@ export class UsersService {
       return user.tfa_secret
     }
     catch (error) {
-      throw new NotFoundException();
+      throw new NotFoundException('User id not found');
     }
   }
 

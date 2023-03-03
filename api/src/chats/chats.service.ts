@@ -18,13 +18,13 @@ export class ChatsService {
 
   async findOneById(id: number): Promise<ChatModel> {
     try {
-      const chat = await this.chatsRepository.findOneOrFail({ 
-        where: { id: id } 
+      const chat = await this.chatsRepository.findOneOrFail({
+        where: { id: id }
       });
       return chat;
     }
     catch (error) {
-      throw new NotFoundException();
+      throw new NotFoundException('Chat id not found');
     }
   }
 
@@ -50,14 +50,12 @@ export class ChatsService {
       res.password = hash;
     }
 
-    try {
-      const created = await this.chatsRepository.save(res);
+    const created = await this.chatsRepository.save(res).catch((err: any) => {
+      throw new BadRequestException('Chat creation error');
+    });
 
-      return created;
-    }
-    catch (error) {
-      throw new BadRequestException();
-    }
+    return created;
+
   }
 
   async delete(id: number): Promise<void> {
@@ -66,7 +64,7 @@ export class ChatsService {
       this.chatsRepository.delete({ id: id });
     }
     catch (error) {
-      throw new NotFoundException();
+      throw new NotFoundException('Chat id not found');
     }
   }
 }

@@ -31,7 +31,7 @@ export class FriendsService {
       return friend;
     }
     catch (error) {
-      throw new NotFoundException();
+      throw new NotFoundException('Friend id not found');
     }
   }
 
@@ -39,7 +39,7 @@ export class FriendsService {
   async createFriendship(friender_id: number, newfriend_id: number): Promise<FriendModel> {
 
     if (friender_id == newfriend_id)
-      throw new BadRequestException();
+      throw new BadRequestException('Cannot self friend');
 
 
     const reverseFriend = await this.friendsRepository.findOne({
@@ -68,7 +68,7 @@ export class FriendsService {
     const alreadyExists = await this.friendsRepository.findOne({
       where: {
         first_user: { id: friender_id },
-        second_user: { id: newfriend_id},
+        second_user: { id: newfriend_id },
       },
       relations: {
         // first_user: true,
@@ -88,14 +88,11 @@ export class FriendsService {
       friend_type: { id: FriendTypeModel.ASKED_TYPE },
     });
 
-    try {
-      const createdfriend = await this.friendsRepository.save(newfriend);
-      return await this.findOneById(createdfriend.id);
+    const createdfriend = await this.friendsRepository.save(newfriend).catch((err: any) => {
+      throw new BadRequestException('Friend creation error');
+    });
 
-    }
-    catch (error) {
-      throw new BadRequestException();
-    }
+    return await this.findOneById(createdfriend.id);
   }
 
 
@@ -103,7 +100,7 @@ export class FriendsService {
   async deleteFriendship(friender_id: number, newfriend_id: number): Promise<void> {
 
     if (friender_id == newfriend_id)
-      throw new BadRequestException();
+      throw new BadRequestException('Cannot self friend delete');
 
 
     const reverseFriend = await this.friendsRepository.findOne({

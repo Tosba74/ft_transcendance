@@ -111,13 +111,7 @@ export class AuthService {
         return null;
     }
     
-    async login(user: any, is_tfa: boolean = false) {   
-        // if (is_tfa == true)
-        // {
-        //     // allows replacement of token datas
-        //     delete user.exp;
-        //     delete user.iat;
-        // }
+    async login(user: any, is_tfa: boolean = false) {
         const access_token = this.jwtService.sign(user);
         return {access_token: access_token};
         // return {...user, is_tfa: is_tfa, access_token: access_token};   // est-ce qu'on renvoie pas juste le token vu qu il contient deja les info du user ?
@@ -130,7 +124,7 @@ export class AuthService {
         const secret: string = authenticator.generateSecret();
         const appname: string | undefined = process.env.AUTH_APP_NAME;
         if (!appname)
-            throw new InternalServerErrorException();
+            throw new InternalServerErrorException('Missing app name');
         else
         {
             const user: UserModel = await this.usersService.findOneById(id);

@@ -22,7 +22,7 @@ export class ChatRolesService {
       return chatRole;
     } 
     catch (error) {
-      throw new NotFoundException();
+      throw new NotFoundException('Chat role id not found');
     }
   }
 }
