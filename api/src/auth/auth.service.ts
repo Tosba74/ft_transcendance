@@ -112,12 +112,12 @@ export class AuthService {
     }
     
     async login(user: any, is_tfa: boolean = false) {   
-        if (is_tfa == true)
-        {
-            // allows replacement of token datas
-            delete user.exp;
-            delete user.iat;
-        }
+        // if (is_tfa == true)
+        // {
+        //     // allows replacement of token datas
+        //     delete user.exp;
+        //     delete user.iat;
+        // }
         const access_token = this.jwtService.sign(user);
         return {access_token: access_token};
         // return {...user, is_tfa: is_tfa, access_token: access_token};   // est-ce qu'on renvoie pas juste le token vu qu il contient deja les info du user ?
@@ -134,7 +134,7 @@ export class AuthService {
         else
         {
             const user: UserModel = await this.usersService.findOneById(id);
-            const otpauthUrl: string = authenticator.keyuri(user.tfa_email, appname, secret);
+            const otpauthUrl: string = authenticator.keyuri(user.login_name, appname, secret);
 
             // save the secret (associated with the qrcode) in the database
             await this.usersService.setTfaSecret(secret, user.id);

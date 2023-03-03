@@ -49,10 +49,6 @@ export class UserModel {
     
     @ApiResponseProperty({ type: String })
     @Column({ nullable: true, default: null })
-    tfa_email: string;
-    
-    @ApiResponseProperty({ type: String })
-    @Column({ nullable: true, default: null })
     tfa_secret: string;
 
     //--------------------------------------------
