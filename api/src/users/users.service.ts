@@ -56,7 +56,11 @@ export class UsersService {
   async findOneByLoginName(login: string): Promise<UserModel> {
     try {
       const user = await this.usersRepository.findOneOrFail({
+<<<<<<< HEAD
         select: ['id', 'login_name', 'pseudo', 'avatar_url', 'tfa_enabled', 'is_admin', 'password'],
+=======
+        select: ['id', 'login_name', 'pseudo', 'avatar_url', 'is_admin', 'password'],
+>>>>>>> dev
         where: { login_name: login }
       });
       return user;
