@@ -121,6 +121,7 @@ export class AuthController {
         }
         catch (AxiosError) {
             throw new UnauthorizedException('Api 42 connection error');
+<<<<<<< HEAD
         }
 
     }
@@ -154,6 +155,8 @@ export class AuthController {
         const isCodeValid: boolean = await this.authService.isTfaValid(body.tfa_code, req.user);
         if (!isCodeValid) {
             throw new UnauthorizedException('Wrong authentication code');
+=======
+>>>>>>> dev
         }
 
         return this.authService.login(req.user, true);
