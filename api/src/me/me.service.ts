@@ -17,27 +17,18 @@ export class MeService {
     private friendsService: FriendsService,
   ) { }
 
+  async listFriends(user: LoggedUserDto): Promise<UserModel[]> {
+
+    return this.friendsService.findFriends(user.id);
+  }
+
   async addFriend(user: LoggedUserDto, friend_id: number): Promise<FriendModel> {
 
-    // const user = await this.usersService.findOneByLoginName(loginname);
+    return this.friendsService.createFriendship(user.id, friend_id);
+  }
 
-    // if (user && user.password && await bcrypt.compare(password, user.password)) {
+  async removeFriend(user: LoggedUserDto, friend_id: number): Promise<void> {
 
-    //   // const loggedUser = user as LoggedUserDto;
-
-    //   const loggedUser: LoggedUserDto = {
-    //     id: user.id,
-    //     login_name: user.login_name,
-    //     pseudo: user.pseudo,
-    //     avatar_url: user.avatar_url,
-    //     is_admin: user.is_admin,
-    //   };
-
-    //   return loggedUser;
-    // }
-
-    // return null;
-
-    return new FriendModel();
+    return this.friendsService.deleteFriendship(user.id, friend_id);
   }
 }

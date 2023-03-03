@@ -7,6 +7,7 @@ import { UsersService } from 'src/users/users.service';
 import { FriendModel } from "./models/friend.model";
 import { FriendTypeModel } from 'src/friend_types/models/friend_type.model';
 import { FriendDto } from './dto/friend.dto';
+import { arrayBuffer } from 'stream/consumers';
 
 
 @Injectable()
@@ -36,6 +37,34 @@ export class FriendsService {
   }
 
 
+  async findFriends(id: number): Promise<UserModel[]> {
+    const friends1 = await this.friendsRepository.find({
+      where: {
+        first_user: { id: id },
+        friend_type: { id: FriendTypeModel.FRIEND_TYPE }
+      },
+      relations: {
+        second_user: true,
+      }
+    });
+
+    const friends2 = await this.friendsRepository.find({
+      where: {
+        second_user: { id: id },
+        friend_type: { id: FriendTypeModel.FRIEND_TYPE },
+      },
+      relations: {
+        first_user: true,
+      }
+    });
+
+    let res: UserModel[] = friends1.map(value => value.second_user);
+    res = res.concat(friends2.map(value => value.first_user));
+
+    return res;
+  }
+
+
   async createFriendship(friender_id: number, newfriend_id: number): Promise<FriendModel> {
 
     if (friender_id == newfriend_id)
@@ -59,7 +88,9 @@ export class FriendsService {
         reverseFriend.friend_type.id = FriendTypeModel.FRIEND_TYPE;
       }
 
-      await this.friendsRepository.save(reverseFriend);
+      await this.friendsRepository.save(reverseFriend).catch((err: any) => {
+        throw new BadRequestException('Friend creation error');
+      });
 
       return this.findOneById(reverseFriend.id);
     }

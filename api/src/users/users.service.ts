@@ -66,6 +66,8 @@ export class UsersService {
     }
   }
 
+
+
   async create(createUserDto: CreateUserDto): Promise<UserModel> {
     const newuser = new UserModel();
 
@@ -93,7 +95,9 @@ export class UsersService {
 
     // validate_date = null at creation
 
-    await this.usersRepository.save(newuser);
+    await this.usersRepository.save(newuser).catch((err: any) => {
+      throw new BadRequestException('User creation error');
+    });
     return newuser;
   }
 
@@ -116,7 +120,9 @@ export class UsersService {
     newuser.status = new UserStatusModel(UserStatusModel.OFFLINE_STATUS);
     newuser.status_updated_at = new Date();
 
-    await this.usersRepository.save(newuser);
+    await this.usersRepository.save(newuser).catch((err: any) => {
+      throw new BadRequestException('User creation error');
+    });
     return newuser;
   }
 

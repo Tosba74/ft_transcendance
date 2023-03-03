@@ -7,6 +7,10 @@ import { MeService } from './me.service';
 import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
 
 
+import { FriendModel } from 'src/friends/models/friend.model';
+import { UserModel } from 'src/users/models/user.model';
+
+
 
 @Controller('api/me')
 @ApiTags('api/me')
@@ -21,15 +25,28 @@ export class MeController {
         return req.user as LoggedUserDto;
     }
 
-    // @Get()
-    // public findAll(): Promise<FriendModel[]> {
-    //     return this.friendsService.findAll();
-    // }
+
+
+    @Get('friends')
+    @ApiOkResponse({ description: 'Friends retrieved successfully', type: [FriendModel] })
+    public listFriendships(@Request() req: any): Promise<UserModel[]> {
+
+        return this.meService.listFriends(req.user as LoggedUserDto);
+    }
     
-    
-    // @Get('friends')
-    // @ApiOkResponse({ description: 'Friends retrieved successfully', type: FriendModel, isArray: true})
-    // getFriends(@Request() req: any) {
-    //     return req.user;
-    // }
+    @Post('friends/:id')
+    @ApiCreatedResponse({ description: 'Friend created successfully', type: FriendModel })
+    @ApiBadRequestResponse({ description: 'Friend validation error' })
+    public createFriendship(@Request() req: any, @Param('id', ParseIntPipe) id: number): Promise<FriendModel> {
+
+        return this.meService.addFriend(req.user as LoggedUserDto, id);
+    }
+
+    @Delete('friends/:id')
+    @ApiNoContentResponse({ description: 'Friend deleted successfully', type: FriendModel })
+    @ApiBadRequestResponse({ description: 'Friend validation error' })
+    public deleteFriendship(@Request() req: any, @Param('id', ParseIntPipe) id: number): Promise<FriendModel> {
+
+        return this.meService.addFriend(req.user as LoggedUserDto, id);
+    }
 }
