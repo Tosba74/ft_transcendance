@@ -10,6 +10,7 @@ import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
 import { FriendModel } from 'src/friends/models/friend.model';
 import { UserModel } from 'src/users/models/user.model';
 import { BlockedModel } from 'src/blockeds/models/blocked.model';
+import { ChatParticipantModel } from 'src/chat_participants/models/chat_participant.model';
 
 
 
@@ -50,7 +51,6 @@ export class MeController {
         return this.meService.removeFriend(req.user as LoggedUserDto, id);
     }
 
-
     @Get('blockeds')
     @ApiOkResponse({ description: 'Blockeds retrieved successfully', type: [FriendModel] })
     public listBlockeds(@Request() req: any): Promise<BlockedModel[]> {
@@ -80,4 +80,35 @@ export class MeController {
 
         return this.meService.removeBlocked(req.user as LoggedUserDto, id);
     }
+
+
+    @Get('chats')
+    @ApiOkResponse({ description: 'Blockeds retrieved successfully', type: [ChatParticipantModel] })
+    public chats(@Request() req: any): Promise<ChatParticipantModel[]> {
+
+        return this.meService.listChats(req.user as LoggedUserDto);
+    }
+
+    // @Get('blockedby')
+    // @ApiOkResponse({ description: 'Blockeds by retrieved successfully', type: [FriendModel] })
+    // public listBlockedBy(@Request() req: any): Promise<BlockedModel[]> {
+
+    //     return this.meService.listBlockedBy(req.user as LoggedUserDto);
+    // }
+    
+    // @Post('frienblockedds/:id')
+    // @ApiCreatedResponse({ description: 'Blocked created successfully', type: BlockedModel })
+    // @ApiBadRequestResponse({ description: 'Blocked validation error' })
+    // public createBlocked(@Request() req: any, @Param('id', ParseIntPipe) id: number): Promise<BlockedModel> {
+
+    //     return this.meService.addBlocked(req.user as LoggedUserDto, id);
+    // }
+
+    // @Delete('blocked/:id')
+    // @ApiNoContentResponse({ description: 'Blocked deleted successfully' })
+    // @ApiBadRequestResponse({ description: 'Blocked validation error' })
+    // public deleteBlocked(@Request() req: any, @Param('id', ParseIntPipe) id: number): Promise<void> {
+
+    //     return this.meService.removeBlocked(req.user as LoggedUserDto, id);
+    // }
 }

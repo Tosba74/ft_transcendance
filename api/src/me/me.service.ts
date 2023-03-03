@@ -2,14 +2,19 @@ import { ConsoleLogger, Injectable, NotFoundException, BadRequestException } fro
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
+
 import { UserModel } from 'src/users/models/user.model';
 import { UsersService } from 'src/users/users.service';
-import { FriendsService } from 'src/friends/friends.service';
 
-import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
+import { FriendsService } from 'src/friends/friends.service';
 import { FriendModel } from 'src/friends/models/friend.model';
+
 import { BlockedModel } from 'src/blockeds/models/blocked.model';
 import { BlockedsService } from 'src/blockeds/blockeds.service';
+
+import { ChatParticipantsService } from 'src/chat_participants/chat_participants.service';
+import { ChatParticipantModel } from 'src/chat_participants/models/chat_participant.model';
 
 
 @Injectable()
@@ -18,6 +23,7 @@ export class MeService {
     private usersService: UsersService,
     private friendsService: FriendsService,
     private blockedsService: BlockedsService,
+    private chatParticipantService: ChatParticipantsService,
   ) { }
 
   async listFriends(user: LoggedUserDto): Promise<UserModel[]> {
@@ -56,4 +62,13 @@ export class MeService {
 
     return this.blockedsService.unblockUser(user.id, blocked_id);
   }
+
+
+  async listChats(user: LoggedUserDto): Promise<ChatParticipantModel[]> {
+
+    return this.chatParticipantService.listChats(user.id);
+  }
+
+
+
 }

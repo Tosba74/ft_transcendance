@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException, } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 
 import { ChatParticipantModel } from "./models/chat_participant.model";
 import { CreateParticipantDto } from './dto/create-participant';
@@ -28,6 +28,17 @@ export class ChatParticipantsService {
     catch (error) {
       throw new NotFoundException('Chat participant id not found');
     }
+  }
+
+  async listChats(id: number): Promise<ChatParticipantModel[]> {
+    const chats = await this.chatParticipantsRepository.find({
+      where: {
+        participant: { id: id },
+        role: { id: Not(ChatRoleModel.BAN_ROLE) }
+      },
+      relations: { room: true },
+    });
+    return chats;
   }
 
   async create(createParticipantDto: CreateParticipantDto): Promise<ChatParticipantModel> {
