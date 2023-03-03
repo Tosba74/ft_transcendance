@@ -16,13 +16,13 @@ export class BlockedsService {
 
   async findOneById(id: number): Promise<BlockedModel> {
     try {
-      const blocked = await this.blockedsRepository.findOneOrFail({ 
-        where: { id: id } 
+      const blocked = await this.blockedsRepository.findOneOrFail({
+        where: { id: id }
       });
       return blocked;
     }
     catch (error) {
-      throw new NotFoundException();
+      throw new NotFoundException('Blocked id not found');
     }
   }
 
@@ -55,21 +55,22 @@ export class BlockedsService {
       }
     });
 
+
     if (alreadyExists != null) {
       return alreadyExists;
     }
+
 
     const newBlocked = this.blockedsRepository.create({
       blocker: { id: id },
       blocked: { id: blockedDto.blocked_id }
     });
 
-    try {
-      return this.blockedsRepository.save(newBlocked);
-    }
-    catch (error) {
-      throw new BadRequestException();
-    }
+    const created = await this.blockedsRepository.save(newBlocked).catch((err: any) => {
+      throw new BadRequestException('Blocked creation error');
+    });
+
+    return created;
   }
 
   async unblockUser(id: number, blockedDto: BlockedDto): Promise<void> {
@@ -84,7 +85,7 @@ export class BlockedsService {
     if (blocked != null)
       this.blockedsRepository.delete(blocked);
     else
-      throw new NotFoundException();
+      throw new NotFoundException('Blocked id not found');
   }
 
 }

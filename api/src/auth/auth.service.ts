@@ -130,7 +130,7 @@ export class AuthService {
         const secret: string = authenticator.generateSecret();
         const appname: string | undefined = process.env.AUTH_APP_NAME;
         if (!appname)
-            throw new InternalServerErrorException();
+            throw new InternalServerErrorException('Missing app name');
         else
         {
             const user: UserModel = await this.usersService.findOneById(id);
