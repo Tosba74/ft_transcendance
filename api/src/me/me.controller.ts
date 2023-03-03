@@ -9,6 +9,7 @@ import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
 
 import { FriendModel } from 'src/friends/models/friend.model';
 import { UserModel } from 'src/users/models/user.model';
+import { BlockedModel } from 'src/blockeds/models/blocked.model';
 
 
 
@@ -24,7 +25,6 @@ export class MeController {
     getMe(@Request() req: any): LoggedUserDto {
         return req.user as LoggedUserDto;
     }
-
 
 
     @Get('friends')
@@ -43,10 +43,41 @@ export class MeController {
     }
 
     @Delete('friends/:id')
-    @ApiNoContentResponse({ description: 'Friend deleted successfully', type: FriendModel })
+    @ApiNoContentResponse({ description: 'Friend deleted successfully' })
     @ApiBadRequestResponse({ description: 'Friend validation error' })
-    public deleteFriendship(@Request() req: any, @Param('id', ParseIntPipe) id: number): Promise<FriendModel> {
+    public deleteFriendship(@Request() req: any, @Param('id', ParseIntPipe) id: number): Promise<void> {
 
-        return this.meService.addFriend(req.user as LoggedUserDto, id);
+        return this.meService.removeFriend(req.user as LoggedUserDto, id);
+    }
+
+
+    @Get('blockeds')
+    @ApiOkResponse({ description: 'Blockeds retrieved successfully', type: [FriendModel] })
+    public listBlockeds(@Request() req: any): Promise<BlockedModel[]> {
+
+        return this.meService.listBlockeds(req.user as LoggedUserDto);
+    }
+
+    @Get('blockedby')
+    @ApiOkResponse({ description: 'Blockeds by retrieved successfully', type: [FriendModel] })
+    public listBlockedBy(@Request() req: any): Promise<BlockedModel[]> {
+
+        return this.meService.listBlockedBy(req.user as LoggedUserDto);
+    }
+    
+    @Post('frienblockedds/:id')
+    @ApiCreatedResponse({ description: 'Blocked created successfully', type: BlockedModel })
+    @ApiBadRequestResponse({ description: 'Blocked validation error' })
+    public createBlocked(@Request() req: any, @Param('id', ParseIntPipe) id: number): Promise<BlockedModel> {
+
+        return this.meService.addBlocked(req.user as LoggedUserDto, id);
+    }
+
+    @Delete('blocked/:id')
+    @ApiNoContentResponse({ description: 'Blocked deleted successfully' })
+    @ApiBadRequestResponse({ description: 'Blocked validation error' })
+    public deleteBlocked(@Request() req: any, @Param('id', ParseIntPipe) id: number): Promise<void> {
+
+        return this.meService.removeBlocked(req.user as LoggedUserDto, id);
     }
 }
