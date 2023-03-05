@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { SyntheticEvent, useState } from "react";
-import { Profile } from './Profile'
+import { Profile } from '../Profile/Profile'
 
 
 interface LogPageProps {

@@ -8,14 +8,14 @@ import ReactPage from './components/ReactPage';
 import GamePage from './components/Game/GamePage';
 import HomePage from './components/Home/HomePage';
 import ProfilePage from './components/Profile/ProfilePage';
-import LogPage from './components/Profile/LogPage';
+import LogPage from './components/Log/LogPage';
 
 import NavBar from './components/NavBar/NavBar';
-import ChatPage from './components/Chat/ChatPage';
+import ChatIcon from './components/Chat/ChatIcon';
 import ExempleChat from './components/Chat/exemple';
 
-import LoginApi from './components/Profile/LoginApi';
-import Logout from './components/Profile/Logout';
+import LoginApi from './components/Log/LoginApi';
+import Logout from './components/Log/Logout';
 
 
 export default function App() {
@@ -62,21 +62,26 @@ export default function App() {
 
   return (
     <Router>
-      <div className="bg_white">
+      <div>
         <NavBar logged={logged} />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/players" element={<ProfilePage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/profile/:id" element={<ProfilePage />} />
-          <Route path="/game" element={<GamePage />} />
-          <Route path="/chat" element={<ChatPage/>} />
-          <Route path="/exemplechat" element={<ExempleChat />} />
-          <Route path="/history" element={<ReactPage />} />
-          <Route path="/login" element={<LogPage setLogged={setLogged} />} />
-          <Route path="/loginapi" element={<LoginApi setLogged={setLogged} />} />
-          <Route path="/logout" element={<Logout />} />
-        </Routes>
+        <div className="bg-gray-100 dark:bg-gray-400">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/players" element={<ProfilePage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/profile/:id" element={<ProfilePage />} />
+            <Route path="/game" element={<GamePage />} />
+            <Route path="/exemplechat" element={<ExempleChat />} />
+            <Route path="/history" element={<ReactPage />} />
+            <Route path="/login" element={<LogPage setLogged={setLogged} />} />
+            <Route path="/loginapi" element={<LoginApi setLogged={setLogged} />} />
+            <Route path="/logout" element={<Logout />} />
+          </Routes>
+        </div>
+        <div className="absolute z-50 right-0 bottom-12">
+          <ChatIcon />
+        </div>
+
       </div>
     </Router>
   );

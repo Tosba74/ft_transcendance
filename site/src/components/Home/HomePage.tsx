@@ -3,9 +3,8 @@ import ChatIcon from '../Chat/ChatIcon'
 
 export default function HomePage() {
     return (
-        <div>
-            <h2>Home !!</h2>
-            <ChatIcon />
+        <div className="w-full h-screen items-center">
+            <h2>Home !!!</h2>
         </div>
     );
 }

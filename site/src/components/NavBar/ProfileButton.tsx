@@ -14,7 +14,7 @@ export default function ProfileButton({ logged }: ProfileButtonProps) {
 	};
 
 	return (
-		<div className="flex items-between md:order-2">
+		<div className="flex items-between md:order-2 shadow-lg">
 			<button
 				type="button" onClick={handleClick} className="flex justify-items-end mr-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
 				<span className="sr-only">Open user menu</span>

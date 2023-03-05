@@ -2,6 +2,7 @@ import React, { Fragment, useState } from "react";
 import { Mock_Profile } from "./Mock_Profile";
 import ProfileList from "./ProfileList";
 import { Profile } from "./Profile";
+import ChatIcon from "../Chat/ChatIcon";
 
 export default function ProfilesPage() {
     const [profiles, setProfiles] = useState<Profile[]>(Mock_Profile);
@@ -16,8 +17,8 @@ export default function ProfilesPage() {
     return (
         <Fragment>
             <div>
-            <h2>Profiles !!</h2>
-            <ProfileList onSave={saveProfile} profiles={profiles} />
+                <h2>Profiles !!</h2>
+                <ProfileList onSave={saveProfile} profiles={profiles} />
             </div>
         </Fragment>
     );
