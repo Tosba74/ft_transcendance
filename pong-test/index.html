@@ -52,8 +52,8 @@ class Ball {
 		ctx.stroke();
 		ctx.restore();
 		ctx.restore();
-		if(this.xunits > 0)
-			opponent.moveTo(this.ghostPath(opponent.x));
+		/*if(this.xunits > 0)
+			opponent.moveTo(this.ghostPath(opponent.x));*/
 
 	}
 	ghostPath(toX) {
@@ -68,11 +68,14 @@ class Ball {
 
 var playerOne;
 var playerTwo;
+var playerOne_points = 0;
+var playerTwo_points = 0;
 
 function startGame() {
 	myGameArea.start();
-	playerOne = new drawPlayerOne(5, myGameArea.canvas.height / 3, "white", 20, 120);
-	playerTwo = new drawPlayerTwo(5, myGameArea.canvas.height / 3, "white", myGameArea.canvas.width - 25, 120);
+	playerOne = new drawPlayerOne(5, myGameArea.canvas.height / 3, "green", 20, 120);
+	playerTwo = new drawPlayerTwo(5, myGameArea.canvas.height / 3, "red", myGameArea.canvas.width - 25, 120);
+	init_ball(myGameArea.context, myGameArea.canvas);
 }
 
 var myGameArea =
@@ -95,6 +98,72 @@ var myGameArea =
 	clear : function() {
 		this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	}
+}
+
+function check_for_collisions(canvas) {
+	// if ball is at goal
+	if (ball.x > canvas.width || ball.x < 0)
+	{
+		if (ball.x > canvas.width)
+			addPoint(1);
+		if (ball.x < 0)
+			addPoint(2);
+	}
+	else if (ball.y >= canvas.height - ball.radius || ball.y <= 0 + ball.radius)
+	{
+		ball.changeAngle(360 - ball.angle);
+		if (ball.y >= canvas.height - ball.radius)
+			ball.y = canvas.height - ball.radius - 1;
+		if (ball.y <= 0 + ball.radius)
+			ball.y = ball.radius + 1;
+	}
+	//if playerOne paddle collision
+	if (ball.x - ball.radius < playerOne.x + playerOne.width && ball.x + ball.radius > playerOne.x + playerOne.width &&
+			ball.y - ball.radius > playerOne.y && ball.y + ball.radius < playerOne.y + playerOne.height && ball.xunits < 0)
+	{
+		ball.changeAngle( Math.floor(Math.random() * (175 - 180) + 175) - ball.angle);
+	}
+	//if playerTwo paddle collision
+	if (ball.x + ball.radius > playerTwo.x - playerTwo.width && ball.x - ball.radius < playerTwo.x + playerTwo.width &&
+			ball.y - ball.radius >= playerTwo.y && ball.y + ball.radius <= playerTwo.y + playerTwo.height && ball.xunits > 0)
+	{
+		ball.changeAngle( Math.floor(Math.random() * (185 - 175) + 175) - ball.angle);
+	}
+
+	function addPoint(p1ORp2) {
+		switch(p1ORp2)
+		{
+			case 1:
+				playerOne_points += 1;
+				break;
+			case 2:
+				playerTwo_points += 1;
+				break;
+		}
+		ball.changeAngle(180 - ball.angle);
+		ball.x = canvas.width / 2;
+		ball.y = canvas.height / 2;
+
+	}
+}
+
+function init_ball(ctx, canvas) {
+	ctx.beginPath();
+	let ball_x = canvas.width / 2;
+	let ball_y = canvas.height / 2;
+	let ball_radius = 5;
+	ctx.arc(ball_x, ball_y, ball_radius, 0, 2 * Math.PI);
+	ball = new Ball(ball_x, ball_y, ball_radius);
+	ctx.fillStyle = "white";
+	ctx.save();
+	ctx.shadowColor = '#999';
+	ctx.shadowBlur = 20;
+	ctx.shadowOffsetX = 15;
+	ctx.shadowOffsetY = 15;
+	ctx.strokeStyle = "purple";
+	ctx.fill();
+	ctx.stroke();
+	ctx.restore();
 }
 
 function drawPlayerOne(width, height, color, x, y)
@@ -162,6 +231,9 @@ function updateGameArea() {
 	playerTwo.newPos();
 	playerTwo.update();
 	draw_center_line(myGameArea.context, myGameArea.canvas);
+	ball.render();
+	check_for_collisions(myGameArea.canvas);
+	draw_scores(myGameArea.context, myGameArea.canvas);
 }
 
 function draw_center_line(ctx, canvas) {
@@ -182,11 +254,32 @@ function draw_center_line(ctx, canvas) {
 	}
 }
 
-/*function draw_scores(ctx) {
+function draw_scores(ctx, canvas) {
 	ctx.fillStyle = "white";
-	ctx.fillText("Player 1: " + player_points, 20, 30);
-	ctx.fillText("Player 2: " + opponent_points, canvas.width - 100, 30);
-}*/
+	ctx.fillText("Player 1: " + playerOne_points, 20, 30);
+	ctx.fillText("Player 2: " + playerTwo_points, canvas.width - 100, 30);
+}
+
+function adjust_for_dpi(canvas_ele) {
+  canvas_ele.style.width = "100%";
+  canvas_ele.style.height = "100%";
+
+  let canvas_gcs = getComputedStyle(canvas_ele);
+  let canvas_css_width = canvas_gcs.getPropertyValue('width')
+    .slice(0, -2);
+  let canvas_css_height = canvas_gcs.getPropertyValue('height')
+    .slice(0, -2);
+
+  let dpi = window.devicePixelRatio;
+
+  let setAttr = canvas_ele.setAttribute.bind(canvas_ele);
+  setAttr('width', canvas_css_width * dpi);
+  setAttr('height', canvas_css_height * dpi);
+
+  let setCss = canvas_ele.style;
+  setCss.width = canvas_css_width;
+  setCss.height = canvas_css_height;
+}
 
 </script>
 
