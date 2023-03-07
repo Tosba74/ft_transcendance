@@ -7,12 +7,22 @@ canvas {
 	border: 1px solid #d3d3d3;
 	background-color: #000000;
 }
+
+.center {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
 </style>
 </head>
-<body >
-<button id="btn_start" onclick="startGame()">start</button>
+<body>
+<button id="btn_start" class="center" onclick="startGame()">start</button>
+<br>
 <button id="btn_pause" style="visibility: hidden;" onclick="pause=!pause">Pause</button>
-<button id="btn_restart" onclick="restart()">restart</button>
+<button id="btn_restart" style="visibility: hidden;" onclick="restart()">restart</button>
 
 
 <script>
@@ -40,7 +50,7 @@ class Ball {
 		this.changeAngle(Math.atan2(y - this.y, x - this.x));
 	}
 	render() {
-		if (pause)
+		if (!pause)
 		{
 			this.x += this.xunits;
 			this.y += this.yunits;
@@ -75,7 +85,8 @@ class Ball {
 	}
 }
 
-var pause = true;
+var pause = false;
+var start = false;
 var playerOne;
 var playerTwo;
 var playerOne_points = 0;
@@ -83,8 +94,9 @@ var playerTwo_points = 0;
 
 function startGame() //set up everything
 {
-	document.getElementById('btn_start').style.visibility = 'hidden';
 	document.getElementById('btn_pause').style.visibility = 'visible';
+	document.getElementById('btn_restart').style.visibility = 'visible';
+	document.getElementById('btn_start').style.visibility = 'hidden';
 	myGameArea.start();
 	playerOne = new drawPlayerOne(5, myGameArea.canvas.height / 4, "green", 20, myGameArea.canvas.height / 3);
 	playerTwo = new drawPlayerTwo(5, myGameArea.canvas.height / 4, "red", myGameArea.canvas.width - 25, myGameArea.canvas.height / 3);
@@ -98,12 +110,33 @@ var myGameArea =
 	{
 		this.canvas.width = innerWidth - 100;
 		this.canvas.height = innerHeight - 100;
+		this.canvas.tabIndex = 1;
 		this.context = this.canvas.getContext("2d");
 		document.body.insertBefore(this.canvas, document.body.childNodes[0]);
 		this.interval = setInterval(updateGameArea, 20);
 		window.addEventListener('keydown', function (e) {
 			myGameArea.keys = (myGameArea.keys || []);
 			myGameArea.keys[e.keyCode] = (e.type == "keydown");
+			move = false;
+			x = false;
+			y = false;
+			var keycode;
+			if (window.event)
+				keycode = window.event.keyCode;
+			else if (e)
+				keycode = e.which;
+			switch(keycode){
+				case 38:
+					move = true;
+					y = 'negative'
+				break;
+				case 40:
+					move = true;
+					y = 'positive'
+				break;
+			}
+			e.preventDefault();
+			return false;
 		})
 		window.addEventListener('keyup', function (e) {
 			myGameArea.keys[e.keyCode] = (e.type == "keydown");
@@ -239,7 +272,7 @@ function updateGameArea()
 	myGameArea.canvas.width = innerWidth - 100;
 	myGameArea.canvas.height = innerHeight - 100;
 	ball.speed = 0;
-	if (pause)
+	if (!pause)
 	{
 		document.getElementById("res").innerHTML = ball.angle;
 		ball.speed = myGameArea.canvas.width / 100 + 2;
@@ -309,7 +342,7 @@ function draw_scores(ctx, canvas)
 	ctx.fillText(playerTwo_points, txt_W_Ptwo, txt_H);
 	if (playerOne_points == 10)
 	{
-		pause = false;
+		pause = true;
 		document.getElementById('btn_pause').style.visibility = 'hidden';
 		ctx.font = canvas.width / 10 + "px pixel";
 		ctx.fillStyle = "green";
@@ -318,7 +351,7 @@ function draw_scores(ctx, canvas)
 	}
 	if (playerTwo_points == 10)
 	{
-		pause = false;
+		pause = true;
 		document.getElementById('btn_pause').style.visibility = 'hidden';
 		ctx.font = canvas.width / 10 + "px pixel";
 		ctx.fillStyle = "red";
