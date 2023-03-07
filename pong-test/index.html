@@ -9,7 +9,12 @@ canvas {
 }
 </style>
 </head>
-<body onload="startGame()">
+<body >
+<button id="btn_start" onclick="startGame()">start</button>
+<button id="btn_pause" style="visibility: hidden;" onclick="pause=!pause">Pause</button>
+<button id="btn_restart" onclick="restart()">restart</button>
+
+
 <script>
 
 class Ball {
@@ -35,12 +40,16 @@ class Ball {
 		this.changeAngle(Math.atan2(y - this.y, x - this.x));
 	}
 	render() {
-		this.x += this.xunits;
-		this.y += this.yunits;
+		if (pause)
+		{
+			this.x += this.xunits;
+			this.y += this.yunits;
+		}
 		ctx.save();
 		ctx.beginPath();
 		ctx.fillStyle = "white";
 		this.movement += this.speed;
+		this.pause_speed = this.speed;
 		ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
 		ctx.save();
 		ctx.shadowColor = '#999';
@@ -66,6 +75,7 @@ class Ball {
 	}
 }
 
+var pause = true;
 var playerOne;
 var playerTwo;
 var playerOne_points = 0;
@@ -73,6 +83,8 @@ var playerTwo_points = 0;
 
 function startGame() //set up everything
 {
+	document.getElementById('btn_start').style.visibility = 'hidden';
+	document.getElementById('btn_pause').style.visibility = 'visible';
 	myGameArea.start();
 	playerOne = new drawPlayerOne(5, myGameArea.canvas.height / 4, "green", 20, myGameArea.canvas.height / 3);
 	playerTwo = new drawPlayerTwo(5, myGameArea.canvas.height / 4, "red", myGameArea.canvas.width - 25, myGameArea.canvas.height / 3);
@@ -132,6 +144,10 @@ function drawPlayerOne(width, height, color, x, y) //set up first playerOne
 	this.y = y;
 	this.speedY = 0;
 	this.update = function() {
+		this.height = myGameArea.canvas.height / 4;
+		this.x = 20;
+		if (this.y + this.height > myGameArea.canvas.height)
+			this.y = myGameArea.canvas.height - this.height;
 		ctx = myGameArea.context;
 		ctx.fillStyle = color;
 		ctx.fillRect(this.x, this.y, this.width, this.height);
@@ -151,6 +167,10 @@ function drawPlayerTwo(width, height, color, x, y) //set up first playerTwo
 	this.y = y;
 	this.speedY = 0;
 	this.update = function() {
+		this.height = myGameArea.canvas.height / 4;
+		this.x = myGameArea.canvas.width - 25;
+		if (this.y + this.height > myGameArea.canvas.height)
+			this.y = myGameArea.canvas.height - this.height;
 		ctx = myGameArea.context;
 		ctx.fillStyle = color;
 		ctx.fillRect(this.x, this.y, this.width, this.height);
@@ -180,13 +200,13 @@ function check_for_collisions(canvas) //if ball hit either player or goal
 	}
 	//if playerOne paddle collision
 	if (ball.x - ball.radius < playerOne.x + playerOne.width && ball.x + ball.radius > playerOne.x + playerOne.width &&
-			ball.y - ball.radius > playerOne.y && ball.y + ball.radius < playerOne.y + playerOne.height && ball.xunits < 0)
+			ball.y - ball.radius > playerOne.y && ball.y + ball.radius < playerOne.y + playerOne.height  )
 	{
-		ball.changeAngle( Math.floor(Math.random() * (175 - 180) + 175) - ball.angle); base
+		ball.changeAngle( Math.floor(Math.random() * (175 - 180) + 175) - ball.angle);
 	}
 	//if playerTwo paddle collision
 	if (ball.x + ball.radius > playerTwo.x - playerTwo.width && ball.x - ball.radius < playerTwo.x + playerTwo.width &&
-			ball.y - ball.radius >= playerTwo.y && ball.y + ball.radius <= playerTwo.y + playerTwo.height && ball.xunits > 0)
+			ball.y - ball.radius >= playerTwo.y && ball.y + ball.radius <= playerTwo.y + playerTwo.height)
 	{
 		ball.changeAngle( Math.floor(Math.random() * (185 - 175) + 175) - ball.angle);
 	}
@@ -203,35 +223,51 @@ function check_for_collisions(canvas) //if ball hit either player or goal
 				break;
 		}
 		ball.changeAngle(180 - ball.angle);
+		/*if (ball.angle <= 90 || ball.angle >= 270)
+			ball.changeAngle(Math.floor(Math.random() * (135 - 45) + 45) - ball.angle);
+		if (ball.angle > 90 && ball.angle < 270)
+			ball.changeAngle(Math.floor(Math.random() * (315 - 225) + 225) - ball.angle);*/
 		ball.x = canvas.width / 2;
 		ball.y = canvas.height / 2;
+		//ball.y = Math.floor(Math.random() * (canvas.height - 0) + 0);
 	}
 }
 
 function updateGameArea()
 {
 	myGameArea.clear();
-	playerOne.speedY = 0;
-	playerTwo.speedY = 0;
-	if (myGameArea.keys && myGameArea.keys[87])
+	myGameArea.canvas.width = innerWidth - 100;
+	myGameArea.canvas.height = innerHeight - 100;
+	ball.speed = 0;
+	if (pause)
 	{
-		if (playerOne.y >= 0)
-			playerOne.speedY = -(myGameArea.canvas.height / 100 + 2);;
-	}
-	if (myGameArea.keys && myGameArea.keys[83])
-	{
-		if (playerOne.y + playerOne.height < myGameArea.canvas.height)
-			playerOne.speedY = myGameArea.canvas.height / 100 + 2;
-	}
-	if (myGameArea.keys && myGameArea.keys[38])//up
-	{
-		if (playerTwo.y >= 0)
-			playerTwo.speedY = -(myGameArea.canvas.height / 100 + 2);
-	}
-	if (myGameArea.keys && myGameArea.keys[40]) //down
-	{
-		if (playerTwo.y + playerTwo.height < myGameArea.canvas.height)
-			playerTwo.speedY = myGameArea.canvas.height / 100 + 2;
+		document.getElementById("res").innerHTML = ball.angle;
+		ball.speed = myGameArea.canvas.width / 100 + 2;
+		ball.movement = myGameArea.canvas.width / 100 + 2;
+		ball.changeAngle(ball.angle);
+		playerOne.speedY = 0;
+		playerTwo.speedY = 0;
+		if (myGameArea.keys && myGameArea.keys[87])
+		{
+			if (playerOne.y >= 0)
+				playerOne.speedY = -(myGameArea.canvas.height / 100 + 2);;
+		}
+		if (myGameArea.keys && myGameArea.keys[83])
+		{
+			if (playerOne.y + playerOne.height < myGameArea.canvas.height)
+				playerOne.speedY = myGameArea.canvas.height / 100 + 2;
+		}
+		if (myGameArea.keys && myGameArea.keys[38])//up
+		{
+			if (playerTwo.y >= 0)
+				playerTwo.speedY = -(myGameArea.canvas.height / 100 + 2);
+		}
+		if (myGameArea.keys && myGameArea.keys[40]) //down
+		{
+			if (playerTwo.y + playerTwo.height < myGameArea.canvas.height)
+				playerTwo.speedY = myGameArea.canvas.height / 100 + 2;
+		}
+
 	}
 	playerOne.newPos();
 	playerOne.update();
@@ -265,14 +301,44 @@ function draw_center_line(ctx, canvas)
 function draw_scores(ctx, canvas)
 {
 	ctx.fillStyle = "white";
-	ctx.font = "30px pixel";
-	ctx.fillText(playerOne_points, canvas.width / 2 - 50, 30);
-	ctx.fillText(playerTwo_points, canvas.width / 2 + 50, 30);
+	ctx.font = canvas.width / 10 + "px pixel";
+	let txt_H = canvas.width / 10;
+	let txt_W_Pone = canvas.width / 3;
+	let txt_W_Ptwo = canvas.width / 3 + canvas.width / 3;
+	ctx.fillText(playerOne_points, txt_W_Pone, txt_H);
+	ctx.fillText(playerTwo_points, txt_W_Ptwo, txt_H);
+	if (playerOne_points == 10)
+	{
+		pause = false;
+		document.getElementById('btn_pause').style.visibility = 'hidden';
+		ctx.font = canvas.width / 10 + "px pixel";
+		ctx.fillStyle = "green";
+		ctx.textAlign = "center";
+		ctx.fillText("player one WON!", canvas.width/2, canvas.height/2);
+	}
+	if (playerTwo_points == 10)
+	{
+		pause = false;
+		document.getElementById('btn_pause').style.visibility = 'hidden';
+		ctx.font = canvas.width / 10 + "px pixel";
+		ctx.fillStyle = "red";
+		ctx.textAlign = "center";
+		ctx.fillText("player two WON!", canvas.width/2, canvas.height/2);
+	}
+}
+
+function restart()
+{
+	document.getElementById('btn_pause').style.visibility = 'visible';
+	pause = true;
+	init_ball(myGameArea.context, myGameArea.canvas);
+	playerOne_points = 0;
+	playerTwo_points = 0;
 }
 
 </script>
 
 <p>try to make a pong</p>
-
+<p id="res"></p>
 </body>
 </html>
