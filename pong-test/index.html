@@ -13,11 +13,11 @@ canvas {
 <script>
 
 class Ball {
-	constructor(x, y, radius) {
+	constructor(x, y, radius, speed) {
 		this.x = x;
 		this.y = y;
 		this.radius = radius;
-		this.speed = 5;
+		this.speed = speed;
 
 		this.changeAngle(0);
 		this.movement = 0;
@@ -74,8 +74,8 @@ var playerTwo_points = 0;
 function startGame() //set up everything
 {
 	myGameArea.start();
-	playerOne = new drawPlayerOne(5, myGameArea.canvas.height / 3, "green", 20, myGameArea.canvas.height / 3);
-	playerTwo = new drawPlayerTwo(5, myGameArea.canvas.height / 3, "red", myGameArea.canvas.width - 25, myGameArea.canvas.height / 3);
+	playerOne = new drawPlayerOne(5, myGameArea.canvas.height / 4, "green", 20, myGameArea.canvas.height / 3);
+	playerTwo = new drawPlayerTwo(5, myGameArea.canvas.height / 4, "red", myGameArea.canvas.width - 25, myGameArea.canvas.height / 3);
 	init_ball(myGameArea.context, myGameArea.canvas);
 }
 
@@ -84,8 +84,8 @@ var myGameArea =
 	canvas : document.createElement("canvas"),
 	start : function()
 	{
-		this.canvas.width = 480;
-		this.canvas.height = 270;
+		this.canvas.width = innerWidth - 100;
+		this.canvas.height = innerHeight - 100;
 		this.context = this.canvas.getContext("2d");
 		document.body.insertBefore(this.canvas, document.body.childNodes[0]);
 		this.interval = setInterval(updateGameArea, 20);
@@ -109,7 +109,7 @@ function init_ball(ctx, canvas) //create first ball
 	let ball_y = canvas.height / 2;
 	let ball_radius = 5;
 	ctx.arc(ball_x, ball_y, ball_radius, 0, 2 * Math.PI);
-	ball = new Ball(ball_x, ball_y, ball_radius);
+	ball = new Ball(ball_x, ball_y, ball_radius, canvas.width / 100 + 2);
 	ctx.fillStyle = "white";
 	ctx.save();
 	ctx.shadowColor = '#999';
@@ -182,7 +182,7 @@ function check_for_collisions(canvas) //if ball hit either player or goal
 	if (ball.x - ball.radius < playerOne.x + playerOne.width && ball.x + ball.radius > playerOne.x + playerOne.width &&
 			ball.y - ball.radius > playerOne.y && ball.y + ball.radius < playerOne.y + playerOne.height && ball.xunits < 0)
 	{
-		ball.changeAngle( Math.floor(Math.random() * (175 - 180) + 175) - ball.angle);
+		ball.changeAngle( Math.floor(Math.random() * (175 - 180) + 175) - ball.angle); base
 	}
 	//if playerTwo paddle collision
 	if (ball.x + ball.radius > playerTwo.x - playerTwo.width && ball.x - ball.radius < playerTwo.x + playerTwo.width &&
@@ -216,22 +216,22 @@ function updateGameArea()
 	if (myGameArea.keys && myGameArea.keys[87])
 	{
 		if (playerOne.y >= 0)
-			playerOne.speedY = -3;
+			playerOne.speedY = -(myGameArea.canvas.height / 100 + 2);;
 	}
 	if (myGameArea.keys && myGameArea.keys[83])
 	{
 		if (playerOne.y + playerOne.height < myGameArea.canvas.height)
-			playerOne.speedY = 3;
+			playerOne.speedY = myGameArea.canvas.height / 100 + 2;
 	}
 	if (myGameArea.keys && myGameArea.keys[38])//up
 	{
 		if (playerTwo.y >= 0)
-			playerTwo.speedY = -3;
+			playerTwo.speedY = -(myGameArea.canvas.height / 100 + 2);
 	}
 	if (myGameArea.keys && myGameArea.keys[40]) //down
 	{
 		if (playerTwo.y + playerTwo.height < myGameArea.canvas.height)
-			playerTwo.speedY = 3;
+			playerTwo.speedY = myGameArea.canvas.height / 100 + 2;
 	}
 	playerOne.newPos();
 	playerOne.update();
@@ -265,8 +265,9 @@ function draw_center_line(ctx, canvas)
 function draw_scores(ctx, canvas)
 {
 	ctx.fillStyle = "white";
-	ctx.fillText("Player 1: " + playerOne_points, 20, 30);
-	ctx.fillText("Player 2: " + playerTwo_points, canvas.width - 100, 30);
+	ctx.font = "30px pixel";
+	ctx.fillText(playerOne_points, canvas.width / 2 - 50, 30);
+	ctx.fillText(playerTwo_points, canvas.width / 2 + 50, 30);
 }
 
 </script>
