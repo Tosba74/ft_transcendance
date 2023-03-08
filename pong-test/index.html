@@ -6,6 +6,7 @@
 canvas {
 	border: 1px solid #d3d3d3;
 	background-color: #000000;
+	width: 50%;
 }
 
 .center {
@@ -33,6 +34,7 @@ class Ball {
 		this.y = y;
 		this.radius = radius;
 		this.speed = speed;
+		this.init_speed = speed;
 
 		this.changeAngle(0);
 		this.movement = 0;
@@ -59,7 +61,6 @@ class Ball {
 		ctx.beginPath();
 		ctx.fillStyle = "white";
 		this.movement += this.speed;
-		this.pause_speed = this.speed;
 		ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
 		ctx.save();
 		ctx.shadowColor = '#999';
@@ -177,8 +178,6 @@ function drawPlayerOne(width, height, color, x, y) //set up first playerOne
 	this.y = y;
 	this.speedY = 0;
 	this.update = function() {
-		this.height = myGameArea.canvas.height / 4;
-		this.x = 20;
 		if (this.y + this.height > myGameArea.canvas.height)
 			this.y = myGameArea.canvas.height - this.height;
 		ctx = myGameArea.context;
@@ -200,8 +199,7 @@ function drawPlayerTwo(width, height, color, x, y) //set up first playerTwo
 	this.y = y;
 	this.speedY = 0;
 	this.update = function() {
-		this.height = myGameArea.canvas.height / 4;
-		this.x = myGameArea.canvas.width - 25;
+		//this.x = myGameArea.canvas.width - 25;
 		if (this.y + this.height > myGameArea.canvas.height)
 			this.y = myGameArea.canvas.height - this.height;
 		ctx = myGameArea.context;
@@ -231,17 +229,20 @@ function check_for_collisions(canvas) //if ball hit either player or goal
 		if (ball.y <= 0 + ball.radius)
 			ball.y = ball.radius + 1;
 	}
+
 	//if playerOne paddle collision
 	if (ball.x - ball.radius < playerOne.x + playerOne.width && ball.x + ball.radius > playerOne.x + playerOne.width &&
-			ball.y - ball.radius > playerOne.y && ball.y + ball.radius < playerOne.y + playerOne.height  )
+			ball.y - ball.radius > playerOne.y && ball.y + ball.radius < playerOne.y + playerOne.height && ball.xunits < 0)
 	{
 		ball.changeAngle( Math.floor(Math.random() * (175 - 180) + 175) - ball.angle);
+		ball.speed+=2;
 	}
 	//if playerTwo paddle collision
 	if (ball.x + ball.radius > playerTwo.x - playerTwo.width && ball.x - ball.radius < playerTwo.x + playerTwo.width &&
-			ball.y - ball.radius >= playerTwo.y && ball.y + ball.radius <= playerTwo.y + playerTwo.height)
+			ball.y - ball.radius >= playerTwo.y && ball.y + ball.radius <= playerTwo.y + playerTwo.height && ball.xunits > 0)
 	{
 		ball.changeAngle( Math.floor(Math.random() * (185 - 175) + 175) - ball.angle);
+		ball.speed+=2;
 	}
 
 	function addPoint(p1ORp2)
@@ -262,21 +263,25 @@ function check_for_collisions(canvas) //if ball hit either player or goal
 			ball.changeAngle(Math.floor(Math.random() * (315 - 225) + 225) - ball.angle);*/
 		ball.x = canvas.width / 2;
 		ball.y = canvas.height / 2;
+		playerOne.y = canvas.height / 3;
+		playerTwo.y = canvas.height / 3;
+		ball.speed = ball.init_speed;
 		//ball.y = Math.floor(Math.random() * (canvas.height - 0) + 0);
 	}
 }
 
 function updateGameArea()
 {
-	myGameArea.clear();
-	myGameArea.canvas.width = innerWidth - 100;
-	myGameArea.canvas.height = innerHeight - 100;
-	ball.speed = 0;
 	if (!pause)
 	{
+		myGameArea.clear();
+		//myGameArea.canvas.width = innerWidth - 100;
+		//myGameArea.canvas.height = innerHeight - 100;
+		//ball.speed = 0;
+
 		document.getElementById("res").innerHTML = ball.angle;
-		ball.speed = myGameArea.canvas.width / 100 + 2;
-		ball.movement = myGameArea.canvas.width / 100 + 2;
+		//ball.speed = myGameArea.canvas.width / 100 + 2;
+		//ball.movement = myGameArea.canvas.width / 100 + 2;
 		ball.changeAngle(ball.angle);
 		playerOne.speedY = 0;
 		playerTwo.speedY = 0;
@@ -300,16 +305,16 @@ function updateGameArea()
 			if (playerTwo.y + playerTwo.height < myGameArea.canvas.height)
 				playerTwo.speedY = myGameArea.canvas.height / 100 + 2;
 		}
-
+		playerOne.newPos();
+		playerOne.update();
+		playerTwo.newPos();
+		playerTwo.update();
+		draw_center_line(myGameArea.context, myGameArea.canvas);
+		ball.render();
+		check_for_collisions(myGameArea.canvas);
+		draw_scores(myGameArea.context, myGameArea.canvas);
 	}
-	playerOne.newPos();
-	playerOne.update();
-	playerTwo.newPos();
-	playerTwo.update();
-	draw_center_line(myGameArea.context, myGameArea.canvas);
-	ball.render();
-	check_for_collisions(myGameArea.canvas);
-	draw_scores(myGameArea.context, myGameArea.canvas);
+
 }
 
 function draw_center_line(ctx, canvas)
@@ -345,6 +350,8 @@ function draw_scores(ctx, canvas)
 		pause = true;
 		document.getElementById('btn_pause').style.visibility = 'hidden';
 		ctx.font = canvas.width / 10 + "px pixel";
+		ball.x = canvas.width / 2;
+		ball.y = canvas.height / 2;
 		ctx.fillStyle = "green";
 		ctx.textAlign = "center";
 		ctx.fillText("player one WON!", canvas.width/2, canvas.height/2);
@@ -363,7 +370,7 @@ function draw_scores(ctx, canvas)
 function restart()
 {
 	document.getElementById('btn_pause').style.visibility = 'visible';
-	pause = true;
+	pause = false;
 	init_ball(myGameArea.context, myGameArea.canvas);
 	playerOne_points = 0;
 	playerTwo_points = 0;
