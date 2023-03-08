@@ -3,29 +3,44 @@ import { Injectable } from '@nestjs/common';
 
 // import { io, Socket } from 'socket.io-client';
 
-import { Message } from './dto/message.dto';
-import { Room } from './dto/room.dto';
+import { ChatMessage } from './dto/chat_message.dto';
+import { ChatRoom } from './dto/chat_room.dto';
 import { ChatResponse } from './dto/chat_response.dto';
 
 import { joinRoom } from './gateway/joinroom';
 
 
+export class ServerRoom {
+	id: string;
+
+  clientList: string[]
+}
+
+
+
 @Injectable()
 export class ChatService {
 
-  clientToUser = new Map<string, string>(); // Map object utilisé pour stocker les utilisateurs qui sont abonnés au système de chat.
+  clientToUser = new Map<string, string[]>(); // Map object utilisé pour stocker les utilisateurs qui sont abonnés au système de chat.
+
+
 
   joinRoom = joinRoom;
 
+
+  leaveAllRooms(clientId: string)
+  {
+
+  }
 
   quitChat(clientId: string) {
     this.clientToUser.delete(clientId);
   }
 
 
-  getClientName(clientId: string): string | undefined {
-    return this.clientToUser.get(clientId);
-  }
+  // getClientName(clientId: string): string | undefined {
+  //   return this.clientToUser.get(clientId);
+  // }
 
   // async userIsTyping(name: string, isTyping: boolean): Promise<void> {
   //   if (isTyping === true)

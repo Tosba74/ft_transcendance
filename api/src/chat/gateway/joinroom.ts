@@ -1,19 +1,19 @@
 import { WebSocketGateway, SubscribeMessage, MessageBody, WebSocketServer, ConnectedSocket, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
-import { Message } from '../dto/message.dto';
-import { Room } from '../dto/room.dto';
+import { ChatMessage } from '../dto/chat_message.dto';
+import { ChatRoom } from '../dto/chat_room.dto';
 import { ChatResponse } from '../dto/chat_response.dto';
 // import { ChatGateway } from '../chat.gateway';
 
 import { ChatService } from '../chat.service';
 
-export async function joinRoom(this: ChatService, client: Socket, room: string) : Promise<ChatResponse<Room>> {
+export async function joinRoom(this: ChatService, client: Socket, room: string) : Promise<ChatResponse<ChatRoom>> {
 
 
     // this.clientToUser
 
-    let res = new ChatResponse<Room>();
+    let res = new ChatResponse<ChatRoom>();
 
     // await this.chatService.identify(name, client.id);
 
@@ -23,7 +23,7 @@ export async function joinRoom(this: ChatService, client: Socket, room: string) 
     if (requestedRoomId == 1) {
         client.join(room);
 
-        let newroom: Room = new Room();
+        let newroom: ChatRoom = new ChatRoom();
 
         newroom.id = 1;
         newroom.name = room;
@@ -31,7 +31,7 @@ export async function joinRoom(this: ChatService, client: Socket, room: string) 
         newroom.messages = [];
 
         for (let i: number = 0; i < 5; i++) {
-            let msg: Message = new Message();
+            let msg: ChatMessage = new ChatMessage();
             msg.id = i + 10;
             msg.senderId = 30;
             msg.senderDiplayName = "Moi";
