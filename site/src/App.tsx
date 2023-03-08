@@ -1,4 +1,4 @@
-import React from 'react';
+import React ,{ useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import axios from 'axios';
 
@@ -8,6 +8,7 @@ import ReactPage from './components/ReactPage';
 import GamePage from './components/Game/GamePage';
 import HomePage from './components/Home/HomePage';
 import ProfilePage from './components/Profile/ProfilePage';
+import Profil from './components/Profil';
 import LogPage from './components/Log/LogPage';
 
 import NavBar from './components/NavBar/NavBar';
@@ -19,10 +20,10 @@ import Logout from './components/Log/Logout';
 
 
 export default function App() {
-  const [logged, setLogged] = React.useState(false);
-  const [userInfos, setUserInfos] = React.useState({});
+  const [logged, setLogged] = useState(false);
+  const [userInfos, setUserInfos] = useState({});
 
-  React.useEffect(() => {
+  useEffect(() => {
     console.log('login try');
 
     async function fetchData() {
@@ -72,13 +73,14 @@ export default function App() {
             <Route path="/profile/:id" element={<ProfilePage />} />
             <Route path="/game" element={<GamePage />} />
             <Route path="/exemplechat" element={<ExempleChat />} />
+            {/* <Route path="/profil" element={<Profil />} /> */}
             <Route path="/history" element={<ReactPage />} />
             <Route path="/login" element={<LogPage setLogged={setLogged} />} />
             <Route path="/loginapi" element={<LoginApi setLogged={setLogged} />} />
             <Route path="/logout" element={<Logout />} />
           </Routes>
         </div>
-        <div className="absolute z-50 right-0 bottom-12">
+        <div className="absolute z-50 right-0 bottom-8">
           <ChatIcon />
         </div>
 

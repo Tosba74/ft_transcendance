@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Profil from "../Profil";
+import ProfileCard from "./ProfileCard";
 import {Profile} from "./Profile";
 import ProfileForm from "./ProfileForm";
 
@@ -20,10 +20,14 @@ export default function ProfileList({ profiles, onSave }: ProfileListProps) {
   };
 
   return (
-    <div className="flex flex-wrap gap-4">
+    <div>
       {profiles.map((profile) => (
-        <div key={profile.id}>
-            <Profil profile={profile} />
+        <div key={profile.id} className="">
+          {profile === profileBeingEdited ? (
+            <ProfileForm profile={profile} onSave={onSave} onCancel={cancelEditing} />
+          ) : (
+            <ProfileCard profile={profile} onEdit={handleEdit} />
+          )}
         </div>
       ))}
     </div>

@@ -11,8 +11,8 @@ interface LogPageProps {
 export default function LogPage({ setLogged }: LogPageProps) {
     const [focus, setFocused] = useState(false);
 
-    const [loginName, setLoginName] = React.useState('');
-    const [password, setPassword] = React.useState('');
+    const [loginName, setLoginName] = useState('');
+    const [password, setPassword] = useState('');
 
     const handleSubmit = async (event: SyntheticEvent) => {
         event.preventDefault();
@@ -26,9 +26,21 @@ export default function LogPage({ setLogged }: LogPageProps) {
                 if (res.status === 201) {
                     console.log(res.data['access_token']);
                     localStorage.setItem('token', res.data['access_token']);
-                    setLogged(true)
+                    setLogged(true);
                 }
-                else {
+                else if (res.status === 206) {
+                    console.log(res.data['access_token']);
+                    console.log("send me your code authentificator");
+                    axios.post("/api/login/tfa/authenticate",
+                    {
+                        'username': loginName,
+                        'password': password,
+                        // 'tfa_code': tfa_code,
+                    })
+                    .then(function(response) {
+                        console.log(response);
+                    })
+                    
                     // console.log('error', res.statusText);
                 }
 

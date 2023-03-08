@@ -13,10 +13,17 @@ export default function ProfileButton({ logged }: ProfileButtonProps) {
 		setOpen(!isOpen);
 	};
 
+	// <div class="flex items-center md:order-2">
+      {/* <button type="button" class="flex mr-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom"> */}
+        {/* <span class="sr-only">Open user menu</span> */}
+        {/* <img class="w-8 h-8 rounded-full" src="/docs/images/people/profile-picture-3.jpg" alt="user photo"> */}
+      {/* </button> */}
+
+
 	return (
-		<div className="flex items-between md:order-2 shadow-lg">
+		<div className="flex items-center md:order-2 shadow-lg">
 			<button
-				type="button" onClick={handleClick} className="flex justify-items-end mr-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
+				type="button" onClick={handleClick} className="flex mr-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
 				<span className="sr-only">Open user menu</span>
 				<img className="w-8 h-8 rounded-full" height="8" src={LogoInconnu} alt="user photo" />
 			</button>
@@ -41,9 +48,9 @@ export default function ProfileButton({ logged }: ProfileButtonProps) {
 							<Link to="/login" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
 								Log in
 							</Link>
-							<Link to="/api/login/apisignin" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+							<a href="/api/login/apisignin" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
 								Log in api
-							</Link>
+							</a>
 						</ul>
 					}
 					{logged &&

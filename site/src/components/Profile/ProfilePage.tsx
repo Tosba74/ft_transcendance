@@ -16,9 +16,13 @@ export default function ProfilesPage() {
 
     return (
         <Fragment>
-            <div>
-                <h2>Profiles !!</h2>
-                <ProfileList onSave={saveProfile} profiles={profiles} />
+            <div className="w-full h-full flex flex-auto justify-center">
+                <div>
+                    <ProfileList onSave={saveProfile} profiles={profiles} />
+                </div>
+                {/* <Profile onSave={saveProfile} profiles={profiles} /> */}
+                {/* <div className="flex-row"> */}
+                {/* </div> */}
             </div>
         </Fragment>
     );
