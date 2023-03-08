@@ -10,12 +10,12 @@ canvas {
 }
 
 .center {
-  margin: 0;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  -ms-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
+	margin: 0;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	-ms-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
 }
 </style>
 </head>
@@ -24,6 +24,7 @@ canvas {
 <br>
 <button id="btn_pause" style="visibility: hidden;" onclick="pause=!pause">Pause</button>
 <button id="btn_restart" style="visibility: hidden;" onclick="restart()">restart</button>
+<button id="btn_exportToJson" style="visibility: hidden;" onclick="exportToJson()">export to JSON</button>
 
 
 <script>
@@ -98,6 +99,7 @@ function startGame() //set up everything
 	document.getElementById('btn_pause').style.visibility = 'visible';
 	document.getElementById('btn_restart').style.visibility = 'visible';
 	document.getElementById('btn_start').style.visibility = 'hidden';
+	document.getElementById('btn_exportToJson').style.visibility = 'visible';
 	myGameArea.start();
 	playerOne = new drawPlayerOne(5, myGameArea.canvas.height / 4, "green", 20, myGameArea.canvas.height / 3);
 	playerTwo = new drawPlayerTwo(5, myGameArea.canvas.height / 4, "red", myGameArea.canvas.width - 25, myGameArea.canvas.height / 3);
@@ -374,6 +376,21 @@ function restart()
 	init_ball(myGameArea.context, myGameArea.canvas);
 	playerOne_points = 0;
 	playerTwo_points = 0;
+}
+
+function exportToJson()
+{
+	let dataStr = JSON.stringify({ Yplayer1: playerOne.y, Yplayer2: playerTwo.y, Xball: ball.x, Yball: ball.y });
+	let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+
+	let exportFileDefaultName = 'data.json';
+
+	let linkElement = document.createElement('a');
+	linkElement.setAttribute('href', dataUri);
+	linkElement.setAttribute('download', exportFileDefaultName);
+	linkElement.click();
+
+	//console.log(JSON.stringify({ Yplayer1: playerOne.y, Yplayer2: playerTwo.y, Xball: ball.x, Yball: ball.y }));
 }
 
 </script>
