@@ -1,6 +1,6 @@
 import { Controller, Param, Body, Get, Post, Put, Delete, UseFilters, ParseIntPipe, } from '@nestjs/common';
 import { ApiOkResponse, ApiNotFoundResponse, ApiCreatedResponse, ApiUnprocessableEntityResponse, ApiTags, ApiBadRequestResponse } from '@nestjs/swagger';
-import { HttpExceptionFilter } from '../_common/filters/http-exception.filter';
+import { HttpExceptionFilter } from 'src/_common/filters/http-exception.filter';
 
 import { ChatRolesService } from './chat_roles.service';
 import { ChatRoleModel } from "./models/chat_role.model";

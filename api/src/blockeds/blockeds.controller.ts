@@ -1,6 +1,6 @@
 import { Controller, HttpCode, Param, Body, Get, Post, Put, Delete, UseFilters, ParseIntPipe, } from '@nestjs/common';
 import { ApiOkResponse, ApiNotFoundResponse, ApiCreatedResponse, ApiNoContentResponse, ApiUnprocessableEntityResponse, ApiTags, ApiBadRequestResponse } from '@nestjs/swagger';
-import { HttpExceptionFilter } from '../_common/filters/http-exception.filter';
+import { HttpExceptionFilter } from 'src/_common/filters/http-exception.filter';
 
 import { BlockedsService } from './blockeds.service';
 import { BlockedModel } from "./models/blocked.model";
