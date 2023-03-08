@@ -380,7 +380,7 @@ function restart()
 
 function exportToJson()
 {
-	let dataStr = JSON.stringify({ Yplayer1: playerOne.y, Yplayer2: playerTwo.y, Xball: ball.x, Yball: ball.y });
+	let dataStr = JSON.stringify({ Scoreplayer1: playerOne_points, Scoreplayer2: playerTwo_points, Yplayer1: playerOne.y, Yplayer2: playerTwo.y, Xball: ball.x, Yball: ball.y });
 	let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
 
 	let exportFileDefaultName = 'data.json';
