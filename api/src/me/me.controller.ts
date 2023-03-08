@@ -11,6 +11,7 @@ import { FriendModel } from 'src/friends/models/friend.model';
 import { UserModel } from 'src/users/models/user.model';
 import { BlockedModel } from 'src/blockeds/models/blocked.model';
 import { ChatParticipantModel } from 'src/chat_participants/models/chat_participant.model';
+import { JoinChatDto } from './dto/join_chat';
 
 
 
@@ -24,6 +25,7 @@ export class MeController {
     @Get()
     @ApiOkResponse({ description: 'User infos retrieved successfully', type: LoggedUserDto})
     getMe(@Request() req: any): LoggedUserDto {
+        console.log(req.user);
         return req.user as LoggedUserDto;
     }
 
@@ -87,6 +89,13 @@ export class MeController {
     public chats(@Request() req: any): Promise<ChatParticipantModel[]> {
 
         return this.meService.listChats(req.user as LoggedUserDto);
+    }
+
+    @Post('chats/join/:id')
+    @ApiOkResponse({ description: 'Chat joined successfully', type: ChatParticipantModel })
+    public joinChat(@Request() req: any, @Param('id', ParseIntPipe) id: number, @Body() joinInfos: JoinChatDto): Promise<ChatParticipantModel> {
+
+        return this.meService.joinChat(req.user as LoggedUserDto, id, joinInfos);
     }
 
     // @Get('blockedby')

@@ -33,7 +33,7 @@ export class ChatParticipantsController {
   @ApiCreatedResponse({ description: 'Chat participant created successfully', type: ChatParticipantModel })
   @ApiBadRequestResponse({ description: 'Chat participant validation error' })
   public create(@Body() createMessageDto: CreateParticipantDto): Promise<ChatParticipantModel> {
-    return this.chatParticipantsService.create(createMessageDto);
+    return this.chatParticipantsService.create(createMessageDto.user_id, createMessageDto.chat_id, createMessageDto.role_id);
   }
 
   @Patch(':id/change_role')

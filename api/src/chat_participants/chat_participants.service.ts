@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Not, Repository } from 'typeorm';
 
 import { ChatParticipantModel } from "./models/chat_participant.model";
-import { CreateParticipantDto } from './dto/create-participant';
 import { UpdateRoleDto } from './dto/update-role';
 import { MuteParticipantDto } from './dto/mute-participant';
 import { ChatRoleModel } from 'src/chat_roles/models/chat_role.model';
@@ -41,12 +40,13 @@ export class ChatParticipantsService {
     return chats;
   }
 
-  async create(createParticipantDto: CreateParticipantDto): Promise<ChatParticipantModel> {
+  async create(user_id: number, chat_id: number, role_id: number): Promise<ChatParticipantModel> {
+
     const res = this.chatParticipantsRepository.create({
 
-      participant: { id: createParticipantDto.user_id },
-      room: { id: createParticipantDto.chat_id },
-      role: new ChatRoleModel(createParticipantDto.role_id),
+      participant: { id: user_id },
+      room: { id: chat_id },
+      role: new ChatRoleModel(role_id),
       muted_until: new Date(),
     });
 
