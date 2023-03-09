@@ -29,6 +29,15 @@ canvas {
 
 <script>
 
+const canvas_width = 1000;
+const canvas_height = 800;
+const paddle_width = 5;
+const paddle_height = canvas_height / 4;
+const paddle_x = 20;
+const paddle2_x = canvas_width - 25;
+const paddle_y = canvas_height / 3;
+const ball_speed = 12;
+
 class Ball {
 	constructor(x, y, radius, speed) {
 		this.x = x;
@@ -101,8 +110,8 @@ function startGame() //set up everything
 	document.getElementById('btn_start').style.visibility = 'hidden';
 	document.getElementById('btn_exportToJson').style.visibility = 'visible';
 	myGameArea.start();
-	playerOne = new drawPlayerOne(5, myGameArea.canvas.height / 4, "green", 20, myGameArea.canvas.height / 3);
-	playerTwo = new drawPlayerTwo(5, myGameArea.canvas.height / 4, "red", myGameArea.canvas.width - 25, myGameArea.canvas.height / 3);
+	playerOne = new drawPlayerOne(paddle_width, paddle_height, "green", paddle_x, paddle_y);
+	playerTwo = new drawPlayerTwo(paddle_width , paddle_height, "red", paddle2_x, paddle_y);
 	init_ball(myGameArea.context, myGameArea.canvas);
 }
 
@@ -111,8 +120,8 @@ var myGameArea =
 	canvas : document.createElement("canvas"),
 	start : function()
 	{
-		this.canvas.width = innerWidth - 100;
-		this.canvas.height = innerHeight - 100;
+		this.canvas.width = canvas_width;
+		this.canvas.height = canvas_height;
 		this.canvas.tabIndex = 1;
 		this.context = this.canvas.getContext("2d");
 		document.body.insertBefore(this.canvas, document.body.childNodes[0]);
@@ -157,7 +166,7 @@ function init_ball(ctx, canvas) //create first ball
 	let ball_y = canvas.height / 2;
 	let ball_radius = 5;
 	ctx.arc(ball_x, ball_y, ball_radius, 0, 2 * Math.PI);
-	ball = new Ball(ball_x, ball_y, ball_radius, canvas.width / 100 + 2);
+	ball = new Ball(ball_x, ball_y, ball_radius, ball_speed);
 	ctx.fillStyle = "white";
 	ctx.save();
 	ctx.shadowColor = '#999';
@@ -237,14 +246,16 @@ function check_for_collisions(canvas) //if ball hit either player or goal
 			ball.y - ball.radius > playerOne.y && ball.y + ball.radius < playerOne.y + playerOne.height && ball.xunits < 0)
 	{
 		ball.changeAngle( Math.floor(Math.random() * (175 - 180) + 175) - ball.angle);
-		ball.speed+=2;
+		if (ball.speed < ball.init_speed * 2)
+			ball.speed+=1;
 	}
 	//if playerTwo paddle collision
 	if (ball.x + ball.radius > playerTwo.x - playerTwo.width && ball.x - ball.radius < playerTwo.x + playerTwo.width &&
 			ball.y - ball.radius >= playerTwo.y && ball.y + ball.radius <= playerTwo.y + playerTwo.height && ball.xunits > 0)
 	{
 		ball.changeAngle( Math.floor(Math.random() * (185 - 175) + 175) - ball.angle);
-		ball.speed+=2;
+		if (ball.speed < ball.init_speed * 2)
+			ball.speed+=1;
 	}
 
 	function addPoint(p1ORp2)
@@ -281,7 +292,7 @@ function updateGameArea()
 		//myGameArea.canvas.height = innerHeight - 100;
 		//ball.speed = 0;
 
-		document.getElementById("res").innerHTML = ball.angle;
+		document.getElementById("res").innerHTML = ball.speed;
 		//ball.speed = myGameArea.canvas.width / 100 + 2;
 		//ball.movement = myGameArea.canvas.width / 100 + 2;
 		ball.changeAngle(ball.angle);
@@ -380,17 +391,27 @@ function restart()
 
 function exportToJson()
 {
-	let dataStr = JSON.stringify({ Scoreplayer1: playerOne_points, Scoreplayer2: playerTwo_points, Yplayer1: playerOne.y, Yplayer2: playerTwo.y, Xball: ball.x, Yball: ball.y });
-	let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+	//let dataStr = JSON.stringify({ Scoreplayer1: playerOne_points, Scoreplayer2: playerTwo_points, Yplayer1: playerOne.y, Yplayer2: playerTwo.y, Xball: ball.x, Yball: ball.y });
+	//let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
 
-	let exportFileDefaultName = 'data.json';
+	//let exportFileDefaultName = 'data.json';
 
-	let linkElement = document.createElement('a');
-	linkElement.setAttribute('href', dataUri);
-	linkElement.setAttribute('download', exportFileDefaultName);
-	linkElement.click();
+	//let linkElement = document.createElement('a');
+	//linkElement.setAttribute('href', dataUri);
+	//linkElement.setAttribute('download', exportFileDefaultName);
+	//linkElement.click();
 
-	//console.log(JSON.stringify({ Yplayer1: playerOne.y, Yplayer2: playerTwo.y, Xball: ball.x, Yball: ball.y }));
+	console.log(JSON.stringify({ Scoreplayer1: playerOne_points, Scoreplayer2: playerTwo_points, Yplayer1: playerOne.y, Yplayer2: playerTwo.y, Xball: ball.x, Yball: ball.y }));
+}
+
+function ImportJson(value)
+{
+	playerOne_points = value.Scoreplayer1;
+	playerTwo_points = value.Scoreplayer2;
+	playerOne.y = value.Yplayer1;
+	playerTwo.y = value.Yplayer2;
+	ball.x = value.Xball;
+	ball.y = value.Yball;
 }
 
 </script>
