@@ -20,17 +20,19 @@ export default function ProfileCard(props: ProfileCardProps) {
     // setProfileBeingEdited(profile);
   // };
   return (
-    <div className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1">
+    <div className="items-center justify-center w-full flex md:w-auto md:order-1">
       <div className="bg-gray-200 w-48 h-80 z-40 border border-gray-800 items-center center">
         {/* <img src={profile.imageUrl} alt={profile.name} /> */}
-        <img className="w-16 h-16 rounded-full" height="16" src={logoInconnu} alt={profile.name} />
+        <div className="w-20 h-20 justify-center items-center">
+          <img className="w-16 h-16 rounded-full justify-center items-center" height="16" src={logoInconnu} alt={profile.name} />
+        </div>
         <section>
           <h5>
             <strong>{profile.name}</strong>
           </h5>
           <p>{formatDescription(profile.description)}</p>
           <button
-            className=" bordered"
+            className="border rounded-full p-1 px-2 bg-blue-300"
             onClick={() => {
               handleEditClick(profile);
             }}

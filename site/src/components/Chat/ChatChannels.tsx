@@ -1,8 +1,17 @@
+import React from 'react';
+
 
 export default function ChatChannels() {
 	return (
-		<div className="bg-gray-300 p-2 rounded-lg w-64 h-full">
-		<div>hahaha!</div>
+		<div>
+			{/* <div className="flex justify-end gap-4 p-4 w-full h-full"> */}
+				{/* <ChatChannels /> */}
+				{/* <ChatChannels /> */}
+			{/* </div> */}
+			<h2>**** !!!</h2>
+				{/* <SendBar /> */}
+				{/* <ChatChannels /> */}
 		</div>
 	);
 }
+// <ChatChannels />
