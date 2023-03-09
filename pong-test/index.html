@@ -37,6 +37,10 @@ const paddle_x = 20;
 const paddle2_x = canvas_width - 25;
 const paddle_y = canvas_height / 3;
 const ball_speed = 12;
+const score_size = canvas_width / 10;
+const score1_x = canvas_width / 3;
+const score2_x = canvas_width / 3 + canvas_width / 3;
+
 
 class Ball {
 	constructor(x, y, radius, speed) {
@@ -44,7 +48,6 @@ class Ball {
 		this.y = y;
 		this.radius = radius;
 		this.speed = speed;
-		this.init_speed = speed;
 
 		this.changeAngle(0);
 		this.movement = 0;
@@ -81,9 +84,6 @@ class Ball {
 		ctx.fill();
 		ctx.stroke();
 		ctx.restore();
-		ctx.restore();
-		/*if(this.xunits > 0)
-			opponent.moveTo(this.ghostPath(opponent.x));*/
 
 	}
 	ghostPath(toX) {
@@ -125,7 +125,7 @@ var myGameArea =
 		this.canvas.tabIndex = 1;
 		this.context = this.canvas.getContext("2d");
 		document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-		this.interval = setInterval(updateGameArea, 20);
+		this.interval = setInterval(updateGameArea, 20); //50 fps
 		window.addEventListener('keydown', function (e) {
 			myGameArea.keys = (myGameArea.keys || []);
 			myGameArea.keys[e.keyCode] = (e.type == "keydown");
@@ -189,14 +189,12 @@ function drawPlayerOne(width, height, color, x, y) //set up first playerOne
 	this.y = y;
 	this.speedY = 0;
 	this.update = function() {
+		this.y += this.speedY;
 		if (this.y + this.height > myGameArea.canvas.height)
 			this.y = myGameArea.canvas.height - this.height;
 		ctx = myGameArea.context;
 		ctx.fillStyle = color;
 		ctx.fillRect(this.x, this.y, this.width, this.height);
-	}
-	this.newPos = function() {
-		this.y += this.speedY;
 	}
 }
 
@@ -210,15 +208,12 @@ function drawPlayerTwo(width, height, color, x, y) //set up first playerTwo
 	this.y = y;
 	this.speedY = 0;
 	this.update = function() {
-		//this.x = myGameArea.canvas.width - 25;
+		this.y += this.speedY;
 		if (this.y + this.height > myGameArea.canvas.height)
 			this.y = myGameArea.canvas.height - this.height;
 		ctx = myGameArea.context;
 		ctx.fillStyle = color;
 		ctx.fillRect(this.x, this.y, this.width, this.height);
-	}
-	this.newPos = function() {
-		this.y += this.speedY;
 	}
 }
 
@@ -246,7 +241,7 @@ function check_for_collisions(canvas) //if ball hit either player or goal
 			ball.y - ball.radius > playerOne.y && ball.y + ball.radius < playerOne.y + playerOne.height && ball.xunits < 0)
 	{
 		ball.changeAngle( Math.floor(Math.random() * (175 - 180) + 175) - ball.angle);
-		if (ball.speed < ball.init_speed * 2)
+		if (ball.speed < ball_speed * 2)
 			ball.speed+=1;
 	}
 	//if playerTwo paddle collision
@@ -254,11 +249,11 @@ function check_for_collisions(canvas) //if ball hit either player or goal
 			ball.y - ball.radius >= playerTwo.y && ball.y + ball.radius <= playerTwo.y + playerTwo.height && ball.xunits > 0)
 	{
 		ball.changeAngle( Math.floor(Math.random() * (185 - 175) + 175) - ball.angle);
-		if (ball.speed < ball.init_speed * 2)
+		if (ball.speed < ball_speed * 2)
 			ball.speed+=1;
 	}
 
-	function addPoint(p1ORp2)
+	function addPoint(p1ORp2) //add point and reset position
 	{
 		switch(p1ORp2)
 		{
@@ -269,68 +264,50 @@ function check_for_collisions(canvas) //if ball hit either player or goal
 				playerTwo_points += 1;
 				break;
 		}
-		ball.changeAngle(180 - ball.angle);
-		/*if (ball.angle <= 90 || ball.angle >= 270)
-			ball.changeAngle(Math.floor(Math.random() * (135 - 45) + 45) - ball.angle);
-		if (ball.angle > 90 && ball.angle < 270)
-			ball.changeAngle(Math.floor(Math.random() * (315 - 225) + 225) - ball.angle);*/
 		ball.x = canvas.width / 2;
 		ball.y = canvas.height / 2;
 		playerOne.y = canvas.height / 3;
 		playerTwo.y = canvas.height / 3;
-		ball.speed = ball.init_speed;
-		//ball.y = Math.floor(Math.random() * (canvas.height - 0) + 0);
+		ball.speed = ball_speed;
+		ball.movement = ball_speed;
+		ball.changeAngle(180 - ball.angle);
 	}
 }
 
-function updateGameArea()
+function updateGameArea() // do the 50 fps games
 {
 	if (!pause)
 	{
 		myGameArea.clear();
-		//myGameArea.canvas.width = innerWidth - 100;
-		//myGameArea.canvas.height = innerHeight - 100;
-		//ball.speed = 0;
-
-		document.getElementById("res").innerHTML = ball.speed;
-		//ball.speed = myGameArea.canvas.width / 100 + 2;
-		//ball.movement = myGameArea.canvas.width / 100 + 2;
-		ball.changeAngle(ball.angle);
+		document.getElementById("res").innerHTML = ball.speed; //just to test value
+		//ball.changeAngle(ball.angle);
 		playerOne.speedY = 0;
 		playerTwo.speedY = 0;
 		if (myGameArea.keys && myGameArea.keys[87])
-		{
 			if (playerOne.y >= 0)
-				playerOne.speedY = -(myGameArea.canvas.height / 100 + 2);;
-		}
+				playerOne.speedY = -(myGameArea.canvas.height / 100 + 2);
+
 		if (myGameArea.keys && myGameArea.keys[83])
-		{
 			if (playerOne.y + playerOne.height < myGameArea.canvas.height)
 				playerOne.speedY = myGameArea.canvas.height / 100 + 2;
-		}
+
 		if (myGameArea.keys && myGameArea.keys[38])//up
-		{
 			if (playerTwo.y >= 0)
 				playerTwo.speedY = -(myGameArea.canvas.height / 100 + 2);
-		}
+
 		if (myGameArea.keys && myGameArea.keys[40]) //down
-		{
 			if (playerTwo.y + playerTwo.height < myGameArea.canvas.height)
 				playerTwo.speedY = myGameArea.canvas.height / 100 + 2;
-		}
-		playerOne.newPos();
 		playerOne.update();
-		playerTwo.newPos();
 		playerTwo.update();
 		draw_center_line(myGameArea.context, myGameArea.canvas);
 		ball.render();
 		check_for_collisions(myGameArea.canvas);
 		draw_scores(myGameArea.context, myGameArea.canvas);
 	}
-
 }
 
-function draw_center_line(ctx, canvas)
+function draw_center_line(ctx, canvas) //draw line with 30 dash
 {
 	let currentX = canvas.width / 2, currentY = 0;
 	ctx.moveTo(currentX, currentY);
@@ -349,13 +326,13 @@ function draw_center_line(ctx, canvas)
 	}
 }
 
-function draw_scores(ctx, canvas)
+function draw_scores(ctx, canvas) //draw score p1 & p2
 {
 	ctx.fillStyle = "white";
-	ctx.font = canvas.width / 10 + "px pixel";
-	let txt_H = canvas.width / 10;
-	let txt_W_Pone = canvas.width / 3;
-	let txt_W_Ptwo = canvas.width / 3 + canvas.width / 3;
+	ctx.font = score_size + "px pixel";
+	let txt_H = score_size;
+	let txt_W_Pone = score1_x;
+	let txt_W_Ptwo = score2_x;
 	ctx.fillText(playerOne_points, txt_W_Pone, txt_H);
 	ctx.fillText(playerTwo_points, txt_W_Ptwo, txt_H);
 	if (playerOne_points == 10)
@@ -380,7 +357,7 @@ function draw_scores(ctx, canvas)
 	}
 }
 
-function restart()
+function restart() //when button restart pressed
 {
 	document.getElementById('btn_pause').style.visibility = 'visible';
 	pause = false;
@@ -389,7 +366,7 @@ function restart()
 	playerTwo_points = 0;
 }
 
-function exportToJson()
+function exportToJson() //when button export pressed
 {
 	//let dataStr = JSON.stringify({ Scoreplayer1: playerOne_points, Scoreplayer2: playerTwo_points, Yplayer1: playerOne.y, Yplayer2: playerTwo.y, Xball: ball.x, Yball: ball.y });
 	//let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
@@ -404,7 +381,7 @@ function exportToJson()
 	console.log(JSON.stringify({ Scoreplayer1: playerOne_points, Scoreplayer2: playerTwo_points, Yplayer1: playerOne.y, Yplayer2: playerTwo.y, Xball: ball.x, Yball: ball.y }));
 }
 
-function ImportJson(value)
+function ImportJson(value) //when command ImportJson is written
 {
 	playerOne_points = value.Scoreplayer1;
 	playerTwo_points = value.Scoreplayer2;
