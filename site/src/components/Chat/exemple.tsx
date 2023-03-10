@@ -1,4 +1,15 @@
-export default function ExempleChat() {
+import React from "react";
+
+interface ExempleChatProps {
+    identify: Function;
+}
+
+export default function ExempleChat({ identify }: ExempleChatProps) {
+
+	React.useEffect(() => {
+		identify();
+	}, []);
+
 	return (
 		<div className="flex flex-col flex-1 p:2 sm:p-6 md:p-8 lg:p-6 justify-between md:w-96 lg:w-96 h-screen">
 			{/* <div className="flex sm:items-center justify-between py-3 border-b-2 border-gray-200"> */}
