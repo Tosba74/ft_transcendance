@@ -22,8 +22,6 @@ export default function App() {
   const [userInfos, setUserInfos] = React.useState({});
 
   React.useEffect(() => {
-    console.log('login try');
-
     async function fetchData() {
 
       try {

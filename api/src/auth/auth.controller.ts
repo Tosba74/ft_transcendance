@@ -32,7 +32,7 @@ export class AuthController {
         if (req.user.tfa_enabled === false)
             return this.authService.login(req.user);
 
-        console.log(req.user);
+        // console.log(req.user);
         
         const secret: string | undefined = await this.usersService.getTfaSecret(req.user.id);
         if (secret === '' || secret === undefined)
@@ -155,7 +155,7 @@ export class AuthController {
         if (!isCodeValid) {
             throw new UnauthorizedException('Wrong authentication code');
         }
-
+        
         return this.authService.login(req.user, true);
     }
 
