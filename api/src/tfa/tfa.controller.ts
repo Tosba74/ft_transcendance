@@ -8,6 +8,7 @@ import { AuthService } from '../auth/auth.service';
 import { LoggedUserDto } from '../auth/dto/logged_user.dto';
 import { UsersService } from '../users/users.service';
 
+// la partie confirmation pour le qr code devrait être dans la partie user et appeler les fonctions du module 2fa
 
 @Controller('api/tfa')
 @ApiTags('api/tfa')
@@ -21,29 +22,44 @@ export class TfaController {
 
 	@AllowLogged()
     @Get('activate')
-    async activate(@Response() res: any, @Request() req: any) {
-        // generate a tfa_secret and store it in db and set tfa_enable to true
-        const otpAuthUrl: string = await this.tfaService.generateTfaSecret(req.user.id);
-        
-        // generate and return a qrcode associated with the tfa_secret
-        return this.tfaService.pipeQrCodeStream(res, otpAuthUrl);
+    async activate(@Response() res: any, @Request() req: any): Promise<any> {
+        const otpAuthUrl: string = await this.tfaService.setTfaSecret(req.user.id);
+        // return a qrcode associated with the tfa_secret
+        return this.tfaService.displayQrCode(res, otpAuthUrl);
     }
 
+    @AllowLogged()
+    @Post('confirm-activation')
+    async confirm(@Body() body: any, @Request() req: any): Promise<void> {
+        const id = req.user.id;
 
-    // async turnOffTfa (@Request() req: any, @Body() body: any): Promise<LoggedUserDto> {}
+        const isCodeValid: boolean = await this.tfaService.isTfaValid(body.tfa_code, id);
+        if (!isCodeValid)
+            throw new UnauthorizedException('Wrong authentication code');
+        
+        this.usersService.enableTfa(id);
+    }
 
+    // demander le code pour confirmer la desactivation ?
+    @AllowLogged()
+    @Get('deactivate')
+    async deactivate(@Request() req: any): Promise<any> {
+        const id = req.user.id;
+        this.usersService.disableTfa(id);
+        this.usersService.unsetTfaSecret(id);
+    }
 
-    // vue que route est en AllowPublic, possibilite de mettre une limite de tentative pour eviter un brutforce
-    // car route authenticate utilise que une paire id-tfacode
+    // vue que route est en AllowPublic, possibilite de mettre une limite de tentatives pour eviter un brutforce sur /api/authenticate avec des paires de id-code
     @AllowPublic()
     @Post('authenticate')
     async authenticateApi(@Body() body: any): Promise<any> {
-        const isCodeValid: boolean = await this.tfaService.isTfaValid(body.tfa_code, body.id);
-        if (!isCodeValid) {
-            throw new UnauthorizedException('Wrong authentication code');
-        }
+        const id = body.id;
 
-        const user = await this.usersService.findOneById(body.id);
+        const isCodeValid: boolean = await this.tfaService.isTfaValid(body.tfa_code, id);
+        if (!isCodeValid)
+            throw new UnauthorizedException('Wrong authentication code');
+
+        const user = await this.usersService.findOneById(id);
         const loggedUser: LoggedUserDto = {
             id: user.id,
             login_name: user.login_name,

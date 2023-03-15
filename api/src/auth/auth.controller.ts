@@ -22,15 +22,11 @@ export class AuthController {
     @Post('basic')
     async basicLogin(@Request() req: any): Promise<any> {
 
-        // if the 2fa is turned off, directly respond with a new jwt token with full access
+        // if the tfa is turned off, directly respond with a new jwt token with full access
         if (req.user.tfa_enabled === false)
             return this.authService.login(req.user);
-        
-        // const secret: string | undefined = await this.usersService.getTfaSecret(req.user.id);
-        // if (secret === '' || secret === undefined)
-        //     throw new BadRequestException('Tfa error: tfa is enabled but secret is not defined');
 
-        // 2fa is enabled so dont sent token but ask for tfa code
+        // tfa is enabled so dont sent token but ask for tfa code
         return {id: req.user.id};
     }
 

@@ -147,8 +147,30 @@ export class UsersService {
     }
   }
 
+
   //--------------------------------------------
 
+  async enableTfa(id: number) {
+    try {
+      let user: UserModel = await this.findOneById(id);
+      user.tfa_enabled = true;
+      await this.usersRepository.save(user);
+    }
+    catch (error) {
+      throw new NotFoundException('User id not found');
+    }
+  }
+
+  async disableTfa(id: number) {
+    try {
+      let user: UserModel = await this.findOneById(id);
+      user.tfa_enabled = false;
+      await this.usersRepository.save(user);
+    }
+    catch (error) {
+      throw new NotFoundException('User id not found');
+    }
+  }
 
   async isTfaEnabled(id: number): Promise<boolean> {
     try {
@@ -164,7 +186,18 @@ export class UsersService {
     try {
       let user: UserModel = await this.findOneById(id);
       user.tfa_secret = secret;
-      user.tfa_enabled = true;
+      await this.usersRepository.save(user);
+      return user;
+    }
+    catch (error) {
+      throw new NotFoundException('User id not found');
+    }
+  }
+
+  async unsetTfaSecret(id: number): Promise<UserModel> {
+    try {
+      let user: UserModel = await this.findOneById(id);
+      user.tfa_secret = '';
       await this.usersRepository.save(user);
       return user;
     }

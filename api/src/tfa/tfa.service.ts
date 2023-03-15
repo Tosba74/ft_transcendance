@@ -7,15 +7,12 @@ import { authenticator } from 'otplib';
 import { toFileStream } from 'qrcode';
 import { Response } from 'express';
 
-import { JwtService } from '@nestjs/jwt';
-
 @Injectable()
 export class TfaService {
 
-	// constructor(private usersService: UsersService, private jwtService: JwtService) { }
 	constructor(private usersService: UsersService) { }
 	
-	async generateTfaSecret(id: number): Promise<string> {
+	async setTfaSecret(id: number): Promise<string> {
         const secret: string = authenticator.generateSecret();
         const appname: string | undefined = process.env.AUTH_APP_NAME;
         if (!appname)
@@ -31,11 +28,11 @@ export class TfaService {
         }
     }
 
-    async pipeQrCodeStream(stream: Response, otpauthUrl: string) {
+    async displayQrCode(stream: Response, otpauthUrl: string): Promise<any> {
         return toFileStream(stream, otpauthUrl);
     }
 
-    async isTfaValid(tfa_code: string, id: number) {
+    async isTfaValid(tfa_code: string, id: number): Promise<boolean> {
         const tfa_secret: string | undefined = await this.usersService.getTfaSecret(id);
         
         if (tfa_secret === '' || tfa_secret === undefined)
@@ -46,10 +43,5 @@ export class TfaService {
             secret:  tfa_secret
         });
     }
-
-	// async login(user: any, is_tfa: boolean = false) {
-    //     const access_token = this.jwtService.sign(user);
-    //     return {access_token: access_token};
-    // }
 
 }
