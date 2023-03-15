@@ -3,11 +3,11 @@ import axios from "axios";
 
 interface TfaCodeProps {
 	userId: number,
-	logUser: any,
+	loginUser: any,
 	errorMsg: any
 }
 
-export default function TfaCode({ userId, logUser, errorMsg}: TfaCodeProps) {
+export default function TfaCode({ userId, loginUser, errorMsg}: TfaCodeProps) {
 
 	console.log('POURQUOI RE-RENDER A CHAQUE FRAPPE TOUTE LE COMPONENT TfaCode ?');
 	const [tfaCode, setTfaCode] = React.useState('');
@@ -15,18 +15,18 @@ export default function TfaCode({ userId, logUser, errorMsg}: TfaCodeProps) {
 	const handleSubmit = async (event: SyntheticEvent) => {
         event.preventDefault();
 
-		axios.post("/api/login/tfa/authenticate",
+		axios.post("/api/tfa/authenticate",
 		{
 			'id': userId,
 			'tfa_code': tfaCode
 		})
 		.then(res => {
 			if (res.status === 201)
-				logUser();
+				loginUser();
 		})
 		.catch(error => {
-			errorMsg('code invalid');
-			// console.log('error', error);
+			errorMsg('Code invalid');
+			console.log('error', error);
 		});
     };
 

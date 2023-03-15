@@ -30,7 +30,7 @@ export default function LoginApi({ setLogged }: LoginApiProps) {
     let code = searchParams.get("code");
     let state = searchParams.get("state");
 
-    const logUser = () => {
+    const loginUser = () => {
         console.log(token);
         localStorage.setItem('token', token);
         setPageMessage('Login success, redirecting...');
@@ -53,13 +53,15 @@ export default function LoginApi({ setLogged }: LoginApiProps) {
                         setUserId(decoded.id);
                         
                         if (!decoded.tfa_enabled) {
-                            logUser();
+                            loginUser();
                         }
                     }
-                    else
+                    else {
                         setPageMessage('Error contacting 42 API');
+
+                    }
                 })
-                // .catch(error => setPageMessage('Code invalid'));
+                // .catch(error => setPageMessage( JSON.stringify(error, null, ' ') ) );
                 // .catch(error => console.log(error));
         }
         else
@@ -67,13 +69,12 @@ export default function LoginApi({ setLogged }: LoginApiProps) {
 
     }, [setTfa, setUserId, setToken, setPageMessage])
 
-
     return (
         <div className="flex justify-center mt-6">
             <form className="bg-gray-200 w-98 py-4 border border-gray-500 shadow-lg pr-10 center justify-center">
                 <div className="content sm:w-98 lg:w-98 w-full center content-center text-center items-center justify-center mh-8">
                     {tfa &&
-                        <TfaCode userId={userId} logUser={logUser} errorMsg={setPageMessage}/>
+                        <TfaCode userId={userId} loginUser={loginUser} errorMsg={setPageMessage}/>
                     }
                     <div>{pageMessage}</div>
                 </div>

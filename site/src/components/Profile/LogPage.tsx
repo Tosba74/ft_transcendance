@@ -22,7 +22,7 @@ export default function LogPage({ setLogged }: LogPageProps) {
 
     const navigate = useNavigate();
     
-    const logUser = () => {
+    const loginUser = () => {
         console.log(token);
         localStorage.setItem('token', token);
         setLogged(true);
@@ -43,7 +43,7 @@ export default function LogPage({ setLogged }: LogPageProps) {
                 if (res.data['access_token']) {
                     console.log(res.data['access_token']);
                     setToken(res.data['access_token']);
-                    logUser();
+                    loginUser();
                 }
                 else {
                     setTfa(true);
@@ -53,11 +53,11 @@ export default function LogPage({ setLogged }: LogPageProps) {
             })
             .catch(error => {
                 setPageMessage('Password invalid');
-                // console.log('error', error);
+                console.log('error', error);
             });
         }
         else {
-            axios.post("/api/login/tfa/authenticate",
+            axios.post("/api/tfa/authenticate",
             {
                 'id': userId,
                 'tfa_code': tfaCode
@@ -66,16 +66,16 @@ export default function LogPage({ setLogged }: LogPageProps) {
                 if (res.status === 201) {
                     console.log(res.data['access_token']);
                     setToken(res.data['access_token']);
-                    logUser();
+                    loginUser();
                 }
                 else {
-                    setPageMessage('Login error21');
-                    // console.log('error', res.statusText);
+                    setPageMessage('Internal error');
+                    console.log('error', res.statusText);
                 }
             })
             .catch(error => {
                 setPageMessage('Code invalid');
-                // console.log('error', error);
+                console.log('error', error);
             });
         }
     };

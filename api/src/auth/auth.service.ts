@@ -1,13 +1,9 @@
 
-import { Injectable, UnauthorizedException, InternalServerErrorException, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import axios from 'axios';
 
-import { authenticator } from 'otplib';
-import { toFileStream } from 'qrcode';
-import { Response } from 'express';
 import { UserModel } from '../users/models/user.model';
 
 import { LoggedUserDto } from './dto/logged_user.dto';
@@ -16,11 +12,23 @@ import { title } from 'process';
 @Injectable()
 export class AuthService {
     constructor(private usersService: UsersService, private jwtService: JwtService) { }
+    
+    private states: Array<string> = [];
+    addState(state: string) {
+        this.states.push(state);
+    }
+    checkState(state: string) {
+        const index: number = this.states.findIndex(el => el === state);
+        if (index == -1) {
+            throw new BadRequestException('State doesn\'t exists');
+        }
+        this.states.splice(index, 1);
+    }
 
     async validateUser(loginname: string, password: string): Promise<LoggedUserDto | null> {
 
         const user: UserModel = await this.usersService.findOneByLoginName(loginname);
-        
+
         if (user && user.password && await bcrypt.compare(password, user.password)) {
 
             // const loggedUser = user as LoggedUserDto;
@@ -40,7 +48,6 @@ export class AuthService {
 
         return null;
     }
-
 
     async validateOrCreateUser(loginname: string, infos: any = {}): Promise<LoggedUserDto | null> {
 
@@ -114,41 +121,6 @@ export class AuthService {
     async login(user: any, is_tfa: boolean = false) {
         const access_token = this.jwtService.sign(user);
         return {access_token: access_token};
-    }
-
-    
-    //--------------------------------------------
-
-    async generateTfaSecret(id: number): Promise<string> {
-        const secret: string = authenticator.generateSecret();
-        const appname: string | undefined = process.env.AUTH_APP_NAME;
-        if (!appname)
-            throw new InternalServerErrorException('Missing app name');
-        else
-        {
-            const user: LoggedUserDto = await this.usersService.findOneById(id);
-            const otpauthUrl: string = authenticator.keyuri(user.login_name, appname, secret);
-
-            // save the secret (associated with the qrcode) in the database
-            await this.usersService.setTfaSecret(secret, user.id);
-            return otpauthUrl;
-        }
-    }
-
-    async pipeQrCodeStream(stream: Response, otpauthUrl: string) {
-        return toFileStream(stream, otpauthUrl);
-    }
-
-    async isTfaValid(tfa_code: string, id: number) {
-        const tfa_secret: string | undefined = await this.usersService.getTfaSecret(id);
-        
-        if (tfa_secret === '' || tfa_secret === undefined)
-            throw new UnauthorizedException('TFA not activated');
-
-        return authenticator.verify({
-            token: tfa_code,
-            secret:  tfa_secret
-        });
     }
 
 }
