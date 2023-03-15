@@ -2,6 +2,7 @@ import axios from "axios";
 import jwt_decode from "jwt-decode";
 import React, { SyntheticEvent, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import TfaCode from "./TfaCode";
 
 interface LoginApiProps {
     setLogged: Function,
@@ -18,20 +19,26 @@ interface LoggedUser {
 }
 
 export default function LoginApi({ setLogged }: LoginApiProps) {
-    const [username, setUsername] = React.useState('');
+    const [userId, setUserId] = React.useState(-1);
     const [tfa, setTfa] = React.useState(false);
-    const [login, setLogin] = React.useState(false);
-    const [error, setError] = React.useState(false);
+    const [token, setToken] = React.useState('');
+    const [pageMessage, setPageMessage] = React.useState('');
 
-    const navigate = useNavigate()
-
+    const navigate = useNavigate();
     const [searchParams] = useSearchParams();
 
     let code = searchParams.get("code");
     let state = searchParams.get("state");
 
-    React.useEffect(() => {
+    const logUser = () => {
+        console.log(token);
+        localStorage.setItem('token', token);
+        setPageMessage('Login success, redirecting...');
+        setLogged(true);
+        setTimeout(() => { navigate('/') }, 3000);
+    }
 
+    React.useEffect(() => {
         if (code != null && state != null) {
             axios.post("/api/login/apicallback",
                 {
@@ -40,44 +47,35 @@ export default function LoginApi({ setLogged }: LoginApiProps) {
                 })
                 .then(res => {
                     if (res.status === 201) {
-                        const token = res.data['access_token'];
-                        const decoded: LoggedUser = jwt_decode(token);
+                        setToken(res.data['access_token']);
+                        const decoded: LoggedUser = jwt_decode(res.data['access_token']);
                         setTfa(decoded.tfa_enabled);
-                        setUsername(decoded.login_name);
+                        setUserId(decoded.id);
                         
-                        if (decoded.tfa_enabled === false) {
-                            localStorage.setItem('token', token);
-                            setLogin(true);
-                            setLogged(true);
-                            setTimeout(() => { navigate('/') }, 3000);
+                        if (!decoded.tfa_enabled) {
+                            logUser();
                         }
                     }
                     else
-                        setError(true);
+                        setPageMessage('Error contacting 42 API');
                 })
-                .catch(error => console.log(error));
-                // .catch(error => setError(true));
+                // .catch(error => setPageMessage('Code invalid'));
+                // .catch(error => console.log(error));
         }
         else
-            setError(true);
+            setPageMessage('Error missing infos');
 
-    }, [setLogin, setError, setTfa])
+    }, [setTfa, setUserId, setToken, setPageMessage])
 
 
     return (
         <div className="flex justify-center mt-6">
             <form className="bg-gray-200 w-98 py-4 border border-gray-500 shadow-lg pr-10 center justify-center">
                 <div className="content sm:w-98 lg:w-98 w-full center content-center text-center items-center justify-center mh-8">
-                    {login &&
-                        <p>Login success, redirecting</p>
-                    }
                     {tfa &&
-                        <p>ask tfa code</p>
-                        // <TfaCode username={username} />
+                        <TfaCode userId={userId} logUser={logUser} errorMsg={setPageMessage}/>
                     }
-                    {error === true &&
-                        <p>Oups, an error occured</p>
-                    }
+                    <div>{pageMessage}</div>
                 </div>
             </form >
         </div>

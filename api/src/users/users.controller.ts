@@ -8,6 +8,7 @@ import { UserModel } from "./models/user.model";
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePseudoDto } from './dto/update-pseudo.dto';
+import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
 
 @Controller('api/users')
 @ApiTags('api/users')
@@ -25,7 +26,7 @@ export class UsersController {
   @ApiOkResponse({ description: 'User retrieved successfully', type: UserModel })
   @ApiNotFoundResponse({ description: 'User not found' })
   @ApiBadRequestResponse({ description: 'User validation error' })
-  public findOne(@Param('id', ParseIntPipe) id: number): Promise<UserModel> {
+  public findOne(@Param('id', ParseIntPipe) id: number): Promise<LoggedUserDto> {
     return this.usersService.findOneById(id);
   }
   
@@ -36,13 +37,13 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
   
-  @Put(':id')
-  @ApiCreatedResponse({ description: 'Password updated successfully', type: UpdateUserDto })
-  @ApiNotFoundResponse({ description: 'User not found' })
-  @ApiBadRequestResponse({ description: 'User validation error' })
-  public update(@Param('id', ParseIntPipe) id: number, @Body() updateUserDto: UpdateUserDto): Promise<UserModel> {
-    return this.usersService.update(id, updateUserDto);
-  }
+  // @Put(':id')
+  // @ApiCreatedResponse({ description: 'Password updated successfully', type: UpdateUserDto })
+  // @ApiNotFoundResponse({ description: 'User not found' })
+  // @ApiBadRequestResponse({ description: 'User validation error' })
+  // public update(@Param('id', ParseIntPipe) id: number, @Body() updateUserDto: UpdateUserDto): Promise<UserModel> {
+  //   return this.usersService.update(id, updateUserDto);
+  // }
 
   @Patch(':id/change_pseudo')
   @ApiCreatedResponse({ description: 'Pseudo updated successfully', type: UpdatePseudoDto })

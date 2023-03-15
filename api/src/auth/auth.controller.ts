@@ -31,16 +31,14 @@ export class AuthController {
         // if the 2fa is turned off, directly respond with a new jwt token with full access
         if (req.user.tfa_enabled === false)
             return this.authService.login(req.user);
-
-        // console.log(req.user);
         
-        const secret: string | undefined = await this.usersService.getTfaSecret(req.user.id);
-        if (secret === '' || secret === undefined)
-            throw new BadRequestException('Tfa error: tfa is enabled but secret is not defined');
+        // const secret: string | undefined = await this.usersService.getTfaSecret(req.user.id);
+        // if (secret === '' || secret === undefined)
+        //     throw new BadRequestException('Tfa error: tfa is enabled but secret is not defined');
 
-        // retourne status 206 'partial content' au front pour lui indiquer de demander le tfa_code de google auth
+        // 206 partial content, ask tfa code
         response.status(206);
-        return null;
+        return {id: req.user.id};
     }
 
 
@@ -132,11 +130,8 @@ export class AuthController {
     @AllowLogged()
     @Get('tfa/activate')
     async activate(@Response() res: any, @Request() req: any) {
-        // generate a tfa_secret and store it in db
+        // generate a tfa_secret and store it in db and set tfa_enable to true
         const otpAuthUrl: string = await this.authService.generateTfaSecret(req.user.id);
-        
-        // set tfa_enable to true
-        await this.usersService.enableTfa(req.user.id);
         
         // generate and return a qrcode associated with the tfa_secret
         return this.authService.pipeQrCodeStream(res, otpAuthUrl);
@@ -148,15 +143,25 @@ export class AuthController {
 
     // user looks up the Authenticator application code and sends it to the /tfa/authenticate endpoint
     @AllowPublic()
-    @UseGuards(LocalAuthGuard)
+    // @UseGuards(LocalAuthGuard) // LocalAuthGuard se charge de creer un LoggedUser et de le mettre dans Request (req.user)
     @Post('tfa/authenticate')
-    async authenticate(@Request() req: any, @Body() body: any): Promise<any> {
-        const isCodeValid: boolean = await this.authService.isTfaValid(body.tfa_code, req.user);
+    async authenticateApi(@Body() body: any): Promise<any> {
+        const isCodeValid: boolean = await this.authService.isTfaValid(body.tfa_code, body.id);
         if (!isCodeValid) {
             throw new UnauthorizedException('Wrong authentication code');
         }
-        
-        return this.authService.login(req.user, true);
+
+        const user = await this.usersService.findOneById(body.id);
+        const loggedUser: LoggedUserDto = {
+            id: user.id,
+            login_name: user.login_name,
+            pseudo: user.pseudo,
+            color: user.color,
+            avatar_url: user.avatar_url,
+            tfa_enabled: user.tfa_enabled,
+            is_admin: user.is_admin,
+        };
+        return this.authService.login(loggedUser, true);
     }
 
 }

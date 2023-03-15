@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { SyntheticEvent, useState } from "react";
-import { Profile } from './Profile'
+import { useNavigate } from "react-router-dom";
 
 interface LogPageProps {
     setLogged: Function,
@@ -9,16 +9,30 @@ interface LogPageProps {
 export default function LogPage({ setLogged }: LogPageProps) {
     const [focus, setFocused] = useState(false);
 
-    const [tfa, setTfa] = React.useState(false);
-
     const [loginName, setLoginName] = React.useState('');
     const [password, setPassword] = React.useState('');
+    
+    const [tfa, setTfa] = React.useState(false);
+    const [token, setToken] = React.useState('');
+
     const [tfaCode, setTfaCode] = React.useState('');
+    const [userId, setUserId] = React.useState(-1);
+
+    const [pageMessage, setPageMessage] = React.useState('');
+
+    const navigate = useNavigate();
+    
+    const logUser = () => {
+        console.log(token);
+        localStorage.setItem('token', token);
+        setLogged(true);
+        setPageMessage('Login success, redirecting...');
+        setTimeout(() => { navigate('/') }, 3000);
+    }
     
     const handleSubmit = async (event: SyntheticEvent) => {
         event.preventDefault();
 
-        // check tfa
         if (tfa === false) {
             axios.post("/api/login/basic",
             {
@@ -28,40 +42,44 @@ export default function LogPage({ setLogged }: LogPageProps) {
             .then(res => {
                 if (res.status === 201) {
                     console.log(res.data['access_token']);
-                    localStorage.setItem('token', res.data['access_token']);
-                    setLogged(true);
+                    setToken(res.data['access_token']);
+                    logUser();
                 }
                 else if (res.status === 206) {
                     setTfa(true);
+                    setUserId(res.data.id);
                 }
                 else {
+                    setPageMessage('Login error11');
                     // console.log('error', res.statusText);
                 }
 
             })
             .catch(error => {
+                setPageMessage('Login error12');
                 // console.log('error', error);
             });
         }
         else {
             axios.post("/api/login/tfa/authenticate",
             {
-                'username': loginName,
-                'password': password,
+                'id': userId,
                 'tfa_code': tfaCode
             })
             .then(res => {
                 if (res.status === 201) {
                     console.log(res.data['access_token']);
-                    localStorage.setItem('token', res.data['access_token']);
-                    setLogged(true);
+                    setToken(res.data['access_token']);
+                    logUser();
                 }
                 else {
+                    setPageMessage('Login error21');
                     // console.log('error', res.statusText);
                 }
             })
             .catch(error => {
-                    // console.log('error', error);
+                setPageMessage('Code invalid');
+                // console.log('error', error);
             });
         }
     };
@@ -127,6 +145,7 @@ export default function LogPage({ setLogged }: LogPageProps) {
                     <button onClick={handleSubmit} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 center content-center text-center font-medium rounded-lg text-sm md:w-auto px-5 py-1 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                         Log in
                     </button>
+                    <div>{pageMessage}</div>
                 </div>
             </form >
         </div>

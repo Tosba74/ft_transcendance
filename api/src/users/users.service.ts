@@ -9,6 +9,7 @@ import { UserStatusModel } from 'src/user_status/models/user_status.model';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePseudoDto } from './dto/update-pseudo.dto';
+import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
 
 @Injectable()
 export class UsersService {
@@ -34,7 +35,7 @@ export class UsersService {
   async findOneByLoginName(login: string): Promise<UserModel> {
     try {
       const user = await this.usersRepository.findOneOrFail({
-        select: ['id', 'login_name', 'pseudo', 'avatar_url', 'tfa_enabled', 'is_admin', 'password'],
+        select: ['id', 'login_name', 'pseudo', 'color', 'avatar_url', 'tfa_enabled', 'is_admin', 'password'],
         where: { login_name: login }
       });
       return user;
@@ -90,33 +91,33 @@ export class UsersService {
   }
 
 
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<UserModel> {
-    try {
-      let user: UserModel = await this.findOneById(id);
+  // async update(id: number, updateUserDto: UpdateUserDto): Promise<UserModel> {
+  //   try {
+  //     let user: UserModel = await this.findOneById(id);
 
-      if (updateUserDto.login_name)
-        user.login_name = updateUserDto.login_name;
+  //     if (updateUserDto.login_name)
+  //       user.login_name = updateUserDto.login_name;
 
-      if (updateUserDto.password) {
-        const saltRounds: number = 10;
-        const hash: string = await bcrypt.hash(updateUserDto.password, saltRounds);
-        user.password = hash;
-      }
+  //     if (updateUserDto.password) {
+  //       const saltRounds: number = 10;
+  //       const hash: string = await bcrypt.hash(updateUserDto.password, saltRounds);
+  //       user.password = hash;
+  //     }
 
-      if (updateUserDto.pseudo)
-        user.pseudo = updateUserDto.pseudo;
+  //     if (updateUserDto.pseudo)
+  //       user.pseudo = updateUserDto.pseudo;
 
 
-      await this.usersRepository.save(user).catch((err: any) => {
-        throw new BadRequestException('User update error');
-      });
+  //     await this.usersRepository.save(user).catch((err: any) => {
+  //       throw new BadRequestException('User update error');
+  //     });
 
-      return user;
-    }
-    catch (error) {
-      throw new NotFoundException('User id not found');
-    }
-  }
+  //     return user;
+  //   }
+  //   catch (error) {
+  //     throw new NotFoundException('User id not found');
+  //   }
+  // }
 
   async updatePseudo(id: number, updatePseudo: UpdatePseudoDto): Promise<UserModel> {
     try {
@@ -148,16 +149,6 @@ export class UsersService {
 
   //--------------------------------------------
 
-  async enableTfa(id: number) {
-    try {
-      let user: UserModel = await this.findOneById(id);
-      user.tfa_enabled = true;
-      await this.usersRepository.save(user);
-    }
-    catch (error) {
-      throw new NotFoundException('User id not found');
-    }
-  }
 
   async isTfaEnabled(id: number): Promise<boolean> {
     try {
@@ -173,6 +164,7 @@ export class UsersService {
     try {
       let user: UserModel = await this.findOneById(id);
       user.tfa_secret = secret;
+      user.tfa_enabled = true;
       await this.usersRepository.save(user);
       return user;
     }

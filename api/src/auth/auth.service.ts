@@ -114,7 +114,6 @@ export class AuthService {
     async login(user: any, is_tfa: boolean = false) {
         const access_token = this.jwtService.sign(user);
         return {access_token: access_token};
-        // return {...user, is_tfa: is_tfa, access_token: access_token};   // est-ce qu'on renvoie pas juste le token vu qu il contient deja les info du user ?
     }
 
     
@@ -127,7 +126,7 @@ export class AuthService {
             throw new InternalServerErrorException('Missing app name');
         else
         {
-            const user: UserModel = await this.usersService.findOneById(id);
+            const user: LoggedUserDto = await this.usersService.findOneById(id);
             const otpauthUrl: string = authenticator.keyuri(user.login_name, appname, secret);
 
             // save the secret (associated with the qrcode) in the database
@@ -140,10 +139,10 @@ export class AuthService {
         return toFileStream(stream, otpauthUrl);
     }
 
-    async isTfaValid(tfa_code: string, user: UserModel) {
-        const tfa_secret: string | undefined = await this.usersService.getTfaSecret(user.id);
+    async isTfaValid(tfa_code: string, id: number) {
+        const tfa_secret: string | undefined = await this.usersService.getTfaSecret(id);
         
-        if (tfa_secret === '' || tfa_secret === undefined || user.tfa_enabled === false)
+        if (tfa_secret === '' || tfa_secret === undefined)
             throw new UnauthorizedException('TFA not activated');
 
         return authenticator.verify({
