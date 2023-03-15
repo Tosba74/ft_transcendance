@@ -40,23 +40,19 @@ export default function LogPage({ setLogged }: LogPageProps) {
                 'password': password,
             })
             .then(res => {
-                if (res.status === 201) {
+                if (res.data['access_token']) {
                     console.log(res.data['access_token']);
                     setToken(res.data['access_token']);
                     logUser();
                 }
-                else if (res.status === 206) {
+                else {
                     setTfa(true);
                     setUserId(res.data.id);
+                    setPageMessage('');
                 }
-                else {
-                    setPageMessage('Login error11');
-                    // console.log('error', res.statusText);
-                }
-
             })
             .catch(error => {
-                setPageMessage('Login error12');
+                setPageMessage('Password invalid');
                 // console.log('error', error);
             });
         }
@@ -89,6 +85,8 @@ export default function LogPage({ setLogged }: LogPageProps) {
             <form className="bg-gray-200 w-98 py-4 border border-gray-500 shadow-lg pr-10 center justify-center">
                 <div className="content sm:w-98 lg:w-98 w-full center content-center text-center items-center justify-center mh-8">
 
+                { !tfa &&
+                    <>
                     <div className="mb-6 flex text-center content-center justify-center center w-80">
                         <label className="text-right pr-4 block w-80 text-sl font-medium text-gray-900 dark:text-gray-800">
                             Login name
@@ -116,24 +114,26 @@ export default function LogPage({ setLogged }: LogPageProps) {
                             required
                         />
                     </div>
+                    </>
+                }
 
-                    {
-                        tfa &&
-                        <div className="mb-6 flex text-center content-center justify-center center w-80">
-                            <label className="text-right pr-4 block w-80 text-sl font-medium text-gray-900 dark:text-gray-800">
-                                Code
-                            </label>
-                            <input 
-                                id="tfaCode"
-                                className="text-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                type="text"
-                                placeholder="XXXXXX" 
-                                value={tfaCode}
-                                onChange={e => setTfaCode(e.target.value)} 
-                                required
-                            />
-                        </div>
-                    }
+                {
+                    tfa &&
+                    <div className="mb-6 flex text-center content-center justify-center center w-80">
+                        <label className="text-right pr-4 block w-80 text-sl font-medium text-gray-900 dark:text-gray-800">
+                            Code
+                        </label>
+                        <input 
+                            id="tfaCode"
+                            className="text-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            type="text"
+                            placeholder="XXXXXX" 
+                            value={tfaCode}
+                            onChange={e => setTfaCode(e.target.value)} 
+                            required
+                        />
+                    </div>
+                }
 
                     {/* <div className="flex items-start mb-2 px-6">
                         <div className="flex items-center h-5">

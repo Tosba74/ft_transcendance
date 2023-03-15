@@ -1,6 +1,5 @@
 
-import { Controller, Request, Response, Res, Get, Post, UseGuards, UnauthorizedException, Body, BadRequestException, Redirect, HttpStatus } from '@nestjs/common';
-// import { Response } from 'express'; // get express types
+import { Controller, Request, Response, Get, Post, UseGuards, UnauthorizedException, Body, BadRequestException, Redirect, HttpStatus } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import axios from 'axios';
 
@@ -26,7 +25,7 @@ export class AuthController {
     @AllowPublic()
     @UseGuards(LocalAuthGuard)
     @Post('basic')
-    async basicLogin(@Request() req: any, @Res({ passthrough: true }) response: any): Promise<any> {
+    async basicLogin(@Request() req: any): Promise<any> {
 
         // if the 2fa is turned off, directly respond with a new jwt token with full access
         if (req.user.tfa_enabled === false)
@@ -36,8 +35,7 @@ export class AuthController {
         // if (secret === '' || secret === undefined)
         //     throw new BadRequestException('Tfa error: tfa is enabled but secret is not defined');
 
-        // 206 partial content, ask tfa code
-        response.status(206);
+        // no token, ask tfa code
         return {id: req.user.id};
     }
 
