@@ -8,8 +8,6 @@ import { AuthService } from '../auth/auth.service';
 import { LoggedUserDto } from '../auth/dto/logged_user.dto';
 import { UsersService } from '../users/users.service';
 
-// la partie confirmation pour le qr code devrait être dans la partie user et appeler les fonctions du module 2fa
-
 
 @Controller('api/tfa')
 @ApiTags('api/tfa')
@@ -35,9 +33,9 @@ export class TfaController {
     // async turnOffTfa (@Request() req: any, @Body() body: any): Promise<LoggedUserDto> {}
 
 
-    // user looks up the Authenticator application code and sends it to the /tfa/authenticate endpoint
+    // vue que route est en AllowPublic, possibilite de mettre une limite de tentative pour eviter un brutforce
+    // car route authenticate utilise que une paire id-tfacode
     @AllowPublic()
-    // @UseGuards(LocalAuthGuard) // LocalAuthGuard se charge de creer un LoggedUser et de le mettre dans Request (req.user)
     @Post('authenticate')
     async authenticateApi(@Body() body: any): Promise<any> {
         const isCodeValid: boolean = await this.tfaService.isTfaValid(body.tfa_code, body.id);
@@ -55,7 +53,6 @@ export class TfaController {
             tfa_enabled: user.tfa_enabled,
             is_admin: user.is_admin,
         };
-        // return this.tfaService.login(loggedUser, true);
         return this.authService.login(loggedUser, true);
     }
 

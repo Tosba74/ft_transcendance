@@ -3,7 +3,7 @@ apk add nano
 
 # sleep 1000000
 
-# yarn global add @nestjs/cli
+yarn global add @nestjs/cli
 
 # # Create application
 if [ "$BUILD_TYPE" = "Setup" ]; 
