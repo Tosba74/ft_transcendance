@@ -5,8 +5,10 @@ const paddle_height = 150;
 const paddle_x = 20;
 const paddle2_x = canvas_width - 25;
 const paddle_y = canvas_height / 2 - (paddle_height / 2);
-const ball_speed = 12;
+const paddle_color = "green";
+const paddle2_color = "red";
 const paddle_speed = 15;
+const ball_speed = 12;
 const score_size = canvas_width / 10;
 const score1_x = canvas_width / 3;
 const score2_x = canvas_width / 3 + canvas_width / 3;
@@ -34,11 +36,7 @@ class Ball {
 
 	}
 	changeAngle(angle : any) {
-		// if(angle == 0)
-		//  angle = 1; // angle cannot be equal to 0;
-		//this.angle = angle;
 		this.angle = angle % 360;
-
 	}
 	angleTo(x : any, y : any) {
 		this.changeAngle(Math.atan2(y - this.y, x - this.x));
@@ -50,10 +48,10 @@ class Ball {
 		this.movement += this.speed;
 		ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
 		ctx.save();
-		ctx.shadowColor = '#999';
-		ctx.shadowBlur = 20;
-		ctx.shadowOffsetX = 15;
-		ctx.shadowOffsetY = 15;
+		//ctx.shadowColor = '#999';
+		//ctx.shadowBlur = 20;
+		//ctx.shadowOffsetX = 15;
+		//ctx.shadowOffsetY = 15;
 		ctx.strokeStyle = "purple";
 		ctx.fill();
 		ctx.stroke();
@@ -85,8 +83,8 @@ export function startGame() //set up everything
 	document.getElementById('btn_start')!.style.visibility = 'hidden';
 	document.getElementById('btn_exportToJson')!.style.visibility = 'visible';
 	myGameArea.start();
-	playerOne = new paddle(paddle_width, paddle_height, "green", paddle_x, paddle_y);
-	playerTwo = new paddle(paddle_width , paddle_height, "red", paddle2_x, paddle_y);
+	playerOne = new paddle(paddle_width, paddle_height, paddle_color, paddle_x, paddle_y);
+	playerTwo = new paddle(paddle_width , paddle_height, paddle2_color, paddle2_x, paddle_y);
 	init_ball(myGameArea.context, myGameArea.canvas);
 }
 
@@ -102,7 +100,6 @@ var myGameArea : any =
 		this.canvas.width = canvas_width;
 		this.canvas.height = canvas_height;
 		this.canvas.tabIndex = 1;
-		//document.body.insertBefore(this.canvas, document.body.childNodes[0]);
 		this.interval = setInterval(updateGameArea, 20); //50 fps
 		window.onkeyup = (e: KeyboardEvent): any => {
 			if (e.key == "w")
@@ -122,7 +119,6 @@ var myGameArea : any =
 					playerTwo.speedY = 0;
 	}
 		window.onkeydown = (e: KeyboardEvent): any => {
-			//console.log(e.key)
 			if (e.key == "w")
 				if (playerOne.y >= 0)
 					playerOne.speedY = -(paddle_speed);
@@ -198,25 +194,6 @@ class paddle //set up first playerOne
 	}
 }
 
-/*class drawPlayerTwo(this: any, width : any, height : any, color : any, x : any, y : any) //set up first playerTwo
-{
-	var canvas = document.getElementById("canvas");
-	this.gamearea = myGameArea;
-	this.width = width;
-	this.height = height;
-	this.x = x;
-	this.y = y;
-	this.speedY = 0;
-	this.update = function() {
-		this.y += this.speedY;
-		if (this.y + this.height > myGameArea.canvas.height)
-			this.y = myGameArea.canvas.height - this.height;
-		ctx = myGameArea.context;
-		ctx.fillStyle = color;
-		ctx.fillRect(this.x, this.y, this.width, this.height);
-	}
-}*/
-
 function check_for_collisions(canvas : any) //if ball hit either player or goal
 {
 	// if ball is at goal
@@ -252,85 +229,70 @@ function check_for_collisions(canvas : any) //if ball hit either player or goal
 		xdest = ball.x + ball.xunits;
 		ydest = ball.y + ball.yunits;
 
+		//if playerOne paddle collision
 		if (ball.x < canvas_width / 2)
 		{
 			if (!calculate_impact(playerOne.x + playerOne.width, (playerOne.x + playerOne.width), ball.x, xdest,
-		playerOne.y, (playerOne.y + playerOne.height), ball.y, ydest))
+				playerOne.y, (playerOne.y + playerOne.height), ball.y, ydest))
 			{
 				ball.x = xdest;
 				ball.y = ydest;
 			}
 		}
+		//if playerTwo paddle collision
 		else
 		{
 			if (!calculate_impact(playerTwo.x, playerTwo.x, ball.x, xdest,
-		playerTwo.y, (playerTwo.y + playerTwo.height), ball.y, ydest))
+				playerTwo.y, (playerTwo.y + playerTwo.height), ball.y, ydest))
 			{
 				ball.x = xdest;
 				ball.y = ydest;
 			}
 		}
-
-
 	}
-	//if playerOne paddle collision
-	/*if (ball.x - ball.radius < playerOne.x + playerOne.width && ball.x + ball.radius > playerOne.x + playerOne.width &&
-			ball.y - ball.radius > playerOne.y && ball.y + ball.radius < playerOne.y + playerOne.height && ball.xunits < 0)
+}
+function map(x : any, in_min : any, in_max : any, out_min : any, out_max : any)
+{
+	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+function calculate_impact(x1 : any, x2 : any, x3 : any, x4 : any, y1 : any, y2 : any, y3 : any, y4 : any)
+{
+	const den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+	if (den == 0)
+		return;
+	const t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / den;
+	const u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / den;
+	if (t > 0 && t < 1 && u > 0 && u < 1)
 	{
-		ball.changeAngle( Math.floor(Math.random() * (175 - 180) + 175) - ball.angle);
-		ball.speed = min(ball.speed + 1, ball_speed * 2);
-	}
-	//if playerTwo paddle collision
-	if (ball.x + ball.radius > playerTwo.x - playerTwo.width && ball.x - ball.radius < playerTwo.x + playerTwo.width &&
-			ball.y - ball.radius >= playerTwo.y && ball.y + ball.radius <= playerTwo.y + playerTwo.height && ball.xunits > 0)
-	{
-		ball.changeAngle( Math.floor(Math.random() * (185 - 175) + 175) - ball.angle);
-		ball.speed = min(ball.speed + 1, ball_speed * 2);
-	}*/
-	function map(x : any, in_min : any, in_max : any, out_min : any, out_max : any)
-	{
-		return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-	}
-
-	function calculate_impact(x1 : any, x2 : any, x3 : any, x4 : any, y1 : any, y2 : any, y3 : any, y4 : any)
-	{
-		const den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
-		if (den == 0)
-			return;
-		const t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / den;
-		const u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / den;
-		if (t > 0 && t < 1 && u > 0 && u < 1)
+		if (ball.x < canvas_width / 2)
+			ball.changeAngle((map(t, 0,1 ,-45, 45 )));
+		else
 		{
-			if (ball.x < canvas_width / 2)
-				ball.changeAngle((map(t, 0,1 ,-45, 45 )));
-			else
-			{
-				ball.changeAngle((map(t, 0,1 ,225, 135 )));
-			}
-			ball.speed = Math.min(ball.speed + 0.5, ball_speed * 2);
-			return (true);
+			ball.changeAngle((map(t, 0,1 ,225, 135 )));
 		}
-		return false;
+		ball.speed = Math.min(ball.speed + 0.5, ball_speed * 2);
+		return (true);
 	}
-	function addPoint(p1ORp2 : any) //add point and reset position
+	return false;
+}
+function addPoint(p1ORp2 : any) //add point and reset position
+{
+	switch(p1ORp2)
 	{
-		switch(p1ORp2)
-		{
-			case 1:
-				playerOne_points += 1;
-				break;
-			case 2:
-				playerTwo_points += 1;
-				break;
-		}
-		ball.x = canvas_width / 2;
-		ball.y = canvas_height / 2;
-		playerOne.y = paddle_y;
-		playerTwo.y = paddle_y;
-		ball.speed = ball_speed;
-		ball.movement = ball_speed;
-		ball.changeAngle(180 - ball.angle);
+		case 1:
+			playerOne_points += 1;
+			break;
+		case 2:
+			playerTwo_points += 1;
+			break;
 	}
+	ball.x = canvas_width / 2;
+	ball.y = canvas_height / 2;
+	playerOne.y = paddle_y;
+	playerTwo.y = paddle_y;
+	ball.speed = ball_speed;
+	ball.movement = ball_speed;
+	ball.changeAngle(180 - ball.angle);
 }
 
 function updateGameArea() // do the 50 fps games
@@ -338,8 +300,6 @@ function updateGameArea() // do the 50 fps games
 	if (!pause)
 	{
 		myGameArea.clear();
-		//document.getElementById("res").innerHTML = ball.angle; //just to test value
-		//ball.changeAngle(ball.angle);
 		playerOne.update(myGameArea.context);
 		playerTwo.update(myGameArea.context);
 		draw_center_line(myGameArea.context, myGameArea.canvas);
