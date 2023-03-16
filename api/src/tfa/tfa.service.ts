@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 
 import { LoggedUserDto } from '../auth/dto/logged_user.dto';
 import { UsersService } from '../users/users.service';
@@ -14,21 +14,19 @@ export class TfaService {
 	
 	async setTfaSecret(id: number): Promise<string> {
         const secret: string = authenticator.generateSecret();
-        const appname: string | undefined = process.env.AUTH_APP_NAME;
-        if (!appname)
-            throw new InternalServerErrorException('Missing app name');
-        else
-        {
-            const user: LoggedUserDto = await this.usersService.findOneById(id);
-            const otpauthUrl: string = authenticator.keyuri(user.login_name, appname, secret);
-
-            // save the secret (associated with the qrcode) in the database
-            await this.usersService.setTfaSecret(secret, user.id);
-            return otpauthUrl;
-        }
+        const user: LoggedUserDto = await this.usersService.findOneById(id);
+        this.usersService.setTfaSecret(secret, user.id);
+        return secret;
     }
 
-    async displayQrCode(stream: Response, otpauthUrl: string): Promise<any> {
+    async displayQrCode(secret: string, id: number, stream: Response): Promise<any> {
+        let appname = process.env.GOOGLE_AUTH_APP_NAME;
+        if (!appname || appname === '')
+            appname = 'Pong';
+
+        const user: LoggedUserDto = await this.usersService.findOneById(id);
+        const otpauthUrl: string = authenticator.keyuri(user.login_name, appname, secret);
+
         return toFileStream(stream, otpauthUrl);
     }
 
@@ -36,7 +34,7 @@ export class TfaService {
         const tfa_secret: string | undefined = await this.usersService.getTfaSecret(id);
         
         if (tfa_secret === '' || tfa_secret === undefined)
-            throw new UnauthorizedException('TFA not activated');
+            throw new InternalServerErrorException('TFA error');
 
         return authenticator.verify({
             token: tfa_code,

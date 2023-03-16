@@ -208,8 +208,11 @@ export class UsersService {
 
   async getTfaSecret(id: number): Promise<string | undefined> {
     try {
-      let user: UserModel = await this.findOneById(id);
-      return user.tfa_secret
+      const user = await this.usersRepository.findOneOrFail({
+        select: ['tfa_secret'],
+        where: { id: id }
+      });
+      return user.tfa_secret;
     }
     catch (error) {
       throw new NotFoundException('User id not found');

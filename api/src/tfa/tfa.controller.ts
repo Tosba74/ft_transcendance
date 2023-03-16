@@ -23,9 +23,8 @@ export class TfaController {
 	@AllowLogged()
     @Get('activate')
     async activate(@Response() res: any, @Request() req: any): Promise<any> {
-        const otpAuthUrl: string = await this.tfaService.setTfaSecret(req.user.id);
-        // return a qrcode associated with the tfa_secret
-        return this.tfaService.displayQrCode(res, otpAuthUrl);
+        const secret: string = await this.tfaService.setTfaSecret(req.user.id);
+        return this.tfaService.displayQrCode(secret, req.user.id, res);
     }
 
     @AllowLogged()
