@@ -19,13 +19,12 @@ export default function TfaCode({ userId, loginUser, errorMsg}: TfaCodeProps) {
 			'tfa_code': tfaCode
 		})
 		.then(res => {
-			if (res.status === 201)
+			if (res.status === 201) {
+				localStorage.setItem('token', res.data['access_token']);
 				loginUser();
+			}
 		})
-		.catch(error => {
-			errorMsg('Code invalid');
-			console.log('error', error);
-		});
+		.catch(() => errorMsg('Code invalid'));
     };
 
     return (

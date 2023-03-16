@@ -21,7 +21,6 @@ interface LoggedUser {
 export default function LoginApi({ setLogged }: LoginApiProps) {
     const [userId, setUserId] = React.useState(-1);
     const [tfa, setTfa] = React.useState(false);
-    const [token, setToken] = React.useState('');
     const [pageMessage, setPageMessage] = React.useState('');
 
     const navigate = useNavigate();
@@ -31,8 +30,6 @@ export default function LoginApi({ setLogged }: LoginApiProps) {
     let state = searchParams.get("state");
     
     const loginUser = () => {
-        console.log(token);
-        localStorage.setItem('token', token);
         setPageMessage('Login successful, redirecting...');
         setLogged(true);
         setTimeout(() => { navigate('/') }, 3000);
@@ -41,34 +38,27 @@ export default function LoginApi({ setLogged }: LoginApiProps) {
     React.useEffect(() => {
         if (code != null && state != null) {
             axios.post("/api/login/apicallback", {
-                    'code': code,
-                    'state': state,
+                'code': code,
+                'state': state
             })
             .then(res => {
                 if (res.status === 201) {
-                    setToken(res.data['access_token']);
                     const decoded: LoggedUser = jwt_decode(res.data['access_token']);
                     setTfa(decoded.tfa_enabled);
                     setUserId(decoded.id);
                     
                     if (!decoded.tfa_enabled) {
+                        localStorage.setItem('token', res.data['access_token']);
                         loginUser();
                     }
                 }
-                else {
-                    setPageMessage('Error contacting 42 API');
-                    console.log('error', res.statusText);
-                }
+                else setPageMessage('Error contacting 42 API');
             })
-            .catch(error => {
-                setPageMessage('Error during login: retry without refreshing logging process.');
-                console.log(error);  
-            })
+            .catch(() => setPageMessage('Error during login: retry without refreshing logging process.'));
         }
-        else
-            setPageMessage('Error missing infos');
+        else setPageMessage('Error missing infos');
 
-    }, [setTfa, setUserId, setToken, setPageMessage])
+    }, [setTfa, setUserId, setPageMessage])
 
     return (
         <>
