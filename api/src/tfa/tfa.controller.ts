@@ -8,8 +8,6 @@ import { AuthService } from '../auth/auth.service';
 import { LoggedUserDto } from '../auth/dto/logged_user.dto';
 import { UsersService } from '../users/users.service';
 
-// la partie confirmation pour le qr code devrait être dans la partie user et appeler les fonctions du module 2fa
-
 @Controller('api/tfa')
 @ApiTags('api/tfa')
 export class TfaController { 

@@ -147,8 +147,7 @@ export class UsersService {
     }
   }
 
-
-  //--------------------------------------------
+  // -------------------- TFA --------------------
 
   async enableTfa(id: number) {
     try {
