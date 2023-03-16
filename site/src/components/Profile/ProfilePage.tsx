@@ -30,21 +30,38 @@ export default function ProfilesPage() {
 
     const fileInput: any = useRef();
 
+    function imageValidation(): boolean {
+        // validate mime types
+
+        // validate limit size
+
+        // eventually validate image proportion w/h and/or reformat image as a square ??
+
+        return true;
+    }
+
     function handleSubmit(event: SyntheticEvent) {
         event.preventDefault();        
         if (!fileInput) 
             return;
         
+        if (imageValidation() === false) {
+            setPageMessage('Error during the upload');
+            return;
+        }
+        
+        const token: string | null = localStorage.getItem('token');
         let user_decoded: LoggedUser | null = null;
         let id: number | null = null;
-        const token: string | null = localStorage.getItem('token');
         if (token) {
             user_decoded = jwt_decode(token);
             if (user_decoded)
                 id = user_decoded.id;
         }
-        if (token === null || id === null)
+        if (token === null || user_decoded || id === null) {
+            setPageMessage('Error during the upload');
             return;
+        }
 
         axios.put(`/api/users/${id}/upload_image`, {
             'content': fileInput.current.files[0].name
