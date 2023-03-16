@@ -141,7 +141,11 @@ export class UsersService {
       let user: UserModel = await this.findOneById(id);
 
       if (updateAvatar.content) {
+
         console.log(updateAvatar);
+
+        // additional serverside validation ?
+
         // store l'image dans un folder
           // folder name :
           // image name :

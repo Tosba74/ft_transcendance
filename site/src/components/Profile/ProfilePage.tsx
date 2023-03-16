@@ -31,6 +31,7 @@ export default function ProfilesPage() {
     const fileInput: any = useRef();
 
     function imageValidation(): boolean {
+        
         // validate mime types
 
         // validate limit size
@@ -46,7 +47,7 @@ export default function ProfilesPage() {
             return;
         
         if (imageValidation() === false) {
-            setPageMessage('Error during the upload');
+            setPageMessage('Error during the upload1');
             return;
         }
         
@@ -58,8 +59,8 @@ export default function ProfilesPage() {
             if (user_decoded)
                 id = user_decoded.id;
         }
-        if (token === null || user_decoded || id === null) {
-            setPageMessage('Error during the upload');
+        if (token === null || user_decoded === null || id === null) {
+            setPageMessage('Error during the upload2');
             return;
         }
 
@@ -75,7 +76,7 @@ export default function ProfilesPage() {
                 setPageMessage('Image updated successfully');
             }
         })
-        .catch(() => setPageMessage('Error during the upload'));
+        .catch(() => setPageMessage('Error during the upload3'));
     }
 
     return (

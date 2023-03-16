@@ -57,7 +57,7 @@ export class UsersController {
   }
 
   @Put(':id/upload_image')
-  // @AllowLogged()
+  @AllowLogged()
   @ApiCreatedResponse({ description: 'Avatar updated successfully', type: UpdatePseudoDto })
   @ApiNotFoundResponse({ description: 'User not found' })
   @ApiBadRequestResponse({ description: 'User validation error' })
