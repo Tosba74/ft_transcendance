@@ -18,15 +18,15 @@ export class TfaController {
 		private authService: AuthService
 	) { }
 
-	@AllowLogged()
     @Get('activate')
+	@AllowLogged()
     async activate(@Response() res: any, @Request() req: any): Promise<any> {
         const secret: string = await this.tfaService.setTfaSecret(req.user.id);
         return this.tfaService.displayQrCode(secret, req.user.id, res);
     }
 
-    @AllowLogged()
     @Post('confirm-activation')
+    @AllowLogged()
     async confirm(@Body() body: any, @Request() req: any): Promise<void> {
         const id = req.user.id;
 
@@ -38,8 +38,8 @@ export class TfaController {
     }
 
     // demander le code pour confirmer la desactivation ?
-    @AllowLogged()
     @Get('deactivate')
+    @AllowLogged()
     async deactivate(@Request() req: any): Promise<any> {
         const id = req.user.id;
         this.usersService.disableTfa(id);

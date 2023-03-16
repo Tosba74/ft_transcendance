@@ -6,9 +6,12 @@ import { UsersService } from './users.service';
 import { UserModel } from "./models/user.model";
 
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+// import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePseudoDto } from './dto/update-pseudo.dto';
 import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
+import { UpdateAvatarDto } from './dto/update-avatar.dto';
+
+import { AllowLogged, AllowPublic } from '../auth/auth.decorators';
 
 @Controller('api/users')
 @ApiTags('api/users')
@@ -49,9 +52,17 @@ export class UsersController {
   @ApiCreatedResponse({ description: 'Pseudo updated successfully', type: UpdatePseudoDto })
   @ApiNotFoundResponse({ description: 'User not found' })
   @ApiBadRequestResponse({ description: 'User validation error' })
-
   public update_pseudo(@Param('id', ParseIntPipe) id: number, @Body() updatePseudo: UpdatePseudoDto): Promise<UserModel> {
     return this.usersService.updatePseudo(id, updatePseudo);
+  }
+
+  @Put(':id/upload_image')
+  @AllowLogged()
+  @ApiCreatedResponse({ description: 'Avatar updated successfully', type: UpdatePseudoDto })
+  @ApiNotFoundResponse({ description: 'User not found' })
+  @ApiBadRequestResponse({ description: 'User validation error' })
+  public update_avatar(@Param('id', ParseIntPipe) id: number, @Body() updateAvatar: UpdateAvatarDto): Promise<boolean> {
+    return this.usersService.updateAvatar(id, updateAvatar);
   }
   
   @Delete(':id')

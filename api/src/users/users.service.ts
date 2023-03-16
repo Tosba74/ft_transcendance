@@ -7,9 +7,9 @@ import { UserModel } from "./models/user.model";
 import { UserStatusModel } from 'src/user_status/models/user_status.model';
 
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+// import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePseudoDto } from './dto/update-pseudo.dto';
-import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
+import { UpdateAvatarDto } from './dto/update-avatar.dto';
 
 @Injectable()
 export class UsersService {
@@ -130,6 +130,31 @@ export class UsersService {
         throw new BadRequestException('User pseudo update error');
       });
       return user;
+    }
+    catch (error) {
+      throw new NotFoundException('User id not found');
+    }
+  }
+
+  async updateAvatar(id: number, updateAvatar: UpdateAvatarDto): Promise<boolean> {
+    try {
+      let user: UserModel = await this.findOneById(id);
+
+      if (updateAvatar.content) {
+        console.log(updateAvatar);
+        // store l'image dans un folder
+          // folder name :
+          // image name :
+        
+        const path: string = '';
+        // enregistre le path de l'image sur le server dans avatar_url
+        // user.avatar_url = path;
+      }
+
+      await this.usersRepository.save(user).catch((err: any) => {
+        throw new BadRequestException('User avatar update error');
+      });
+      return true;
     }
     catch (error) {
       throw new NotFoundException('User id not found');
