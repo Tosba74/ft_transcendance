@@ -62,6 +62,9 @@ export default function LoginApi({ setLogged }: LoginApiProps) {
 
     return (
         <>
+        { !tfa && 
+            <div className="mt-3 h-6 text-sm text-center">{pageMessage}</div>
+        }
         { tfa &&
             <div className="flex justify-center mt-6">
                 <form className="bg-gray-200 w-98 py-2 pt-10 border border-gray-500 shadow-lg center justify-center">
@@ -71,9 +74,6 @@ export default function LoginApi({ setLogged }: LoginApiProps) {
                     </div>
                 </form >
             </div>
-        }
-        { !tfa && 
-            <div className="mt-3 h-6 text-sm text-center">{pageMessage}</div>
         }
         </>
     );

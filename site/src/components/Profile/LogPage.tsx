@@ -9,14 +9,14 @@ interface LogPageProps {
 export default function LogPage({ setLogged }: LogPageProps) {
     const [focus, setFocused] = useState(false);
 
-    const [loginName, setLoginName] = React.useState('');
-    const [password, setPassword] = React.useState('');
-    
     const [userId, setUserId] = React.useState(-1);
     const [tfa, setTfa] = React.useState(false);
     const [pageMessage, setPageMessage] = React.useState('');
-    const [tfaCode, setTfaCode] = React.useState('');
 
+    const [loginName, setLoginName] = React.useState('');
+    const [password, setPassword] = React.useState('');
+    const [tfaCode, setTfaCode] = React.useState('');
+    
     const navigate = useNavigate();
     
     const loginUser = () => {
