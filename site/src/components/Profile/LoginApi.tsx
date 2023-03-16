@@ -1,6 +1,5 @@
-import axios from "axios";
-import jwt_decode from "jwt-decode";
 import React, { SyntheticEvent, useState } from "react";
+import axios from "axios";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import TfaCode from "./TfaCode";
 
@@ -42,15 +41,13 @@ export default function LoginApi({ setLogged }: LoginApiProps) {
                 'state': state
             })
             .then(res => {
-                if (res.status === 201) {
-                    const decoded: LoggedUser = jwt_decode(res.data['access_token']);
-                    setTfa(decoded.tfa_enabled);
-                    setUserId(decoded.id);
-                    
-                    if (!decoded.tfa_enabled) {
-                        localStorage.setItem('token', res.data['access_token']);
-                        loginUser();
-                    }
+                if (res.status === 201 && res.data['access_token']) {
+                    localStorage.setItem('token', res.data['access_token']);
+                    loginUser();
+                }
+                else if (res.status === 201 && res.data['id']) {
+                    setUserId(res.data['id']);
+                    setTfa(true);
                 }
                 else setPageMessage('Error contacting 42 API');
             })

@@ -21,7 +21,6 @@ export class AuthController {
     @UseGuards(LocalAuthGuard)
     @Post('basic')
     async basicLogin(@Request() req: any): Promise<any> {
-
         // if the tfa is turned off, directly respond with a new jwt token with full access
         if (req.user.tfa_enabled === false)
             return this.authService.login(req.user);
@@ -92,12 +91,13 @@ export class AuthController {
             const user = await this.authService.validateOrCreateUser(datas.data.login, datas.data);
 
             if (user) {
+                if (user.tfa_enabled === true)
+                    return {id: user.id};
                 return this.authService.login(user);
             }
             throw new UnauthorizedException('Api user validation error');
         }
         catch (AxiosError) {
-            console.log('Error requesting 42 access_token');
             throw new UnauthorizedException('Api 42 connection error');
         }
 
