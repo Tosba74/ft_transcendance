@@ -29,40 +29,41 @@ export default function LoginApi({ setLogged }: LoginApiProps) {
 
     let code = searchParams.get("code");
     let state = searchParams.get("state");
-
+    
     const loginUser = () => {
         console.log(token);
         localStorage.setItem('token', token);
-        setPageMessage('Login success, redirecting...');
+        setPageMessage('Login successful, redirecting...');
         setLogged(true);
         setTimeout(() => { navigate('/') }, 3000);
     }
 
     React.useEffect(() => {
         if (code != null && state != null) {
-            axios.post("/api/login/apicallback",
-                {
+            axios.post("/api/login/apicallback", {
                     'code': code,
                     'state': state,
-                })
-                .then(res => {
-                    if (res.status === 201) {
-                        setToken(res.data['access_token']);
-                        const decoded: LoggedUser = jwt_decode(res.data['access_token']);
-                        setTfa(decoded.tfa_enabled);
-                        setUserId(decoded.id);
-                        
-                        if (!decoded.tfa_enabled) {
-                            loginUser();
-                        }
+            })
+            .then(res => {
+                if (res.status === 201) {
+                    setToken(res.data['access_token']);
+                    const decoded: LoggedUser = jwt_decode(res.data['access_token']);
+                    setTfa(decoded.tfa_enabled);
+                    setUserId(decoded.id);
+                    
+                    if (!decoded.tfa_enabled) {
+                        loginUser();
                     }
-                    else {
-                        setPageMessage('Error contacting 42 API');
-
-                    }
-                })
-                // .catch(error => setPageMessage( JSON.stringify(error, null, ' ') ) );
-                // .catch(error => console.log(error));
+                }
+                else {
+                    setPageMessage('Error contacting 42 API');
+                    console.log('error', res.statusText);
+                }
+            })
+            .catch(error => {
+                setPageMessage('Error during login: retry without refreshing logging process.');
+                console.log(error);  
+            })
         }
         else
             setPageMessage('Error missing infos');
@@ -70,15 +71,20 @@ export default function LoginApi({ setLogged }: LoginApiProps) {
     }, [setTfa, setUserId, setToken, setPageMessage])
 
     return (
-        <div className="flex justify-center mt-6">
-            <form className="bg-gray-200 w-98 py-4 border border-gray-500 shadow-lg pr-10 center justify-center">
-                <div className="content sm:w-98 lg:w-98 w-full center content-center text-center items-center justify-center mh-8">
-                    {tfa &&
-                        <TfaCode userId={userId} loginUser={loginUser} errorMsg={setPageMessage}/>
-                    }
-                    <div>{pageMessage}</div>
-                </div>
-            </form >
-        </div>
+        <>
+        { tfa &&
+            <div className="flex justify-center mt-6">
+                <form className="bg-gray-200 w-98 py-2 pt-10 border border-gray-500 shadow-lg center justify-center">
+                    <div className="content sm:w-98 lg:w-98 w-full center content-center text-center items-center justify-center mh-8">
+                            <TfaCode userId={userId} loginUser={loginUser} errorMsg={setPageMessage}/>
+                        <div className="mt-3 h-6 text-sm text-center">{pageMessage}</div>
+                    </div>
+                </form >
+            </div>
+        }
+        { !tfa && 
+            <div className="mt-3 h-6 text-sm text-center">{pageMessage}</div>
+        }
+        </>
     );
 }

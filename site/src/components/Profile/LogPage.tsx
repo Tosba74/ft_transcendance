@@ -25,8 +25,8 @@ export default function LogPage({ setLogged }: LogPageProps) {
     const loginUser = () => {
         console.log(token);
         localStorage.setItem('token', token);
+        setPageMessage('Login successful, redirecting...');
         setLogged(true);
-        setPageMessage('Login success, redirecting...');
         setTimeout(() => { navigate('/') }, 3000);
     }
     
@@ -34,8 +34,7 @@ export default function LogPage({ setLogged }: LogPageProps) {
         event.preventDefault();
 
         if (tfa === false) {
-            axios.post("/api/login/basic",
-            {
+            axios.post("/api/login/basic", {
                 'username': loginName,
                 'password': password,
             })
@@ -57,8 +56,7 @@ export default function LogPage({ setLogged }: LogPageProps) {
             });
         }
         else {
-            axios.post("/api/tfa/authenticate",
-            {
+            axios.post("/api/tfa/authenticate", {
                 'id': userId,
                 'tfa_code': tfaCode
             })
@@ -82,18 +80,18 @@ export default function LogPage({ setLogged }: LogPageProps) {
 
     return (
         <div className="flex justify-center mt-6">
-            <form className="bg-gray-200 w-98 py-4 border border-gray-500 shadow-lg pr-10 center justify-center">
+            <form className="bg-gray-200 w-98 py-2 pt-10 border border-gray-500 shadow-lg center justify-center">
                 <div className="content sm:w-98 lg:w-98 w-full center content-center text-center items-center justify-center mh-8">
 
                 { !tfa &&
                     <>
-                    <div className="mb-6 flex text-center content-center justify-center center w-80">
-                        <label className="text-right pr-4 block w-80 text-sl font-medium text-gray-900 dark:text-gray-800">
+                    <div className="mb-6 flex text-center content-center justify-center center w-80 px-6">
+                        <label className="text-right pr-4 block w-2/5 text-sl font-medium text-gray-900 dark:text-gray-800">
                             Login name
                         </label>
                         <input 
                             id="loginName" 
-                            className="text-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-300 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-3/5 p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-300 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                             type="text" 
                             value={loginName}
                             onChange={e => setLoginName(e.target.value)} 
@@ -101,13 +99,13 @@ export default function LogPage({ setLogged }: LogPageProps) {
                         />
                     </div>
 
-                    <div className="mb-6 flex text-center content-center justify-center center w-80">
-                        <label className="text-right pr-4 block w-80 text-sl font-medium text-gray-900 dark:text-gray-800">
+                    <div className="mb-6 flex text-center content-center justify-center center w-80 px-6">
+                        <label className="text-right pr-4 block w-2/5 text-sl font-medium text-gray-900 dark:text-gray-800">
                             Password
                         </label>
                         <input 
                             id="password" 
-                            className="text-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-3/5 p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             type="password" 
                             value={password} 
                             onChange={e => setPassword(e.target.value)}
@@ -119,15 +117,15 @@ export default function LogPage({ setLogged }: LogPageProps) {
 
                 {
                     tfa &&
-                    <div className="mb-6 flex text-center content-center justify-center center w-80">
-                        <label className="text-right pr-4 block w-80 text-sl font-medium text-gray-900 dark:text-gray-800">
+                    <div className="mb-6 flex text-center content-center justify-center center w-80 px-6">
+                        <label className="text-right pr-4 block w-2/5 text-sl font-medium text-gray-900 dark:text-gray-800">
                             Code
                         </label>
                         <input 
                             id="tfaCode"
-                            className="text-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            className="w-3/5 text-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             type="text"
-                            placeholder="XXXXXX" 
+                            placeholder="_ _ _ _ _ _" 
                             value={tfaCode}
                             onChange={e => setTfaCode(e.target.value)} 
                             required
@@ -145,7 +143,7 @@ export default function LogPage({ setLogged }: LogPageProps) {
                     <button onClick={handleSubmit} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 center content-center text-center font-medium rounded-lg text-sm md:w-auto px-5 py-1 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                         Log in
                     </button>
-                    <div>{pageMessage}</div>
+                    <div className="mt-3 h-6 text-sm text-center">{pageMessage}</div>
                 </div>
             </form >
         </div>
