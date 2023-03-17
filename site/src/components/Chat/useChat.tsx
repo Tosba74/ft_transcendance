@@ -9,74 +9,29 @@ import { ChatRoom } from './dto/chat-room.dto';
 import { UseChatDto } from './dto/useChat.dto';
 
 
+interface useChatProps {
+  logged: boolean;
+  token: string;
+}
 
+interface broadcastMessageProps {
+  room_id: string,
+  message: ChatMessage,
+}
 
+const useChat = ({logged, token}: useChatProps): UseChatDto => {
 
-const useChat = (): UseChatDto => {
-
-  // let socket: Socket = io('http://127.0.0.1:4000');
   const socketRef = React.useRef<Socket>();
-
-  // const [messages, setMessages] = React.useState<{ [key: string]: ChatMessage[] }>();
-  const [messages, setMessages] = React.useState<{ [key: number]: ChatMessage[] }>();
-
-  let rooms: number[] = [1];
-  const username: string = "default";
+  const [rooms, setRooms] = React.useState<{ [key: string]: ChatRoom }>();
 
 
-  React.useEffect(() => {
-    setTimeout(() => {
+  const identify = () => {
 
-      console.log('arrived');
+    console.log('sent iden');
 
-      // socketRef.current = io('http://localhost:8080/');
-      socketRef.current = io('http://localhost:8080/', {path: '/chat/'});
-      // socketRef.current = io('http://localhost:8080', {path: '/api'});
-
-      socketRef.current.on("connect", () => {
-        console.log("connected! front-end");
-
-        // rooms.forEach(function (oneRoom) {
-        //   joinRoom(oneRoom);
-
-        // });
-
-
-        interface broadcastMessageProps {
-          room: number,
-          message: ChatMessage,
-        }
-
-        // console.log(socketRef.current);
-        socketRef.current &&
-          socketRef.current.on("broadcastMessage", ({ room, message }: broadcastMessageProps) => {
-
-            // console.log("broacd", messages);
-            console.log("recv", room, message);
-
-            let newMsgList: ChatMessage[] = (messages && messages[room]) || [];
-            newMsgList.push(message);
-
-            // console.log("oneroom", newMsgList);
-
-            setMessages((oldMessages) => ({
-              ...oldMessages,
-              [room]: [...((oldMessages && oldMessages[room]) || []), message],
-            }));
-
-
-            // console.log("after", messages);
-          });
-
-      });
-    }, 1000);
-  }, []);
-
-
-  const identify = (room_id: number) => {
-
+    // Send identify to register websocket user
     socketRef.current &&
-      socketRef.current.emit("identify", {}, (response: ChatResponse<undefined>) => {
+      socketRef.current.emit("identify", {}, (response: ChatResponse<ChatRoom[]>) => {
 
         if (response.error != undefined) {
           console.log('identify error', response.error)
@@ -85,40 +40,85 @@ const useChat = (): UseChatDto => {
       });
   }
 
+
   const connectRoom = (room_id: number) => {
 
+    console.log('try connect', room_id);
+
+    // Try to connect to a room, receive room name and messages on success
     socketRef.current &&
-      socketRef.current.emit("joinRoom", { room: room_id }, (response: ChatResponse<ChatRoom>) => {
+      socketRef.current.emit("connectRoom", { room: room_id }, (response: ChatResponse<ChatRoom>) => {
 
-        if (response.error != undefined) {
-          let roomName: string = response.value?.name || "";
-          let roomMessages = response.value?.messages || [];
+        if (response.error == undefined && response.value) {
+          let room: ChatRoom = response.value;
 
+          console.log('connected', room.id);
 
-          if (roomName != "") {
-            setMessages(oldMessages => ({
-              ...oldMessages,
-              [roomName]: roomMessages,
-            }));
-          }
+          setRooms(oldRooms => ({
+            ...oldRooms,
+            [room.id]: room,
+          }));
         }
 
-        // console.log(messages);
       });
   }
 
 
-  const sendMessage = (messageBody: string, room: number) => {
+  const sendMessage = (messageBody: string, room_id: number) => {
 
     socketRef.current &&
       socketRef.current.emit('createMessage', {
-        room: room,
+        room_id: room_id,
         message: messageBody,
       });
   };
 
 
-  return { messages, identify, connectRoom, sendMessage }
+
+
+  React.useEffect(() => {
+
+    if (logged) {
+
+      socketRef.current = io('http://localhost:8080/', {
+        path: '/chat/',
+        timeout: 10000,
+        extraHeaders: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+
+      socketRef.current.on("connect", () => {
+        console.log("connected! front-end");
+
+        // Send authorization header to authentify socket
+        identify();
+
+
+        // Bind function for message reception
+        socketRef.current &&
+          socketRef.current.on("broadcastMessage", ({ room_id, message }: broadcastMessageProps) => {
+
+            console.log('recv msg', room_id, message);
+            
+            setRooms((oldRooms) => ((oldRooms && oldRooms[room_id] && {
+              ...oldRooms,
+              [room_id]: {...(oldRooms[room_id]), messages: [...oldRooms[room_id].messages, message]} ,
+            })) || oldRooms);
+          });
+      });
+
+    }
+    else {
+      console.log('socket not connected not logged');
+    }
+
+  }, [logged]);
+
+
+
+  return { rooms, identify, connectRoom, sendMessage }
 }
 
 export default useChat;

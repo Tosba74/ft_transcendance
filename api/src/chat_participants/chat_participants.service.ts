@@ -33,10 +33,13 @@ export class ChatParticipantsService {
     const chats = await this.chatParticipantsRepository.find({
       where: {
         participant: { id: id },
-        role: { id: Not(ChatRoleModel.BAN_ROLE) }
+        role: { id: Not(ChatRoleModel.BAN_ROLE) },
       },
-      relations: { room: true },
+      relations: { 
+        room: { messages: { sender: true } }
+      },
     });
+
     return chats;
   }
 

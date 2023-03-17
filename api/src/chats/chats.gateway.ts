@@ -1,34 +1,28 @@
-import { Request } from '@nestjs/common';
-import { WebSocketGateway, SubscribeMessage, MessageBody, WebSocketServer, ConnectedSocket, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
+import { Request, UseFilters, UseGuards } from '@nestjs/common';
+import { WebSocketGateway, SubscribeMessage, MessageBody, WebSocketServer, ConnectedSocket, OnGatewayConnection, OnGatewayDisconnect, BaseWsExceptionFilter, WsException } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+
+import { WsAuthGuard } from 'src/auth/auth-strategy/ws-auth.guard';
+import { WebsocketExceptionsFilter } from 'src/_common/filters/ws-exception.filter';
+
+import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
 import { ChatsService } from './chats.service';
 
 import { ChatResponse } from './dto/chat-response.dto';
-import { ChatMessage } from './dto/chat-message.dto';
 import { ChatRoom } from './dto/chat-room.dto';
-import { AllowLogged } from 'src/auth/auth.decorators';
-import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
-import { connect } from 'http2';
 
 
-// @WebSocketGateway({ path: 'chat', cors: { origin: '*' } })
+
 @WebSocketGateway({ path: '/chat/', cors: { origin: '*' } })
+@UseFilters(WebsocketExceptionsFilter)
 export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	@WebSocketServer() server: Server;
 	constructor(private readonly chatsService: ChatsService) { }
 
 
-	handleConnection(@Request() req: any, @ConnectedSocket() client: Socket): void {
-		console.log('handle Connection', client);
+	handleConnection(@ConnectedSocket() client: Socket): void {
 
-		// let responseMessage = new ChatMessage();
-		// responseMessage.id = -1;
-		// responseMessage.senderDiplayName = 'Server';
-		// responseMessage.senderId = -1;
-		// responseMessage.content = 'Command done';
-
-		// client.emit('broadcastMessage', { room: 'body.room', message: responseMessage });
 	}
 
 	handleDisconnect(@ConnectedSocket() client: Socket): void {
@@ -38,31 +32,35 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 
 	@SubscribeMessage('identify')
-	// async joinRoom(@MessageBody('room') room: string, @ConnectedSocket() client: Socket): Promise<RoomResponse | undefined> {
-	async identify(client: Socket, @Request() req: any, body: {}) {
+	@UseGuards(WsAuthGuard)
+	async identify(@ConnectedSocket() client: Socket): Promise<ChatResponse<undefined>> {
 
+		const user = (client.handshake as any).user as LoggedUserDto;
 
-		console.log('get identify');
+		console.log(user);
 
-		let responseMessage = new ChatMessage();
-		responseMessage.id = -1;
-		responseMessage.senderDiplayName = 'Server';
-		responseMessage.senderId = -1;
-		responseMessage.content = 'Command done';
-
-		// client.emit('broadcastMessage', { room: 5, message: responseMessage });
-
-		this.server.emit('broadcastMessage', { room: 30, message: responseMessage });
-
-		// this.chatsService.identify(req.user as LoggedUserDto, client);
+		return this.chatsService.identify(user, client);
 	}
 
 
 	@SubscribeMessage('connectRoom')
-	// async joinRoom(@MessageBody('room') room: string, @ConnectedSocket() client: Socket): Promise<RoomResponse | undefined> {
-	async connectRoom(client: Socket, @Request() req: any, body: { room: number }): Promise<ChatResponse<ChatRoom>> {
+	async connectRoom(client: Socket, body: { room: number }): Promise<ChatResponse<ChatRoom>> {
 
-		return (this.chatsService.connectRoom(req.user as LoggedUserDto, client, body.room))
+		const loggedUser = this.chatsService.isIdentifed(client);
+		
+		if (loggedUser == undefined) {
+			throw new WsException('Not identified');
+		}
+
+		// const loggedUser: LoggedUserDto = {
+		// 	id: 1,
+		// 	login_name: 'ada',
+		// 	pseudo: 'dad',
+		// 	color: 1,
+		// 	is_admin: false,
+		// }
+
+		return (this.chatsService.connectRoom(loggedUser, client, body.room))
 	}
 
 
@@ -70,30 +68,48 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	// create and send message
 	@SubscribeMessage('createMessage')
-	// async create(@MessageBody() input: MessageDto, @ConnectedSocket() client: Socket): Promise<MessageDto> {
-	async createMessage(client: Socket, body: { room: number, message: ChatMessage }): Promise<ChatResponse<undefined>> {
-
-		let res = new ChatResponse<undefined>();
-
-		//Check if user can send in room
-		if (1 == 1) {
-			if (body.message.content.startsWith("/") == true) {
-				let responseMessage = new ChatMessage();
-				responseMessage.id = -1;
-				responseMessage.senderDiplayName = 'Server';
-				responseMessage.senderId = -1;
-				responseMessage.content = 'Command done';
-
-				client.emit('broadcastMessage', { room: body.room, message: responseMessage })
-				// this.server.emit('broadcastMessage', { room: body.room, message: body.message });
+	async createMessage(client: Socket, body: { room_id: number, message: string }) {
 
 
-			}
-			else {
-				this.server.to(body.room.toString()).emit('broadcastMessage', { room: body.room, message: body.message });
-			}
+		if (body == undefined || body.room_id == undefined || body.message == undefined) {
+			throw new WsException('Not identified');
+
 		}
 
-		return (res);
+		if (!client.rooms.has(body.room_id.toString())) {
+			throw new WsException('Room not joined');
+		}
+
+		const loggedUser = this.chatsService.isIdentifed(client);
+
+		if (loggedUser == undefined) {
+			throw new WsException('Not identified');
+		}
+
+		// const loggedUser: LoggedUserDto = {
+		// 	id: 1,
+		// 	login_name: 'ada',
+		// 	pseudo: 'dad',
+		// 	color: 1,
+		// 	is_admin: false,
+		// }
+
+
+
+		if (body.message.startsWith("/") == true) {
+
+			let messageObj = await this.chatsService.adminCommand(loggedUser, client, body.room_id, body.message);
+
+			if (messageObj != undefined)
+				this.server.to(body.room_id.toString()).emit('broadcastMessage', { room_id: body.room_id.toString(), message: messageObj });
+
+		}
+		else {
+
+			let messageObj = await this.chatsService.createMessage(loggedUser, client, body.room_id, body.message);
+
+			if (messageObj != undefined)
+				this.server.to(body.room_id.toString()).emit('broadcastMessage', { room_id: body.room_id.toString(), message: messageObj });
+		}
 	}
 }

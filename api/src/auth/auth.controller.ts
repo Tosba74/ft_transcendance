@@ -81,7 +81,6 @@ export class AuthController {
                         'Authorization': `Bearer ${access_token}`
                     }
                 });
-                console.log(access_token);
 
                 coal_data.data.forEach(function (element: any) {
                     if (element['coalition_id'] >= 191 && element['coalition_id'] <= 193)

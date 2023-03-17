@@ -1,8 +1,7 @@
-import { StringMappingType } from 'typescript';
-import { ChatMessage } from './chat-message.dto';
+import { ChatRoom } from './chat-room.dto';
 
 export interface UseChatDto {
-	messages: { [key: number]: ChatMessage[] } | undefined;
+	rooms: { [key: string]: ChatRoom } | undefined;
     identify: Function;
     connectRoom: Function;
     sendMessage: Function;
