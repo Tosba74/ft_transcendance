@@ -8,8 +8,9 @@ import ReactPage from './components/ReactPage';
 import GamePage from './components/Game/GamePage';
 import HomePage from './components/Home/HomePage';
 import ProfilePage from './components/Profile/ProfilePage';
-import Profil from './components/Profil';
 import LogPage from './components/Log/LogPage';
+import Profil from './components/Profil';
+import SetProfil from './components/SetProfil';
 
 import NavBar from './components/NavBar/NavBar';
 import ChatIcon from './components/Chat/ChatIcon';
@@ -72,12 +73,12 @@ export default function App() {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/profile/:id" element={<ProfilePage />} />
             <Route path="/game" element={<GamePage />} />
-            <Route path="/exemplechat" element={<ExempleChat />} />
-            {/* <Route path="/profil" element={<Profil />} /> */}
             <Route path="/history" element={<ReactPage />} />
             <Route path="/login" element={<LogPage setLogged={setLogged} />} />
             <Route path="/loginapi" element={<LoginApi setLogged={setLogged} />} />
             <Route path="/logout" element={<Logout />} />
+            <Route path="/exemplechat" element={<ExempleChat />} />
+            <Route path="/setprofil" element={<SetProfil userdata={userInfos} setdata={setUserInfos} />} />
           </Routes>
         </div>
         <div className="absolute z-50 right-0 bottom-8">

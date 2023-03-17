@@ -22,7 +22,7 @@ export default function ProfileList({ profiles, onSave }: ProfileListProps) {
   return (
     <div>
       {profiles.map((profile) => (
-        <div key={profile.id} className="">
+        <div key={profile.id} className="h-screen">
           {profile === profileBeingEdited ? (
             <ProfileForm profile={profile} onSave={onSave} onCancel={cancelEditing} />
           ) : (
