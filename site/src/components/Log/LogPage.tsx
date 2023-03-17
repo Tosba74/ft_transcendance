@@ -4,11 +4,11 @@ import { Profile } from '../Profile/Profile'
 
 
 interface LogPageProps {
-    setLogged: Function,
+    setToken: Function,
 }
 
 
-export default function LogPage({ setLogged }: LogPageProps) {
+export default function LogPage({ setToken }: LogPageProps) {
     const [focus, setFocused] = useState(false);
 
     const [loginName, setLoginName] = useState('');
@@ -26,7 +26,7 @@ export default function LogPage({ setLogged }: LogPageProps) {
                 if (res.status === 201) {
                     console.log(res.data['access_token']);
                     localStorage.setItem('token', res.data['access_token']);
-                    setLogged(true);
+                    setToken(res.data['access_token']);
                 }
                 else if (res.status === 206) {
                     console.log(res.data['access_token']);

@@ -28,13 +28,13 @@ export class ChatMessagesService {
     }
   }
 
-  async create(createMessageDto: CreateMessageDto): Promise<ChatMessageModel> {
+  async create(message: string, sender_id: number, room_id: number): Promise<ChatMessageModel> {
 
     const res = this.chatMessagesRepository.create({
-      message: createMessageDto.message,
+      message: message,
 
-      sender: { id: createMessageDto.user_id },
-      room: { id: createMessageDto.chat_id },
+      sender: { id: sender_id },
+      room: { id: room_id },
       sent_at: new Date(),
     });
 

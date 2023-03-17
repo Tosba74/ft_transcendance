@@ -22,7 +22,7 @@ setup:
 
 
 start:
-			${DOCKER} up -d
+			${DOCKER} up -d --build
 
 ps:
 			${DOCKER} ps -a

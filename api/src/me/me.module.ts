@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 
 import { MeService } from './me.service';
 import { MeController } from './me.controller';
@@ -10,7 +10,7 @@ import { ChatsModule } from 'src/chats/chats.module';
 import { ChatParticipantsModule } from 'src/chat_participants/chat_participants.module';
 
 @Module({
-  imports: [UsersModule,  FriendsModule, BlockedsModule, ChatsModule, ChatParticipantsModule],
+  imports: [UsersModule, FriendsModule, BlockedsModule, forwardRef(() => ChatsModule), ChatParticipantsModule],
   providers: [MeService],
   controllers: [MeController],
   exports: [MeService],

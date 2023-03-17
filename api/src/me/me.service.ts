@@ -1,4 +1,4 @@
-import { ConsoleLogger, Injectable, NotFoundException, BadRequestException, PreconditionFailedException, UnauthorizedException } from '@nestjs/common';
+import { ConsoleLogger, Injectable, NotFoundException, BadRequestException, PreconditionFailedException, UnauthorizedException, forwardRef, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -31,6 +31,7 @@ export class MeService {
     private usersService: UsersService,
     private friendsService: FriendsService,
     private blockedsService: BlockedsService,
+    @Inject(forwardRef(() => ChatsService))
     private chatsService: ChatsService,
     private chatParticipantService: ChatParticipantsService,
   ) { }

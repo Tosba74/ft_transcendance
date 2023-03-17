@@ -25,7 +25,7 @@ export class MeController {
     @Get()
     @ApiOkResponse({ description: 'User infos retrieved successfully', type: LoggedUserDto})
     getMe(@Request() req: any): LoggedUserDto {
-        console.log(req.user);
+        
         return req.user as LoggedUserDto;
     }
 
