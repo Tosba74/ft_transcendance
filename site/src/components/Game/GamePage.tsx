@@ -8,6 +8,18 @@ export default function GamePage() {
 		setPause(!pause);
 	};
 
+	const styles = {
+		myProgress: {
+			width: "100%",
+			backgroundColor: "#ddd"
+		  },
+
+		myBar: {
+			width: "0%",
+			height: "30px",
+			backgroundColor: "#4CBB17"
+		  },
+	};
 
 	return (
 		<div className="bg-yellow-400 w-full h-full">
@@ -21,26 +33,49 @@ export default function GamePage() {
 				</div>
 			</div>
 			<div>
-				<canvas className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" id="canvas" style={{border: '1px solid rgba(255, 255, 255, 0.85)', backgroundColor: 'rgba(0, 0, 0, 0.85)', width: '50%'}}>
+				<div>
+					<p>ULTIME :</p>
+						<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_add_ball"onClick={pong.boost_ult}>
+							ADMIN: BOOST ULT
+						</button>
+						<a className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" id="btn_ult0">
+							1: Add a ball
+						</a>
+						<a className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" id="btn_ult1">
+							2 :Paddle Dash
+						</a>
+						<a className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" id="btn_ult2">
+							3: Reduce paddle
+						</a>
+					<div id="myProgress" style={styles.myProgress}>
+						<div id="myBar" style={styles.myBar}>
+						</div>
+					</div>
+				</div>
+				<canvas className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" id="canvas" style={{border: '1px solid rgba(255, 255, 255, 0.85)', backgroundColor: 'rgba(0, 0, 0, 0.85)', width: '100%'}}>
 				</canvas>
 			</div>
 			<div>
 				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_start" onClick={pong.startGame}>
 					Start
 				</button>
-				<br></br>
 				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_pause" style={{visibility: 'hidden'}} onClick={pong.do_pause}>
 					Pause
 				</button>
 				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_restart" style={{visibility: 'hidden'}} onClick={pong.restart}>
 					restart
 				</button>
-				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" style={{visibility: 'hidden'}} id="btn_exportToJson" onClick={pong.exportToJson}>
-					export to JSON
+				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" style={{visibility: 'hidden'}} id="btn_exportToJson" onClick={pong.exportToJson_pone}>
+					export to JSON for P1
 				</button>
-
-
+				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" style={{visibility: 'hidden'}} id="btn_exportToJson" onClick={pong.exportToJson_ptwo}>
+					export to JSON for P2
+				</button>
 			</div>
+			<p>/!CONTROL!\</p>
+			<p>W: UP</p>
+			<p>S: DOWN</p>
+			<p>SPACE: ULTIMATE</p>
 		</div>
 	);
 }
