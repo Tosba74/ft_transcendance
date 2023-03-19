@@ -12,18 +12,7 @@ import { title } from 'process';
 @Injectable()
 export class AuthService {
     constructor(private usersService: UsersService, private jwtService: JwtService) { }
-    
     private states: Array<string> = [];
-    addState(state: string) {
-        this.states.push(state);
-    }
-    checkState(state: string) {
-        const index: number = this.states.findIndex(el => el === state);
-        if (index == -1) {
-            throw new BadRequestException('State doesn\'t exists');
-        }
-        this.states.splice(index, 1);
-    }
 
     async validateUser(loginname: string, password: string): Promise<LoggedUserDto | null> {
 
@@ -50,7 +39,7 @@ export class AuthService {
     }
 
     async validateOrCreateUser(loginname: string, infos: any = {}): Promise<LoggedUserDto | null> {
-
+        
         try {
             const user = await this.usersService.findOneByLoginName(loginname);
 
@@ -118,9 +107,21 @@ export class AuthService {
         return null;
     }
     
-    async login(user: any, is_tfa: boolean = false) {
+    async login(user: any) {
         const access_token = this.jwtService.sign(user);
         return {access_token: access_token};
+    }
+
+    addState(state: string) {
+        this.states.push(state);
+    }
+    
+    checkState(state: string) {
+        const index: number = this.states.findIndex(el => el === state);
+        if (index == -1) {
+            throw new BadRequestException('State doesn\'t exists');
+        }
+        this.states.splice(index, 1);
     }
 
 }

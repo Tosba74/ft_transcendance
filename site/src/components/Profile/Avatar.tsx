@@ -1,15 +1,24 @@
 import React, { useRef, SyntheticEvent } from "react";
 import axios from "axios";
+import jwt_decode from "jwt-decode";
 
-export default function Avatar() {
+import { LoggedUser } from "./LoggedUser";
+interface AvatarProps {
+    user: LoggedUser,
+    setUserInfos: Function,
+}
 
-    const [pageMessage, setPageMessage] = React.useState('');
+export default function Avatar({user, setUserInfos}: AvatarProps) {
+
+    const { avatar_url, } = user;
+
+    const [avatarMessage, setAvatarMessage] = React.useState('');
 
     const fileInput: any = useRef();
 
     function fileValidation(): boolean {
         if (!fileInput) {
-            setPageMessage('Error: file not detected');
+            setAvatarMessage('Error: file not detected');
             return false;
         }
 
@@ -17,13 +26,13 @@ export default function Avatar() {
         if (fileInput.current.files[0].type !== 'image/png' && 
             fileInput.current.files[0].type !== 'image/jpg' &&
             fileInput.current.files[0].type !== 'image/jpeg') {
-            setPageMessage('Error: the image must be jpg or png');
+            setAvatarMessage('Error: the image must be jpg or png');
             return false;
         }
 
         // validate size (1MO)
         if (fileInput.current.files[0].size < 1 || fileInput.current.files[0].size > 1000000) {
-            setPageMessage('Error: maximum image size 1 MO');
+            setAvatarMessage('Error: maximum image size 1 MO');
             return false;
         }
 
@@ -31,6 +40,28 @@ export default function Avatar() {
 
         return true;
     }
+
+    function refreshTokenAndUserInfos() {
+		const token = localStorage.getItem('token');
+		axios.get("/api/login/refresh_token", {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			}
+		})
+		.then(res => {
+			const newtoken: string = res.data['access_token'];
+			if (newtoken) {
+				console.log("new token:", newtoken);
+				localStorage.setItem('token', newtoken);
+				const user: LoggedUser = jwt_decode(newtoken);
+				setUserInfos(user);
+			}
+		})
+		.catch((error) => {
+			setAvatarMessage('Error while refreshing user\'s token');
+			console.log(error);
+		});
+	}
 
     function handleSubmit(event: SyntheticEvent) {
         event.preventDefault();        
@@ -45,16 +76,17 @@ export default function Avatar() {
     
             axios.put(`/api/users/upload_image`, data, {
                 headers: {
-                    'Authorization': `Bearer ${token}`,
+                    Authorization: `Bearer ${token}`,
                 }
             })
             .then(res => {
-                // console.log(res)
                 if (res.data === true) {
-                    setPageMessage('Image uploaded successfully');
+                    setAvatarMessage('Image uploaded successfully');
+                    refreshTokenAndUserInfos();
+                    setTimeout(() => { setAvatarMessage('') }, 3000);
                 }
             })
-            .catch(() => setPageMessage('Error: impossible to contact API. Try to re-login...'));
+            .catch(() => setAvatarMessage('Error: impossible to contact API. Try to re-login...'));
         }
     }
 
@@ -80,7 +112,7 @@ export default function Avatar() {
                         Submit
                     </button>
 
-                    <div className="mt-3 h-6 text-sm text-center">{pageMessage}</div>
+                    <div className="mt-3 h-6 text-sm text-center">{avatarMessage}</div>
 
                 </div>
             </form>

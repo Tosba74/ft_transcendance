@@ -66,7 +66,7 @@ export class TfaController {
             tfa_enabled: user.tfa_enabled,
             is_admin: user.is_admin,
         };
-        return this.authService.login(loggedUser, true);
+        return this.authService.login(loggedUser);
     }
 
 }

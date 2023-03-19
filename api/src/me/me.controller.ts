@@ -5,6 +5,7 @@ import { HttpExceptionFilter } from 'src/_common/filters/http-exception.filter';
 import { AllowLogged, AllowPublic } from 'src/auth/auth.decorators';
 import { MeService } from './me.service';
 import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
+import { UserModel } from 'src/users/models/user.model';
 
 
 
@@ -14,21 +15,11 @@ import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
 @UseFilters(HttpExceptionFilter)
 export class MeController {
     constructor(private meService: MeService) { }
-
     
     @Get()
     @ApiOkResponse({ description: 'User infos retrieved successfully', type: LoggedUserDto})
     getMe(@Request() req: any): LoggedUserDto {
         return req.user as LoggedUserDto;
-    }
-
-    @Get('profile')
-    // @ApiCreatedResponse({ description: 'Profile retrieved successfully', type: UserModel })
-    // @ApiNotFoundResponse({ description: 'User not found' })
-    // @ApiBadRequestResponse({ description: 'User validation error' })
-    public getProfile(@Request() req: any){
-        return true;
-    //   return this.usersService.getProfile(req.user.id);
     }
 
     // @Get()

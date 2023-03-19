@@ -17,9 +17,9 @@ import { DataSource } from 'typeorm';
 export class AuthController {
     constructor(private authService: AuthService, private readonly usersService: UsersService) { }
 
+    @Post('basic')
     @AllowPublic()
     @UseGuards(LocalAuthGuard)
-    @Post('basic')
     async basicLogin(@Request() req: any): Promise<any> {
         // if the tfa is turned off, directly respond with a new jwt token with full access
         if (req.user.tfa_enabled === false)
@@ -27,6 +27,15 @@ export class AuthController {
 
         // tfa is enabled so dont sent token but ask for tfa code
         return {id: req.user.id};
+    }
+
+
+    @Get('refresh_token')
+    @AllowLogged()
+    async refreshToken(@Request() req: any): Promise<any> {
+        delete req.user.exp;
+        delete req.user.iat;
+        return this.authService.login(req.user);
     }
 
 

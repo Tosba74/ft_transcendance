@@ -73,14 +73,14 @@ export class UsersController {
       --------- OUR APP additional routes ---------
   */
 
-  @Get('profile')
-  @AllowLogged()
-  @ApiCreatedResponse({ description: 'Profile retrieved successfully', type: UserModel })
-  @ApiNotFoundResponse({ description: 'User not found' })
-  @ApiBadRequestResponse({ description: 'User validation error' })
-  public getProfile(@Request() req: any) {
-    // return this.usersService.getProfile(req.user.id);
-  }
+  // @Get('avatar')
+  // @AllowLogged()
+  // // @ApiCreatedResponse({ description: 'Avatar retrieved successfully', type: UserModel })
+  // // @ApiNotFoundResponse({ description: 'User not found' })
+  // // @ApiBadRequestResponse({ description: 'User validation error' })
+  // public getAvatar(@Request() req: any) {
+  //   // return this.usersService.getProfile(req.user.id);
+  // }
 
   // @Get('public_profile')
   // @AllowLogged()
@@ -94,12 +94,13 @@ export class UsersController {
   //     // return this.usersService.getPrivateProfile(req.user.id);
   // }
 
-  @Patch(':id/change_pseudo')
+  @Put('update_pseudo')
+  @AllowLogged()
   @ApiCreatedResponse({ description: 'Pseudo updated successfully', type: UpdatePseudoDto })
   @ApiNotFoundResponse({ description: 'User not found' })
   @ApiBadRequestResponse({ description: 'User validation error' })
-  public update_pseudo(@Param('id', ParseIntPipe) id: number, @Body() updatePseudo: UpdatePseudoDto): Promise<UserModel> {
-    return this.usersService.updatePseudo(id, updatePseudo);
+  public update_pseudo(@Request() req: any, @Body() updatePseudo: UpdatePseudoDto): Promise<boolean> {
+    return this.usersService.updatePseudo(req.user.id, updatePseudo);
   }
 
   @Put('upload_image')

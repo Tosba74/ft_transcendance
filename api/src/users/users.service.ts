@@ -151,7 +151,7 @@ export class UsersService {
 
   // }
 
-  async updatePseudo(id: number, updatePseudo: UpdatePseudoDto): Promise<UserModel> {
+  async updatePseudo(id: number, updatePseudo: UpdatePseudoDto): Promise<boolean> {
     try {
       let user: UserModel = await this.findOneById(id);
 
@@ -161,7 +161,7 @@ export class UsersService {
       await this.usersRepository.save(user).catch((err: any) => {
         throw new BadRequestException('User pseudo update error');
       });
-      return user;
+      return true;
     }
     catch (error) {
       throw new NotFoundException('User id not found');

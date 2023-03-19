@@ -1,43 +1,26 @@
 import Avatar from "./Avatar";
+import Pseudo from "./Pseudo";
 import ProfilePublic from "./ProfilePublic";
 import ProfilePrivate from "./ProfilePrivate";
 
-import axios from 'axios';
-
-import {LoggedUser} from './LoggedUser';
-
-interface ProfilesPageProps {
+import { LoggedUser } from './LoggedUser';
+interface ProfilePageProps {
     user: LoggedUser,
+    setUserInfos: Function,
 }
 
-export default function ProfilesPage({user}: ProfilesPageProps) {
-
-    const token = localStorage.getItem('token');
-    if (token) {
-
-        // axios.get('/api/users/profile', {
-        axios.get('/api/me/profile', {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-            }
-        })
-        .then(res => {
-            if (res.status === 200) {
-                // console.log(res);
-            }
-        })
-        .catch(error => {
-            // console.log(error);
-        });
-    }
+export default function ProfilePage({user, setUserInfos}: ProfilePageProps) {
 
     return (
         <>
         <div>
             <h2>Your profile</h2>            
-            <ProfilePublic user={user} />
-            <ProfilePrivate user={user} />
-            <Avatar />
+            <Pseudo user={user} setUserInfos={setUserInfos}/>
+            <Avatar user={user} setUserInfos={setUserInfos}/>
+
+            {/* add informations like stats, friend, channels, etc in the next 2 components */}
+            {/* <ProfilePublic user={user} /> */}
+            {/* <ProfilePrivate user={user} /> */}
         </div>
         </>
     );
