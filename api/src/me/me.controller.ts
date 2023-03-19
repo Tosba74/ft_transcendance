@@ -11,6 +11,7 @@ import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
 @Controller('api/me')
 @ApiTags('api/me')
 @AllowLogged()
+@UseFilters(HttpExceptionFilter)
 export class MeController {
     constructor(private meService: MeService) { }
 
@@ -19,6 +20,15 @@ export class MeController {
     @ApiOkResponse({ description: 'User infos retrieved successfully', type: LoggedUserDto})
     getMe(@Request() req: any): LoggedUserDto {
         return req.user as LoggedUserDto;
+    }
+
+    @Get('profile')
+    // @ApiCreatedResponse({ description: 'Profile retrieved successfully', type: UserModel })
+    // @ApiNotFoundResponse({ description: 'User not found' })
+    // @ApiBadRequestResponse({ description: 'User validation error' })
+    public getProfile(@Request() req: any){
+        return true;
+    //   return this.usersService.getProfile(req.user.id);
     }
 
     // @Get()

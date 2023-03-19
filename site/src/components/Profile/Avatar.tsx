@@ -49,7 +49,7 @@ export default function Avatar() {
                 }
             })
             .then(res => {
-                // console.log(res.statusText)
+                // console.log(res)
                 if (res.data === true) {
                     setPageMessage('Image uploaded successfully');
                 }

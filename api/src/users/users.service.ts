@@ -139,6 +139,10 @@ export class UsersService {
       --------- OUR APP additional methods ---------
   */
 
+  async getProfile(id: number): Promise<UserModel> {
+    return this.findOneById(id);
+  }
+
   // async getPublicProfile(id: number) {
     
   // }
@@ -167,14 +171,13 @@ export class UsersService {
   async updateAvatar(id: number, path: string): Promise<boolean> {    
     try {
       let user: UserModel = await this.findOneById(id);
-      
-      console.log('old:', user.avatar_url);
-      console.log('new:', path);
+  
       const oldpath: string | undefined = user.avatar_url;
       if (oldpath && path !== oldpath) {
         fs.unlink(oldpath, (err) => {
           if (err) {
-            throw new InternalServerErrorException(`Could not remove the old file from user ${user.id}`);
+            // throw new InternalServerErrorException(`Could not remove the old file from user ${user.id}`);
+            console.log(`Could not remove the old file from user ${user.id}`);
           }
           
           //file removed

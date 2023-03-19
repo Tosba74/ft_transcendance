@@ -22,7 +22,8 @@ import { AllowLogged, AllowPublic } from '../auth/auth.decorators';
 @UseFilters(HttpExceptionFilter)
 export class UsersController {
 
-  constructor(private readonly usersService: UsersService) { }
+  // constructor(private readonly usersService: UsersService) { }
+  constructor(private usersService: UsersService) { }
   
 
   /* 
@@ -74,9 +75,11 @@ export class UsersController {
 
   @Get('profile')
   @AllowLogged()
+  @ApiCreatedResponse({ description: 'Profile retrieved successfully', type: UserModel })
+  @ApiNotFoundResponse({ description: 'User not found' })
+  @ApiBadRequestResponse({ description: 'User validation error' })
   public getProfile(@Request() req: any) {
-    return true;
-      // return this.usersService.getPublicProfile(req.user.id);
+    // return this.usersService.getProfile(req.user.id);
   }
 
   // @Get('public_profile')
@@ -104,7 +107,7 @@ export class UsersController {
   @UseInterceptors(
     FileInterceptor('avatar', {
       storage: diskStorage({
-        destination: 'src/users/avatars',
+        destination: 'users_avatar/',
         filename: (req: any, file, cb) => {
             cb(null, req.user.id + extname(file.originalname));
         },

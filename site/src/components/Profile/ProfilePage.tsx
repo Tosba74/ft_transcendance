@@ -13,20 +13,23 @@ interface ProfilesPageProps {
 export default function ProfilesPage({user}: ProfilesPageProps) {
 
     const token = localStorage.getItem('token');
-    // if (token) {
+    if (token) {
 
-    //     axios.get('/api/users/profile', {
-    //         headers: {
-    //             'Authorization': `Bearer ${token}`,
-    //         }
-    //     })
-    //     .then(res => {
-    //         if (res.status === 200) {
-    //         }
-    //     })
-    //     .catch(error => {
-    //     });
-    // }
+        // axios.get('/api/users/profile', {
+        axios.get('/api/me/profile', {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            }
+        })
+        .then(res => {
+            if (res.status === 200) {
+                // console.log(res);
+            }
+        })
+        .catch(error => {
+            // console.log(error);
+        });
+    }
 
     return (
         <>
