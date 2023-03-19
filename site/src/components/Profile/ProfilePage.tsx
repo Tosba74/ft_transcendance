@@ -47,7 +47,7 @@ export default function ProfilesPage() {
             return;
         
         if (imageValidation() === false) {
-            setPageMessage('Error during the upload1');
+            setPageMessage('ERROR DURING THE UPLOAD1');
             return;
         }
         
@@ -60,14 +60,14 @@ export default function ProfilesPage() {
                 id = user_decoded.id;
         }
         if (token === null || user_decoded === null || id === null) {
-            setPageMessage('Error during the upload2');
+            setPageMessage('ERROR DURING THE UPLOAD2');
             return;
         }
 
         const data = new FormData();
         data.append('avatar', fileInput.current.files[0], fileInput.current.files[0].name);
 
-        axios.post(`/api/users/${id}/upload_image`, data, {
+        axios.put(`/api/users/${id}/upload_image`, data, {
             headers: {
                 'Authorization': `Bearer ${token}`,
             }
@@ -75,10 +75,10 @@ export default function ProfilesPage() {
         .then(res => {
             console.log(res.statusText)
             if (res.data === true) {
-                setPageMessage('Image updated successfully');
+                setPageMessage('Image uploaded successfully');
             }
         })
-        .catch(() => setPageMessage('Error during the upload3'));
+        .catch(() => setPageMessage('ERROR DURING THE UPLOAD3'));
     }
 
     return (

@@ -61,7 +61,7 @@ export class UsersController {
     return this.usersService.updatePseudo(id, updatePseudo);
   }
 
-  @Post(':id/upload_image')
+  @Put(':id/upload_image')
   @AllowLogged()
   @UseInterceptors(
     FileInterceptor('avatar', {
@@ -81,6 +81,10 @@ export class UsersController {
   public uploadFileAndPassValidation(@Param('id', ParseIntPipe) id: number, @UploadedFile() file: Express.Multer.File): Promise<boolean>
   {
     // console.log(file);
+
+    // dans usersService:
+    // EFFACER ANCIENNE IMAGE SI LE UPLOAD A PASSER ET A PAS ECRASER L'ANCIEN PATH (car extension differente ?)
+
     return this.usersService.updateAvatar(id, file.path);
   }
   
