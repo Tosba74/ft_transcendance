@@ -1,14 +1,7 @@
-import React, { useState, useRef, SyntheticEvent } from "react";
+import React, { useRef, SyntheticEvent } from "react";
 import axios from "axios";
-import {LoggedUser} from './LoggedUser';
 
-interface AvatarProps {
-    user: LoggedUser,
-}
-
-export default function Avatar({user}: AvatarProps) {
-
-    const { id, } = user;
+export default function Avatar() {
 
     const [pageMessage, setPageMessage] = React.useState('');
 
@@ -46,17 +39,17 @@ export default function Avatar({user}: AvatarProps) {
             return;
 
         const token = localStorage.getItem('token');
-        if (token && id > 0) {
+        if (token) {
             const data = new FormData();
             data.append('avatar', fileInput.current.files[0], fileInput.current.files[0].name);
     
-            axios.put(`/api/users/${id}/upload_image`, data, {
+            axios.put(`/api/users/upload_image`, data, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 }
             })
             .then(res => {
-                console.log(res.statusText)
+                // console.log(res.statusText)
                 if (res.data === true) {
                     setPageMessage('Image uploaded successfully');
                 }

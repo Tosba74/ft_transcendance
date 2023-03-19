@@ -47,8 +47,8 @@ export class TfaController {
     }
 
     // vue que route est en AllowPublic, possibilite de mettre une limite de tentatives pour eviter un brutforce sur /api/authenticate avec des paires de id-code
-    @AllowPublic()
     @Post('authenticate')
+    @AllowPublic()
     async authenticateApi(@Body() body: any): Promise<any> {
         const id = body.id;
 

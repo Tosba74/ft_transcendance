@@ -1,4 +1,4 @@
-import { Controller, HttpCode, Param, Body, Get, Post, Put, Patch, Delete, UseFilters, ParseIntPipe, UseInterceptors, UploadedFile, } from '@nestjs/common';
+import { Controller, Request, HttpCode, Param, Body, Get, Post, Put, Patch, Delete, UseFilters, ParseIntPipe, UseInterceptors, UploadedFile, } from '@nestjs/common';
 import { ApiOkResponse, ApiNotFoundResponse, ApiCreatedResponse, ApiNoContentResponse, ApiTags, ApiBadRequestResponse } from '@nestjs/swagger';
 import { HttpExceptionFilter } from 'src/_common/filters/http-exception.filter';
 
@@ -6,7 +6,6 @@ import { UsersService } from './users.service';
 import { UserModel } from "./models/user.model";
 
 import { CreateUserDto } from './dto/create-user.dto';
-// import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePseudoDto } from './dto/update-pseudo.dto';
 import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
 
@@ -22,8 +21,14 @@ import { AllowLogged, AllowPublic } from '../auth/auth.decorators';
 @ApiTags('api/users')
 @UseFilters(HttpExceptionFilter)
 export class UsersController {
+
   constructor(private readonly usersService: UsersService) { }
   
+
+  /* 
+      --------- CRUD usual routes ---------
+  */
+
   @Get()
   @ApiOkResponse({ description: 'Users retrieved successfully', type: UserModel, isArray: true})
   public findAll(): Promise<UserModel[]> {
@@ -52,6 +57,39 @@ export class UsersController {
   // public update(@Param('id', ParseIntPipe) id: number, @Body() updateUserDto: UpdateUserDto): Promise<UserModel> {
   //   return this.usersService.update(id, updateUserDto);
   // }
+  
+  @Delete(':id')
+  @HttpCode(204)
+	@ApiNoContentResponse({ description: 'Post deleted successfully.'})
+	@ApiNotFoundResponse({ description: 'Post not found.' })
+	public delete(@Param('id', ParseIntPipe) id: number): Promise<void> {  
+		return this.usersService.delete(id);
+	}
+
+
+
+  /* 
+      --------- OUR APP additional routes ---------
+  */
+
+  @Get('profile')
+  @AllowLogged()
+  public getProfile(@Request() req: any) {
+    return true;
+      // return this.usersService.getPublicProfile(req.user.id);
+  }
+
+  // @Get('public_profile')
+  // @AllowLogged()
+  // public getPublicProfile(@Request() req: any) {
+  //     // return this.usersService.getPublicProfile(req.user.id);
+  // }
+
+  // @Get('private_profile')
+  // @AllowLogged()
+  // public getPrivateProfile(@Request() req: any) {
+  //     // return this.usersService.getPrivateProfile(req.user.id);
+  // }
 
   @Patch(':id/change_pseudo')
   @ApiCreatedResponse({ description: 'Pseudo updated successfully', type: UpdatePseudoDto })
@@ -61,7 +99,7 @@ export class UsersController {
     return this.usersService.updatePseudo(id, updatePseudo);
   }
 
-  @Put(':id/upload_image')
+  @Put('upload_image')
   @AllowLogged()
   @UseInterceptors(
     FileInterceptor('avatar', {
@@ -80,16 +118,8 @@ export class UsersController {
   @ApiCreatedResponse({ description: 'Avatar updated successfully', type: UpdatePseudoDto })
   @ApiNotFoundResponse({ description: 'User not found' })
   @ApiBadRequestResponse({ description: 'User validation error' })
-  public uploadFileAndPassValidation(@Param('id', ParseIntPipe) id: number, @UploadedFile() file: Express.Multer.File): Promise<boolean> {
-    return this.usersService.updateAvatar(id, file.path);
+  public uploadFileAndPassValidation(@Request() req: any, @UploadedFile() file: Express.Multer.File): Promise<boolean> {
+    return this.usersService.updateAvatar(req.user.id, file.path);
   }
-  
-  @Delete(':id')
-  @HttpCode(204)
-	@ApiNoContentResponse({ description: 'Post deleted successfully.'})
-	@ApiNotFoundResponse({ description: 'Post not found.' })
-	public delete(@Param('id', ParseIntPipe) id: number): Promise<void> {  
-		return this.usersService.delete(id);
-	}
 
 }

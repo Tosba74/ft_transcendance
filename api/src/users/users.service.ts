@@ -7,7 +7,6 @@ import { UserModel } from "./models/user.model";
 import { UserStatusModel } from 'src/user_status/models/user_status.model';
 
 import { CreateUserDto } from './dto/create-user.dto';
-// import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePseudoDto } from './dto/update-pseudo.dto';
 import * as fs from 'fs';
 
@@ -15,6 +14,11 @@ import * as fs from 'fs';
 export class UsersService {
 
   constructor(@InjectRepository(UserModel) private usersRepository: Repository<UserModel>) { }
+
+
+  /* 
+      --------- CRUD usual methods ---------
+  */
 
   findAll(): Promise<UserModel[]> {
     return this.usersRepository.find();
@@ -90,7 +94,6 @@ export class UsersService {
     return newuser;
   }
 
-
   // async update(id: number, updateUserDto: UpdateUserDto): Promise<UserModel> {
   //   try {
   //     let user: UserModel = await this.findOneById(id);
@@ -117,6 +120,31 @@ export class UsersService {
   //   catch (error) {
   //     throw new NotFoundException('User id not found');
   //   }
+  // }
+
+  // EXCEPTION MARCHE PAS ???
+  async delete(id: number): Promise<void> {
+    try {
+      const user: UserModel = await this.findOneById(id);
+      this.usersRepository.delete(id);
+    }
+    catch (error) {
+      throw new NotFoundException('User id not found');
+    }
+  }
+
+
+
+  /* 
+      --------- OUR APP additional methods ---------
+  */
+
+  // async getPublicProfile(id: number) {
+    
+  // }
+
+  // async getPrivateProfile(id: number) {
+
   // }
 
   async updatePseudo(id: number, updatePseudo: UpdatePseudoDto): Promise<UserModel> {
@@ -148,6 +176,7 @@ export class UsersService {
           if (err) {
             throw new InternalServerErrorException(`Could not remove the old file from user ${user.id}`);
           }
+          
           //file removed
         })
       }
@@ -165,18 +194,11 @@ export class UsersService {
     }
   }
 
-  // EXCEPTION MARCHE PAS ???
-  async delete(id: number): Promise<void> {
-    try {
-      const user: UserModel = await this.findOneById(id);
-      this.usersRepository.delete(id);
-    }
-    catch (error) {
-      throw new NotFoundException('User id not found');
-    }
-  }
 
-  // -------------------- TFA --------------------
+
+  /* 
+      --------- TFA methods ---------
+  */
 
   async enableTfa(id: number) {
     try {
