@@ -64,14 +64,16 @@ export default function ProfilesPage() {
             return;
         }
 
-        axios.put(`/api/users/${id}/upload_image`, {
-            'content': fileInput.current.files[0].name
-        }, {
+        const data = new FormData();
+        data.append('avatar', fileInput.current.files[0], fileInput.current.files[0].name);
+
+        axios.post(`/api/users/${id}/upload_image`, data, {
             headers: {
-                'Authorization': `Bearer ${token}`
+                'Authorization': `Bearer ${token}`,
             }
         })
         .then(res => {
+            console.log(res.statusText)
             if (res.data === true) {
                 setPageMessage('Image updated successfully');
             }

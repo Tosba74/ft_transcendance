@@ -26,6 +26,8 @@ then
 
     yarn add otplib 
     yarn add qrcode @types/qrcode
+
+    yarn add @types/multer
 fi
 
 

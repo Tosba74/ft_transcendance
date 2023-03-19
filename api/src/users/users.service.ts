@@ -9,7 +9,6 @@ import { UserStatusModel } from 'src/user_status/models/user_status.model';
 import { CreateUserDto } from './dto/create-user.dto';
 // import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePseudoDto } from './dto/update-pseudo.dto';
-import { UpdateAvatarDto } from './dto/update-avatar.dto';
 
 @Injectable()
 export class UsersService {
@@ -136,25 +135,12 @@ export class UsersService {
     }
   }
 
-  async updateAvatar(id: number, updateAvatar: UpdateAvatarDto): Promise<boolean> {
+  async updateAvatar(id: number, filename: string): Promise<boolean> {    
     try {
       let user: UserModel = await this.findOneById(id);
 
-      if (updateAvatar.content) {
-
-        console.log(updateAvatar);
-
-        // additional serverside validation ?
-
-        // store l'image dans un folder
-          // folder name :
-          // image name :
-        
-        const path: string = '';
-        // enregistre le path de l'image sur le server dans avatar_url
-        // user.avatar_url = path;
-      }
-
+      if (filename !== null && filename !== '')
+        user.avatar_url = filename;
       await this.usersRepository.save(user).catch((err: any) => {
         throw new BadRequestException('User avatar update error');
       });
