@@ -1,25 +1,23 @@
-import React, { Fragment, useState, useRef, SyntheticEvent } from "react";
-import AvatarUpdate from "./AvatarUpdate";
+import Avatar from "./Avatar";
+import ProfilePublic from "./ProfilePublic";
+import ProfilePrivate from "./ProfilePrivate";
 
-export default function ProfilesPage() {
-   
-    // const [profiles, setProfiles] = useState<Profile[]>(Mock_Profile);
+import {LoggedUser} from './LoggedUser';
 
-    // const saveProfile = (profile: Profile) => {
-    //     let updatedProfiles = profiles.map((p: Profile) => {
-    //         return p.id === profile.id ? profile : p;
-    //     });
-    //     setProfiles(updatedProfiles);
-    // };
+interface ProfilesPageProps {
+    user: LoggedUser,
+}
+
+export default function ProfilesPage({user}: ProfilesPageProps) {
+    
 
     return (
         <>
         <div>
-            <h2>Profiles !!</h2>
-            {/* <ProfileList onSave={saveProfile} profiles={profiles} /> */}
-            
-            {/* <UserInformation /> */}
-            <AvatarUpdate />
+            <h2>Profiles !!</h2>            
+            <ProfilePublic user={user} />
+            <ProfilePrivate user={user} />
+            <Avatar user={user} />
         </div>
         </>
     );

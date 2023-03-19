@@ -5,15 +5,8 @@ import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { UserModel } from './models/user.model';
 
-// import { Multer } from 'multer';
-// import { MulterModule } from '@nestjs/platform-express';
-
 @Module({
-  imports: [TypeOrmModule.forFeature([UserModel]), 
-    // MulterModule.register({
-    //   dest: './avatars',
-    // })
-  ],
+  imports: [TypeOrmModule.forFeature([UserModel])],
   providers: [UsersService],
   controllers: [UsersController],
   exports: [UsersService],

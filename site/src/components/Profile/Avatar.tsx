@@ -1,37 +1,20 @@
 import React, { useState, useRef, SyntheticEvent } from "react";
 import axios from "axios";
-import jwt_decode from "jwt-decode";
+import {LoggedUser} from './LoggedUser';
 
-interface LoggedUser {
-    id: number,
-    login_name: string,
-    pseudo: string,
-    color: number,
-    avatar_url: string,
-    tfa_enabled: boolean,
-    is_admin: boolean
+interface AvatarProps {
+    user: LoggedUser,
 }
 
-export default function AvatarUpdate() {
+export default function Avatar({user}: AvatarProps) {
+
+    const { id, } = user;
 
     const [pageMessage, setPageMessage] = React.useState('');
 
     const fileInput: any = useRef();
 
-    function decodeTokenToId(token: string | null): number {
-        if (token) {
-            const user: LoggedUser = jwt_decode(token);
-            const id = user.id;
-            if (id > 0)
-                return id;
-        }
-        setPageMessage('Error: user not properly identified');
-        return -1;
-    }
-
     function fileValidation(): boolean {
-        console.log(fileInput.current.files[0]);
-
         if (!fileInput) {
             setPageMessage('Error: file not detected');
             return false;
@@ -58,14 +41,12 @@ export default function AvatarUpdate() {
 
     function handleSubmit(event: SyntheticEvent) {
         event.preventDefault();        
-        
-        const token: string | null = localStorage.getItem('token');
-        const id: number = decodeTokenToId(token);
 
         if (fileValidation() === false)
             return;
 
-        if (id > 0) {
+        const token = localStorage.getItem('token');
+        if (token && id > 0) {
             const data = new FormData();
             data.append('avatar', fileInput.current.files[0], fileInput.current.files[0].name);
     
@@ -80,7 +61,7 @@ export default function AvatarUpdate() {
                     setPageMessage('Image uploaded successfully');
                 }
             })
-            .catch(() => setPageMessage('Server-side error during the upload'));
+            .catch(() => setPageMessage('Error: impossible to contact API. Try to re-login...'));
         }
     }
 

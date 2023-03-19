@@ -1,6 +1,5 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
-import axios from 'axios';
 
 import './App.css';
 
@@ -16,46 +15,55 @@ import ChatPage from './components/Chat/ChatPage';
 import LoginApi from './components/Profile/LoginApi';
 import Logout from './components/Profile/Logout';
 
+// import axios from 'axios';
+import {LoggedUser} from './components/Profile/LoggedUser';
+import jwt_decode from "jwt-decode";
+
+// Voir aussi pour verifier si le token est toujours valable
+// si non setLogged a false + setUserInfos a {}
 
 export default function App() {
   const [logged, setLogged] = React.useState(false);
-  const [userInfos, setUserInfos] = React.useState({});
+  const [userInfos, setUserInfos] = React.useState(new LoggedUser());
 
-  React.useEffect(() => {
-    async function fetchData() {
+  function fetchData() {
+    try {
+      const token = localStorage.getItem('token');
 
-      try {
-        const token = localStorage.getItem('token');
+      if (token != null) {
+        const user: LoggedUser = jwt_decode(token);
+        console.log(user);
+        setUserInfos(user);
+        setLogged(true);
+        return;
 
-        if (token != null) {
-          axios.get('/api/me',
-            {
-              headers: ({
-                Authorization: 'Bearer ' + token,
-              })
-            })
-            .then(res => {
-              if (res.status === 200) {
+        // axios.get('/api/me',
+        //   {
+        //     headers: ({
+        //       Authorization: 'Bearer ' + token,
+        //     })
+        //   })
+        //   .then(res => {
+        //     if (res.status === 200) {
 
-                console.log(res.data);
-                setUserInfos(res.data);
-                setLogged(true);
-                return;
-              }
-            })
-            .catch(error => {
-            });
-        }
+        //       console.log(res.data);
+        //       setUserInfos(res.data);
+        //       setLogged(true);
+        //       return;
+        //     }
+        //   })
+        //   .catch(error => {
+        //   });
+
       }
-      catch {
-      }
+    } catch {
 
-
-      setLogged(false)
     }
+    
+    setLogged(false)
+  }
 
-    fetchData();
-  }, [setLogged]);
+  useEffect(fetchData, [logged]);
 
   return (
     <Router>
@@ -63,9 +71,9 @@ export default function App() {
         <NavBar logged={logged} />
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/players" element={<ProfilePage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/profile/:id" element={<ProfilePage />} />
+          <Route path="/players" element={<ProfilePage user={userInfos}/>} />
+          <Route path="/profile" element={<ProfilePage user={userInfos}/>} />
+          <Route path="/profile/:id" element={<ProfilePage user={userInfos}/>} />
           <Route path="/game" element={<GamePage />} />
           <Route path="/chat" element={<ChatPage/>} />
           <Route path="/history" element={<ReactPage />} />
