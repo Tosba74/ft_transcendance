@@ -1,5 +1,5 @@
-import { Controller, HttpCode, Param, Body, Get, Post, Put, Patch, Delete, UseFilters, ParseIntPipe, UseInterceptors, UploadedFile, ParseFilePipeBuilder, HttpStatus} from '@nestjs/common';
-import { ApiOkResponse, ApiNotFoundResponse, ApiCreatedResponse, ApiNoContentResponse, ApiUnprocessableEntityResponse, ApiTags, ApiBadRequestResponse } from '@nestjs/swagger';
+import { Controller, HttpCode, Param, Body, Get, Post, Put, Patch, Delete, UseFilters, ParseIntPipe, UseInterceptors, UploadedFile, } from '@nestjs/common';
+import { ApiOkResponse, ApiNotFoundResponse, ApiCreatedResponse, ApiNoContentResponse, ApiTags, ApiBadRequestResponse } from '@nestjs/swagger';
 import { HttpExceptionFilter } from 'src/_common/filters/http-exception.filter';
 
 import { UsersService } from './users.service';
@@ -12,9 +12,9 @@ import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
 
 import { Express } from 'express'
 import { FileInterceptor } from '@nestjs/platform-express';
-import { MulterModule } from '@nestjs/platform-express';
-import { Multer, diskStorage } from 'multer';
-import { editFileName, imageFileFilter } from './validation/file-upload.utils';
+import { diskStorage } from 'multer';
+import { imageFileFilter } from './validation/file-upload.utils';
+import { extname } from 'path';
 
 import { AllowLogged, AllowPublic } from '../auth/auth.decorators';
 
@@ -67,7 +67,9 @@ export class UsersController {
     FileInterceptor('avatar', {
       storage: diskStorage({
         destination: 'src/users/avatars',
-        filename: editFileName,
+        filename: (req: any, file, cb) => {
+            cb(null, req.user.id + extname(file.originalname));
+        },
       }),
       limits: {
         fileSize: 1000000
@@ -78,13 +80,7 @@ export class UsersController {
   @ApiCreatedResponse({ description: 'Avatar updated successfully', type: UpdatePseudoDto })
   @ApiNotFoundResponse({ description: 'User not found' })
   @ApiBadRequestResponse({ description: 'User validation error' })
-  public uploadFileAndPassValidation(@Param('id', ParseIntPipe) id: number, @UploadedFile() file: Express.Multer.File): Promise<boolean>
-  {
-    // console.log(file);
-
-    // dans usersService:
-    // EFFACER ANCIENNE IMAGE SI LE UPLOAD A PASSER ET A PAS ECRASER L'ANCIEN PATH (car extension differente ?)
-
+  public uploadFileAndPassValidation(@Param('id', ParseIntPipe) id: number, @UploadedFile() file: Express.Multer.File): Promise<boolean> {
     return this.usersService.updateAvatar(id, file.path);
   }
   

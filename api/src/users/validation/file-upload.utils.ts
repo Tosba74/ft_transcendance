@@ -1,5 +1,4 @@
 import { UnprocessableEntityException } from '@nestjs/common';
-import { extname } from 'path';
 
 export function imageFileFilter(req: any, file: any, callback: any) {
 	// console.log(file);
@@ -9,9 +8,3 @@ export function imageFileFilter(req: any, file: any, callback: any) {
 		return callback(new UnprocessableEntityException('Only image files (jpg/png) are allowed'), false);
 	callback(null, true);
 };
-
-export function editFileName(req: any, file: any, callback: any) {
-	const filename: string = `${req.user.id}`;
-	const fileExtName = extname(file.originalname);
-	callback(null, filename+fileExtName);
-}

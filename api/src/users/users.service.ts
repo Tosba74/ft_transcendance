@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException, } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -9,6 +9,7 @@ import { UserStatusModel } from 'src/user_status/models/user_status.model';
 import { CreateUserDto } from './dto/create-user.dto';
 // import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePseudoDto } from './dto/update-pseudo.dto';
+import * as fs from 'fs';
 
 @Injectable()
 export class UsersService {
@@ -135,12 +136,25 @@ export class UsersService {
     }
   }
 
-  async updateAvatar(id: number, filename: string): Promise<boolean> {    
+  async updateAvatar(id: number, path: string): Promise<boolean> {    
     try {
       let user: UserModel = await this.findOneById(id);
+      
+      console.log('old:', user.avatar_url);
+      console.log('new:', path);
+      const oldpath: string | undefined = user.avatar_url;
+      if (oldpath && path !== oldpath) {
+        fs.unlink(oldpath, (err) => {
+          if (err) {
+            throw new InternalServerErrorException(`Could not remove the old file from user ${user.id}`);
+          }
+          //file removed
+        })
+      }
+      
+      if (path !== null && path !== '')
+        user.avatar_url = path;
 
-      if (filename !== null && filename !== '')
-        user.avatar_url = filename;
       await this.usersRepository.save(user).catch((err: any) => {
         throw new BadRequestException('User avatar update error');
       });
