@@ -55,6 +55,7 @@ services:
 
     volumes:
       - ./api:/app
+      - ./_datas:/app-datas
 
 
   front:

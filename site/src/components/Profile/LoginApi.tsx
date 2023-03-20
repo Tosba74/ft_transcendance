@@ -41,7 +41,7 @@ export default function LoginApi({ setLogged }: LoginApiProps) {
                 }
                 else setPageMessage('Error contacting 42 API');
             })
-            .catch(() => setPageMessage('Error during login: retry without refreshing logging process.'));
+            // .catch(() => setPageMessage('Error during login: retry without refreshing logging process.'));
         }
         else setPageMessage('Error missing infos');
 

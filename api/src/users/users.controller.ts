@@ -112,12 +112,13 @@ export class UsersController {
     return new StreamableFile(file);
   }
 
+  // mettre les images a part ou un volume et donner l'accès direct avec nginx, et comme ça on peut juste stocker l'url dans le model du user
   @Put('upload_image')
   @AllowLogged()
   @UseInterceptors(
     FileInterceptor('avatar', {
       storage: diskStorage({
-        destination: 'users_avatar/',
+        destination: '../app-datas/avatars',
         filename: (req: any, file, cb) => {
             cb(null, req.user.id + extname(file.originalname));
         },
@@ -131,8 +132,8 @@ export class UsersController {
   @ApiCreatedResponse({ description: 'Avatar updated successfully', type: UpdatePseudoDto })
   @ApiNotFoundResponse({ description: 'User not found' })
   @ApiBadRequestResponse({ description: 'User validation error' })
-  public uploadFileAndPassValidation(@Request() req: any, @UploadedFile() file: Express.Multer.File): Promise<boolean> {
-    return this.usersService.updateAvatar(req.user.id, file.path);
+  public uploadFileAndPassValidation(@Request() req: any, @UploadedFile() file: Express.Multer.File): Promise<string> {
+    return this.usersService.updateAvatar(req.user.id, file.filename);
   }
 
 }
