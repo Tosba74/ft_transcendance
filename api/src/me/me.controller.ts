@@ -25,13 +25,12 @@ export class MeController {
         return req.user as LoggedUserDto;
     }
 
-
+    // provisoirement ici car route sur /api/users renvoie erreur 403 mais ici pas
     @Get('avatar')
-    @AllowLogged()
     @ApiCreatedResponse({ description: 'Avatar retrieved successfully', type: UserModel })
     getFile(@Request() req: any, @Res({ passthrough: true }) res: Response): StreamableFile {
   
-      // check si image existe, sinon envoie default avatar
+      // rajouter encore check si image existe sur server, sinon garder image de 42
       
       const path = req.user.avatar_url;
       const extension: string = extname(path);

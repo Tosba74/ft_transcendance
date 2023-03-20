@@ -19,8 +19,6 @@ import axios from 'axios';
 import {LoggedUser} from './components/Profile/LoggedUser';
 import jwt_decode from "jwt-decode";
 
-// Voir aussi pour verifier si le token est toujours valable
-// si non setLogged a false + setUserInfos a {}
 
 export default function App() {
   const [logged, setLogged] = React.useState(false);
@@ -62,15 +60,45 @@ export default function App() {
 
   useEffect(fetchData, [logged]);
 
+
+  // const [tokenMessage, setTokenMessage] = React.useState('');
+
+  // Voir aussi pour verifier si le token est toujours valable
+  // si non setLogged a false + setUserInfos a {}
+  function refreshTokenAndUserInfos() {
+    const token = localStorage.getItem('token');
+
+    // if token still available
+        axios.get("/api/login/refresh_token", {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        })
+        .then(res => {
+            const newtoken: string = res.data['access_token'];
+            if (newtoken) {
+                localStorage.setItem('token', newtoken);
+                const user: LoggedUser = jwt_decode(newtoken);
+                setUserInfos(user);
+            }
+        })
+        .catch((error) => {
+            // setTokenMessage('Error while refreshing user\'s token');
+            console.log(error);
+        });
+    // else
+        // log out the user
+  }
+
   return (
     <Router>
       <div className="bg_white">
         <NavBar logged={logged} />
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/players" element={<ProfilePage user={userInfos} setUserInfos={setUserInfos} />} />
-          <Route path="/profile" element={<ProfilePage user={userInfos} setUserInfos={setUserInfos} />} />
-          <Route path="/profile/:id" element={<ProfilePage user={userInfos} setUserInfos={setUserInfos} />} />
+          <Route path="/players" element={<ProfilePage user={userInfos} refreshUserInfos={refreshTokenAndUserInfos} />} />
+          <Route path="/profile" element={<ProfilePage user={userInfos} refreshUserInfos={refreshTokenAndUserInfos} />} />
+          <Route path="/profile/:id" element={<ProfilePage user={userInfos} refreshUserInfos={refreshTokenAndUserInfos} />} />
           <Route path="/game" element={<GamePage />} />
           <Route path="/chat" element={<ChatPage/>} />
           <Route path="/history" element={<ReactPage />} />

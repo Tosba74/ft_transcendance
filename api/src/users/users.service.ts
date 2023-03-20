@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -55,7 +55,7 @@ export class UsersService {
     newuser.pseudo = createUserDto.pseudo;
     newuser.login_name = createUserDto.login_name;
 
-    const bcrypt = require('bcrypt');
+    // const bcrypt = require('bcrypt');
     const saltRounds: number = 10;
     const hash: string = await bcrypt.hash(createUserDto.password, saltRounds);
     newuser.password = hash;
@@ -122,11 +122,13 @@ export class UsersService {
   //   }
   // }
 
-  // EXCEPTION MARCHE PAS ???
   async delete(id: number): Promise<void> {
     try {
       const user: UserModel = await this.findOneById(id);
-      this.usersRepository.delete(id);
+      // await this.usersRepository.delete(user);
+      await this.usersRepository.delete(id).catch((err: any) => {
+        throw new BadRequestException('Delete user error');
+      });
     }
     catch (error) {
       throw new NotFoundException('User id not found');
