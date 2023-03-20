@@ -78,7 +78,7 @@ const useChat = ({logged, token}: useChatProps): UseChatDto => {
 
   React.useEffect(() => {
 
-    if (logged) {
+    if (logged && socketRef.current === undefined) {
 
       socketRef.current = io('http://localhost:8080/', {
         path: '/chat/',

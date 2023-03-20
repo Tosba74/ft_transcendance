@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
-import axios from 'axios';
 
 import './App.css';
 
@@ -21,55 +20,86 @@ import Logout from './components/Log/Logout';
 import useChat from './components/Chat/useChat';
 import { UseChatDto } from './components/Chat/dto/useChat.dto';
 
+import axios from 'axios';
+import { LoggedUser } from './components/Profile/LoggedUser';
+import jwt_decode from "jwt-decode";
+
 
 export default function App() {
-  const [logged, setLogged] = useState(false);
-  const [userInfos, setUserInfos] = useState({});
+  const [logged, setLogged] = React.useState(false);
+  const [userInfos, setUserInfos] = React.useState(new LoggedUser());
 
   const [token, setToken] = useState(localStorage.getItem('token') || '');
 
-  
-  let chats: UseChatDto = useChat({logged, token});
 
-  useEffect(() => {
-    
-    console.log('effect');
-    
-    async function fetchData() {
-      
-      try {
-        
-        if (token != '') {
-          axios.get('/api/me',
-          {
-            headers: ({
-                Authorization: 'Bearer ' + token,
-              })
-            })
-            .then(res => {
-              if (res.status === 200) {
-                
-                console.log(res.data);
-                setUserInfos(res.data);
-                setLogged(true);
-                                
-                return;
-              }
-            })
-            .catch(error => {
-            });
-          }
-        }
-        catch {
-        }
-        
-        
-        setLogged(false);
+  let chats: UseChatDto = useChat({ logged, token });
+
+  function fetchData() {
+    try {
+      if (token != null) {
+        const user: LoggedUser = jwt_decode(token);
+        setUserInfos(user);
+        setLogged(true);
+
+        return;
+
+        // axios.get('/api/me',
+        //   {
+        //     headers: ({
+        //       Authorization: 'Bearer ' + token,
+        //     })
+        //   })
+        //   .then(res => {
+        //     if (res.status === 200) {
+        //       // console.log(res.data);
+        //       setUserInfos(res.data);
+        //       setLogged(true);
+        //       return;
+        //     }
+        //   })
+        //   .catch(error => {
+        //   });
+
       }
-      
-    fetchData();
-      
-  }, [token]);
+    } catch {
+
+    }
+
+    setLogged(false)
+  }
+
+
+  useEffect(fetchData, [token]);
+
+
+  // const [tokenMessage, setTokenMessage] = React.useState('');
+
+  // Voir aussi pour verifier si le token est toujours valable
+  // si non setLogged a false + setUserInfos a {}
+  function refreshTokenAndUserInfos() {
+    const token = localStorage.getItem('token');
+
+    // if token still available
+        axios.get("/api/login/refresh_token", {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        })
+        .then(res => {
+            const newtoken: string = res.data['access_token'];
+            if (newtoken) {
+                localStorage.setItem('token', newtoken);
+                const user: LoggedUser = jwt_decode(newtoken);
+                setUserInfos(user);
+            }
+        })
+        .catch((error) => {
+            // setTokenMessage('Error while refreshing user\'s token');
+            console.log(error);
+        });
+    // else
+        // log out the user
+  }
 
   return (
     <Router>
@@ -77,15 +107,15 @@ export default function App() {
         <NavBar logged={logged} />
         <div className="bg-gray-100 dark:bg-gray-400">
           <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/players" element={<ProfilePage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/profile/:id" element={<ProfilePage />} />
+            <Route path="/" element={<HomePage />} />.
+            <Route path="/players" element={<ProfilePage user={userInfos} refreshUserInfos={refreshTokenAndUserInfos} />} />
+            <Route path="/profile" element={<ProfilePage user={userInfos} refreshUserInfos={refreshTokenAndUserInfos} />} />
+            <Route path="/profile/:id" element={<ProfilePage user={userInfos} refreshUserInfos={refreshTokenAndUserInfos} />} />
             <Route path="/game" element={<GamePage />} />
             <Route path="/exemplechat" element={<ExempleChat chats={chats} />} />
             {/* <Route path="/profil" element={<Profil />} /> */}
             <Route path="/history" element={<ReactPage />} />
-            <Route path="/login" element={<LogPage setToken={setToken} />} />
+            <Route path="/login" element={<LogPage setLogged={setLogged} setToken={setToken} />} />
             <Route path="/loginapi" element={<LoginApi setLogged={setLogged} />} />
             <Route path="/logout" element={<Logout />} />
           </Routes>
@@ -93,7 +123,6 @@ export default function App() {
         <div className="absolute z-50 right-0 bottom-8">
           <ChatIcon />
         </div>
-
       </div>
     </Router>
   );

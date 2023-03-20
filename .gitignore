@@ -9,3 +9,4 @@ _build/nginx/certs/*.key
 .env.test.local
 .env.production.local
 
+.idea

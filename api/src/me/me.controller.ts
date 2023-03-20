@@ -1,4 +1,4 @@
-import { Controller, HttpCode, Param, Body, Get, Post, Put, Delete, UseFilters, ParseIntPipe, UseGuards, Request, } from '@nestjs/common';
+import { Controller, Res, HttpCode, Param, Body, Get, Post, Put, Delete, UseFilters, ParseIntPipe, UseGuards, Request, StreamableFile } from '@nestjs/common';
 import { ApiOkResponse, ApiNotFoundResponse, ApiCreatedResponse, ApiNoContentResponse, ApiUnprocessableEntityResponse, ApiTags, ApiBadRequestResponse } from '@nestjs/swagger';
 import { HttpExceptionFilter } from 'src/_common/filters/http-exception.filter';
 
@@ -6,6 +6,10 @@ import { AllowLogged, AllowPublic } from 'src/auth/auth.decorators';
 import { MeService } from './me.service';
 import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
 
+import { createReadStream } from 'fs';
+import { join } from 'path';
+import type { Response } from 'express';
+import { extname } from 'path';
 
 import { FriendModel } from 'src/friends/models/friend.model';
 import { UserModel } from 'src/users/models/user.model';
@@ -14,13 +18,12 @@ import { ChatParticipantModel } from 'src/chat_participants/models/chat_particip
 import { JoinChatDto } from './dto/join_chat';
 
 
-
 @Controller('api/me')
 @ApiTags('api/me')
 @AllowLogged()
+@UseFilters(HttpExceptionFilter)
 export class MeController {
     constructor(private meService: MeService) { }
-
     
     @Get()
     @ApiOkResponse({ description: 'User infos retrieved successfully', type: LoggedUserDto})
@@ -29,6 +32,27 @@ export class MeController {
         return req.user as LoggedUserDto;
     }
 
+    // provisoirement ici car route sur /api/users renvoie erreur 403 mais ici pas
+    // conserver au cas ou ca reste utile pour l api
+    @Get('avatar')
+    @ApiCreatedResponse({ description: 'Avatar retrieved successfully', type: UserModel })
+    getFile(@Request() req: any, @Res({ passthrough: true }) res: Response): StreamableFile {
+  
+      // rajouter encore check si image existe sur server, sinon garder image de 42
+      
+      const path = req.user.avatar_url;
+      const extension: string = extname(path);
+
+      res.set({'Content-Type': `image/${extension}`});
+  
+      const file = createReadStream(path, {encoding: "base64"});
+      return new StreamableFile(file);
+    }
+
+    // @Get()
+    // public findAll(): Promise<FriendModel[]> {
+    //     return this.friendsService.findAll();
+    // }
 
     @Get('friends')
     @ApiOkResponse({ description: 'Friends retrieved successfully', type: [FriendModel] })

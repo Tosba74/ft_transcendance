@@ -21,5 +21,6 @@ import { WsjwtStrategy } from './auth-strategy/ws.strategy';
     ],
     providers: [ AuthService, LocalStrategy, JwtStrategy, WsjwtStrategy ],
     controllers: [AuthController],
+    exports: [AuthService],
 })
 export class AuthModule { }
