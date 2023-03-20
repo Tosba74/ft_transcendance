@@ -9,6 +9,7 @@ then
     yarn add react-router-dom 
     yarn add axios 
     yarn add tailwindcss postcss autoprefixer classnames
+    yarn add jwt-decode
     
     # For testing auth module
     yarn add --dev bootstrap

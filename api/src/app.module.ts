@@ -20,6 +20,7 @@ import { ChatMessagesModule } from './chat_messages/chat_messages.module';
 import { ChatParticipantsModule } from './chat_participants/chat_participants.module';
 
 import { AuthModule } from './auth/auth.module';
+import { TfaModule } from './tfa/tfa.module';
 
 import { APP_GUARD } from '@nestjs/core';
 import { AppGuard } from './auth/app.guard';
@@ -27,10 +28,11 @@ import { MeModule } from './me/me.module';
 
 
 @Module({
-  imports: [TypeOrmModule.forRoot(config),
+  imports: [
+    TypeOrmModule.forRoot(config),
     UsersModule, UserStatusModule, FriendTypesModule, FriendsModule, FriendTypesModule, BlockedsModule,
     ChatTypesModule, ChatRolesModule, ChatsModule, ChatMessagesModule, ChatParticipantsModule,
-    AuthModule, MeModule,
+    AuthModule, TfaModule, MeModule,
     ChatModule,
   ],
   controllers: [AppController],
@@ -38,7 +40,7 @@ import { MeModule } from './me/me.module';
     {
       provide: APP_GUARD,
       useClass: AppGuard
-    } 
+    }
   ],
 })
 export class AppModule { }
