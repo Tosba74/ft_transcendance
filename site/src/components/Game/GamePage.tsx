@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import * as pong from '../../pong';
-//import "../../pong"
+import * as module_pong from './pong';
+import * as module_ultimate from './ultimate';
+import * as module_json from './json_imp_exp';
 
 export default function GamePage() {
 	const [pause, setPause] = React.useState(false);
@@ -35,7 +36,7 @@ export default function GamePage() {
 			<div>
 				<div>
 					<p>ULTIME :</p>
-						<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_add_ball"onClick={pong.boost_ult}>
+						<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_add_ball"onClick={module_ultimate.boost_ult}>
 							ADMIN: BOOST ULT
 						</button>
 						<a className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" id="btn_ult0">
@@ -56,26 +57,26 @@ export default function GamePage() {
 				</canvas>
 			</div>
 			<div>
-				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_start" onClick={pong.startGame}>
+				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_start" onClick={module_pong.startGame}>
 					Start
 				</button>
-				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_pause" style={{visibility: 'hidden'}} onClick={pong.do_pause}>
+				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_pause" style={{visibility: 'hidden'}} onClick={module_pong.do_pause}>
 					Pause
 				</button>
-				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_restart" style={{visibility: 'hidden'}} onClick={pong.restart}>
+				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_restart" style={{visibility: 'hidden'}} onClick={module_pong.restart}>
 					restart
 				</button>
-				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" style={{visibility: 'hidden'}} id="btn_exportToJson" onClick={pong.exportToJson_pone}>
+				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" style={{visibility: 'hidden'}} id="btn_exportToJson" onClick={module_json.exportToJson_pone}>
 					export to JSON for P1
 				</button>
-				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" style={{visibility: 'hidden'}} id="btn_exportToJson" onClick={pong.exportToJson_ptwo}>
+				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" style={{visibility: 'hidden'}} id="btn_exportToJson" onClick={module_json.exportToJson_ptwo}>
 					export to JSON for P2
 				</button>
 			</div>
 			<p>/!CONTROL!\</p>
 			<p>W: UP</p>
 			<p>S: DOWN</p>
-			<p>SPACE: ULTIMATE</p>
+			<p>NUMBERS: ULTIMATE</p>
 		</div>
 	);
 }
