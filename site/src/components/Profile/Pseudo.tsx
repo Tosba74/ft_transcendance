@@ -34,7 +34,7 @@ export default function Pseudo({user, refreshUserInfos}: PseudoProps) {
 			
 		const token = localStorage.getItem('token');
 		if (token) {
-			axios.put(`/api/users/update_pseudo`, {
+			axios.patch(`/api/users/update_pseudo`, {
 				pseudo: pseudoInput
 			}, {
 				headers: {

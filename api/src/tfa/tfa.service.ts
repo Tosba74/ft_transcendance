@@ -1,7 +1,9 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 
 import { LoggedUserDto } from '../auth/dto/logged_user.dto';
 import { UsersService } from '../users/users.service';
+
+import { AuthService } from 'src/auth/auth.service';
 
 import { authenticator } from 'otplib';
 import { toFileStream } from 'qrcode';
@@ -10,9 +12,15 @@ import { Response } from 'express';
 @Injectable()
 export class TfaService {
 
-	constructor(private usersService: UsersService) { }
+	constructor(private usersService: UsersService, private authService: AuthService) { }
 	
-	async setTfaSecret(id: number): Promise<string> {
+    // demander le code pour confirmer la desactivation ?
+    async deactivate(id: number): Promise<void> {
+        this.usersService.setTfaEnabled(id);
+        this.usersService.setTfaSecret('', id);
+    }
+
+	async generateTfaSecret(id: number): Promise<string> {
         const secret: string = authenticator.generateSecret();
         const user: LoggedUserDto = await this.usersService.findOneById(id);
         this.usersService.setTfaSecret(secret, user.id);
@@ -28,6 +36,32 @@ export class TfaService {
         const otpauthUrl: string = authenticator.keyuri(user.login_name, appname, secret);
 
         return toFileStream(stream, otpauthUrl);
+    }
+
+    async confirmActivation(id: number, tfa_code: string) {
+        const isCodeValid: boolean = await this.isTfaValid(tfa_code, id);
+        if (!isCodeValid)
+            throw new UnauthorizedException('Wrong authentication code');
+        
+        this.usersService.setTfaEnabled(id);
+    }
+
+    async authenticateApi(id: number, tfa_code: string) {
+        const isCodeValid: boolean = await this.isTfaValid(tfa_code, id);
+        if (!isCodeValid)
+            throw new UnauthorizedException('Wrong authentication code');
+    
+        const user = await this.usersService.findOneById(id);
+        const loggedUser: LoggedUserDto = {
+            id: user.id,
+            login_name: user.login_name,
+            pseudo: user.pseudo,
+            color: user.color,
+            avatar_url: user.avatar_url,
+            tfa_enabled: user.tfa_enabled,
+            is_admin: user.is_admin,
+        };
+        return this.authService.login(loggedUser);
     }
 
     async isTfaValid(tfa_code: string, id: number): Promise<boolean> {

@@ -5,7 +5,6 @@ import axios from 'axios';
 import { LocalAuthGuard } from './auth-strategy/local-auth.guard';
 
 import { AuthService } from './auth.service';
-import { UsersService } from '../users/users.service';
 
 import { AllowLogged, AllowPublic } from './auth.decorators';
 import { IsLoginNameAlreadyExistConstraint } from 'src/users/validation/is-user-already-exist';
@@ -15,7 +14,7 @@ import { DataSource } from 'typeorm';
 @Controller('api/login')
 @ApiTags('api/login')
 export class AuthController {
-    constructor(private authService: AuthService, private readonly usersService: UsersService) { }
+    constructor(private authService: AuthService) { }
 
     @Post('basic')
     @AllowPublic()
@@ -26,6 +25,8 @@ export class AuthController {
             return this.authService.login(req.user);
 
         // tfa is enabled so dont sent token but ask for tfa code
+        // (manque dans la db) set tfa_date pour que on puisse tfa seulement ~5 minutes après le login
+        // response.status(206);
         return {id: req.user.id};
     }
 

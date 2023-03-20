@@ -1,4 +1,4 @@
-import { Controller, Request, Res, Header, HttpCode, Param, Body, Get, Post, Put, Delete, UseFilters, ParseIntPipe, UseInterceptors, UploadedFile, StreamableFile} from '@nestjs/common';
+import { Controller, Request, Res, Header, HttpCode, Param, Body, Get, Post, Patch, Put, Delete, UseFilters, ParseIntPipe, UseInterceptors, UploadedFile, StreamableFile} from '@nestjs/common';
 import { ApiOkResponse, ApiNotFoundResponse, ApiCreatedResponse, ApiNoContentResponse, ApiTags, ApiBadRequestResponse } from '@nestjs/swagger';
 import { HttpExceptionFilter } from 'src/_common/filters/http-exception.filter';
 
@@ -7,7 +7,6 @@ import { UserModel } from "./models/user.model";
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePseudoDto } from './dto/update-pseudo.dto';
-import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
 
 import { Express } from 'express'
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -16,10 +15,9 @@ import { imageFileFilter } from './validation/file-upload.utils';
 import { extname } from 'path';
 
 import { createReadStream } from 'fs';
-import { join } from 'path';
 import type { Response } from 'express';
 
-import { AllowLogged, AllowPublic } from '../auth/auth.decorators';
+import { AllowLogged } from '../auth/auth.decorators';
 
 @Controller('api/users')
 @ApiTags('api/users')
@@ -44,7 +42,7 @@ export class UsersController {
   @ApiOkResponse({ description: 'User retrieved successfully', type: UserModel })
   @ApiNotFoundResponse({ description: 'User not found' })
   @ApiBadRequestResponse({ description: 'User validation error' })
-  public findOne(@Param('id', ParseIntPipe) id: number): Promise<LoggedUserDto> {
+  public findOne(@Param('id', ParseIntPipe) id: number): Promise<UserModel> {
     return this.usersService.findOneById(id);
   }
   
@@ -89,7 +87,7 @@ export class UsersController {
   //     // return this.usersService.getPrivateProfile(req.user.id);
   // }
 
-  @Put('update_pseudo')
+  @Patch('update_pseudo')
   @AllowLogged()
   @ApiCreatedResponse({ description: 'Pseudo updated successfully', type: UpdatePseudoDto })
   @ApiNotFoundResponse({ description: 'User not found' })

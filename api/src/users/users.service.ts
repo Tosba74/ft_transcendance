@@ -204,22 +204,11 @@ export class UsersService {
   /* 
       --------- TFA methods ---------
   */
-
-  async enableTfa(id: number) {
+    
+  async setTfaEnabled(id: number) {
     try {
       let user: UserModel = await this.findOneById(id);
-      user.tfa_enabled = true;
-      await this.usersRepository.save(user);
-    }
-    catch (error) {
-      throw new NotFoundException('User id not found');
-    }
-  }
-
-  async disableTfa(id: number) {
-    try {
-      let user: UserModel = await this.findOneById(id);
-      user.tfa_enabled = false;
+      user.tfa_enabled = !user.tfa_enabled;
       await this.usersRepository.save(user);
     }
     catch (error) {
@@ -241,18 +230,6 @@ export class UsersService {
     try {
       let user: UserModel = await this.findOneById(id);
       user.tfa_secret = secret;
-      await this.usersRepository.save(user);
-      return user;
-    }
-    catch (error) {
-      throw new NotFoundException('User id not found');
-    }
-  }
-
-  async unsetTfaSecret(id: number): Promise<UserModel> {
-    try {
-      let user: UserModel = await this.findOneById(id);
-      user.tfa_secret = '';
       await this.usersRepository.save(user);
       return user;
     }

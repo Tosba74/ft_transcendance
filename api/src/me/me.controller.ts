@@ -26,6 +26,7 @@ export class MeController {
     }
 
     // provisoirement ici car route sur /api/users renvoie erreur 403 mais ici pas
+    // conserver au cas ou ca reste utile pour l api
     @Get('avatar')
     @ApiCreatedResponse({ description: 'Avatar retrieved successfully', type: UserModel })
     getFile(@Request() req: any, @Res({ passthrough: true }) res: Response): StreamableFile {

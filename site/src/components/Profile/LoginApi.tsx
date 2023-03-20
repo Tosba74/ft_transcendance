@@ -7,16 +7,6 @@ interface LoginApiProps {
     setLogged: Function,
 }
 
-interface LoggedUser {
-    id: number,
-    login_name: string,
-    pseudo: string,
-    color: number,
-    avatar_url: string,
-    tfa_enabled: boolean,
-    is_admin: boolean
-}
-
 export default function LoginApi({ setLogged }: LoginApiProps) {
     const [userId, setUserId] = React.useState(-1);
     const [tfa, setTfa] = React.useState(false);
