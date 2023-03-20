@@ -139,9 +139,9 @@ export class UsersService {
       --------- OUR APP additional methods ---------
   */
 
-  async getProfile(id: number): Promise<UserModel> {
-    return this.findOneById(id);
-  }
+  // async getProfile(id: number): Promise<UserModel> {
+  //   return this.findOneById(id);
+  // }
 
   // async getPublicProfile(id: number) {
     

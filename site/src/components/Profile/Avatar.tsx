@@ -1,23 +1,23 @@
-import React, { useRef, SyntheticEvent } from "react";
+import React, { useRef, SyntheticEvent, useEffect } from "react";
 import axios from "axios";
-import jwt_decode from "jwt-decode";
 
 import { LoggedUser } from "./LoggedUser";
 interface AvatarProps {
     user: LoggedUser,
-    setUserInfos: Function,
+    refreshUserInfos: Function
 }
 
-export default function Avatar({user, setUserInfos}: AvatarProps) {
+export default function Avatar({user, refreshUserInfos}: AvatarProps) {
 
     const { avatar_url, } = user;
 
+    const [avatarStream, setAvatarStream] = React.useState({});
     const [avatarMessage, setAvatarMessage] = React.useState('');
 
     const fileInput: any = useRef();
 
     function fileValidation(): boolean {
-        if (!fileInput) {
+        if (fileInput.current.files[0] === undefined) {
             setAvatarMessage('Error: file not detected');
             return false;
         }
@@ -41,28 +41,6 @@ export default function Avatar({user, setUserInfos}: AvatarProps) {
         return true;
     }
 
-    function refreshTokenAndUserInfos() {
-		const token = localStorage.getItem('token');
-		axios.get("/api/login/refresh_token", {
-			headers: {
-				Authorization: `Bearer ${token}`,
-			}
-		})
-		.then(res => {
-			const newtoken: string = res.data['access_token'];
-			if (newtoken) {
-				console.log("new token:", newtoken);
-				localStorage.setItem('token', newtoken);
-				const user: LoggedUser = jwt_decode(newtoken);
-				setUserInfos(user);
-			}
-		})
-		.catch((error) => {
-			setAvatarMessage('Error while refreshing user\'s token');
-			console.log(error);
-		});
-	}
-
     function handleSubmit(event: SyntheticEvent) {
         event.preventDefault();        
 
@@ -82,7 +60,7 @@ export default function Avatar({user, setUserInfos}: AvatarProps) {
             .then(res => {
                 if (res.data === true) {
                     setAvatarMessage('Image uploaded successfully');
-                    refreshTokenAndUserInfos();
+                    refreshUserInfos();
                     setTimeout(() => { setAvatarMessage('') }, 3000);
                 }
             })
@@ -90,21 +68,52 @@ export default function Avatar({user, setUserInfos}: AvatarProps) {
         }
     }
 
+    function fetchAvatarStream() {
+        try {
+            const token = localStorage.getItem('token');
+                                                                    // POURQUOI ROUTE /users FONCTIONNE PAS COMME LES AUTRES ?
+            // axios.get("/api/users/avatar", {
+            axios.get("/api/me/avatar", {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            })
+            .then(res => {
+                setAvatarStream(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    
+        } catch {
+    
+        }
+        
+        // setLogged(false)
+    }
+
+    useEffect(fetchAvatarStream, [avatarMessage]);
+
     return (
         <div className="flex justify-center mt-6">
             <form onSubmit={handleSubmit} className="bg-gray-200 w-98 py-2 pt-10 border border-gray-500 shadow-lg center justify-center">
+                <img
+                    id="avatarImg"
+                    className="text-center w-80 h-80" 
+                    src={`data:image/jpeg;base64,${avatarStream}`} 
+                    // src={URL.createObjectURL(avatarStream)} 
+                />
                 <div className="content sm:w-98 lg:w-98 w-full center content-center text-center items-center justify-center mh-8">
                     
                     <div className="mb-6 flex text-center content-center justify-center center w-80 px-6">
                         <label className="text-right pr-4 block w-2/5 text-sl font-medium text-gray-900 dark:text-gray-800">
-                            Upload file:
+                            Change avatar
                         </label>
                         <input
-                            id="avatar"
+                            id="avatarInput"
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-3/5 p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-300 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                             type="file"
                             ref={fileInput}
-                            required
                         />
                     </div>
 

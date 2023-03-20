@@ -1,14 +1,13 @@
 import React, { SyntheticEvent } from 'react';
 import axios from 'axios';
-import jwt_decode from "jwt-decode";
 
 import { LoggedUser } from './LoggedUser';
 interface PseudoProps {
     user: LoggedUser,
-	setUserInfos: Function,
+	refreshUserInfos: Function
 }
 
-export default function Pseudo({user, setUserInfos}: PseudoProps) {
+export default function Pseudo({user, refreshUserInfos}: PseudoProps) {
 
 	const { pseudo, } = user;
 
@@ -25,28 +24,6 @@ export default function Pseudo({user, setUserInfos}: PseudoProps) {
 		}
 
 		return true;
-	}
-
-	function refreshTokenAndUserInfos() {
-		const token = localStorage.getItem('token');
-		axios.get("/api/login/refresh_token", {
-			headers: {
-				Authorization: `Bearer ${token}`,
-			}
-		})
-		.then(res => {
-			const newtoken: string = res.data['access_token'];
-			if (newtoken) {
-				console.log("new token:", newtoken);
-				localStorage.setItem('token', newtoken);
-				const user: LoggedUser = jwt_decode(newtoken);
-				setUserInfos(user);
-			}
-		})
-		.catch((error) => {
-			setPseudoInputMessage('Error while refreshing user\'s token');
-			console.log(error);
-		});
 	}
 
 	function handleSubmit(event: SyntheticEvent) {
@@ -67,7 +44,7 @@ export default function Pseudo({user, setUserInfos}: PseudoProps) {
 			.then(res => {
 				if (res.data === true) {
 					setPseudoInputMessage('New pseudo saved');
-					refreshTokenAndUserInfos();
+					refreshUserInfos();
 					setTimeout(() => { setPseudoInputMessage('') }, 3000);
 				}
 			})

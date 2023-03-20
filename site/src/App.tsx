@@ -29,29 +29,28 @@ export default function App() {
   function fetchData() {
     try {
       const token = localStorage.getItem('token');
-
       if (token != null) {
-        // const user: LoggedUser = jwt_decode(token);
-        // setUserInfos(user);
-        // setLogged(true);
-        // return;
+        const user: LoggedUser = jwt_decode(token);
+        setUserInfos(user);
+        setLogged(true);
+        return;
 
-        axios.get('/api/me',
-          {
-            headers: ({
-              Authorization: 'Bearer ' + token,
-            })
-          })
-          .then(res => {
-            if (res.status === 200) {
-              // console.log(res.data);
-              setUserInfos(res.data);
-              setLogged(true);
-              return;
-            }
-          })
-          .catch(error => {
-          });
+        // axios.get('/api/me',
+        //   {
+        //     headers: ({
+        //       Authorization: 'Bearer ' + token,
+        //     })
+        //   })
+        //   .then(res => {
+        //     if (res.status === 200) {
+        //       // console.log(res.data);
+        //       setUserInfos(res.data);
+        //       setLogged(true);
+        //       return;
+        //     }
+        //   })
+        //   .catch(error => {
+        //   });
 
       }
     } catch {

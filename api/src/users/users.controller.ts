@@ -1,4 +1,4 @@
-import { Controller, Request, HttpCode, Param, Body, Get, Post, Put, Patch, Delete, UseFilters, ParseIntPipe, UseInterceptors, UploadedFile, } from '@nestjs/common';
+import { Controller, Request, Res, Header, HttpCode, Param, Body, Get, Post, Put, Delete, UseFilters, ParseIntPipe, UseInterceptors, UploadedFile, StreamableFile} from '@nestjs/common';
 import { ApiOkResponse, ApiNotFoundResponse, ApiCreatedResponse, ApiNoContentResponse, ApiTags, ApiBadRequestResponse } from '@nestjs/swagger';
 import { HttpExceptionFilter } from 'src/_common/filters/http-exception.filter';
 
@@ -14,6 +14,10 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { imageFileFilter } from './validation/file-upload.utils';
 import { extname } from 'path';
+
+import { createReadStream } from 'fs';
+import { join } from 'path';
+import type { Response } from 'express';
 
 import { AllowLogged, AllowPublic } from '../auth/auth.decorators';
 
@@ -73,15 +77,6 @@ export class UsersController {
       --------- OUR APP additional routes ---------
   */
 
-  // @Get('avatar')
-  // @AllowLogged()
-  // // @ApiCreatedResponse({ description: 'Avatar retrieved successfully', type: UserModel })
-  // // @ApiNotFoundResponse({ description: 'User not found' })
-  // // @ApiBadRequestResponse({ description: 'User validation error' })
-  // public getAvatar(@Request() req: any) {
-  //   // return this.usersService.getProfile(req.user.id);
-  // }
-
   // @Get('public_profile')
   // @AllowLogged()
   // public getPublicProfile(@Request() req: any) {
@@ -101,6 +96,22 @@ export class UsersController {
   @ApiBadRequestResponse({ description: 'User validation error' })
   public update_pseudo(@Request() req: any, @Body() updatePseudo: UpdatePseudoDto): Promise<boolean> {
     return this.usersService.updatePseudo(req.user.id, updatePseudo);
+  }
+
+  @Get('avatar')
+  @AllowLogged()
+  @ApiCreatedResponse({ description: 'Avatar retrieved successfully', type: UserModel })
+  getFile(@Request() req: any, @Res({ passthrough: true }) res: Response): StreamableFile {
+
+    // check si image existe, sinon envoie default avatar
+    
+    const path = req.user.avatar_url;
+    const extension: string = extname(path);
+
+    res.set({'Content-Type': `image/${extension}`});
+
+    const file = createReadStream(path, {encoding: "base64"});
+    return new StreamableFile(file);
   }
 
   @Put('upload_image')
