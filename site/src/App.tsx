@@ -1,6 +1,5 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
-import axios from 'axios';
 
 import './App.css';
 
@@ -16,48 +15,80 @@ import ChatPage from './components/Chat/ChatPage';
 import LoginApi from './components/Profile/LoginApi';
 import Logout from './components/Profile/Logout';
 
+import axios from 'axios';
+import {LoggedUser} from './components/Profile/LoggedUser';
+import jwt_decode from "jwt-decode";
+
 
 export default function App() {
   const [logged, setLogged] = React.useState(false);
-  const [userInfos, setUserInfos] = React.useState({});
+  const [userInfos, setUserInfos] = React.useState(new LoggedUser());
 
-  React.useEffect(() => {
-    console.log('login try');
+  function fetchData() {
+    try {
+      const token = localStorage.getItem('token');
+      if (token != null) {
+        const user: LoggedUser = jwt_decode(token);
+        setUserInfos(user);
+        setLogged(true);
+        return;
 
-    async function fetchData() {
+        // axios.get('/api/me',
+        //   {
+        //     headers: ({
+        //       Authorization: 'Bearer ' + token,
+        //     })
+        //   })
+        //   .then(res => {
+        //     if (res.status === 200) {
+        //       // console.log(res.data);
+        //       setUserInfos(res.data);
+        //       setLogged(true);
+        //       return;
+        //     }
+        //   })
+        //   .catch(error => {
+        //   });
 
-      try {
-        const token = localStorage.getItem('token');
-
-        if (token != null) {
-          axios.get('/api/me',
-            {
-              headers: ({
-                Authorization: 'Bearer ' + token,
-              })
-            })
-            .then(res => {
-              if (res.status === 200) {
-
-                console.log(res.data);
-                setUserInfos(res.data);
-                setLogged(true);
-                return;
-              }
-            })
-            .catch(error => {
-            });
-        }
       }
-      catch {
-      }
+    } catch {
 
-
-      setLogged(false)
     }
+    
+    setLogged(false)
+  }
 
-    fetchData();
-  }, [setLogged]);
+  useEffect(fetchData, [logged]);
+
+
+  // const [tokenMessage, setTokenMessage] = React.useState('');
+
+  // Voir aussi pour verifier si le token est toujours valable
+  // si non setLogged a false + setUserInfos a {}
+  function refreshTokenAndUserInfos() {
+    const token = localStorage.getItem('token');
+
+    // if token still available
+        axios.get("/api/login/refresh_token", {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        })
+        .then(res => {
+            const newtoken: string = res.data['access_token'];
+            if (newtoken) {
+                localStorage.setItem('token', newtoken);
+                const user: LoggedUser = jwt_decode(newtoken);
+                setUserInfos(user);
+            }
+        })
+        .catch((error) => {
+            // setTokenMessage('Error while refreshing user\'s token');
+            console.log(error);
+        });
+    // else
+        // log out the user
+  }
 
   return (
     <Router>
@@ -65,9 +96,9 @@ export default function App() {
         <NavBar logged={logged} />
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/players" element={<ProfilePage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/profile/:id" element={<ProfilePage />} />
+          <Route path="/players" element={<ProfilePage user={userInfos} refreshUserInfos={refreshTokenAndUserInfos} />} />
+          <Route path="/profile" element={<ProfilePage user={userInfos} refreshUserInfos={refreshTokenAndUserInfos} />} />
+          <Route path="/profile/:id" element={<ProfilePage user={userInfos} refreshUserInfos={refreshTokenAndUserInfos} />} />
           <Route path="/game" element={<GamePage />} />
           <Route path="/chat" element={<ChatPage/>} />
           <Route path="/history" element={<ReactPage />} />

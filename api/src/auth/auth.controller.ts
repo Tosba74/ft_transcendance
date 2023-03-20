@@ -1,11 +1,9 @@
-
-import { Controller, Request, Get, Post, UseGuards, Redirect, HttpStatus, Query, BadRequestException, UnauthorizedException, Body } from '@nestjs/common';
+import { Controller, Request, Get, Post, UseGuards, UnauthorizedException, Body, Redirect, HttpStatus } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import axios from 'axios';
 
 import { LocalAuthGuard } from './auth-strategy/local-auth.guard';
 
-import { LoggedUserDto } from './dto/logged_user.dto';
 import { AuthService } from './auth.service';
 
 import { AllowLogged, AllowPublic } from './auth.decorators';
@@ -18,13 +16,26 @@ import { DataSource } from 'typeorm';
 export class AuthController {
     constructor(private authService: AuthService) { }
 
-    private states: Array<string> = [];
-
-
-    @UseGuards(LocalAuthGuard)
     @Post('basic')
     @AllowPublic()
-    async basicLogin(@Request() req: any): Promise<LoggedUserDto> {
+    @UseGuards(LocalAuthGuard)
+    async basicLogin(@Request() req: any): Promise<any> {
+        // if the tfa is turned off, directly respond with a new jwt token with full access
+        if (req.user.tfa_enabled === false)
+            return this.authService.login(req.user);
+
+        // tfa is enabled so dont sent token but ask for tfa code
+        // (manque dans la db) set tfa_date pour que on puisse tfa seulement ~5 minutes après le login
+        // response.status(206);
+        return {id: req.user.id};
+    }
+
+
+    @Get('refresh_token')
+    @AllowLogged()
+    async refreshToken(@Request() req: any): Promise<any> {
+        delete req.user.exp;
+        delete req.user.iat;
         return this.authService.login(req.user);
     }
 
@@ -39,7 +50,7 @@ export class AuthController {
         var randomstring = require('randomstring');
 
         var state: string = randomstring.generate(15);
-        this.states.push(state);
+        this.authService.addState(state);
 
         const url = `${authorize_url}?client_id=${process.env.API_UID}&redirect_uri=${redirect_url}&scope=public&response_type=code&state=${state}`;
         return { statusCode: HttpStatus.FOUND, url };
@@ -48,13 +59,11 @@ export class AuthController {
 
     @Post('apicallback')
     @AllowPublic()
-    async apiLogin(@Body() oauth2Dto: Oauth2Dto): Promise<LoggedUserDto> {
+    async apiLogin(@Body() oauth2Dto: Oauth2Dto): Promise<any> {
 
-        const api_uid = process.env.API_UID;
-        const api_secret = process.env.API_SECRET;
+        this.authService.checkState(oauth2Dto.state);
 
         try {
-            // This authorization code is then exchanged for an access token using a server-to-server call from the application to the authorization server.
             const token_request: any = await axios.post('https://api.intra.42.fr/oauth/token', {
                 grant_type: 'authorization_code',
                 client_id: process.env.API_UID,
@@ -89,17 +98,11 @@ export class AuthController {
             }
             catch (error) {}
 
-            // If the state don't match the randomstring generated, the request has been created by a third party and the process should be aborted.
-            const index: number = this.states.findIndex(el => el === oauth2Dto.state);
-            if (index == -1) {
-                throw new BadRequestException('State doesn\'t exists');
-            }
-            this.states.splice(index, 1);
-
-
             const user = await this.authService.validateOrCreateUser(datas.data.login, datas.data);
 
             if (user) {
+                if (user.tfa_enabled === true)
+                    return {id: user.id};
                 return this.authService.login(user);
             }
             throw new UnauthorizedException('Api user validation error');
@@ -109,4 +112,5 @@ export class AuthController {
         }
 
     }
+
 }

@@ -3,12 +3,13 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 
-
+import { UsersService } from 'src/users/users.service';
 import { LoggedUserDto } from '../dto/logged_user.dto';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor() {
+
+  constructor(private usersService: UsersService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -17,6 +18,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: LoggedUserDto) {
+
+    // lorsque un user modifie ses infos, pour refresh le token avec les nouvelles datas
+    const user: LoggedUserDto = await this.usersService.findOneById(payload.id);
+    payload.pseudo = user.pseudo;
+    payload.avatar_url = user.avatar_url;
 
     // const loggedUser: LoggedUserDto = {
     //     id: payload.id,
@@ -27,8 +33,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     // };
 
     // const loggedUser = payload as LoggedUserDto;
-
     return payload;
   }
 }
-

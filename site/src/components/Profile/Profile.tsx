@@ -1,4 +1,3 @@
-
 export class Profile {
 	id: number | undefined;
 	login: string = '';
