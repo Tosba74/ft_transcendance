@@ -192,8 +192,7 @@ export class UsersService {
         fs.unlink(oldpath, (err) => {
           if (err)
             console.log(`Could not remove the old file from user ${user.id}`);
-          // else
-            // file removed!
+          // file removed!
         })
       }
       

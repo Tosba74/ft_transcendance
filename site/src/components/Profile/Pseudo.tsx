@@ -13,8 +13,6 @@ export default function Pseudo({user, refreshUserInfos}: PseudoProps) {
 
 	const [pseudoInput, setPseudoInput] = React.useState(pseudo);
 	const [pseudoInputMessage, setPseudoInputMessage] = React.useState('');
-	// console.log(pseudo);
-    // console.log(pseudoInput);
   
 	function pseudoValidation(): boolean {
 		
