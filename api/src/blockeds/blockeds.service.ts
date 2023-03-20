@@ -17,7 +17,8 @@ export class BlockedsService {
   async findOneById(id: number): Promise<BlockedModel> {
     try {
       const blocked = await this.blockedsRepository.findOneOrFail({
-        where: { id: id }
+        where: { id: id },
+        relations: { blocked: true, blocker: true }
       });
       return blocked;
     }
@@ -30,6 +31,7 @@ export class BlockedsService {
   async blockedUsers(id: number): Promise<BlockedModel[]> {
     return this.blockedsRepository.find({
       where: { blocker: { id: id } },
+      relations: { blocked: true, }
     });
   }
 
@@ -37,21 +39,20 @@ export class BlockedsService {
   async blockedBy(id: number): Promise<BlockedModel[]> {
     return this.blockedsRepository.find({
       where: { blocked: { id: id } },
+      relations: { blocker: true, }
     });
   }
 
 
-  async blockUser(id: number, blockedDto: BlockedDto): Promise<BlockedModel> {
+  async blockUser(id: number, blocked_id: number): Promise<BlockedModel> {
 
     const alreadyExists = await this.blockedsRepository.findOne({
       where: {
         blocker: { id: id },
-        blocked: { id: blockedDto.blocked_id },
+        blocked: { id: blocked_id },
       },
       relations: {
         // first_user: true,
-        // second_user: true,
-        // friend_type: true,
       }
     });
 
@@ -63,7 +64,7 @@ export class BlockedsService {
 
     const newBlocked = this.blockedsRepository.create({
       blocker: { id: id },
-      blocked: { id: blockedDto.blocked_id }
+      blocked: { id: blocked_id }
     });
 
     const created = await this.blockedsRepository.save(newBlocked).catch((err: any) => {
@@ -73,12 +74,12 @@ export class BlockedsService {
     return created;
   }
 
-  async unblockUser(id: number, blockedDto: BlockedDto): Promise<void> {
+  async unblockUser(id: number, blocked_id: number): Promise<void> {
 
     const blocked = await this.blockedsRepository.findOne({
       where: {
         blocker: { id: id },
-        blocked: { id: blockedDto.blocked_id },
+        blocked: { id: blocked_id },
       }
     });
 
