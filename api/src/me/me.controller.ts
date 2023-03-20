@@ -5,7 +5,6 @@ import { HttpExceptionFilter } from 'src/_common/filters/http-exception.filter';
 import { AllowLogged, AllowPublic } from 'src/auth/auth.decorators';
 import { MeService } from './me.service';
 import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
-import { UserModel } from 'src/users/models/user.model';
 
 import { createReadStream } from 'fs';
 import { join } from 'path';
