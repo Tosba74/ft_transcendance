@@ -75,18 +75,6 @@ export class UsersController {
       --------- OUR APP additional routes ---------
   */
 
-  // @Get('public_profile')
-  // @AllowLogged()
-  // public getPublicProfile(@Request() req: any) {
-  //     // return this.usersService.getPublicProfile(req.user.id);
-  // }
-
-  // @Get('private_profile')
-  // @AllowLogged()
-  // public getPrivateProfile(@Request() req: any) {
-  //     // return this.usersService.getPrivateProfile(req.user.id);
-  // }
-
   @Patch('update_pseudo')
   @AllowLogged()
   @ApiCreatedResponse({ description: 'Pseudo updated successfully', type: UpdatePseudoDto })
@@ -96,23 +84,21 @@ export class UsersController {
     return this.usersService.updatePseudo(req.user.id, updatePseudo);
   }
 
-  @Get('avatar')
-  @AllowLogged()
-  @ApiCreatedResponse({ description: 'Avatar retrieved successfully', type: UserModel })
-  getFile(@Request() req: any, @Res({ passthrough: true }) res: Response): StreamableFile {
-
-    // rajouter encore check si image existe sur server, sinon garder image de 42
+  // // conserver au cas ou ca reste utile pour l api
+  // @Get('avatar')
+  // @AllowLogged()
+  // @ApiCreatedResponse({ description: 'Avatar retrieved successfully', type: UserModel })
+  // getFile(@Request() req: any, @Res({ passthrough: true }) res: Response): StreamableFile {
     
-    const path = req.user.avatar_url;
-    const extension: string = extname(path);
+  //   const path = req.user.avatar_url;
+  //   const extension: string = extname(path);
 
-    res.set({'Content-Type': `image/${extension}`});
+  //   res.set({'Content-Type': `image/${extension}`});
 
-    const file = createReadStream(path, {encoding: "base64"});
-    return new StreamableFile(file);
-  }
+  //   const file = createReadStream(path, {encoding: "base64"});
+  //   return new StreamableFile(file);
+  // }
 
-  // mettre les images a part ou un volume et donner l'accès direct avec nginx, et comme ça on peut juste stocker l'url dans le model du user
   @Put('upload_image')
   @AllowLogged()
   @UseInterceptors(

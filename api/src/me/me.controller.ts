@@ -32,23 +32,6 @@ export class MeController {
         return req.user as LoggedUserDto;
     }
 
-    // // provisoirement ici car route sur /api/users renvoie erreur 403 mais ici pas
-    // // conserver au cas ou ca reste utile pour l api
-    // @Get('avatar')
-    // @ApiCreatedResponse({ description: 'Avatar retrieved successfully', type: UserModel })
-    // getFile(@Request() req: any, @Res({ passthrough: true }) res: Response): StreamableFile {
-  
-    //   // rajouter encore check si image existe sur server, sinon garder image de 42
-      
-    //   const path = req.user.avatar_url;
-    //   const extension: string = extname(path);
-
-    //   res.set({'Content-Type': `image/${extension}`});
-  
-    //   const file = createReadStream(path, {encoding: "base64"});
-    //   return new StreamableFile(file);
-    // }
-
     // @Get()
     // public findAll(): Promise<FriendModel[]> {
     //     return this.friendsService.findAll();

@@ -10,6 +10,7 @@ interface AvatarProps {
 /* Upload fonctionne
 Apres un changement d image, il est possible que l'ancienne image reste visible (si meme extension)
 car l image aura le meme nom et le navigateur la garde en cache.
+
 Solution (a faire plus tard):
 Sur l'api, a voir pour implementer un random string dans le nom de l'image 
 (mais ca demande plus de logique dans les fonctions)
@@ -19,7 +20,6 @@ export default function Avatar({user, refreshUserInfos}: AvatarProps) {
 
     const { avatar_url, } = user;
 
-    // const [avatarStream, setAvatarStream] = React.useState({});
     const [avatarUrl, setAvatarUrl] = React.useState(avatar_url);
     const [avatarMessage, setAvatarMessage] = React.useState('');
 
@@ -76,40 +76,12 @@ export default function Avatar({user, refreshUserInfos}: AvatarProps) {
         }
     }
 
-    // function fetchAvatarStream() {
-    //     try {
-    //         const token = localStorage.getItem('token');
-    //                                                                 // POURQUOI ROUTE /users FONCTIONNE PAS COMME LES AUTRES ?
-    //         // axios.get("/api/users/avatar", {
-    //         axios.get("/api/me/avatar", {
-    //             headers: {
-    //                 Authorization: `Bearer ${token}`,
-    //             }
-    //         })
-    //         .then(res => {
-    //             // setAvatarStream(res.data);
-    //             setAvatarUrl(res.data);
-    //         })
-    //         .catch((error) => {
-    //             console.log(error);
-    //         });
-    
-    //     } catch {
-    
-    //     }
-        
-    //     // setLogged(false)
-    // }
-
-    // useEffect(fetchAvatarStream, [avatarMessage]);
-
     return (
         <div className="flex justify-center mt-6">
             <form onSubmit={handleSubmit} className="bg-gray-200 w-98 py-2 pt-10 border border-gray-500 shadow-lg center justify-center">
                 <img
                     id="avatarImg"
                     className="text-center w-80 h-80" 
-                    // src={`data:image/jpeg;base64,${avatarStream}`} 
                     src={avatarUrl}
                 />
                 <div className="content sm:w-98 lg:w-98 w-full center content-center text-center items-center justify-center mh-8">
