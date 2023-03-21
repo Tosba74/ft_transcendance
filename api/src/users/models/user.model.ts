@@ -6,7 +6,7 @@ import { ChatMessageModel } from "src/chat_messages/models/chat_message.model";
 import { ChatParticipantModel } from "src/chat_participants/models/chat_participant.model";
 
 @Entity("users")
-@Unique('unique_constraint', ['login_name'])
+@Unique('unique_constraint', ['login_name', 'pseudo'])
 export class UserModel {
 
     @ApiResponseProperty({ type: Number })
@@ -48,12 +48,8 @@ export class UserModel {
     tfa_enabled: boolean;
     
     @ApiResponseProperty({ type: String })
-    @Column({ nullable: true, default: null })
-    tfa_email: string;
-    
-    @ApiResponseProperty({ type: String })
-    @Column({ nullable: true, default: null })
-    tfa_code: string;
+    @Column({ nullable: true, default: null, select: false })
+    tfa_secret: string;
 
     //--------------------------------------------
     

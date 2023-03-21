@@ -22,7 +22,7 @@ export class ChatTypesService {
       return chatType;
     } 
     catch (error) {
-      throw new NotFoundException();
+      throw new NotFoundException('Chat type id not found');
     }
   }
 }
