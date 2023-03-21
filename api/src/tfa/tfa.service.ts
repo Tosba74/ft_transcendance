@@ -39,12 +39,12 @@ export class TfaService {
         return toFileStream(stream, otpauthUrl);
     }
 
-    async confirmActivation(id: number, tfa_code: string) {
+    async confirmActivation(id: number, tfa_code: string): Promise<boolean> {
         const isCodeValid: boolean = await this.isTfaValid(tfa_code, id);
         if (!isCodeValid)
             throw new UnauthorizedException('Wrong authentication code');
         
-        this.usersService.setTfaEnabled(id);
+        return this.usersService.setTfaEnabled(id);
     }
 
     async authenticateApi(id: number, tfa_code: string) {

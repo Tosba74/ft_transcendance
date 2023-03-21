@@ -49,19 +49,19 @@ export default function LoginApi({ setLogged }: LoginApiProps) {
 
     return (
         <>
-        { !tfa && 
-            <div className="mt-3 h-6 text-sm text-center">{pageMessage}</div>
-        }
-        { tfa &&
-            <div className="flex justify-center mt-6">
-                <form className="bg-gray-200 w-98 py-2 pt-10 border border-gray-500 shadow-lg center justify-center">
-                    <div className="content sm:w-98 lg:w-98 w-full center content-center text-center items-center justify-center mh-8">
-                            <TfaCode userId={userId} loginUser={loginUser} errorMsg={setPageMessage}/>
-                        <div className="mt-3 h-6 text-sm text-center">{pageMessage}</div>
-                    </div>
-                </form >
-            </div>
-        }
+            { !tfa && 
+                <div className="mt-3 h-6 text-sm text-center">{pageMessage}</div>
+            }
+            { tfa &&
+                <div className="flex justify-center mt-6">
+                    <form className="bg-gray-200 w-98 py-2 pt-10 border border-gray-500 shadow-lg center justify-center">
+                        <div className="content sm:w-98 lg:w-98 w-full center content-center text-center items-center justify-center mh-8">
+                                <TfaCode userId={userId} loginUser={loginUser} errorMsg={setPageMessage}/>
+                            <div className="mt-3 h-6 text-sm text-center">{pageMessage}</div>
+                        </div>
+                    </form >
+                </div>
+            }
         </>
     );
 }

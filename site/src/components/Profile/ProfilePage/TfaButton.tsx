@@ -1,5 +1,5 @@
 import React, { SyntheticEvent } from "react";
-import axios from "axios";
+import TfaConfirmation from "./TfaConfirmation";
 
 import { LoggedUser } from "../LoggedUser";
 interface TfaButtonProps {
@@ -12,17 +12,40 @@ export default function TfaButton({user, refreshUserInfos}: TfaButtonProps) {
 	const {tfa_enabled, } = user;
 
 	const [tfaInput, setTfaInput] = React.useState('');
+
 	const [tfaLabelMessage, setTfaLabelMessage] = React.useState('')
-	const [tfaInputMessage, setTfaInputMessage] = React.useState('')
+	const [tfaMessage, setTfaMessage] = React.useState('')
 	const [tfaButtonMessage, setTfaButtonMessage] = React.useState('')
+
+	const [buttonDisabled, setButtonDisabled] = React.useState(false);
 
 	const [qrCode, setQrCode] = React.useState('')
 
+	// charge les messages correct au premier rendu de la page
 	React.useEffect(() => {
 		tfa_enabled === false ? setTfaInput('no') : setTfaInput('yes');
 		tfa_enabled === false ? setTfaLabelMessage('disabled') : setTfaLabelMessage('enabled');
-		tfa_enabled === false ? setTfaButtonMessage('on') : setTfaButtonMessage('off');
+		tfa_enabled === false ? setTfaButtonMessage('Turn on') : setTfaButtonMessage('Turn off');
 	}, []);
+
+	function switchTfaOn() {
+		setQrCode('');
+		setTfaInput('yes')
+		setTfaLabelMessage('enabled')
+		setTfaMessage('Tfa turned on');
+		setTfaButtonMessage('Turn off');
+		refreshUserInfos();
+		setTimeout(() => { setTfaMessage('') }, 3000);
+	}
+
+	function switchTfaOff() {
+		setTfaInput('no')
+		setTfaLabelMessage('disabled')
+		setTfaMessage('Tfa turned off');
+		setTfaButtonMessage('Turn on');
+		refreshUserInfos();
+		setTimeout(() => { setTfaMessage('') }, 3000);
+	}
 
 	function handleSubmit(event: SyntheticEvent) {
 		event.preventDefault();
@@ -40,53 +63,42 @@ export default function TfaButton({user, refreshUserInfos}: TfaButtonProps) {
 				}
 			})
 			.then(async res => {
-				// if route === turn-on api return qr code on success
-				// if route === turn-off api return 'disabled' on success
-
+				// on turn-on api return qr code on success / on turn-off api return 'disabled' on success
 				if (route === 'turn-on') {
 					const blob = await res.blob();
 					const url = URL.createObjectURL(blob);
 					setQrCode(url);
-
-					// setTfaInput('yes')
-					// setTfaLabelMessage('enabled')
-					// setTfaInputMessage('Tfa turned on');
-					// setTfaButtonMessage('off');
-					// refreshUserInfos();
-					// setTimeout(() => { setTfaInputMessage('') }, 3000);
+					
+					setButtonDisabled(true); 				/* mettre le bouton turn-on en disabled */
+					// setTfaButtonMessage('Refresh QR');		/* ou mettre le texte du bouton en refresh */
 				}
-				else {
-					setTfaInput('no')
-					setTfaLabelMessage('disabled')
-					setTfaInputMessage('Tfa turned off');
-					setTfaButtonMessage('on');
-					refreshUserInfos();
-					setTimeout(() => { setTfaInputMessage('') }, 3000);
-				}
+				else
+					switchTfaOff()
 			})
-			.catch(() => setTfaInputMessage('Error while contacting the API. Retry after reloging.'));
+			.catch(() => setTfaMessage('Error while contacting the API. Retry after reloging.'));
 		}
 	}
 
 	return (
-		<form onSubmit={handleSubmit}>
-			<label>Two factor authentication is {tfaLabelMessage}</label>
-			<button
-				className="text-white bg-blue-700 px-3 py-1"
-				type="submit"
-				name="tfa_enable"
-				value={tfaInput}
-			>
-			Turn {tfaButtonMessage}
-			</button>
-		{
-			qrCode !== '' &&
-			<>
-				<div>qrcode:</div>
-				<img src={qrCode} />
-			</>
-		}
-			<div>{tfaInputMessage}</div>
-		</form>
+		<>
+			<form onSubmit={handleSubmit}>
+				<label>Two factor authentication is {tfaLabelMessage}</label>
+				<button
+					id="tfa_enable"
+					className="text-white bg-blue-700 px-3 py-1"
+					type="submit"
+					name="tfa_enable"
+					value={tfaInput}
+					disabled={buttonDisabled}
+				>
+				{tfaButtonMessage}
+				</button>
+			</form>
+			{ qrCode !== '' &&
+				<TfaConfirmation qrCode={qrCode} switchTfaOn={switchTfaOn} setTfaMessage={setTfaMessage} />
+			}
+			<div>{tfaMessage}</div>
+		</>
 	);
+
 }

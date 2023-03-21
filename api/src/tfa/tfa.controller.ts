@@ -18,8 +18,8 @@ export class TfaController {
 
     @Post('confirm-activation')
     @AllowLogged()
-    async confirmActivation(@Body() body: any, @Request() req: any): Promise<void> {
-        this.tfaService.confirmActivation(req.user.id, body.tfa_code);
+    async confirmActivation(@Body() body: any, @Request() req: any): Promise<boolean> {
+        return this.tfaService.confirmActivation(req.user.id, body.tfa_code);
     }
 
     @Get('turn-off')

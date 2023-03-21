@@ -216,11 +216,12 @@ export class UsersService {
       --------- TFA methods ---------
   */
     
-  async setTfaEnabled(id: number) {
+  async setTfaEnabled(id: number): Promise<boolean> {
     try {
       let user: UserModel = await this.findOneById(id);
       user.tfa_enabled = !user.tfa_enabled;
       await this.usersRepository.save(user);
+      return user.tfa_enabled;
     }
     catch (error) {
       throw new NotFoundException('User id not found');

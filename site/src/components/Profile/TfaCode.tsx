@@ -14,6 +14,8 @@ export default function TfaCode({ userId, loginUser, errorMsg}: TfaCodeProps) {
 	const handleSubmit = async (event: SyntheticEvent) => {
         event.preventDefault();
 
+		// validation de tfaCode (au moins check si empty, + 6 digits)
+
 		axios.post("/api/tfa/authenticate", {
 			'id': userId,
 			'tfa_code': tfaCode
@@ -40,7 +42,6 @@ export default function TfaCode({ userId, loginUser, errorMsg}: TfaCodeProps) {
 				placeholder="_ _ _ _ _ _" 
 				value={tfaCode}
 				onChange={e => setTfaCode(e.target.value)}
-				required
 			/>
 		</div>
 		<button onClick={handleSubmit} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 center content-center text-center font-medium rounded-lg text-sm md:w-auto px-5 py-1 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
