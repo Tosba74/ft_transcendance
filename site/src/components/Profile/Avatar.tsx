@@ -1,4 +1,4 @@
-import React, { useRef, SyntheticEvent, useEffect } from "react";
+import React, { useRef, SyntheticEvent } from "react";
 import axios from "axios";
 
 import { LoggedUser } from "./LoggedUser";
@@ -9,9 +9,9 @@ interface AvatarProps {
 
 export default function Avatar({user, refreshUserInfos}: AvatarProps) {
 
-    const { avatar_url, } = user;
+    const { id, avatar_url, } = user;
 
-    const [avatarStream, setAvatarStream] = React.useState({});
+    const [avatarUrl, setAvatarUrl] = React.useState(avatar_url);
     const [avatarMessage, setAvatarMessage] = React.useState('');
 
     const fileInput: any = useRef();
@@ -37,8 +37,17 @@ export default function Avatar({user, refreshUserInfos}: AvatarProps) {
         }
 
         // eventually validate image proportion w/h and/or reformat image as a square ??
+        // ...
 
         return true;
+    }
+
+    function randomFilename(currentName: string): string {
+        const i: number = currentName.lastIndexOf('.');
+        const extension: string = currentName.substring(i);
+        const randomstring = require('randomstring');
+        const random: string = randomstring.generate(8);
+        return `${random}-${id}${extension}`;
     }
 
     function handleSubmit(event: SyntheticEvent) {
@@ -50,7 +59,8 @@ export default function Avatar({user, refreshUserInfos}: AvatarProps) {
         const token = localStorage.getItem('token');
         if (token) {
             const data = new FormData();
-            data.append('avatar', fileInput.current.files[0], fileInput.current.files[0].name);
+            const filename: string = randomFilename(fileInput.current.files[0].name);
+            data.append('avatar', fileInput.current.files[0], filename);
     
             axios.put(`/api/users/upload_image`, data, {
                 headers: {
@@ -58,74 +68,34 @@ export default function Avatar({user, refreshUserInfos}: AvatarProps) {
                 }
             })
             .then(res => {
-                if (res.data === true) {
-                    setAvatarMessage('Image uploaded successfully');
-                    refreshUserInfos();
-                    setTimeout(() => { setAvatarMessage('') }, 3000);
-                }
+                setAvatarMessage('Image uploaded successfully');
+                setAvatarUrl(res.data);
+                refreshUserInfos();
+                setTimeout(() => { setAvatarMessage('') }, 3000);
             })
             .catch(() => setAvatarMessage('Error: impossible to contact API. Try to re-login...'));
         }
     }
 
-    function fetchAvatarStream() {
-        try {
-            const token = localStorage.getItem('token');
-                                                                    // POURQUOI ROUTE /users FONCTIONNE PAS COMME LES AUTRES ?
-            // axios.get("/api/users/avatar", {
-            axios.get("/api/me/avatar", {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                }
-            })
-            .then(res => {
-                setAvatarStream(res.data);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    
-        } catch {
-    
-        }
-        
-        // setLogged(false)
-    }
-
-    useEffect(fetchAvatarStream, [avatarMessage]);
-
     return (
-        <div className="flex justify-center mt-6">
-            <form onSubmit={handleSubmit} className="bg-gray-200 w-98 py-2 pt-10 border border-gray-500 shadow-lg center justify-center">
+            <form onSubmit={handleSubmit}>
                 <img
-                    id="avatarImg"
-                    className="text-center w-80 h-80" 
-                    src={`data:image/jpeg;base64,${avatarStream}`} 
-                    // src={URL.createObjectURL(avatarStream)} 
+                    className="w-auto h-60" 
+                    src={avatarUrl}
                 />
-                <div className="content sm:w-98 lg:w-98 w-full center content-center text-center items-center justify-center mh-8">
-                    
-                    <div className="mb-6 flex text-center content-center justify-center center w-80 px-6">
-                        <label className="text-right pr-4 block w-2/5 text-sl font-medium text-gray-900 dark:text-gray-800">
-                            New avatar ?
-                        </label>
-                        <input
-                            id="avatarInput"
-                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-3/5 p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-300 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-                            type="file"
-                            ref={fileInput}
-                        />
-                    </div>
-
-                    <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 center content-center text-center font-medium rounded-lg text-sm md:w-auto px-5 py-1 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                        Save
-                    </button>
-
-                    <div className="mt-3 h-6 text-sm text-center">{avatarMessage}</div>
-
-                </div>
+                <label>
+                    Change avatar : 
+                </label>
+                <input
+                    className="px-3 py-1 bg-slate-300"
+                    type="file"
+                    ref={fileInput}
+                />
+                <button type="submit" className="text-white bg-blue-700 px-3 py-1">
+                    Save
+                </button>
+                <div>{avatarMessage}</div>
             </form>
-        </div>
     );
 
 }

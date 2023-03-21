@@ -1,6 +1,10 @@
 _build/nginx/certs/*.crt
 _build/nginx/certs/*.key
 
+_datas/avatars/*
+!_datas/avatars/default-avatar.*
+!_datas/avatars/.gitkeep
+
 # misc
 .DS_Store
 .env
