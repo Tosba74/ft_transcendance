@@ -1,4 +1,4 @@
-import {LoggedUser} from './LoggedUser';
+import {LoggedUser} from '../LoggedUser';
 
 interface ProfilePublicProps {
     user: LoggedUser,

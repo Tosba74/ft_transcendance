@@ -15,9 +15,10 @@ export class TfaService {
 	constructor(private usersService: UsersService, private authService: AuthService) { }
 	
     // demander le code pour confirmer la desactivation ?
-    async deactivate(id: number): Promise<void> {
+    async deactivate(id: number): Promise<string> {
         this.usersService.setTfaEnabled(id);
         this.usersService.setTfaSecret('', id);
+        return 'disabled';
     }
 
 	async generateTfaSecret(id: number): Promise<string> {

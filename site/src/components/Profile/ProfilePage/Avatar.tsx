@@ -1,7 +1,7 @@
 import React, { useRef, SyntheticEvent } from "react";
 import axios from "axios";
 
-import { LoggedUser } from "./LoggedUser";
+import { LoggedUser } from "../LoggedUser";
 interface AvatarProps {
     user: LoggedUser,
     refreshUserInfos: Function
@@ -62,40 +62,39 @@ export default function Avatar({user, refreshUserInfos}: AvatarProps) {
             const filename: string = randomFilename(fileInput.current.files[0].name);
             data.append('avatar', fileInput.current.files[0], filename);
     
-            axios.put(`/api/users/upload_image`, data, {
+            axios.put('/api/users/upload_image', data, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 }
             })
             .then(res => {
+                // return new avatar_url
                 setAvatarMessage('Image uploaded successfully');
                 setAvatarUrl(res.data);
                 refreshUserInfos();
                 setTimeout(() => { setAvatarMessage('') }, 3000);
             })
-            .catch(() => setAvatarMessage('Error: impossible to contact API. Try to re-login...'));
+            .catch(() => setAvatarMessage('Error while contacting the API. Retry after reloging.'));
         }
     }
 
     return (
-            <form onSubmit={handleSubmit}>
-                <img
-                    className="w-auto h-60" 
-                    src={avatarUrl}
-                />
-                <label>
-                    Change avatar : 
-                </label>
-                <input
-                    className="px-3 py-1 bg-slate-300"
-                    type="file"
-                    ref={fileInput}
-                />
-                <button type="submit" className="text-white bg-blue-700 px-3 py-1">
-                    Save
-                </button>
-                <div>{avatarMessage}</div>
-            </form>
+        <form onSubmit={handleSubmit}>
+            <img
+                className="w-auto h-60" 
+                src={avatarUrl}
+            />
+            <label>Change avatar :</label>
+            <input
+                className="px-3 py-1 bg-slate-300"
+                type="file"
+                ref={fileInput}
+            />
+            <button type="submit" className="text-white bg-blue-700 px-3 py-1">
+                Save
+            </button>
+            <div>{avatarMessage}</div>
+        </form>
     );
 
 }
