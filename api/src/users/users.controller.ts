@@ -106,8 +106,8 @@ export class UsersController {
       storage: diskStorage({
         destination: '../app-datas/avatars',
         filename: (req: any, file, cb) => {
-            cb(null, req.user.id + extname(file.originalname));
-        },
+          cb(null, file.originalname);
+      },
       }),
       limits: {
         fileSize: 1000000
@@ -119,7 +119,7 @@ export class UsersController {
   @ApiNotFoundResponse({ description: 'User not found' })
   @ApiBadRequestResponse({ description: 'User validation error' })
   public uploadFileAndPassValidation(@Request() req: any, @UploadedFile() file: Express.Multer.File): Promise<string> {
-    return this.usersService.updateAvatar(req.user.id, file.filename);
+    return this.usersService.updateAvatar(req.user.id, file.originalname);
   }
 
 }

@@ -183,21 +183,24 @@ export class UsersService {
     try {
       let user: UserModel = await this.findOneById(id);
   
-      // si l ancien image avait une ext. diff., il faut l enlever car on aura alors 2 images pour un meme user en memoire
-      const oldurl: string = user.avatar_url;
-      if (oldurl !== 'https://localhost:8443/avatars/default-avatar.jpg'
-        && extname(oldurl) !== extname(filename)) 
+      // remove l'ancienne image de la memoire du volume
+      const prevAvatarUrl: string = user.avatar_url;
+      if (prevAvatarUrl.indexOf('https://cdn.intra.42.fr') === -1 &&
+        prevAvatarUrl !== 'https://localhost:8443/avatars/default-avatar.jpg' &&
+        prevAvatarUrl !== 'https://localhost:8443/avatars/default-avatar.jpeg' &&
+        prevAvatarUrl !== 'https://localhost:8443/avatars/default-avatar.png')
       {
-        const oldpath: string = `../app-datas/avatars/${id}${extname(oldurl)}`;
-        fs.unlink(oldpath, (err) => {
+        const i: number = prevAvatarUrl.lastIndexOf('/');
+        const prevFilename: string = prevAvatarUrl.substring(i+1);
+        const prevFile: string = `../app-datas/avatars/${prevFilename}`;
+        fs.unlink(prevFile, (err) => {
           if (err)
-            console.log(`Could not remove the old file from user ${user.id}`);
+            console.log(`Could not remove the old file ${prevFile} from user ${user.id}`);
           // file removed!
         })
       }
       
       user.avatar_url = `https://localhost:8443/avatars/${filename}`;
-
       await this.usersRepository.save(user).catch((err: any) => {
         throw new BadRequestException('User avatar update error');
       });
