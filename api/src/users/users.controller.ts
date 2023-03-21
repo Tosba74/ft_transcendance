@@ -12,12 +12,13 @@ import { Express } from 'express'
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { imageFileFilter } from './validation/file-upload.utils';
-import { extname } from 'path';
-
-import { createReadStream } from 'fs';
-import type { Response } from 'express';
 
 import { AllowLogged } from '../auth/auth.decorators';
+
+// import { extname } from 'path';
+// import { createReadStream } from 'fs';
+// import type { Response } from 'express';
+
 
 @Controller('api/users')
 @ApiTags('api/users')

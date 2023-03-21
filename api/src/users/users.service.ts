@@ -62,7 +62,7 @@ export class UsersService {
     const hash: string = await bcrypt.hash(createUserDto.password, saltRounds);
     newuser.password = hash;
     
-    newuser.avatar_url = 'https://localhost:8443/avatars/default-avatar.jpg';
+    newuser.avatar_url = 'https://avatars/default-avatar.jpg';
 
     newuser.tfa_enabled = false;
     newuser.tfa_secret = '';
@@ -88,7 +88,7 @@ export class UsersService {
     if (avatar)
       newuser.avatar_url = avatar;
     else
-      newuser.avatar_url = 'https://localhost:8443/avatars/default-avatar.jpg';
+      newuser.avatar_url = '/avatars/default-avatar.jpg';
     newuser.color = color;
 
     newuser.tfa_enabled = false;
@@ -192,13 +192,14 @@ export class UsersService {
         const prevFilename: string = prevAvatarUrl.substring(i+1);
         const prevFile: string = `../app-datas/avatars/${prevFilename}`;
         fs.unlink(prevFile, (err) => {
+          // garder console.log, si on throw une erreur ca terminera pas la fonction et on a besoin du return
           if (err)
             console.log(`Could not remove the old file ${prevFile} from user ${user.id}`);
           // file removed!
         })
       }
       
-      user.avatar_url = `https://localhost:8443/avatars/${filename}`;
+      user.avatar_url = `/avatars/${filename}`;
       await this.usersRepository.save(user).catch((err: any) => {
         throw new BadRequestException('User avatar update error');
       });
