@@ -80,7 +80,7 @@ const useChat = ({logged, token}: useChatProps): UseChatDto => {
 
     if (logged && socketRef.current === undefined) {
 
-      socketRef.current = io('http://localhost:8080/', {
+      socketRef.current = io('', {
         path: '/chat/',
         timeout: 10000,
         extraHeaders: {
