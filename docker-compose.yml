@@ -16,7 +16,6 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_DB}
 
-
   back:
     build: ./_build/back
     depends_on:
@@ -24,6 +23,7 @@ services:
 
     volumes:
       - ./api:/app
+      - ./_datas:/app-datas
 
     networks:
       - netpong
@@ -39,6 +39,8 @@ services:
       API_REDIRECT_URL: ${API_REDIRECT_URL}
       API_UID: ${API_UID}
       API_SECRET: ${API_SECRET}
+
+      GOOGLE_AUTH_APP_NAME: ${GOOGLE_AUTH_APP_NAME}
 
     working_dir: /app
 
@@ -67,6 +69,7 @@ services:
 
     volumes:
       - ./_build/nginx/certs:/certs
+      - ./_datas:/app-datas
 
     networks:
       - netpong

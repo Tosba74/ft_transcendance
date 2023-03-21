@@ -14,7 +14,7 @@ export default function Logout() {
         const token = localStorage.getItem('token');
 
         if (token == null) {
-            setPageMessage('Logout successful, redirecting');
+            setPageMessage('Logout successful, redirecting...');
 
             // axios.post("/api/login/apicallback",
             //         {
@@ -33,18 +33,11 @@ export default function Logout() {
         }
         else {
             setPageMessage('Logout error');
-
         }
     }, [setPageMessage])
 
 
     return (
-        <div className="flex justify-center mt-6">
-            <form className="bg-gray-200 w-98 py-4 border border-gray-500 shadow-lg pr-10 center justify-center">
-                <div className="content sm:w-98 lg:w-98 w-full center content-center text-center items-center justify-center mh-8">
-                    {pageMessage}
-                </div>
-            </form >
-        </div>
+        <div className="mt-3 h-6 text-sm text-center">{pageMessage}</div>
     );
 }

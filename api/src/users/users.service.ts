@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException, } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -7,39 +7,23 @@ import { UserModel } from "./models/user.model";
 import { UserStatusModel } from 'src/user_status/models/user_status.model';
 
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePseudoDto } from './dto/update-pseudo.dto';
-// HOW TO PREVENT SQL INJECTIONS WITH TYPEORM ?
-
-import { Logger } from '@nestjs/common';
+import * as fs from 'fs';
+import { extname } from 'path';
 
 @Injectable()
 export class UsersService {
 
   constructor(@InjectRepository(UserModel) private usersRepository: Repository<UserModel>) { }
 
-  private readonly logger = new Logger(UsersService.name);
+
+  /* 
+      --------- CRUD usual methods ---------
+  */
 
   findAll(): Promise<UserModel[]> {
     return this.usersRepository.find();
   }
-
-  // async findOneByName(login_name: string): Promise<UserModel | null> {
-  //   return await this.usersRepository.findOne({
-  //     where: {
-  //       login_name,
-  //     },
-  //   });
-  // }
-
-  // async findOneByName(login_name: string): Promise<boolean> {
-  // 	const user: UserModel | null = await this.usersRepository.findOne({
-  // 		where: {
-  // 			login_name,
-  // 		},
-  // 	});	
-  // 	return !user;
-  // }
 
   async findOneById(id: number): Promise<UserModel> {
     try {
@@ -56,7 +40,7 @@ export class UsersService {
   async findOneByLoginName(login: string): Promise<UserModel> {
     try {
       const user = await this.usersRepository.findOneOrFail({
-        select: ['id', 'login_name', 'pseudo', 'avatar_url', 'is_admin', 'password'],
+        select: ['id', 'login_name', 'pseudo', 'color', 'avatar_url', 'tfa_enabled', 'is_admin', 'password'],
         where: { login_name: login }
       });
       return user;
@@ -71,29 +55,20 @@ export class UsersService {
   async create(createUserDto: CreateUserDto): Promise<UserModel> {
     const newuser = new UserModel();
 
-    // id = db autoincrement
-
     newuser.pseudo = createUserDto.pseudo;
     newuser.login_name = createUserDto.login_name;
 
-    const bcrypt = require('bcrypt');
     const saltRounds: number = 10;
     const hash: string = await bcrypt.hash(createUserDto.password, saltRounds);
     newuser.password = hash;
-
-
-    // avatar = null at creation
+    
+    newuser.avatar_url = 'https://avatars/default-avatar.jpg';
 
     newuser.tfa_enabled = false;
-    // newuser.tfa_email = createUserDto.tfa_email;
-    // newuser.tfa_code = createUserDto.tfa_code;
-    newuser.tfa_email = '';
-    newuser.tfa_code = '';
+    newuser.tfa_secret = '';
 
     newuser.status = new UserStatusModel(UserStatusModel.OFFLINE_STATUS);
     newuser.status_updated_at = new Date();
-
-    // validate_date = null at creation
 
     await this.usersRepository.save(newuser).catch((err: any) => {
       throw new BadRequestException('User creation error');
@@ -110,12 +85,14 @@ export class UsersService {
 
     newuser.password = undefined;
 
-    newuser.avatar_url = avatar;
+    if (avatar)
+      newuser.avatar_url = avatar;
+    else
+      newuser.avatar_url = '/avatars/default-avatar.jpg';
     newuser.color = color;
 
     newuser.tfa_enabled = false;
-    newuser.tfa_email = '';
-    newuser.tfa_code = '';
+    newuser.tfa_secret = '';
 
     newuser.status = new UserStatusModel(UserStatusModel.OFFLINE_STATUS);
     newuser.status_updated_at = new Date();
@@ -126,29 +103,41 @@ export class UsersService {
     return newuser;
   }
 
+  // async update(id: number, updateUserDto: UpdateUserDto): Promise<UserModel> {
+  //   try {
+  //     let user: UserModel = await this.findOneById(id);
 
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<UserModel> {
+  //     if (updateUserDto.login_name)
+  //       user.login_name = updateUserDto.login_name;
+
+  //     if (updateUserDto.password) {
+  //       const saltRounds: number = 10;
+  //       const hash: string = await bcrypt.hash(updateUserDto.password, saltRounds);
+  //       user.password = hash;
+  //     }
+
+  //     if (updateUserDto.pseudo)
+  //       user.pseudo = updateUserDto.pseudo;
+
+
+  //     await this.usersRepository.save(user).catch((err: any) => {
+  //       throw new BadRequestException('User update error');
+  //     });
+
+  //     return user;
+  //   }
+  //   catch (error) {
+  //     throw new NotFoundException('User id not found');
+  //   }
+  // }
+
+  async delete(id: number): Promise<void> {
     try {
-      let user: UserModel = await this.findOneById(id);
-
-      if (updateUserDto.login_name)
-        user.login_name = updateUserDto.login_name;
-
-      if (updateUserDto.password) {
-        const saltRounds: number = 10;
-        const hash: string = await bcrypt.hash(updateUserDto.password, saltRounds);
-        user.password = hash;
-      }
-
-      if (updateUserDto.pseudo)
-        user.pseudo = updateUserDto.pseudo;
-
-
-      await this.usersRepository.save(user).catch((err: any) => {
-        throw new BadRequestException('User update error');
+      const user: UserModel = await this.findOneById(id);
+      // await this.usersRepository.delete(user);
+      await this.usersRepository.delete(id).catch((err: any) => {
+        throw new BadRequestException('Delete user error');
       });
-
-      return user;
     }
     catch (error) {
       throw new NotFoundException('User id not found');
@@ -157,7 +146,23 @@ export class UsersService {
 
 
 
-  async updatePseudo(id: number, updatePseudo: UpdatePseudoDto): Promise<UserModel> {
+  /* 
+      --------- OUR APP additional methods ---------
+  */
+
+  // async getProfile(id: number): Promise<UserModel> {
+  //   return this.findOneById(id);
+  // }
+
+  // async getPublicProfile(id: number) {
+    
+  // }
+
+  // async getPrivateProfile(id: number) {
+
+  // }
+
+  async updatePseudo(id: number, updatePseudo: UpdatePseudoDto): Promise<boolean> {
     try {
       let user: UserModel = await this.findOneById(id);
 
@@ -167,6 +172,76 @@ export class UsersService {
       await this.usersRepository.save(user).catch((err: any) => {
         throw new BadRequestException('User pseudo update error');
       });
+      return true;
+    }
+    catch (error) {
+      throw new NotFoundException('User id not found');
+    }
+  }
+
+  async updateAvatar(id: number, filename: string): Promise<string> {
+    try {
+      let user: UserModel = await this.findOneById(id);
+  
+      // remove l'ancienne image de la memoire du volume
+      const prevAvatarUrl: string = user.avatar_url;
+      if (prevAvatarUrl.indexOf('https://cdn.intra.42.fr') === -1 &&
+        prevAvatarUrl.indexOf('default-avatar') === -1)
+      {
+        const i: number = prevAvatarUrl.lastIndexOf('/');
+        const prevFilename: string = prevAvatarUrl.substring(i+1);
+        const prevFile: string = `../app-datas/avatars/${prevFilename}`;
+        fs.unlink(prevFile, (err) => {
+          // garder console.log, si on throw une erreur ca terminera pas la fonction et on a besoin du return
+          if (err)
+            console.log(`Could not remove the old file ${prevFile} from user ${user.id}`);
+          // file removed!
+        })
+      }
+      
+      user.avatar_url = `/avatars/${filename}`;
+      await this.usersRepository.save(user).catch((err: any) => {
+        throw new BadRequestException('User avatar update error');
+      });
+      return user.avatar_url;
+    }
+    catch (error) {
+      throw new NotFoundException('User id not found');
+    }
+  }
+
+
+
+  /* 
+      --------- TFA methods ---------
+  */
+    
+  async setTfaEnabled(id: number) {
+    try {
+      let user: UserModel = await this.findOneById(id);
+      user.tfa_enabled = !user.tfa_enabled;
+      await this.usersRepository.save(user);
+    }
+    catch (error) {
+      throw new NotFoundException('User id not found');
+    }
+  }
+
+  async isTfaEnabled(id: number): Promise<boolean> {
+    try {
+      let user: UserModel = await this.findOneById(id);
+      return user.tfa_enabled;
+    }
+    catch (error) {
+      throw new NotFoundException('User id not found');
+    }
+  }
+
+  async setTfaSecret(secret: string, id: number): Promise<UserModel> {
+    try {
+      let user: UserModel = await this.findOneById(id);
+      user.tfa_secret = secret;
+      await this.usersRepository.save(user);
       return user;
     }
     catch (error) {
@@ -174,14 +249,17 @@ export class UsersService {
     }
   }
 
-  // EXCEPTION MARCHE PAS ???
-  async delete(id: number): Promise<void> {
+  async getTfaSecret(id: number): Promise<string | undefined> {
     try {
-      const user: UserModel = await this.findOneById(id);
-      this.usersRepository.delete(id);
+      const user = await this.usersRepository.findOneOrFail({
+        select: ['tfa_secret'],
+        where: { id: id }
+      });
+      return user.tfa_secret;
     }
     catch (error) {
       throw new NotFoundException('User id not found');
     }
   }
+
 }
