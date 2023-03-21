@@ -186,9 +186,7 @@ export class UsersService {
       // remove l'ancienne image de la memoire du volume
       const prevAvatarUrl: string = user.avatar_url;
       if (prevAvatarUrl.indexOf('https://cdn.intra.42.fr') === -1 &&
-        prevAvatarUrl !== 'https://localhost:8443/avatars/default-avatar.jpg' &&
-        prevAvatarUrl !== 'https://localhost:8443/avatars/default-avatar.jpeg' &&
-        prevAvatarUrl !== 'https://localhost:8443/avatars/default-avatar.png')
+        prevAvatarUrl.indexOf('default-avatar') === -1)
       {
         const i: number = prevAvatarUrl.lastIndexOf('/');
         const prevFilename: string = prevAvatarUrl.substring(i+1);
