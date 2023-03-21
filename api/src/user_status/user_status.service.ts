@@ -22,7 +22,7 @@ export class UserStatusService {
       return userStatus;
     } 
     catch (error) {
-      throw new NotFoundException();
+      throw new NotFoundException('User status id not found');
     }
   }
 }

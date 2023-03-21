@@ -22,7 +22,7 @@ export class FriendTypesService {
       return friendType;
     } 
     catch (error) {
-      throw new NotFoundException();
+      throw new NotFoundException('Friend type id not found');
     }
   }
 }

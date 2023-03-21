@@ -1,6 +1,6 @@
 import { Controller, HttpCode, Param, Body, Get, Post, Put, Delete, UseFilters, ParseIntPipe, } from '@nestjs/common';
 import { ApiOkResponse, ApiNotFoundResponse, ApiNoContentResponse, ApiCreatedResponse, ApiUnprocessableEntityResponse, ApiTags, ApiBadRequestResponse } from '@nestjs/swagger';
-import { HttpExceptionFilter } from '../_common/filters/http-exception.filter';
+import { HttpExceptionFilter } from 'src/_common/filters/http-exception.filter';
 
 import { ChatsService } from './chats.service';
 import { ChatModel } from "./models/chat.model";
@@ -32,7 +32,7 @@ export class ChatsController {
   @ApiCreatedResponse({ description: 'Chat created successfully', type: ChatModel })
   @ApiBadRequestResponse({ description: 'Chat validation error' })
   public create(@Body() createChatDto: CreateChatDto): Promise<ChatModel> {
-    return this.chatsService.create(createChatDto);
+    return this.chatsService.create(createChatDto.name, createChatDto.type_id, createChatDto.password);
   }
 
   @Delete(':id')

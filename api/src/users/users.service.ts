@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -43,28 +43,30 @@ export class UsersService {
 
   async findOneById(id: number): Promise<UserModel> {
     try {
-      const user = await this.usersRepository.findOneOrFail({ 
-        where: { id: id } 
+      const user = await this.usersRepository.findOneOrFail({
+        where: { id: id }
       });
       return user;
     }
     catch (error) {
-      throw new NotFoundException();
+      throw new NotFoundException('User id not found');
     }
   }
 
   async findOneByLoginName(login: string): Promise<UserModel> {
     try {
-      const user = await this.usersRepository.findOneOrFail({ 
-        select: [ 'id', 'login_name', 'pseudo', 'avatar_url', 'is_admin', 'password' ],
-        where: { login_name: login } 
+      const user = await this.usersRepository.findOneOrFail({
+        select: ['id', 'login_name', 'pseudo', 'avatar_url', 'is_admin', 'password'],
+        where: { login_name: login }
       });
       return user;
     }
     catch (error) {
-      throw new NotFoundException();
+      throw new NotFoundException('User login not found');
     }
   }
+
+
 
   async create(createUserDto: CreateUserDto): Promise<UserModel> {
     const newuser = new UserModel();
@@ -78,7 +80,7 @@ export class UsersService {
     const saltRounds: number = 10;
     const hash: string = await bcrypt.hash(createUserDto.password, saltRounds);
     newuser.password = hash;
-    
+
 
     // avatar = null at creation
 
@@ -93,7 +95,9 @@ export class UsersService {
 
     // validate_date = null at creation
 
-    await this.usersRepository.save(newuser);
+    await this.usersRepository.save(newuser).catch((err: any) => {
+      throw new BadRequestException('User creation error');
+    });
     return newuser;
   }
 
@@ -108,7 +112,7 @@ export class UsersService {
 
     newuser.avatar_url = avatar;
     newuser.color = color;
-    
+
     newuser.tfa_enabled = false;
     newuser.tfa_email = '';
     newuser.tfa_code = '';
@@ -116,19 +120,10 @@ export class UsersService {
     newuser.status = new UserStatusModel(UserStatusModel.OFFLINE_STATUS);
     newuser.status_updated_at = new Date();
 
-    await this.usersRepository.save(newuser);
+    await this.usersRepository.save(newuser).catch((err: any) => {
+      throw new BadRequestException('User creation error');
+    });
     return newuser;
-  }
-
-  // EXCEPTION MARCHE PAS ???
-  async delete(id: number): Promise<void> {
-    try {
-      const user: UserModel = await this.findOneById(id);
-      this.usersRepository.delete(id);
-    }
-    catch (error) {
-      throw new NotFoundException();
-    } 
   }
 
 
@@ -148,12 +143,15 @@ export class UsersService {
       if (updateUserDto.pseudo)
         user.pseudo = updateUserDto.pseudo;
 
-      await this.usersRepository.save(user);
+
+      await this.usersRepository.save(user).catch((err: any) => {
+        throw new BadRequestException('User update error');
+      });
 
       return user;
     }
     catch (error) {
-      throw new NotFoundException();
+      throw new NotFoundException('User id not found');
     }
   }
 
@@ -166,11 +164,24 @@ export class UsersService {
       if (updatePseudo.pseudo)
         user.pseudo = updatePseudo.pseudo;
 
-      await this.usersRepository.save(user);
+      await this.usersRepository.save(user).catch((err: any) => {
+        throw new BadRequestException('User pseudo update error');
+      });
       return user;
     }
     catch (error) {
-      throw new NotFoundException();
+      throw new NotFoundException('User id not found');
+    }
+  }
+
+  // EXCEPTION MARCHE PAS ???
+  async delete(id: number): Promise<void> {
+    try {
+      const user: UserModel = await this.findOneById(id);
+      this.usersRepository.delete(id);
+    }
+    catch (error) {
+      throw new NotFoundException('User id not found');
     }
   }
 }
