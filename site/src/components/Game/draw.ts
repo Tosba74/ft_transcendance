@@ -1,73 +1,66 @@
 import * as module_const from "./constant"
 import * as module_pong from "./pong"
 
-export function draw_center_line(ctx : any, canvas : any) //draw line with 30 dash
+export function draw_center_line() //draw line with 30 dash
 {
 	let buffer = 12;
 	let numberOfDashes = 30;
 	let bufferSize = numberOfDashes * buffer;
-	let heightOfDash = (canvas.height - bufferSize) / numberOfDashes;
+	let heightOfDash = (module_const.canvas_height - bufferSize) / numberOfDashes;
 
-	let currentX = canvas.width / 2;
+	let currentX = module_const.canvas_width / 2;
 	let currentY = buffer / 2;
-	ctx.strokeStyle = "white";
+	module_pong.myGameArea.context.strokeStyle = "white";
 
 	for (let i = 0; i < numberOfDashes; i++, currentY += buffer) {
-		ctx.beginPath();
-		ctx.moveTo(currentX, currentY);
+		module_pong.myGameArea.context.beginPath();
+		module_pong.myGameArea.context.moveTo(currentX, currentY);
 		currentY += heightOfDash;
-		ctx.lineTo(currentX, currentY);
-		ctx.stroke();
+		module_pong.myGameArea.context.lineTo(currentX, currentY);
+		module_pong.myGameArea.context.stroke();
 	}
 }
 
-export function draw_scores(ctx : any, canvas : any, myGameArea : any) //draw score p1 & p2
+export function draw_scores() //draw score p1 & p2
 {
-	ctx.fillStyle = "white";
-	ctx.font = module_const.score_size + "px pixel";
+	module_pong.myGameArea.context.fillStyle = "white";
+	module_pong.myGameArea.context.font = module_const.score_size + "px pixel";
 	let txt_H = module_const.score_size;
 	let txt_W_Pone = module_const.score1_x;
 	let txt_W_Ptwo = module_const.score2_x;
-	ctx.fillText(myGameArea.playerOne_points, txt_W_Pone, txt_H);
-	ctx.fillText(myGameArea.playerTwo_points, txt_W_Ptwo, txt_H);
-	if (myGameArea.playerOne_points == 10)
+	module_pong.myGameArea.context.fillText(module_pong.myGameArea.playerOne.score , txt_W_Pone, txt_H);
+	module_pong.myGameArea.context.fillText(module_pong.myGameArea.playerTwo.score, txt_W_Ptwo, txt_H);
+	if (module_pong.myGameArea.playerOne.score  == 10)
 	{
-		myGameArea.pause = true;
+		module_pong.myGameArea.pause = true;
 		document.getElementById('btn_pause')!.style.visibility = 'hidden';
-		ctx.font = canvas.width / 10 + "px pixel";
-		let i = 0;
-		while (myGameArea.ball[i])
-		{
-			myGameArea.ball[i].x = canvas.width / 2;
-			myGameArea.ball[i].y = canvas.height / 2;
-			i++;
-		}
-		ctx.fillStyle = module_const.paddle_color;
-		ctx.textAlign = "center";
-		ctx.fillText("player one WON!", canvas.width/2, canvas.height/2);
+		module_pong.myGameArea.context.font = module_const.canvas_width / 10 + "px pixel";
+		module_pong.myGameArea.context.fillStyle = module_const.paddle_color;
+		module_pong.myGameArea.context.textAlign = "center";
+		module_pong.myGameArea.context.fillText("player one WON!", module_const.canvas_width/2, module_const.canvas_height/2);
 	}
-	if (myGameArea.playerTwo_points == 10)
+	if (module_pong.myGameArea.playerTwo.score == 10)
 	{
-		myGameArea.pause = true;
+		module_pong.myGameArea.pause = true;
 		document.getElementById('btn_pause')!.style.visibility = 'hidden';
-		ctx.font = canvas.width / 10 + "px pixel";
-		ctx.fillStyle = module_const.paddle2_color;
-		ctx.textAlign = "center";
-		ctx.fillText("player two WON!", canvas.width/2, canvas.height/2);
+		module_pong.myGameArea.context.font = module_const.canvas_width / 10 + "px pixel";
+		module_pong.myGameArea.context.fillStyle = module_const.paddle2_color;
+		module_pong.myGameArea.context.textAlign = "center";
+		module_pong.myGameArea.context.fillText("player two WON!", module_const.canvas_width/2, module_const.canvas_height/2);
 	}
 }
 
-export function progressBar(progress : any)
+export function progressBar(progress : number)
 {
 	let elem : any;
 	elem = document.getElementById("myBar");
-	if (module_pong.myGameArea.ultimate < 100)
+	if (module_pong.myGameArea.playerOne.ultimate < 100)
 	{
 		if (progress < 0)
 			progress = -progress;
-		module_pong.myGameArea.ultimate += progress;
-		elem.style.width = module_pong.myGameArea.ultimate + "%";
-		if (module_pong.myGameArea.ultimate >= 100)
+		module_pong.myGameArea.playerOne.ultimate += progress;
+		elem.style.width = module_pong.myGameArea.playerOne.ultimate + "%";
+		if (module_pong.myGameArea.playerOne.ultimate >= 100)
 			elem.style.backgroundColor = "#FE5A52";
 		else
 			elem.style.backgroundColor = "#4CBB17";
