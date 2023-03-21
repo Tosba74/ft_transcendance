@@ -59,8 +59,10 @@ export function progressBar(progress : number)
 		if (progress < 0)
 			progress = -progress;
 		module_pong.myGameArea.playerOne.ultimate += progress;
-		elem.style.width = module_pong.myGameArea.playerOne.ultimate + "%";
 		if (module_pong.myGameArea.playerOne.ultimate >= 100)
+			module_pong.myGameArea.playerOne.ultimate = 100;
+		elem.style.width = module_pong.myGameArea.playerOne.ultimate + "%";
+		if (module_pong.myGameArea.playerOne.ultimate == 100)
 			elem.style.backgroundColor = "#FE5A52";
 		else
 			elem.style.backgroundColor = "#4CBB17";
