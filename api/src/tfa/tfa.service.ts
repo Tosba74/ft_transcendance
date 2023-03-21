@@ -29,7 +29,7 @@ export class TfaService {
     }
 
     async displayQrCode(secret: string, id: number, stream: Response): Promise<any> {
-        let appname = process.env.GOOGLE_AUTH_APP_NAME;
+        let appname = process.env.AUTH_APP_NAME;
         if (!appname || appname === '')
             appname = 'Pong';
 
