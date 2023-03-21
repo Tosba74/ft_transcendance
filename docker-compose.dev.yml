@@ -35,9 +35,6 @@ services:
     # ports:
     #   - "3001:3001"
 
-    volumes:
-      - ./chat-client:/app
-
     networks:
       - netpong
 
@@ -53,9 +50,6 @@ services:
     # ports:
     #   - "4000:4000"
 
-    volumes:
-      - ./api:/app
-
 
   front:
     restart: "no"
@@ -65,9 +59,6 @@ services:
 
     # ports:
     #   - "3000:3000"
-
-    volumes:
-      - ./site:/app
 
 
   nginx:

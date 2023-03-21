@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import * as module_pong from './pong';
 import * as module_ultimate from './ultimate';
 import * as module_json from './json_imp_exp';
@@ -8,6 +8,9 @@ export default function GamePage() {
 	const handleClick = () => {
 		setPause(!pause);
 	};
+	useEffect(() => {
+		module_pong.setUpGame();
+	}, [])
 
 	const styles = {
 		myProgress: {
@@ -23,7 +26,7 @@ export default function GamePage() {
 	};
 
 	return (
-		<div className="bg-yellow-400 w-full h-full">
+			<div className="bg-yellow-400 w-full h-full">
 			{/* <h2>ICI !!! on game !!</h2> */}
 			<div className="bg-gray-800 w-full z-50 top-10 px-40">
 				<div className="flex flex-row space-x-4 rounded bg-gray-400 border border-gray-300 w-40 text-center items-center basis-1 md:basis-1/2 ld:basis-1/4 bg-gray-300">
@@ -53,8 +56,9 @@ export default function GamePage() {
 						</div>
 					</div>
 				</div>
-				<canvas className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" id="canvas" style={{border: '1px solid rgba(255, 255, 255, 0.85)', backgroundColor: 'rgba(0, 0, 0, 0.85)', width: '100%'}}>
+				<canvas className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" id="canvas" style={{border: '1px solid rgba(255, 255, 255, 0.85)', backgroundColor: 'rgba(0, 0, 0, 0.85)', width: '100%', maxWidth: '2000px'}}>
 				</canvas>
+				<script> module_pong.setUpGame(); </script>
 			</div>
 			<div>
 				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_start" onClick={module_pong.startGame}>

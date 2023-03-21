@@ -9,6 +9,7 @@ import { UserStatusModel } from 'src/user_status/models/user_status.model';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePseudoDto } from './dto/update-pseudo.dto';
 import * as fs from 'fs';
+import { extname } from 'path';
 
 @Injectable()
 export class UsersService {
@@ -57,12 +58,11 @@ export class UsersService {
     newuser.pseudo = createUserDto.pseudo;
     newuser.login_name = createUserDto.login_name;
 
-    // const bcrypt = require('bcrypt');
     const saltRounds: number = 10;
     const hash: string = await bcrypt.hash(createUserDto.password, saltRounds);
     newuser.password = hash;
     
-    newuser.avatar_url = '';
+    newuser.avatar_url = 'https://avatars/default-avatar.jpg';
 
     newuser.tfa_enabled = false;
     newuser.tfa_secret = '';
@@ -85,7 +85,10 @@ export class UsersService {
 
     newuser.password = undefined;
 
-    newuser.avatar_url = avatar;
+    if (avatar)
+      newuser.avatar_url = avatar;
+    else
+      newuser.avatar_url = '/avatars/default-avatar.jpg';
     newuser.color = color;
 
     newuser.tfa_enabled = false;
@@ -176,29 +179,31 @@ export class UsersService {
     }
   }
 
-  async updateAvatar(id: number, path: string): Promise<boolean> {    
+  async updateAvatar(id: number, filename: string): Promise<string> {
     try {
       let user: UserModel = await this.findOneById(id);
   
-      const oldpath: string | undefined = user.avatar_url;
-      if (oldpath && path !== oldpath) {
-        fs.unlink(oldpath, (err) => {
-          if (err) {
-            // throw new InternalServerErrorException(`Could not remove the old file from user ${user.id}`);
-            console.log(`Could not remove the old file from user ${user.id}`);
-          }
-          
-          //file removed
+      // remove l'ancienne image de la memoire du volume
+      const prevAvatarUrl: string = user.avatar_url;
+      if (prevAvatarUrl.indexOf('https://cdn.intra.42.fr') === -1 &&
+        prevAvatarUrl.indexOf('default-avatar') === -1)
+      {
+        const i: number = prevAvatarUrl.lastIndexOf('/');
+        const prevFilename: string = prevAvatarUrl.substring(i+1);
+        const prevFile: string = `../app-datas/avatars/${prevFilename}`;
+        fs.unlink(prevFile, (err) => {
+          // garder console.log, si on throw une erreur ca terminera pas la fonction et on a besoin du return
+          if (err)
+            console.log(`Could not remove the old file ${prevFile} from user ${user.id}`);
+          // file removed!
         })
       }
       
-      if (path !== null && path !== '')
-        user.avatar_url = path;
-
+      user.avatar_url = `/avatars/${filename}`;
       await this.usersRepository.save(user).catch((err: any) => {
         throw new BadRequestException('User avatar update error');
       });
-      return true;
+      return user.avatar_url;
     }
     catch (error) {
       throw new NotFoundException('User id not found');

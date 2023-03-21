@@ -26,8 +26,8 @@ export class UserModel {
     pseudo: string;
     
     @ApiResponseProperty({ type: String })
-    @Column({ nullable: true, default: null })
-    avatar_url?: string;
+    @Column()
+    avatar_url: string;
 
     @ApiResponseProperty({ type: Boolean })
     @Column({ default: false })

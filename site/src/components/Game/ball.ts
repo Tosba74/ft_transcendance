@@ -1,3 +1,5 @@
+import * as module_pong from './pong'
+
 export class Ball {
 	public x: number;
 	public y: number;
@@ -7,6 +9,7 @@ export class Ball {
 	public angle: number;
 	public xunits: number;
 	public yunits: number;
+	public radians: number;
 	public goal: boolean;
 	constructor(x : number, y : number, radius : number, speed : number) {
 		this.x = x;
@@ -16,6 +19,7 @@ export class Ball {
 		this.angle = 0;
 		this.xunits = 0;
 		this.yunits = 0;
+		this.radians = 0;
 		this.changeAngle(0);
 		this.movement = 0;
 		this.goal = false;
@@ -25,20 +29,20 @@ export class Ball {
 		this.angle = angle % 360;
 	}
 
-	render(ctx : any) {
-		ctx.save();
-		ctx.beginPath();
-		ctx.fillStyle = "white";
+	render() {
+		module_pong.myGameArea.context.save();
+		module_pong.myGameArea.context.beginPath();
+		module_pong.myGameArea.context.fillStyle = "white";
 		this.movement += this.speed;
-		ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
-		ctx.save();
+		module_pong.myGameArea.context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+		module_pong.myGameArea.context.save();
 		//ctx.shadowColor = '#999';
 		//ctx.shadowBlur = 20;
 		//ctx.shadowOffsetX = 15;
 		//ctx.shadowOffsetY = 15;
-		ctx.strokeStyle = "purple";
-		ctx.fill();
-		ctx.stroke();
-		ctx.restore();
+		module_pong.myGameArea.context.strokeStyle = "purple";
+		module_pong.myGameArea.context.fill();
+		module_pong.myGameArea.context.stroke();
+		module_pong.myGameArea.context.restore();
 	}
 }

@@ -1,16 +1,22 @@
+import * as module_pong from "./pong"
+
 export class paddle //set up first playerOne
 {
-	private x: number;
-	private y: number;
-	private gamearea: number;
-	private width: number;
-	private height: number;
-	private speedY: number;
-	private speedX: number;
-	private color: number;
-	constructor(width : any, height : any, color : any, x : any, y : any, myGameArea : any) {
+	public x: number;
+	public y: number;
+	public gamearea: module_pong.GameArea;
+	public width: number;
+	public height: number;
+	public speedY: number;
+	public speedX: number;
+	public color: string;
+	public ultimate: number;
+	public addABALL: boolean;
+	public last_input: boolean; //false:down true: up
+	public score: number;
+	constructor(width : number, height : number, color : string, x : number, y : number) {
 		//var canvas = document.getElementById("canvas");
-		this.gamearea = myGameArea;
+		this.gamearea = module_pong.myGameArea;
 		this.width = width;
 		this.height = height;
 		this.x = x;
@@ -18,14 +24,18 @@ export class paddle //set up first playerOne
 		this.speedY = 0;
 		this.speedX = 0;
 		this.color = color;
+		this.ultimate = 0;
+		this.addABALL = false;
+		this.last_input = false;
+		this.score = 0;
 	}
-	update(ctx : any, myGameArea : any) {
+	update() {
 		this.y += this.speedY;
 		if (this.y <= 0)
 			this.y = 0;
-		if (this.y + this.height > myGameArea.canvas.height)
-			this.y = myGameArea.canvas.height - this.height;
-		myGameArea.context.fillStyle = this.color;
-		myGameArea.context.fillRect(this.x, this.y, this.width, this.height);
+		if (this.y + this.height > module_pong.myGameArea.canvas.height)
+			this.y = module_pong.myGameArea.canvas.height - this.height;
+		module_pong.myGameArea.context.fillStyle = this.color;
+		module_pong.myGameArea.context.fillRect(this.x, this.y, this.width, this.height);
 	}
 }

@@ -2,30 +2,29 @@ import * as module_pong from "./pong"
 import * as module_draw from "./draw"
 import * as module_const from "./constant"
 import * as module_ult from "./ultimate"
+import * as module_ball from "./ball"
 
-export function check_for_collisions(canvas : any, ball : any) //if ball hit either player or goal
+export function check_for_collisions(ball : module_ball.Ball) //if ball hit either player or goal
 {
 	// if ball is at goal
-	if (ball.x > canvas.width || ball.x < 0)
+	if (ball.x > module_pong.myGameArea.canvas.width || ball.x < 0)
 	{
-		if (ball.x > canvas.width && ball.goal == false)
+		if (ball.x > module_const.canvas_width && ball.goal == false)
 		{
-			module_pong.myGameArea.nbr_ball_point++;
 			ball.goal = true;
-			module_pong.addPoint(1, module_pong.myGameArea);
+			module_pong.addPoint(1);
 		}
 		if (ball.x < 0 && ball.goal == false)
 		{
-			module_pong.myGameArea.nbr_ball_point++;
 			ball.goal = true;
-			module_pong.addPoint(2, module_pong.myGameArea);
+			module_pong.addPoint(2);
 		}
 	}
-	else if (ball.y >= canvas.height - ball.radius || ball.y <= 0 + ball.radius)
+	else if (ball.y >= module_const.canvas_height - ball.radius || ball.y <= 0 + ball.radius)
 	{
 		ball.changeAngle(360 - ball.angle);
-		if (ball.y >= canvas.height - ball.radius)
-			ball.y = canvas.height - ball.radius - 1;
+		if (ball.y >= module_const.canvas_height - ball.radius)
+			ball.y = module_const.canvas_height - ball.radius - 1;
 		if (ball.y <= 0 + ball.radius)
 			ball.y = ball.radius + 1;
 	}
@@ -67,12 +66,12 @@ export function check_for_collisions(canvas : any, ball : any) //if ball hit eit
 		}
 	}
 }
-function map(x : any, in_min : any, in_max : any, out_min : any, out_max : any)
+function map(x : number, in_min : number, in_max : number, out_min : number, out_max : number)
 {
 	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-function calculate_impact(x1 : any, x2 : any, x3 : any, x4 : any, y1 : any, y2 : any, y3 : any, y4 : any, ball : any)
+function calculate_impact(x1 : number, x2 : number, x3 : number, x4 : number, y1 : number, y2 : number, y3 : number, y4 : number, ball : module_ball.Ball)
 {
 	const den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
 	if (den == 0)
@@ -83,29 +82,33 @@ function calculate_impact(x1 : any, x2 : any, x3 : any, x4 : any, y1 : any, y2 :
 	{
 		if (ball.x < module_const.canvas_width / 2)
 		{
-			module_draw.progressBar((map(t, 0,1 ,-45, 45 )));
-			ball.changeAngle((map(t, 0,1 ,-45, 45 )));
-			if (module_pong.myGameArea.addABALL == true)
+			const map_angle = (map(t, 0,1 ,-45, 45));
+			module_draw.progressBar(map_angle);
+			ball.changeAngle(map_angle);
+			if (module_pong.myGameArea.playerOne.addABALL == true)
 			{
-				module_pong.myGameArea.addABALL = false;
+				module_pong.myGameArea.playerOne.addABALL = false;
 				setTimeout(
 					function() {
-						module_ult.add_ball(map(t, 0,1 ,-45, 45 ), x3, y3);
+						module_ult.add_ball(map_angle, x3, y3);
 				}, 1000);
 			}
 		}
 		else
 		{
-			ball.changeAngle((map(t, 0,1 ,225, 135 )));
-			if (module_pong.myGameArea.addABALL == true)
+			const map_angle = (map(t, 0,1 ,225, 135 ));
+			ball.changeAngle(map_angle);
+			if (module_pong.myGameArea.playerTwo.addABALL == true)
 			{
-				module_pong.myGameArea.addABALL = false;
+				module_pong.myGameArea.playerTwo.addABALL = false;
 				setTimeout(
 					function() {
-						module_ult.add_ball(map(t, 0,1 ,225, 135), x3, y3);
+						module_ult.add_ball(map_angle, x3, y3);
 				}, 1000);
 			}
 		}
+		if (ball.speed < module_const.ball_speed)
+			ball.speed = module_const.ball_speed;
 		ball.speed = Math.min(ball.speed + 0.5, module_const.ball_speed * 2);
 		return (true);
 	}

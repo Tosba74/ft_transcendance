@@ -10,6 +10,7 @@ then
     yarn add axios 
     yarn add tailwindcss postcss autoprefixer classnames
     yarn add jwt-decode
+    yarn add randomstring
     
     # For testing auth module
     yarn add --dev bootstrap
