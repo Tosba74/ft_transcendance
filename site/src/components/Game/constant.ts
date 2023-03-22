@@ -11,6 +11,7 @@ export const paddle2_color = "red";
 export const paddle_speed = 15;
 
 export const ball_speed = 12;
+export const ball_spawn_speed = ball_speed / 3;
 export const ball_x = canvas_width / 2;
 export const ball_y = canvas_height / 2;
 export const ball_radius = 5;

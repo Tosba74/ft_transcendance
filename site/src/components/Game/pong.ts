@@ -149,7 +149,7 @@ export class GameArea {
 	reset(y: number) {
 		this.balls[0].x = module_const.canvas_width / 2;
 		this.balls[0].y = y;
-		this.balls[0].speed = module_const.ball_speed / 3;
+		this.balls[0].speed = module_const.ball_spawn_speed;
 		this.balls[0].goal = false;
 		
 		this.balls.splice(1, this.balls.length);
