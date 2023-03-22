@@ -1,18 +1,16 @@
-import * as module_pong from "./pong"
-import * as module_ball from "./ball"
 import * as module_const from "./constant"
-import * as module_paddle from "./paddle";
 
-export function boost_ult() {
-	let elem: any;
 
-	elem = document.getElementById("myBar");
-	module_pong.myGameArea.playerOne.ultimate = 100;
-	elem.style.width = module_pong.myGameArea.playerOne.ultimate + "%";
-	elem.style.backgroundColor = "#FE5A52";
+import { GameArea } from "./pong";
+import { Paddle } from "./paddle";
+import { Ball } from "./ball";
+
+
+export function ext_boost_ult(this: GameArea) {
+	this.playerOne.ultimate = 100;
 }
 
-export function paddle_dash(player: module_paddle.paddle) {
+export function paddle_dash(player: Paddle) {
 	if (player.last_input == false)
 		player.y -= 100;
 
@@ -20,14 +18,14 @@ export function paddle_dash(player: module_paddle.paddle) {
 		player.y += 100;
 }
 
-export function paddle_reduce(player: module_paddle.paddle) {
+export function paddle_reduce(player: Paddle) {
 	player.reducePaddle = true;
 	player.bonk = 0;
 }
 
-export function add_ball(angle: number, x: number, y: number) //create another ball
+export function ext_add_ball(this: GameArea, angle: number, x: number, y: number) //create another ball
 {
-	module_pong.myGameArea.ball.push(new module_ball.Ball(x, y, module_const.ball_radius, module_pong.myGameArea.ball[module_pong.myGameArea.ball.length - 1].speed / 1.5));
-	//angle = -angle;
-	module_pong.myGameArea.ball[module_pong.myGameArea.ball.length - 1].changeAngle(-angle);
+	this.balls.push(new Ball(x, y, module_const.ball_radius, this.balls[this.balls.length - 1].speed / 1.5));
+
+	this.balls[this.balls.length - 1].changeAngle(-angle);
 }

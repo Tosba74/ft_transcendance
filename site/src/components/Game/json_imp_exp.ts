@@ -12,7 +12,7 @@ export function exportToJson_pone() //when button export pressed
 	//linkElement.click();
 
 
-	console.log(JSON.stringify({ player_1: module_pong.myGameArea.playerOne, ball: module_pong.myGameArea.ball, player_2: module_pong.myGameArea.playerTwo }));
+	// console.log(JSON.stringify({ player_1: module_pong.myGameArea.playerOne, ball: module_pong.myGameArea.ball, player_2: module_pong.myGameArea.playerTwo }));
 }
 
 export function exportToJson_ptwo() //when button export pressed
@@ -26,7 +26,7 @@ export function exportToJson_ptwo() //when button export pressed
 	//linkElement.click();
 
 
-	console.log(JSON.stringify({ movement: module_pong.myGameArea.playerTwo.last_input, ultimate: module_pong.myGameArea.playerTwo.ultimate }));
+	// console.log(JSON.stringify({ movement: module_pong.myGameArea.playerTwo.last_input, ultimate: module_pong.myGameArea.playerTwo.ultimate }));
 }
 
 function ImportJson(value: any) //when command ImportJson is written
