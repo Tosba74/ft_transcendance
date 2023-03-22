@@ -7,7 +7,14 @@ import * as module_ultimate from './ultimate';
 
 
 
-export default function GamePage() {
+import { UseGameDto } from "./dto/useGame.dto";
+
+interface GamePageProps {
+	gamer: UseGameDto;
+}
+
+export default function GamePage({ gamer }: GamePageProps) {
+
 	const [pause, setPause] = React.useState(false);
 	const handleClick = () => {
 		setPause(!pause);
@@ -104,6 +111,57 @@ export default function GamePage() {
 			backgroundColor: "#4CBB17"
 		},
 	};
+
+
+	window.onkeyup = (e: KeyboardEvent): any => {
+		if (e.key == "w")
+			gamer.playGame("");
+
+		if (e.key == "s")
+			gamer.playGame("");
+
+		// if (e.key == "ArrowUp")//up
+		// 	if (this.playerTwo.speedY <= 0)
+		// 		this.playerTwo.speedY = 0;
+
+		// if (e.key == "ArrowDown") //down
+		// 	if (this.playerTwo.speedY >= 0)
+		// 		this.playerTwo.speedY = 0;
+		// if (e.key == "1") //ult
+		// {
+		// 	if (this.playerOne.ultimate >= 100) {
+		// 		this.playerOne.addABALL = true;
+		// 		this.playerOne.ultimate = 0;
+		// 		module_draw.progressBar(0);
+		// 	}
+		// }
+		// if (e.key == "2") //ult
+		// {
+		// 	if (this.playerOne.ultimate >= 100) {
+		// 		module_ultimate.paddle_dash(this.playerOne);
+		// 		this.playerOne.ultimate = 0;
+		// 		module_draw.progressBar(0);
+		// 	}
+		// }
+		// if (e.key == "3") //ult
+		// {
+		// 	if (this.playerOne.ultimate >= 100) {
+		// 		module_ultimate.paddle_reduce(this.playerTwo);
+		// 		this.playerOne.ultimate = 0;
+		// 		module_draw.progressBar(0);
+		// 	}
+		// }
+	}
+
+	window.onkeydown = (e: KeyboardEvent): any => {
+		if (e.key == "w") {
+			gamer.playGame("up");
+		}
+		if (e.key == "s") {
+			gamer.playGame("down");
+		}
+	}
+
 
 	return (
 		<div className="bg-yellow-400 w-full h-full">

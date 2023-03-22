@@ -4,7 +4,6 @@ export class Paddle //set up first playerOne
 {
 	public x: number;
 	public y: number;
-
 	public width: number;
 	public height: number;
 
@@ -22,7 +21,6 @@ export class Paddle //set up first playerOne
 
 	constructor(width: number, height: number, color: string, x: number, y: number) {
 		//var canvas = document.getElementById("canvas");
-
 		this.width = width;
 		this.height = height;
 		this.x = x;

@@ -11,6 +11,34 @@ import { ext_add_ball, ext_boost_ult } from './ultimate';
 import { ext_bounce_action } from './impact';
 
 
+// export var myGameArea: GameArea;
+
+// export function setUpGame() {
+// 	myGameArea = new GameArea();
+// }
+
+
+class GameData {
+	started: boolean;
+	player1: Player = new Player();
+	player2: Player = new Player();
+
+	constructor() {
+		this.started = false;
+	}
+}
+
+
+class Player {
+	paddle: number;
+	action: string;
+
+	constructor() {
+		this.paddle = 0;
+		this.action = '';
+	}
+}
+
 
 export class GameArea {
 
@@ -83,6 +111,19 @@ export class GameArea {
 
 		this.progress_bar = document.getElementById("myBar");
 
+	}
+
+	import(game: GameData) {
+
+		this.playerOne.y = game.player1.paddle;
+		this.playerOne.y = new Date().getMilliseconds() % 300;
+		console.log(this.playerOne.y);
+		this.playerTwo.y = game.player2.paddle;
+
+		this.playerOne.update();
+		this.playerTwo.update();
+
+		// this.render();
 	}
 
 

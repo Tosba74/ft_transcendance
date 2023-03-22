@@ -13,7 +13,7 @@ import { ChatRoom } from './dto/chat-room.dto';
 
 
 
-@WebSocketGateway({ path: '/chat/', cors: { origin: '*' } })
+@WebSocketGateway({ path: '/socket-chat/', cors: { origin: '*' } })
 @UseFilters(WebsocketExceptionsFilter)
 export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
@@ -28,6 +28,12 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	handleDisconnect(@ConnectedSocket() client: Socket): void {
 
 		this.chatsService.disconnect(client);
+	}
+
+	@SubscribeMessage('createGame')
+	async createGame(client: Socket, body: { }): Promise<void> {
+
+		console.log('wring')
 	}
 
 

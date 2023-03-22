@@ -81,7 +81,7 @@ const useChat = ({logged, token}: useChatProps): UseChatDto => {
     if (logged && socketRef.current === undefined) {
 
       socketRef.current = io('', {
-        path: '/chat/',
+        path: '/socket-chat/',
         timeout: 10000,
         extraHeaders: {
           Authorization: `Bearer ${token}`,

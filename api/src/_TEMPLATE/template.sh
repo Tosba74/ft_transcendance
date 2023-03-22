@@ -3,8 +3,8 @@
 NAME="newModel"
 SINGLE_NAME="newModel"
 
-NAME="chat_messages"
-SINGLE_NAME="chat_message"
+NAME="games"
+SINGLE_NAME="game"
 
 
 DEST_FOLDER="../$NAME"

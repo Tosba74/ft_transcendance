@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import axios from 'axios';
+import jwt_decode from "jwt-decode";
 
 import './App.css';
 
@@ -18,11 +20,11 @@ import LoginApi from './components/Log/LoginApi';
 import Logout from './components/Log/Logout';
 
 import useChat from './components/Chat/useChat';
+import useGame from './components/Game/useGame';
 import { UseChatDto } from './components/Chat/dto/useChat.dto';
-
-import axios from 'axios';
+import { UseGameDto } from './components/Game/dto/useGame.dto';
 import { LoggedUser } from './components/Profile/LoggedUser';
-import jwt_decode from "jwt-decode";
+
 
 
 export default function App() {
@@ -33,6 +35,7 @@ export default function App() {
 
 
   let chats: UseChatDto = useChat({ logged, token });
+  let gamer: UseGameDto = useGame({ logged, token });
 
   function fetchData() {
     try {
@@ -111,7 +114,7 @@ export default function App() {
             <Route path="/players" element={<ProfilePage user={userInfos} refreshUserInfos={refreshTokenAndUserInfos} />} />
             <Route path="/profile" element={<ProfilePage user={userInfos} refreshUserInfos={refreshTokenAndUserInfos} />} />
             <Route path="/profile/:id" element={<ProfilePage user={userInfos} refreshUserInfos={refreshTokenAndUserInfos} />} />
-            <Route path="/game" element={<GamePage />} />
+            <Route path="/game" element={<GamePage gamer={gamer} />} />
             <Route path="/exemplechat" element={<ExempleChat chats={chats} />} />
             {/* <Route path="/profil" element={<Profil />} /> */}
             <Route path="/history" element={<ReactPage />} />

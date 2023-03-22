@@ -25,6 +25,7 @@ import { TfaModule } from './tfa/tfa.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AppGuard } from './auth/app.guard';
 import { MeModule } from './me/me.module';
+import { GamesModule } from './games/games.module';
 
 
 @Module({
@@ -32,8 +33,8 @@ import { MeModule } from './me/me.module';
     TypeOrmModule.forRoot(config),
     UsersModule, UserStatusModule, FriendTypesModule, FriendsModule, FriendTypesModule, BlockedsModule,
     ChatTypesModule, ChatRolesModule, ChatsModule, ChatMessagesModule, ChatParticipantsModule,
+    GamesModule,
     AuthModule, TfaModule, MeModule,
-    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService,
