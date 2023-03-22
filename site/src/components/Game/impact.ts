@@ -4,33 +4,32 @@ import * as module_const from "./constant"
 import * as module_ult from "./ultimate"
 import * as module_ball from "./ball"
 
-export function check_for_collisions(ball : module_ball.Ball) //if ball hit either player or goal
+export function check_for_collisions(ball: module_ball.Ball) //if ball hit either player or goal
 {
 	// if ball is at goal
-	if (ball.x > module_pong.myGameArea.canvas.width || ball.x < 0)
-	{
-		if (ball.x > module_const.canvas_width && ball.goal == false)
-		{
+	if (ball.x > module_pong.myGameArea.canvas.width || ball.x < 0) {
+		if (ball.x > module_const.canvas_width && ball.goal == false) {
 			ball.goal = true;
-			module_pong.addPoint(1);
+			module_pong.addPoint(module_pong.myGameArea.playerOne);
 		}
-		if (ball.x < 0 && ball.goal == false)
-		{
+
+		if (ball.x < 0 && ball.goal == false) {
 			ball.goal = true;
-			module_pong.addPoint(2);
+			module_pong.addPoint(module_pong.myGameArea.playerOne);
 		}
 	}
-	else if (ball.y >= module_const.canvas_height - ball.radius || ball.y <= 0 + ball.radius)
-	{
+	else if (ball.y >= module_const.canvas_height - ball.radius || ball.y <= 0 + ball.radius) {
 		ball.changeAngle(360 - ball.angle);
+
 		if (ball.y >= module_const.canvas_height - ball.radius)
 			ball.y = module_const.canvas_height - ball.radius - 1;
+
 		if (ball.y <= 0 + ball.radius)
 			ball.y = ball.radius + 1;
 	}
-	if (!module_pong.myGameArea.pause)
-	{
+	if (!module_pong.myGameArea.pause) {
 		let xdest, ydest;
+
 		ball.radians = ball.angle / (180 * Math.PI) * 10;
 		ball.xunits = Math.cos(ball.radians) * ball.speed;
 		ball.yunits = Math.sin(ball.radians) * ball.speed;
@@ -45,70 +44,94 @@ export function check_for_collisions(ball : module_ball.Ball) //if ball hit eith
 		xdest = ball.x + ball.xunits;
 		ydest = ball.y + ball.yunits;
 		//if playerOne paddle collision
-		if (ball.x < module_const.canvas_width / 2)
-		{
+		if (ball.x < module_const.canvas_width / 2) {
 			if (!calculate_impact(module_pong.myGameArea.playerOne.x + module_pong.myGameArea.playerOne.width, (module_pong.myGameArea.playerOne.x + module_pong.myGameArea.playerOne.width), ball.x, xdest,
-				module_pong.myGameArea.playerOne.y, (module_pong.myGameArea.playerOne.y + module_pong.myGameArea.playerOne.height), ball.y, ydest, ball))
-			{
+				module_pong.myGameArea.playerOne.y, (module_pong.myGameArea.playerOne.y + module_pong.myGameArea.playerOne.height), ball.y, ydest, ball)) {
 				ball.x = xdest;
 				ball.y = ydest;
 			}
 		}
 		//if playerTwo paddle collision
-		else
-		{
+		else {
 			if (!calculate_impact(module_pong.myGameArea.playerTwo.x, module_pong.myGameArea.playerTwo.x, ball.x, xdest,
-				module_pong.myGameArea.playerTwo.y, (module_pong.myGameArea.playerTwo.y + module_pong.myGameArea.playerTwo.height), ball.y, ydest, ball))
-			{
+				module_pong.myGameArea.playerTwo.y, (module_pong.myGameArea.playerTwo.y + module_pong.myGameArea.playerTwo.height), ball.y, ydest, ball)) {
 				ball.x = xdest;
 				ball.y = ydest;
 			}
 		}
 	}
 }
-function map(x : number, in_min : number, in_max : number, out_min : number, out_max : number)
-{
+function map(x: number, in_min: number, in_max: number, out_min: number, out_max: number) {
 	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-function calculate_impact(x1 : number, x2 : number, x3 : number, x4 : number, y1 : number, y2 : number, y3 : number, y4 : number, ball : module_ball.Ball)
-{
+function calculate_impact(x1: number, x2: number, x3: number, x4: number, y1: number, y2: number, y3: number, y4: number, ball: module_ball.Ball) {
 	const den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+
 	if (den == 0)
 		return;
+
 	const t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / den;
 	const u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / den;
-	if (t > 0 && t < 1 && u > 0 && u < 1)
-	{
-		if (ball.x < module_const.canvas_width / 2)
-		{
-			const map_angle = (map(t, 0,1 ,-45, 45));
+
+	if (t > 0 && t < 1 && u > 0 && u < 1) {
+		if (ball.x < module_const.canvas_width / 2) {
+			const map_angle = (map(t, 0, 1, -module_const.bounce_angle, module_const.bounce_angle));
+
 			module_draw.progressBar(map_angle);
 			ball.changeAngle(map_angle);
-			if (module_pong.myGameArea.playerOne.addABALL == true)
-			{
+
+			if (module_pong.myGameArea.playerOne.addABALL == true) {
+
 				module_pong.myGameArea.playerOne.addABALL = false;
-				setTimeout(
-					function() {
-						module_ult.add_ball(map_angle, x3, y3);
-				}, 1000);
+				module_ult.add_ball(map_angle, x3, y3);
 			}
-		}
-		else
-		{
-			const map_angle = (map(t, 0,1 ,225, 135 ));
-			ball.changeAngle(map_angle);
-			if (module_pong.myGameArea.playerTwo.addABALL == true)
+			if (module_pong.myGameArea.playerTwo.reducePaddle == true)
 			{
-				module_pong.myGameArea.playerTwo.addABALL = false;
-				setTimeout(
-					function() {
-						module_ult.add_ball(map_angle, x3, y3);
-				}, 1000);
+				module_pong.myGameArea.playerTwo.reducePaddle = false;
+				module_pong.myGameArea.playerTwo.height = module_const.paddle_height / 2;
+				module_pong.myGameArea.playerTwo.y += module_const.paddle_height / 4;
+			}
+			if (module_pong.myGameArea.playerOne.bonk >= 0)
+			{
+				module_pong.myGameArea.playerOne.bonk++;
+				if (module_pong.myGameArea.playerOne.bonk == 4)
+				{
+					module_pong.myGameArea.playerOne.bonk = -1;
+					module_pong.myGameArea.playerOne.height = module_const.paddle_height;
+					module_pong.myGameArea.playerOne.y -= module_const.paddle_height / 4;
+				}
 			}
 		}
-		if (ball.speed < module_const.ball_speed)
-			ball.speed = module_const.ball_speed;
+		else {
+			const map_angle = (map(t, 0, 1, 180 + module_const.bounce_angle, 180 - module_const.bounce_angle));
+
+			ball.changeAngle(map_angle);
+
+			if (module_pong.myGameArea.playerTwo.addABALL == true) {
+
+				module_pong.myGameArea.playerTwo.addABALL = false;
+				module_ult.add_ball(map_angle, x3, y3);
+			}
+			if (module_pong.myGameArea.playerOne.reducePaddle == true)
+			{
+				module_pong.myGameArea.playerOne.reducePaddle = false;
+				module_pong.myGameArea.playerOne.height = module_const.paddle_height / 2;
+				module_pong.myGameArea.playerOne.y += module_const.paddle_height / 2;
+			}
+			if (module_pong.myGameArea.playerTwo.bonk >= 0)
+			{
+				module_pong.myGameArea.playerTwo.bonk++;
+				if (module_pong.myGameArea.playerTwo.bonk == 4)
+				{
+					module_pong.myGameArea.playerTwo.bonk = -1;
+					module_pong.myGameArea.playerTwo.height = module_const.paddle_height;
+					module_pong.myGameArea.playerTwo.y -= module_const.paddle_height / 4;
+				}
+			}
+		}
+
+		ball.speed = Math.max(ball.speed, module_const.ball_speed);
 		ball.speed = Math.min(ball.speed + 0.5, module_const.ball_speed * 2);
 		return (true);
 	}

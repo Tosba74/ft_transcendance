@@ -29,7 +29,7 @@ export function exportToJson_ptwo() //when button export pressed
 	console.log(JSON.stringify({ movement: module_pong.myGameArea.playerTwo.last_input, ultimate: module_pong.myGameArea.playerTwo.ultimate }));
 }
 
-function ImportJson(value : any) //when command ImportJson is written
+function ImportJson(value: any) //when command ImportJson is written
 {
 	//myGameArea.playerOne_points = value.Scoreplayer1;
 	//myGameArea.playerTwo_points = value.Scoreplayer2;

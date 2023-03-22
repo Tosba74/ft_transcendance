@@ -11,7 +11,7 @@ export class Ball {
 	public yunits: number;
 	public radians: number;
 	public goal: boolean;
-	constructor(x : number, y : number, radius : number, speed : number) {
+	constructor(x: number, y: number, radius: number, speed: number) {
 		this.x = x;
 		this.y = y;
 		this.radius = radius;
@@ -25,7 +25,7 @@ export class Ball {
 		this.goal = false;
 	}
 
-	changeAngle(angle : number) {
+	changeAngle(angle: number) {
 		this.angle = angle % 360;
 	}
 
@@ -36,10 +36,6 @@ export class Ball {
 		this.movement += this.speed;
 		module_pong.myGameArea.context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
 		module_pong.myGameArea.context.save();
-		//ctx.shadowColor = '#999';
-		//ctx.shadowBlur = 20;
-		//ctx.shadowOffsetX = 15;
-		//ctx.shadowOffsetY = 15;
 		module_pong.myGameArea.context.strokeStyle = "purple";
 		module_pong.myGameArea.context.fill();
 		module_pong.myGameArea.context.stroke();
