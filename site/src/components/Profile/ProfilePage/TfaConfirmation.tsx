@@ -16,8 +16,6 @@ export default function TfaConfirmation(props: TfaConfirmationProps) {
 	function handleSubmit(event: SyntheticEvent) {
 		event.preventDefault();
 
-		// validation de tfaCode (au moins check si empty, + 6 digits)
-
 		const token = localStorage.getItem('token');
 		if (token) {
 			axios.post("/api/tfa/confirm-activation", { tfa_code: codeInput }, {

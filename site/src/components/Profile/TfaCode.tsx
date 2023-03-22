@@ -14,8 +14,6 @@ export default function TfaCode({ userId, loginUser, errorMsg}: TfaCodeProps) {
 	const handleSubmit = async (event: SyntheticEvent) => {
         event.preventDefault();
 
-		// validation de tfaCode (au moins check si empty, + 6 digits)
-
 		axios.post("/api/tfa/authenticate", {
 			'id': userId,
 			'tfa_code': tfaCode
