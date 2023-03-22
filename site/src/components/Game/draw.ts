@@ -1,7 +1,12 @@
 import * as module_const from "./constant"
-import * as module_pong from "./pong"
+import { Paddle } from "./paddle";
+import { GameArea } from "./pong";
 
-export function draw_center_line() //draw line with 30 dash
+
+
+
+
+export function draw_center_line(context: CanvasRenderingContext2D) //draw line with 30 dash
 {
 	let buffer = 12;
 	let numberOfDashes = 30;
@@ -10,61 +15,57 @@ export function draw_center_line() //draw line with 30 dash
 
 	let currentX = module_const.canvas_width / 2;
 	let currentY = buffer / 2;
-	module_pong.myGameArea.context.strokeStyle = "white";
+
+	context.strokeStyle = "white";
 
 	for (let i = 0; i < numberOfDashes; i++, currentY += buffer) {
-		module_pong.myGameArea.context.beginPath();
-		module_pong.myGameArea.context.moveTo(currentX, currentY);
+		context.beginPath();
+		context.moveTo(currentX, currentY);
 		currentY += heightOfDash;
-		module_pong.myGameArea.context.lineTo(currentX, currentY);
-		module_pong.myGameArea.context.stroke();
+		context.lineTo(currentX, currentY);
+		context.stroke();
 	}
 }
 
-export function draw_scores() //draw score p1 & p2
+export function draw_scores(context: CanvasRenderingContext2D, score1: number, score2: number) //draw score p1 & p2
 {
-	module_pong.myGameArea.context.fillStyle = "white";
-	module_pong.myGameArea.context.font = module_const.score_size + "px pixel";
+	context.fillStyle = "white";
+	context.font = module_const.score_size + "px pixel";
+
 	let txt_H = module_const.score_size;
 	let txt_W_Pone = module_const.score1_x;
 	let txt_W_Ptwo = module_const.score2_x;
-	module_pong.myGameArea.context.fillText(module_pong.myGameArea.playerOne.score , txt_W_Pone, txt_H);
-	module_pong.myGameArea.context.fillText(module_pong.myGameArea.playerTwo.score, txt_W_Ptwo, txt_H);
-	if (module_pong.myGameArea.playerOne.score  == 10)
-	{
-		module_pong.myGameArea.pause = true;
+
+	context.fillText(score1.toString(), txt_W_Pone, txt_H);
+	context.fillText(score2.toString(), txt_W_Ptwo, txt_H);
+
+	if (score1 >= 10) {
+
 		document.getElementById('btn_pause')!.style.visibility = 'hidden';
-		module_pong.myGameArea.context.font = module_const.canvas_width / 10 + "px pixel";
-		module_pong.myGameArea.context.fillStyle = module_const.paddle_color;
-		module_pong.myGameArea.context.textAlign = "center";
-		module_pong.myGameArea.context.fillText("player one WON!", module_const.canvas_width/2, module_const.canvas_height/2);
+
+		context.font = module_const.canvas_width / 10 + "px pixel";
+		context.fillStyle = module_const.paddle_color;
+		context.textAlign = "center";
+		context.fillText("player one WON!", module_const.canvas_width / 2, module_const.canvas_height / 2);
 	}
-	if (module_pong.myGameArea.playerTwo.score == 10)
-	{
-		module_pong.myGameArea.pause = true;
+
+	if (score2 >= 10) {
+
 		document.getElementById('btn_pause')!.style.visibility = 'hidden';
-		module_pong.myGameArea.context.font = module_const.canvas_width / 10 + "px pixel";
-		module_pong.myGameArea.context.fillStyle = module_const.paddle2_color;
-		module_pong.myGameArea.context.textAlign = "center";
-		module_pong.myGameArea.context.fillText("player two WON!", module_const.canvas_width/2, module_const.canvas_height/2);
+
+		context.font = module_const.canvas_width / 10 + "px pixel";
+		context.fillStyle = module_const.paddle2_color;
+		context.textAlign = "center";
+		context.fillText("player two WON!", module_const.canvas_width / 2, module_const.canvas_height / 2);
 	}
 }
 
-export function progressBar(progress : number)
-{
-	let elem : any;
-	elem = document.getElementById("myBar");
-	if (module_pong.myGameArea.playerOne.ultimate < 100)
-	{
-		if (progress < 0)
-			progress = -progress;
-		module_pong.myGameArea.playerOne.ultimate += progress;
-		if (module_pong.myGameArea.playerOne.ultimate >= 100)
-			module_pong.myGameArea.playerOne.ultimate = 100;
-		elem.style.width = module_pong.myGameArea.playerOne.ultimate + "%";
-		if (module_pong.myGameArea.playerOne.ultimate == 100)
-			elem.style.backgroundColor = "#FE5A52";
-		else
-			elem.style.backgroundColor = "#4CBB17";
-	}
+export function draw_progress_bar(elem: HTMLElement, player: Paddle) {
+
+	elem.style.width = player.ultimate + "%";
+
+	if (player.ultimate == 100)
+		elem.style.backgroundColor = "#FE5A52";
+	else
+		elem.style.backgroundColor = "#4CBB17";
 }
