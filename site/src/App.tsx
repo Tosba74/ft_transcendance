@@ -77,11 +77,10 @@ export default function App() {
             <Route path="/login" element={<LogPage setLogged={setLogged} />} />
             <Route path="/loginapi" element={<LoginApi setLogged={setLogged} />} />
             <Route path="/logout" element={<Logout />} />
-            <Route path="/exemplechat" element={<ExempleChat />} />
             <Route path="/setprofil" element={<SetProfil userdata={userInfos} setdata={setUserInfos} />} />
           </Routes>
         </div>
-        <div className="absolute z-50 right-0 bottom-8">
+        <div className="absolute z-50 right-0 bottom-0">
           <ChatIcon />
         </div>
 

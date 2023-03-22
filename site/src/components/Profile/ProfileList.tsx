@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Profil from "../Profil";
-import {Profile} from "./Profile";
+import { Profile } from "./Profile";
 import ProfileForm from "./ProfileForm";
 
 interface ProfileListProps {
