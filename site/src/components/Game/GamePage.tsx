@@ -9,8 +9,13 @@ export default function GamePage() {
 
 
     return (
-        <div className="w-full h-full">
-            Game!!
+        <div className="w-full h-screen flex flex-wrap p-8 ">
+            <div className="h-4/6 w-full lg:w-2/3 bg-black">
+                Game!!
+            </div>
+            <div className="w-full lg:w-1/3 lg:h-4/6 h-1/6 bg-gray-500">
+                Game History
+            </div>
         </div>
     );
 }
