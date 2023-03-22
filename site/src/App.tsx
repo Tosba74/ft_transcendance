@@ -9,12 +9,11 @@ import GamePage from './components/Game/GamePage';
 import HomePage from './components/Home/HomePage';
 import ProfilePage from './components/Profile/ProfilePage';
 import LogPage from './components/Log/LogPage';
-import Profil from './components/Profil';
-import SetProfil from './components/SetProfil';
+import Profil from './components/Profile/Profil';
+import SetProfil from './components/Profile/SetProfil';
 
 import NavBar from './components/NavBar/NavBar';
 import ChatIcon from './components/Chat/ChatIcon';
-import ExempleChat from './components/Chat/exemple';
 
 import LoginApi from './components/Log/LoginApi';
 import Logout from './components/Log/Logout';

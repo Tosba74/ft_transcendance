@@ -14,9 +14,9 @@ export default function ChatPage() {
 		setOpen(!isOpen);
 	};
 	return (
-		<div className="h-full lg:w-1/2 flex flex-col bg-gray-300 dark:bg-gray-800 rounded-lg p-2 shadow-lg">
+		<div className="h-full lg:w-1/3 flex flex-col bg-gray-300 dark:bg-gray-800 rounded-lg p-2 shadow-lg">
 			<div>
-				<div className="w-full flex flex-row justify-between w-full items-center shadow-lg dark:bg-gray-700 dark:text-white bg-gray-200 p-2 text-center rounded">
+				<div className="w-full flex flex-row justify-between items-center shadow-lg dark:bg-gray-700 dark:text-white bg-gray-200 p-2 text-center rounded">
 					<button className="w-full text-center" type="button" onClick={handleClick}>
 						{isOpen && <div className="px-4">Channel List</div>}
 						{!isOpen && <div className="px-4">Chat Mode</div>}

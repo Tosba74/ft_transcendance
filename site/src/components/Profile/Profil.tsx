@@ -1,6 +1,6 @@
 import logoInconnu from "../assets/img/inconnu.jpeg"
 import { Link } from 'react-router-dom'
-import { Profile } from "./Profile/Profile";
+import { Profile } from "./Profile";
 
 interface ProfilProps {
 	profile: Profile;
