@@ -13,24 +13,45 @@ interface useGameProps {
 
 
 class GameData {
-  started: boolean;
-  player1: Player = new Player();
-  player2: Player = new Player();
+	started: boolean;
+	player1: PlayerDto = new PlayerDto();
+	player2: PlayerDto = new PlayerDto();
+	ball:	BallDto[] = [];
 
-  constructor() {
-    this.started = false;
-  }
+	constructor() {
+		this.started = false;
+	}
 }
 
 
-class Player {
-  paddle: number;
-  action: string;
+class PlayerDto {
+	y: number;
+	action: string;
+	color:	string;
+	height: number;
 
-  constructor() {
-    this.paddle = 0;
-    this.action = '';
-  }
+	constructor() {
+		this.y = 0;
+		this.action = '';
+		this.color = '';
+		this.height = 0;
+	}
+}
+
+class BallDto {
+	x: number;
+	y: number;
+	radius: number;
+	xunits: number;
+	yunits: number;
+
+	constructor() {
+		this.x = 0;
+		this.y = 0;
+		this.radius = 0;
+		this.xunits = 0;
+		this.yunits = 0;
+	}
 }
 
 
