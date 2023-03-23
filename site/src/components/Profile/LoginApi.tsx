@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useState } from "react";
+import React from "react";
 import axios from "axios";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import TfaCode from "./TfaCode";
@@ -41,9 +41,8 @@ export default function LoginApi({ setLogged }: LoginApiProps) {
                 }
                 else setPageMessage('Error contacting 42 API');
             })
-            // .catch(() => setPageMessage('Error during login: retry without refreshing logging process.'));
         }
-        else setPageMessage('Error missing infos');
+        else setPageMessage('Error missing infos for 42 API');
 
     }, [setTfa, setUserId, setPageMessage])
 

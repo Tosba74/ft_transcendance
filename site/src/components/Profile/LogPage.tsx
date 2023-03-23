@@ -8,7 +8,7 @@ interface LogPageProps {
 }
 
 export default function LogPage({ setLogged }: LogPageProps) {
-    const [focus, setFocused] = useState(false);
+    // const [focus, setFocused] = useState(false);
 
     const [userId, setUserId] = React.useState(-1);
     const [tfa, setTfa] = React.useState(false);

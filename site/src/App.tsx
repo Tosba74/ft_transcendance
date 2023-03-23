@@ -63,8 +63,8 @@ export default function App() {
 
   // const [tokenMessage, setTokenMessage] = React.useState('');
 
-  // Voir aussi pour verifier si le token est toujours valable
-  // si non setLogged a false + setUserInfos a {}
+  // Au moment du refresh verifier aussi d'abord si le token est toujours valable (pseudo code en dessous)
+  // si non: setLogged a false + setUserInfos a {}
   function refreshTokenAndUserInfos() {
     const token = localStorage.getItem('token');
 

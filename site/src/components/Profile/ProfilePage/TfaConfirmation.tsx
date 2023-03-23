@@ -24,19 +24,10 @@ export default function TfaConfirmation(props: TfaConfirmationProps) {
 				}
 			})
 			.then(res => {
-				if (res.data === true) {
+				if (res.data === true)
 					switchTfaOn();
-					// setQrCode('');
-					// setTfaInput('yes')
-					// setTfaLabelMessage('enabled')
-					// setTfaMessage('Tfa turned on');
-					// setTfaButtonMessage('Turn off');
-					// refreshUserInfos();
-					// setTimeout(() => { setTfaMessage('') }, 3000);
-				}
 			})
-			.catch((error) => {
-				console.log(error);
+			.catch(() => {
 				setTfaMessage('Code invalid')
 				setTimeout(() => { setTfaMessage('') }, 3000);
 			});

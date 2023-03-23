@@ -27,6 +27,7 @@ export class AuthController {
         // tfa is enabled so dont sent token but ask for tfa code
         // (manque dans la db) set tfa_date pour que on puisse tfa seulement ~5 minutes après le login
         // response.status(206);
+        this.authService.addAttempt(req.user.id);
         return {id: req.user.id};
     }
 

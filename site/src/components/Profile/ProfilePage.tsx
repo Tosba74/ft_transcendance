@@ -27,7 +27,6 @@ export default function ProfilePage({user, refreshUserInfos}: ProfilePageProps) 
     // };
 
     return (
-        <>
         <div>
             <h2>My profile</h2>
             {/* <ProfileList onSave={saveProfile} profiles={profiles} />             */}
@@ -44,6 +43,5 @@ export default function ProfilePage({user, refreshUserInfos}: ProfilePageProps) 
             {/* <ProfilePrivate user={user} /> */}
 
         </div>
-        </>
     );
 }

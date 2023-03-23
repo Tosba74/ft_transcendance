@@ -8,6 +8,12 @@ import { TfaService } from './tfa.service';
 export class TfaController { 
 	constructor(private tfaService: TfaService) { }
 
+    @Get('turn-off')
+    @AllowLogged()
+    async turnOff(@Request() req: any): Promise<string> {
+        return this.tfaService.deactivate(req.user.id);
+    }
+
     @Get('turn-on')
 	@AllowLogged()
     async turnOn(@Response() res: any, @Request() req: any): Promise<any> {
@@ -21,13 +27,6 @@ export class TfaController {
         return this.tfaService.confirmActivation(req.user.id, body.tfa_code);
     }
 
-    @Get('turn-off')
-    @AllowLogged()
-    async turnOff(@Request() req: any): Promise<string> {
-        return this.tfaService.deactivate(req.user.id);
-    }
-
-    // METTRE UNE CRON QUI EFFACE, chaque 15', TOUS LES id DE l'array this.tfaService.blocked
     @Post('authenticate')
     @AllowPublic()
     async authenticateApi(@Body() body: any): Promise<any> {

@@ -16,7 +16,7 @@ export default function Pseudo({user, refreshUserInfos}: PseudoProps) {
   
 	function pseudoValidation(): boolean {
 		
-		// ajouter validation sur format minimum de pseudo
+		// ICI AJOUTER VALIDATION SUR FORMAT MINIMUM DE PSEUDO
 
 		if (pseudoInput === '') {
 			setPseudoInputMessage('You must specify a pseudo');

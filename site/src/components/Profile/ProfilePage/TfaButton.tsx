@@ -55,7 +55,7 @@ export default function TfaButton({user, refreshUserInfos}: TfaButtonProps) {
 			let route: string = '';
 			tfaInput === 'no' ? route = 'turn-on' : route = 'turn-off';
 
-			// besoin de la reponse entiere pour utiliser blob(), pas en json desarialized commme avec axios
+			// fetch car besoin de la reponse entiere pour utiliser blob() (axios desarialize tout  en json)
 			fetch(`/api/tfa/${route}`, {
 				method: "GET",
 				headers: {
@@ -63,7 +63,7 @@ export default function TfaButton({user, refreshUserInfos}: TfaButtonProps) {
 				}
 			})
 			.then(async res => {
-				// on turn-on api return qr code on success / on turn-off api return 'disabled' on success
+				// with turn-on api return qr code on success / with turn-off api return 'disabled' on success
 				if (route === 'turn-on') {
 					const blob = await res.blob();
 					const url = URL.createObjectURL(blob);

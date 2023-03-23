@@ -15,7 +15,7 @@ import { Attempts, LIMIT_ATTEMPT, TIME_LIMIT_IN_MIN, TIME_LIMIT_IN_MS } from './
 @Injectable()
 export class TfaService {
 	constructor(private usersService: UsersService, @Inject(forwardRef(() => AuthService)) private authService: AuthService) { }
-    private attempts: Map<number, Attempts>;
+    private attempts: Map<number, Attempts> = new Map();
 	
     async deactivate(id: number): Promise<string> {
         this.usersService.setTfaEnabled(id);
@@ -50,9 +50,10 @@ export class TfaService {
     }
 
     async authenticateApi(id: number, tfa_code: string): Promise<any> {
-
+        // console.log(this.attempts);
         let message = '';
         const attempt = this.checkAttempt(id);
+        // console.log(attempt);
         if (attempt === -1)
             throw new UnauthorizedException('Limit of attempts exceeded: retry in a moment');
         else if (attempt === -2)
@@ -67,7 +68,8 @@ export class TfaService {
         const isCodeValid: boolean = await this.isTfaValid(tfa_code, id);
         if (!isCodeValid)
             throw new UnauthorizedException(message);
-    
+        this.attempts.delete(id);
+
         const user = await this.usersService.findOneById(id);
         const loggedUser: LoggedUserDto = {
             id: user.id,
@@ -94,27 +96,26 @@ export class TfaService {
     }
 
     addAttempt(id: number) {
-        const newAttempt: Attempts = {
-            login_date: new Date(), 
-            attempt_no : 0
-        };
-        this.attempts.set(id, newAttempt);
+        if (this.attempts.get(id) === undefined) {
+            const newAttempt: Attempts = {
+                login_date: new Date(), 
+                attempt_no : 0
+            };
+            this.attempts.set(id, newAttempt);
+        }
     }
 
     @Interval(TIME_LIMIT_IN_MS)
     removeAttempts() {
-        console.log(this.attempts);
-
-        // traverser la map
-        // retirer les attemps > 5 min par rapport a now
+        // console.log(this.attempts);
         this.attempts.forEach((attempt, id) => {
             const minBetweenAttempt = ((new Date()).getTime() - attempt.login_date.getTime() / 1000 / 60);
             if (minBetweenAttempt > TIME_LIMIT_IN_MIN)
                 this.attempts.delete(id);
         })
+        // console.log(this.attempts);
     }
 
-    // chaque 5 min cron qui passe sur this.attempts et retire les attempt > 5 min
     checkAttempt(id: number): number {
         const attempt = this.attempts.get(id);
     
