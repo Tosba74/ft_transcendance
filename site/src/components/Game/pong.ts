@@ -46,7 +46,7 @@ export class GameArea {
 	public context: CanvasRenderingContext2D | null;
 	public progress_bar: HTMLElement | null;
 
-	public interval: any;
+	// public interval: any;
 	public pause = false;
 	public start = false;
 
@@ -67,7 +67,9 @@ export class GameArea {
 		this.playerOne = new Paddle(module_const.paddle_width, module_const.paddle_height, module_const.paddle_color, module_const.paddle_x, module_const.paddle_y);
 		this.playerTwo = new Paddle(module_const.paddle_width, module_const.paddle_height, module_const.paddle2_color, module_const.paddle2_x, module_const.paddle_y);
 
-		this.interval = setInterval(() => { this.update(); this.render(); }, 1000 / 50); //50 fps
+		console.log('dasd');
+
+		// this.interval = setInterval(() => { this.update(); this.render(); }, 1000 / 50); //50 fps
 	}
 
 	check_for_collisions = ext_check_for_collisions;
@@ -90,42 +92,48 @@ export class GameArea {
 	}
 
 
-	update() {
-
-		if (this.pause == false) {
-
-			this.playerOne.update();
-			this.playerTwo.update();
-
-			this.balls.forEach((value) => {
-				this.check_for_collisions(value);
-			});
-
-		}
-
-	}
-
-	get() {
+	
+	get_elements() {
 		this.canvas = document.getElementById("canvas") as HTMLCanvasElement;
+		if (this.canvas == null)
+			return ;
+
 		this.context = this.canvas.getContext("2d");
+		if (this.context == null)
+			return ;
 
 		this.progress_bar = document.getElementById("myBar");
-
+		if (this.progress_bar == null)
+			return ;
 	}
-
+	
 	import(game: GameData) {
-
+		
 		this.playerOne.y = game.player1.paddle;
-		this.playerOne.y = new Date().getMilliseconds() % 300;
-		console.log(this.playerOne.y);
+		// this.playerOne.y = new Date().getMilliseconds() % 300;
+		// console.log(this.playerOne.y);
 		this.playerTwo.y = game.player2.paddle;
-
+		
 		this.playerOne.update();
 		this.playerTwo.update();
-
+		
 		// this.render();
 	}
+	
+	update() {
 
+		// if (this.start == true) {
+
+			// this.playerOne.update();
+			// this.playerTwo.update();
+
+			// this.balls.forEach((value) => {
+			// 	this.check_for_collisions(value);
+			// });
+
+		// }
+
+	}
 
 	render() {
 
@@ -136,14 +144,14 @@ export class GameArea {
 		let ctx = this.context;
 
 
-		if (this.pause == false) {
+		// if (this.pause == false) {
 
 			this.canvas.width = module_const.canvas_width;
 			this.canvas.height = module_const.canvas_height;
 			this.canvas.tabIndex = 1;
 
 
-			if (this.start == true) {
+			// if (this.start == true) {
 				ctx.save();
 				ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -160,8 +168,8 @@ export class GameArea {
 					module_draw.draw_progress_bar(this.progress_bar, this.playerOne);
 
 				ctx.restore();
-			}
-		}
+			// }
+		// }
 
 		if (this.playerOne.score >= 10 || this.playerTwo.score >= 10)
 			this.pause = true;

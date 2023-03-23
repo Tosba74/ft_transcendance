@@ -21,82 +21,16 @@ export default function GamePage({ gamer }: GamePageProps) {
 	};
 
 
-	let gameArea: GameArea = new GameArea();
-
-
+	// let gameArea: GameArea = gamer.gameArea;
+	
 	useEffect(() => {
+		
+		gamer.gameArea.current?.get_elements();
+		gamer.gameArea.current?.render();
+
 		// gameArea = new GameArea();
 		// gameArea.setUpGame();
-	}, [])
-
-
-	window.onkeyup = (e: KeyboardEvent): any => {
-		if (e.key == "w")
-			if (gameArea.playerOne.speedY <= 0)
-				gameArea.playerOne.speedY = 0;
-
-		if (e.key == "s")
-			if (gameArea.playerOne.speedY >= 0)
-				gameArea.playerOne.speedY = 0;
-
-		if (e.key == "ArrowUp")//up
-			if (gameArea.playerTwo.speedY <= 0)
-				gameArea.playerTwo.speedY = 0;
-
-		if (e.key == "ArrowDown") //down
-			if (gameArea.playerTwo.speedY >= 0)
-				gameArea.playerTwo.speedY = 0;
-
-		if (e.key == "1") //ult
-		{
-			if (gameArea.playerOne.ultimate >= 100) {
-				gameArea.playerOne.addABALL = true;
-				gameArea.playerOne.ultimate = 0;
-			}
-		}
-
-		if (e.key == "2") //ult
-		{
-			if (gameArea.playerOne.ultimate >= 100) {
-
-				module_ultimate.paddle_dash(gameArea.playerOne);
-
-				gameArea.playerOne.ultimate = 0;
-			}
-		}
-
-		if (e.key == "3") //ult
-		{
-			if (gameArea.playerOne.ultimate >= 100) {
-
-				module_ultimate.paddle_reduce(gameArea.playerTwo);
-
-				gameArea.playerOne.ultimate = 0;
-			}
-		}
-	}
-
-	window.onkeydown = (e: KeyboardEvent): any => {
-		if (e.key == "w") {
-			gameArea.playerOne.last_input = false;
-			if (gameArea.playerOne.y >= 0)
-				gameArea.playerOne.speedY = -(module_const.paddle_speed);
-		}
-
-		if (e.key == "s") {
-			gameArea.playerOne.last_input = true;
-			if (gameArea.playerOne.y + gameArea.playerOne.height < module_const.canvas_height)
-				gameArea.playerOne.speedY = module_const.paddle_speed;
-		}
-
-		if (e.key == "ArrowUp")//up
-			if (gameArea.playerTwo.y >= 0)
-				gameArea.playerTwo.speedY = -(module_const.paddle_speed);
-
-		if (e.key == "ArrowDown") //down
-			if (gameArea.playerTwo.y + gameArea.playerTwo.height < module_const.canvas_height)
-				gameArea.playerTwo.speedY = module_const.paddle_speed;
-	}
+	}, [gamer.gameArea.current])
 
 
 	const styles = {
@@ -115,9 +49,11 @@ export default function GamePage({ gamer }: GamePageProps) {
 
 	window.onkeyup = (e: KeyboardEvent): any => {
 		if (e.key == "w")
+			// gamer.gameArea.current && (gamer.gameArea.current.playerTwo.speedY = 0);
 			gamer.playGame("");
-
+		
 		if (e.key == "s")
+			// gamer.gameArea.current && (gamer.gameArea.current.playerTwo.speedY = 0);
 			gamer.playGame("");
 
 		// if (e.key == "ArrowUp")//up
@@ -155,9 +91,11 @@ export default function GamePage({ gamer }: GamePageProps) {
 
 	window.onkeydown = (e: KeyboardEvent): any => {
 		if (e.key == "w") {
+			// gamer.gameArea.current && (gamer.gameArea.current.playerTwo.speedY = -(module_const.paddle_speed));
 			gamer.playGame("up");
 		}
 		if (e.key == "s") {
+			// gamer.gameArea.current && (gamer.gameArea.current.playerTwo.speedY = +(module_const.paddle_speed));
 			gamer.playGame("down");
 		}
 	}
@@ -177,9 +115,9 @@ export default function GamePage({ gamer }: GamePageProps) {
 			<div>
 				<div>
 					<p>ULTIME :</p>
-					<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_add_ball" onClick={() => { gameArea.boost_ult() } }>
+					{/* <button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_add_ball" onClick={() => { gameArea.boost_ult() }}>
 						ADMIN: BOOST ULT
-					</button>
+					</button> */}
 					<a className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" id="btn_ult0">
 						1: Add a ball
 					</a>
@@ -199,13 +137,22 @@ export default function GamePage({ gamer }: GamePageProps) {
 				<script>  </script>
 			</div>
 			<div>
-				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_start" onClick={() => { gameArea.get(); gameArea.startGame() }}>
+				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_start" onClick={() => { gamer.createGame() }}>
+					Create
+				</button>
+				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_start" onClick={() => { gamer.joinGame() }}>
+					Join
+				</button>
+				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_start" onClick={() => { gamer.gameArea.current?.get_elements();}}>
+					Get
+				</button>
+				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_start" onClick={() => {  gamer.gameArea.current?.startGame() }}>
 					Start
 				</button>
-				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_pause" style={{ visibility: 'hidden' }} onClick={() => { gameArea.do_pause() }}>
+				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_pause" style={{ visibility: 'hidden' }} onClick={() => { gamer.gameArea.current?.do_pause() }}>
 					Pause
 				</button>
-				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_restart" style={{ visibility: 'hidden' }} onClick={() => { gameArea.restart() }}>
+				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_restart" style={{ visibility: 'hidden' }} onClick={() => { gamer.gameArea.current?.restart() }}>
 					restart
 				</button>
 				{/* <button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" style={{visibility: 'hidden'}} id="btn_exportToJson" onClick={gameArea.exportToJson_pone}>
