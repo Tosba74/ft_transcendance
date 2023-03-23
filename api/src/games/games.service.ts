@@ -7,13 +7,16 @@ import { GameModel } from "./models/game.model";
 
 
 import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
+import { GameData, import_action } from './gamelogic/export';
+import { GameArea } from './gamelogic/pong';
+
 
 class GameRoom {
   host: WebsocketUser | undefined;
   guest: WebsocketUser | undefined;
   timer: NodeJS.Timer;
 
-  game: GameData = new GameData();
+  game: GameArea = new GameArea();
 
   // constructor() {
   //   this.game = new GameData();
@@ -21,26 +24,6 @@ class GameRoom {
 }
 
 
-class GameData {
-  started: boolean;
-  player1: Player = new Player();
-  player2: Player = new Player();
-
-  constructor() {
-    this.started = false;
-  }
-}
-
-
-class Player {
-  paddle: number;
-  action: string;
-
-  constructor() {
-    this.paddle = 0;
-    this.action = '';
-  }
-}
 
 
 interface WebsocketUser {
@@ -116,34 +99,16 @@ export class GamesService {
       return;
     }
 
-    let gameUser: Player | undefined;
 
     if (this.currentGames[game_id].host && this.currentGames[game_id].host?.user.id == user.user.id) {
 
-      gameUser = this.currentGames[game_id].game.player1;
-      gameUser.action = action;
+      import_action(this.currentGames[game_id].game.playerOne, action);
     }
-
+    
     else if (this.currentGames[game_id].guest && this.currentGames[game_id].guest?.user.id == user.user.id) {
-
-      gameUser = this.currentGames[game_id].game.player2
-      gameUser.action = action;
-
+      
+      import_action(this.currentGames[game_id].game.playerTwo, action);
     }
-
-    if (gameUser === undefined)
-      return;
-
-    // console.log('recv action', action);
-
-    // if (action == "up")
-    //   gameUser.paddle += 10;
-
-    // else if (action == "down")
-    //   gameUser.paddle -= 10;
-
-
-    // server.emit("gameInfos", { paddle1: game.paddle1, paddle2: game.paddle2 });
   }
 
 
@@ -160,22 +125,12 @@ export class GamesService {
 
     const game = this.currentGames[game_id].game;
 
-    console.log('actions', game.player1.action, game.player2.action)
+    // console.log('actions', game.player1.action, game.player2.action)
 
-    if (game.player1.action == "up")
-      game.player1.paddle -= 15;
-
-    if (game.player1.action == "down")
-      game.player1.paddle += 15;
-
-    if (game.player2.action == "up")
-      game.player2.paddle -= 15;
-
-    if (game.player2.action == "down")
-      game.player2.paddle += 15;
+    game.update();
 
     // console.log('emit');
-    server.emit("gameInfos", { game: game });
+    server.emit("gameInfos", { game: game.export() });
   }
 
 
