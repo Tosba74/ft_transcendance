@@ -65,7 +65,7 @@ runpostg:
 rundb:
 			${DOCKER} exec postgres psql --host=postgres --dbname=test_db --username=user -W
 
-front-prettier:
+prettier:
 			${DOCKER} exec front yarn prettier
 
 migrate-create:
