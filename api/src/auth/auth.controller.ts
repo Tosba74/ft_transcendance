@@ -102,7 +102,10 @@ export class AuthController {
 
             if (user) {
                 if (user.tfa_enabled === true)
+                {
+                    this.authService.addAttempt(user.id);
                     return {id: user.id};
+                }
                 return this.authService.login(user);
             }
             throw new UnauthorizedException('Api user validation error');

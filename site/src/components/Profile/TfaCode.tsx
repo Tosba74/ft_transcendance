@@ -10,23 +10,6 @@ interface TfaCodeProps {
 export default function TfaCode({ userId, loginUser, errorMsg}: TfaCodeProps) {
 
 	const [tfaCode, setTfaCode] = React.useState('');
-	
-	// donner 5 min a l'utilisateur pour envoyer le code
-	// ajouter une limite de 2 tentatives echouees lors de ces 5 min
-
-	// des que user a clicke sur login,
-	// useEffect(set un timestamp du render de ce component) -> state time
-	// useEffect(set un attempts) -> state attempts
-
-	// a chaque tentative d envoie du code (handleSubmit ici) 
-		// checker si on est dans les 5 min par rapport au state time
-		// checker si on est en dessous de 3 attempts
-	
-	// si oui et oui
-		// envoie du code (tentative de connexion)
-			// si valid connected
-			// si pas valid incrementer le state attempt
-
 
 	const handleSubmit = async (event: SyntheticEvent) => {
         event.preventDefault();
@@ -40,8 +23,13 @@ export default function TfaCode({ userId, loginUser, errorMsg}: TfaCodeProps) {
 				localStorage.setItem('token', res.data['access_token']);
 				loginUser();
 			}
+			// else {
+			// 	errorMsg(res.statusText);
+			// }
 		})
-		.catch(() => errorMsg('Code invalid'));
+		// .catch((error) => errorMsg('Code invalid'));
+		.catch((error) => errorMsg(error.response.data)); // must display the number of attempts remaining if code invalid
+		// .catch((error) => errorMsg(error.message));
     };
 
     return (

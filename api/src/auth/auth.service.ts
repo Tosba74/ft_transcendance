@@ -1,5 +1,5 @@
 
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, forwardRef, Inject } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
@@ -9,9 +9,11 @@ import { UserModel } from '../users/models/user.model';
 import { LoggedUserDto } from './dto/logged_user.dto';
 import { title } from 'process';
 
+import { TfaService } from 'src/tfa/tfa.service';
+
 @Injectable()
 export class AuthService {
-    constructor(private usersService: UsersService, private jwtService: JwtService) { }
+    constructor(private usersService: UsersService, private jwtService: JwtService, @Inject(forwardRef(() => TfaService)) private tfaService: TfaService) { }
     private states: Array<string> = [];
 
     async validateUser(loginname: string, password: string): Promise<LoggedUserDto | null> {
@@ -122,6 +124,10 @@ export class AuthService {
             throw new BadRequestException('State doesn\'t exists');
         }
         this.states.splice(index, 1);
+    }
+
+    addAttempt(id: number) {
+        this.tfaService.addAttempt(id);
     }
 
 }

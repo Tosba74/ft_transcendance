@@ -6,7 +6,6 @@ import { TfaService } from './tfa.service';
 @Controller('api/tfa')
 @ApiTags('api/tfa')
 export class TfaController { 
-
 	constructor(private tfaService: TfaService) { }
 
     @Get('turn-on')
@@ -28,7 +27,7 @@ export class TfaController {
         return this.tfaService.deactivate(req.user.id);
     }
 
-    // vue que route est en AllowPublic, possibilite de mettre une limite de tentatives pour eviter un brutforce sur /api/authenticate avec des paires de id-code
+    // METTRE UNE CRON QUI EFFACE, chaque 15', TOUS LES id DE l'array this.tfaService.blocked
     @Post('authenticate')
     @AllowPublic()
     async authenticateApi(@Body() body: any): Promise<any> {
