@@ -20,8 +20,9 @@ import { ext_bounce_action } from './impact';
 
 class GameData {
 	started: boolean;
-	player1: Player = new Player();
-	player2: Player = new Player();
+	player1: PlayerDto = new PlayerDto();
+	player2: PlayerDto = new PlayerDto();
+	ball:	BallDto[] = [];
 
 	constructor() {
 		this.started = false;
@@ -29,13 +30,33 @@ class GameData {
 }
 
 
-class Player {
-	paddle: number;
+class PlayerDto {
+	y: number;
 	action: string;
+	color:	string;
+	height: number;
 
 	constructor() {
-		this.paddle = 0;
+		this.y = 0;
 		this.action = '';
+		this.color = '';
+		this.height = 0;
+	}
+}
+
+class BallDto {
+	x: number;
+	y: number;
+	radius: number;
+	xunits: number;
+	yunits: number;
+
+	constructor() {
+		this.x = 0;
+		this.y = 0;
+		this.radius = 0;
+		this.xunits = 0;
+		this.yunits = 0;
 	}
 }
 
@@ -92,7 +113,7 @@ export class GameArea {
 	}
 
 
-	
+
 	get_elements() {
 		this.canvas = document.getElementById("canvas") as HTMLCanvasElement;
 		if (this.canvas == null)
@@ -106,20 +127,26 @@ export class GameArea {
 		if (this.progress_bar == null)
 			return ;
 	}
-	
+
 	import(game: GameData) {
-		
-		this.playerOne.y = game.player1.paddle;
+
+		this.playerOne.y = game.player1.y;
 		// this.playerOne.y = new Date().getMilliseconds() % 300;
 		// console.log(this.playerOne.y);
-		this.playerTwo.y = game.player2.paddle;
-		
+		this.playerTwo.y = game.player2.y;
+		this.playerOne.height = game.player1.height;
+		this.playerOne.color = game.player1.color;
+
+		this.balls.forEach(element => {
+			game.ball.push(element);
+		});
+
 		this.playerOne.update();
 		this.playerTwo.update();
-		
+
 		// this.render();
 	}
-	
+
 	update() {
 
 		// if (this.start == true) {
@@ -187,20 +214,20 @@ export class GameArea {
 
 		}
 	}
-	
-	
-	
+
+
+
 	do_pause() //when button pause pressed
 	{
 		this.pause = !this.pause;
 	}
-	
+
 	reset(y: number) {
 		this.balls[0].x = module_const.canvas_width / 2;
 		this.balls[0].y = y;
 		this.balls[0].speed = module_const.ball_speed / 3;
 		this.balls[0].goal = false;
-		
+
 		this.balls.splice(1, this.balls.length);
 
 		this.playerOne.y = module_const.paddle_y;

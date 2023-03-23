@@ -22,9 +22,9 @@ export default function GamePage({ gamer }: GamePageProps) {
 
 
 	// let gameArea: GameArea = gamer.gameArea;
-	
+
 	useEffect(() => {
-		
+
 		gamer.gameArea.current?.get_elements();
 		gamer.gameArea.current?.render();
 
@@ -48,13 +48,13 @@ export default function GamePage({ gamer }: GamePageProps) {
 
 
 	window.onkeyup = (e: KeyboardEvent): any => {
-		if (e.key == "w")
+		/*if (e.key == "w")
 			// gamer.gameArea.current && (gamer.gameArea.current.playerTwo.speedY = 0);
 			gamer.playGame("");
-		
+
 		if (e.key == "s")
 			// gamer.gameArea.current && (gamer.gameArea.current.playerTwo.speedY = 0);
-			gamer.playGame("");
+			gamer.playGame("");*/
 
 		// if (e.key == "ArrowUp")//up
 		// 	if (this.playerTwo.speedY <= 0)
@@ -94,10 +94,12 @@ export default function GamePage({ gamer }: GamePageProps) {
 			// gamer.gameArea.current && (gamer.gameArea.current.playerTwo.speedY = -(module_const.paddle_speed));
 			gamer.playGame("up");
 		}
-		if (e.key == "s") {
+		else if (e.key == "s") {
 			// gamer.gameArea.current && (gamer.gameArea.current.playerTwo.speedY = +(module_const.paddle_speed));
 			gamer.playGame("down");
 		}
+		else
+			gamer.playGame("");
 	}
 
 
