@@ -39,7 +39,28 @@ export default function GamePage() {
 		if (e.key == "ArrowDown") //down
 			if (gameArea.playerTwo.speedY >= 0)
 				gameArea.playerTwo.speedY = 0;
+	}
 
+	window.onkeydown = (e: KeyboardEvent): any => {
+		if (e.key == "w") {
+			gameArea.playerOne.last_input = false;
+			if (gameArea.playerOne.y >= 0)
+				gameArea.playerOne.speedY = -(module_const.paddle_speed);
+		}
+
+		if (e.key == "s") {
+			gameArea.playerOne.last_input = true;
+			if (gameArea.playerOne.y + gameArea.playerOne.height < module_const.canvas_height)
+				gameArea.playerOne.speedY = module_const.paddle_speed;
+		}
+
+		if (e.key == "ArrowUp")//up
+			if (gameArea.playerTwo.y >= 0)
+				gameArea.playerTwo.speedY = -(module_const.paddle_speed);
+
+		if (e.key == "ArrowDown") //down
+			if (gameArea.playerTwo.y + gameArea.playerTwo.height < module_const.canvas_height)
+				gameArea.playerTwo.speedY = module_const.paddle_speed;
 		if (e.key == "1") //ult
 		{
 			if (gameArea.playerOne.ultimate >= 100) {
@@ -67,28 +88,6 @@ export default function GamePage() {
 				gameArea.playerOne.ultimate = 0;
 			}
 		}
-	}
-
-	window.onkeydown = (e: KeyboardEvent): any => {
-		if (e.key == "w") {
-			gameArea.playerOne.last_input = false;
-			if (gameArea.playerOne.y >= 0)
-				gameArea.playerOne.speedY = -(module_const.paddle_speed);
-		}
-
-		if (e.key == "s") {
-			gameArea.playerOne.last_input = true;
-			if (gameArea.playerOne.y + gameArea.playerOne.height < module_const.canvas_height)
-				gameArea.playerOne.speedY = module_const.paddle_speed;
-		}
-
-		if (e.key == "ArrowUp")//up
-			if (gameArea.playerTwo.y >= 0)
-				gameArea.playerTwo.speedY = -(module_const.paddle_speed);
-
-		if (e.key == "ArrowDown") //down
-			if (gameArea.playerTwo.y + gameArea.playerTwo.height < module_const.canvas_height)
-				gameArea.playerTwo.speedY = module_const.paddle_speed;
 	}
 
 

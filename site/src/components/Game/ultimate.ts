@@ -11,6 +11,13 @@ export function ext_boost_ult(this: GameArea) {
 }
 
 export function paddle_dash(player: Paddle) {
+	player.color = "#FAFA33";
+	setTimeout(function() {
+			if (player.x < module_const.canvas_width / 2)
+				player.color = module_const.paddle_color;
+			else
+				player.color = module_const.paddle2_color;
+		}, 100);
 	if (player.last_input == false)
 		player.y -= 100;
 
