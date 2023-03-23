@@ -36,11 +36,13 @@ export default function LoginApi({ setLogged }: LoginApiProps) {
                     loginUser();
                 }
                 else if (res.status === 201 && res.data['id']) {
+                    // setPageMessage('');           /* strict mode pour reinit le message */
                     setUserId(res.data['id']);
                     setTfa(true);
                 }
                 else setPageMessage('Error contacting 42 API');
             })
+            // .catch((error) => {setPageMessage('wait...'); console.log(error)}); /* en strict mode envoie 2 requetes, 1 qui throw une erreur */
         }
         else setPageMessage('Error missing infos for 42 API');
 
