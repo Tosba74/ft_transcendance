@@ -14,7 +14,6 @@ export class GameArea {
 
 	public canvas: HTMLCanvasElement | null;
 	public context: CanvasRenderingContext2D | null;
-	public progress_bar: HTMLElement | null;
 
 	// public interval: any;
 	public pause = false;
@@ -29,7 +28,6 @@ export class GameArea {
 
 		this.canvas = null;
 		this.context = null;
-		this.progress_bar = null;
 
 
 		// this.playerOne = new Paddle(module_const.paddle_width, module_const.paddle_height, module_const.paddle_color, module_const.paddle_x, module_const.paddle_y);
@@ -65,10 +63,14 @@ export class GameArea {
 		if (this.context == null)
 			return;
 
-		this.progress_bar = document.getElementById("myBar");
-		if (this.progress_bar == null)
-			return;
+		this.playerOne.progress_bar = document.getElementById("myBar");
+		if (this.playerOne.progress_bar == null)
+			return ;
+		this.playerTwo.progress_bar = document.getElementById("myBar2");
+		if (this.playerTwo.progress_bar == null)
+			return ;
 	}
+
 
 	import(game: GameDataDto) {
 
@@ -99,21 +101,27 @@ export class GameArea {
 		this.canvas.height = module_const.canvas_height;
 		this.canvas.tabIndex = 1;
 
-
+		
 		ctx.save();
 		ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
+		
 		this.playerOne.render(ctx);
 		this.playerTwo.render(ctx);
-
+		
 		this.balls.forEach((value) => {
 			value.render(ctx);
 		});
+		
 
 		module_draw.draw_center_line(ctx);
 		module_draw.draw_scores(ctx, this.playerOne.score, this.playerTwo.score);
-		if (this.progress_bar != null)
-			module_draw.draw_progress_bar(this.progress_bar, this.playerOne);
+
+		if (this.playerOne.progress_bar != null)
+			module_draw.draw_progress_bar(this.playerOne.progress_bar, this.playerOne);
+
+		if (this.playerTwo.progress_bar != null)
+			module_draw.draw_progress_bar(this.playerTwo.progress_bar, this.playerTwo);
+
 
 		ctx.restore();
 

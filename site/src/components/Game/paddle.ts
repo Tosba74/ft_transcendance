@@ -12,6 +12,8 @@ export class Paddle //set up first playerOne
 	public ultimate: number;
 	public score: number;
 
+	public progress_bar: HTMLElement | null;
+
 	// constructor(width: number, height: number, color: string, x: number, y: number) {
 	constructor() {
 
@@ -24,6 +26,8 @@ export class Paddle //set up first playerOne
 		this.color = 'white';
 		this.ultimate = 0;
 		this.score = 0;
+
+		this.progress_bar = null;
 	}
 	
 	import(player: PlayerDto) {
