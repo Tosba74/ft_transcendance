@@ -20,13 +20,11 @@ export class AuthController {
     @AllowPublic()
     @UseGuards(LocalAuthGuard)
     async basicLogin(@Request() req: any): Promise<any> {
-        // if the tfa is turned off, directly respond with a new jwt token with full access
         if (req.user.tfa_enabled === false)
             return this.authService.login(req.user);
 
-        // tfa is enabled so dont sent token but ask for tfa code
-        // (manque dans la db) set tfa_date pour que on puisse tfa seulement ~5 minutes après le login
         // response.status(206);
+        this.authService.addAttempt(req.user.id);
         return {id: req.user.id};
     }
 
@@ -60,7 +58,6 @@ export class AuthController {
     @Post('apicallback')
     @AllowPublic()
     async apiLogin(@Body() oauth2Dto: Oauth2Dto): Promise<any> {
-
         this.authService.checkState(oauth2Dto.state);
 
         try {
@@ -102,7 +99,10 @@ export class AuthController {
 
             if (user) {
                 if (user.tfa_enabled === true)
+                {
+                    this.authService.addAttempt(user.id);
                     return {id: user.id};
+                }
                 return this.authService.login(user);
             }
             throw new UnauthorizedException('Api user validation error');

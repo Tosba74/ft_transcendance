@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useState } from "react";
+import React from "react";
 import axios from "axios";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import TfaCode from "./TfaCode";
@@ -36,32 +36,33 @@ export default function LoginApi({ setLogged }: LoginApiProps) {
                     loginUser();
                 }
                 else if (res.status === 201 && res.data['id']) {
+                    // setPageMessage('');           /* strict mode pour reinit le message */
                     setUserId(res.data['id']);
                     setTfa(true);
                 }
                 else setPageMessage('Error contacting 42 API');
             })
-            // .catch(() => setPageMessage('Error during login: retry without refreshing logging process.'));
+            // .catch((error) => {setPageMessage('wait...'); console.log(error)}); /* en strict mode envoie 2 requetes, 1 qui throw une erreur */
         }
-        else setPageMessage('Error missing infos');
+        else setPageMessage('Error missing infos for 42 API');
 
     }, [setTfa, setUserId, setPageMessage])
 
     return (
         <>
-        { !tfa && 
-            <div className="mt-3 h-6 text-sm text-center">{pageMessage}</div>
-        }
-        { tfa &&
-            <div className="flex justify-center mt-6">
-                <form className="bg-gray-200 w-98 py-2 pt-10 border border-gray-500 shadow-lg center justify-center">
-                    <div className="content sm:w-98 lg:w-98 w-full center content-center text-center items-center justify-center mh-8">
-                            <TfaCode userId={userId} loginUser={loginUser} errorMsg={setPageMessage}/>
-                        <div className="mt-3 h-6 text-sm text-center">{pageMessage}</div>
-                    </div>
-                </form >
-            </div>
-        }
+            { !tfa && 
+                <div className="mt-3 h-6 text-sm text-center">{pageMessage}</div>
+            }
+            { tfa &&
+                <div className="flex justify-center mt-6">
+                    <form className="bg-gray-200 w-98 py-2 pt-10 border border-gray-500 shadow-lg center justify-center">
+                        <div className="content sm:w-98 lg:w-98 w-full center content-center text-center items-center justify-center mh-8">
+                                <TfaCode userId={userId} loginUser={loginUser} errorMsg={setPageMessage}/>
+                            <div className="mt-3 h-6 text-sm text-center">{pageMessage}</div>
+                        </div>
+                    </form >
+                </div>
+            }
         </>
     );
 }

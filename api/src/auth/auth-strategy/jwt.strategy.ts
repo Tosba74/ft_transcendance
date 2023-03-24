@@ -23,6 +23,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const user: LoggedUserDto = await this.usersService.findOneById(payload.id);
     payload.pseudo = user.pseudo;
     payload.avatar_url = user.avatar_url;
+    payload.tfa_enabled = user.tfa_enabled;
 
     // const loggedUser: LoggedUserDto = {
     //     id: payload.id,
