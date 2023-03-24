@@ -61,7 +61,16 @@ export default function GamePage({ gamer }: GamePageProps) {
 			width: "100%",
 			backgroundColor: "#CBD18F",
 			border: "1px solid black"
-
+		},
+		padding: {
+			paddingLeft: "40px",
+			paddingRight: "40px"
+		},
+		myCanvas: {
+			border: '1px solid rgba(255, 255, 255, 0.85)',
+			backgroundColor: 'rgba(0, 0, 0, 0.85)',
+			width: '100%',
+			maxWidth: '2000px'
 		}
 	};
 
@@ -133,8 +142,8 @@ export default function GamePage({ gamer }: GamePageProps) {
 					<div className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300">04</div>
 				</div>
 			</div>
-			<div>
-				<div>
+			<div style={styles.padding}>
+				<div >
 					<p>ULTIME :</p>
 					{/* <button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_add_ball" onClick={() => { gameArea.boost_ult() }}>
 						ADMIN: BOOST ULT
@@ -173,11 +182,11 @@ export default function GamePage({ gamer }: GamePageProps) {
 						</tr>
 					</table>
 				</div>
-				<canvas className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" id="canvas" style={{ border: '1px solid rgba(255, 255, 255, 0.85)', backgroundColor: 'rgba(0, 0, 0, 0.85)', width: '100%', maxWidth: '2000px' }}>
+				<canvas className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" id="canvas" style={styles.myCanvas}>
 				</canvas>
 				<script>  </script>
 			</div>
-			<div>
+			<div style={styles.padding}>
 				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_start" onClick={() => { gamer.createGame() }}>
 					Create
 				</button>
