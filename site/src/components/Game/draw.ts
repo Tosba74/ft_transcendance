@@ -1,6 +1,5 @@
 import * as module_const from "./constant"
 import { Paddle } from "./paddle";
-import { GameArea } from "./pong";
 
 
 

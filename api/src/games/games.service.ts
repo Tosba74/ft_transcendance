@@ -7,8 +7,9 @@ import { GameModel } from "./models/game.model";
 
 
 import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
-import { GameData, import_action } from './gamelogic/export';
+import { import_action } from './gamelogic/export';
 import { GameArea } from './gamelogic/pong';
+import * as module_const from './gamelogic/constant';
 
 
 class GameRoom {
@@ -63,7 +64,7 @@ export class GamesService {
 
     this.currentGames[game_id] = new GameRoom();
 
-    this.currentGames[game_id].timer = setInterval(() => { game_function() }, 1000 / 50);
+    this.currentGames[game_id].timer = setInterval(() => { game_function() }, 1000 / module_const.fps);
 
     this.currentGames[game_id].host = user;
     console.log('create');
@@ -128,6 +129,7 @@ export class GamesService {
     // console.log('actions', game.player1.action, game.player2.action)
 
     game.update();
+    // console.log(game.playerOne.y, game.playerOne.speedY);
 
     // console.log('emit');
     server.emit("gameInfos", { game: game.export() });

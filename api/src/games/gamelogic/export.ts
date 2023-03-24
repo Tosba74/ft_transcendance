@@ -2,38 +2,27 @@ import { GameArea } from './pong';
 
 import { Paddle } from './paddle';
 import * as module_const from './constant';
+import { GameDataDto } from './dto/gamedata.dto';
 
-
-
-export class GameData {
-  started: boolean;
-  player1: Player = new Player();
-  player2: Player = new Player();
-
-  constructor() {
-    this.started = false;
-  }
-}
-
-
-class Player {
-  paddle: number;
-
-  constructor() {
-    this.paddle = 0;
-  }
-}
 
 
 export function import_action(player: Paddle, action: string) {
 
-  if (action == "up") {
+  if (action == "w") {
 
     player.speedY = -module_const.paddle_speed;
   }
-  else if (action == "down") {
+  else if (action == "s") {
 
     player.speedY = +module_const.paddle_speed;
+  }
+  else if (action == "ready") {
+
+    player.ready = true;
+  }
+  else if (action == "unready") {
+
+    player.ready = false;
   }
   else {
 
@@ -44,15 +33,20 @@ export function import_action(player: Paddle, action: string) {
 
 
 
-export function ext_export(this: GameArea): GameData {
+export function ext_export(this: GameArea): GameDataDto {
 
-  const res: GameData = new GameData();
+  const res: GameDataDto = {
+    started: this.start,
 
+    player1: this.playerOne.export(),
+    player2: this.playerTwo.export(),
 
-  res.player1.paddle = this.playerOne.y;
-  res.player2.paddle = this.playerTwo.y;
+    balls: [],
+  };
 
+  this.balls.forEach((ball) => {
+    res.balls.push({ x: ball.x, y: ball.y, radius: ball.radius, xunits: ball.xunits, yunits: ball.yunits });
+  })
 
-  // this.render();
   return res;
 }

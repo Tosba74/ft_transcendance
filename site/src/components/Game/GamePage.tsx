@@ -3,8 +3,6 @@ import React, { useState, useEffect } from "react";
 import { GameArea } from "./pong";
 
 import * as module_const from './constant'
-import * as module_ultimate from './ultimate';
-
 
 
 import { UseGameDto } from "./dto/useGame.dto";
@@ -15,21 +13,10 @@ interface GamePageProps {
 
 export default function GamePage({ gamer }: GamePageProps) {
 
-	const [pause, setPause] = React.useState(false);
-	const handleClick = () => {
-		setPause(!pause);
-	};
-
-
-	// let gameArea: GameArea = gamer.gameArea;
-
 	useEffect(() => {
-
 		gamer.gameArea.current?.get_elements();
 		gamer.gameArea.current?.render();
 
-		// gameArea = new GameArea();
-		// gameArea.setUpGame();
 	}, [gamer.gameArea.current])
 
 
@@ -47,59 +34,33 @@ export default function GamePage({ gamer }: GamePageProps) {
 	};
 
 
+	let keys: string[] = [];
+	let controls = ["w", "s"];
+
 	window.onkeyup = (e: KeyboardEvent): any => {
-		/*if (e.key == "w")
-			// gamer.gameArea.current && (gamer.gameArea.current.playerTwo.speedY = 0);
+		if (controls.indexOf(e.key) == -1)
+			return;
+
+		let ind = keys.indexOf(e.key);
+
+		if (ind != -1)
+			keys.splice(ind, 1);
+
+
+		if (keys.length == 0)
 			gamer.playGame("");
 
-		if (e.key == "s")
-			// gamer.gameArea.current && (gamer.gameArea.current.playerTwo.speedY = 0);
-			gamer.playGame("");*/
-
-		// if (e.key == "ArrowUp")//up
-		// 	if (this.playerTwo.speedY <= 0)
-		// 		this.playerTwo.speedY = 0;
-
-		// if (e.key == "ArrowDown") //down
-		// 	if (this.playerTwo.speedY >= 0)
-		// 		this.playerTwo.speedY = 0;
-		// if (e.key == "1") //ult
-		// {
-		// 	if (this.playerOne.ultimate >= 100) {
-		// 		this.playerOne.addABALL = true;
-		// 		this.playerOne.ultimate = 0;
-		// 		module_draw.progressBar(0);
-		// 	}
-		// }
-		// if (e.key == "2") //ult
-		// {
-		// 	if (this.playerOne.ultimate >= 100) {
-		// 		module_ultimate.paddle_dash(this.playerOne);
-		// 		this.playerOne.ultimate = 0;
-		// 		module_draw.progressBar(0);
-		// 	}
-		// }
-		// if (e.key == "3") //ult
-		// {
-		// 	if (this.playerOne.ultimate >= 100) {
-		// 		module_ultimate.paddle_reduce(this.playerTwo);
-		// 		this.playerOne.ultimate = 0;
-		// 		module_draw.progressBar(0);
-		// 	}
-		// }
 	}
 
 	window.onkeydown = (e: KeyboardEvent): any => {
-		if (e.key == "w") {
-			// gamer.gameArea.current && (gamer.gameArea.current.playerTwo.speedY = -(module_const.paddle_speed));
-			gamer.playGame("up");
-		}
-		else if (e.key == "s") {
-			// gamer.gameArea.current && (gamer.gameArea.current.playerTwo.speedY = +(module_const.paddle_speed));
-			gamer.playGame("down");
-		}
-		else
-			gamer.playGame("");
+
+		if (controls.indexOf(e.key) == -1 || keys.indexOf(e.key) != -1)
+			return;
+
+		keys.push(e.key);
+
+		if (keys.length > 0)
+			gamer.playGame(e.key);
 	}
 
 
@@ -145,10 +106,10 @@ export default function GamePage({ gamer }: GamePageProps) {
 				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_start" onClick={() => { gamer.joinGame() }}>
 					Join
 				</button>
-				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_start" onClick={() => { gamer.gameArea.current?.get_elements();}}>
+				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_start" onClick={() => { gamer.gameArea.current?.get_elements(); }}>
 					Get
 				</button>
-				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_start" onClick={() => {  gamer.gameArea.current?.startGame() }}>
+				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_start" onClick={() => { gamer.gameArea.current?.startGame() }}>
 					Start
 				</button>
 				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_pause" style={{ visibility: 'hidden' }} onClick={() => { gamer.gameArea.current?.do_pause() }}>

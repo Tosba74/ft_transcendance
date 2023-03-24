@@ -1,6 +1,9 @@
 
 import React from 'react';
 import { io, Socket } from 'socket.io-client';
+import { BallDto } from './dto/ball.dto';
+import { GameDataDto } from './dto/gamedata.dto';
+import { PlayerDto } from './dto/player.dto';
 import { GameArea } from './pong';
 
 
@@ -10,49 +13,6 @@ interface useGameProps {
   token: string;
 }
 
-
-
-class GameData {
-	started: boolean;
-	player1: PlayerDto = new PlayerDto();
-	player2: PlayerDto = new PlayerDto();
-	ball:	BallDto[] = [];
-
-	constructor() {
-		this.started = false;
-	}
-}
-
-
-class PlayerDto {
-	y: number;
-	action: string;
-	color:	string;
-	height: number;
-
-	constructor() {
-		this.y = 0;
-		this.action = '';
-		this.color = '';
-		this.height = 0;
-	}
-}
-
-class BallDto {
-	x: number;
-	y: number;
-	radius: number;
-	xunits: number;
-	yunits: number;
-
-	constructor() {
-		this.x = 0;
-		this.y = 0;
-		this.radius = 0;
-		this.xunits = 0;
-		this.yunits = 0;
-	}
-}
 
 
 const useGame = ({ logged, token }: useGameProps) => {
@@ -130,21 +90,8 @@ const useGame = ({ logged, token }: useGameProps) => {
   const playGame = (action: string) => {
 
     gameSocketRef.current &&
-      gameSocketRef.current.emit("playGame", { action: action }, (response: void) => {
-
-
-      });
+      gameSocketRef.current.emit("sendAction", { action: action }, (response: void) => {});
   }
-
-
-  // const sendMessage = (messageBody: string, room_id: number) => {
-
-  //   socketRef.current &&
-  //     socketRef.current.emit('createMessage', {
-  //       room_id: room_id,
-  //       message: messageBody,
-  //     });
-  // };
 
 
 
@@ -159,6 +106,7 @@ const useGame = ({ logged, token }: useGameProps) => {
 
       gameSocketRef.current = io('', {
         path: '/socket-game/',
+        // transports: ["websocket"],
         timeout: 10000,
         extraHeaders: {
           Authorization: `Bearer ${token}`,
@@ -175,18 +123,10 @@ const useGame = ({ logged, token }: useGameProps) => {
 
         // Bind function for message reception
         gameSocketRef.current &&
-          gameSocketRef.current.on("gameInfos", ({ game }: { game: GameData }) => {
-
-            console.log('gameinfos', game);
+          gameSocketRef.current.on("gameInfos", ({ game }: { game: GameDataDto }) => {
 
             gameArea.current?.import(game);
-
-
-
-
-            gameArea.current?.update();
             gameArea.current?.render();
-            // console.log('recv msg', room_id, message);
 
           });
 

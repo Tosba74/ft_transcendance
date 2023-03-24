@@ -13,13 +13,8 @@ import { ext_export, import_action } from './export';
 
 export class GameArea {
 
-	public canvas: HTMLCanvasElement | null;
-	public context: CanvasRenderingContext2D | null;
-	public progress_bar: HTMLElement | null;
-
-	// public interval: any;
 	public pause = false;
-	public start = false;
+	public start = true;
 
 	public playerOne: Paddle;
 	public playerTwo: Paddle;
@@ -28,19 +23,11 @@ export class GameArea {
 
 	constructor() {
 
-		this.canvas = null;
-		this.context = null;
-		this.progress_bar = null;
-
 
 		this.balls.push(new Ball(module_const.ball_x, module_const.ball_y, module_const.ball_radius, module_const.ball_speed / 3));
 
 		this.playerOne = new Paddle(module_const.paddle_width, module_const.paddle_height, module_const.paddle_color, module_const.paddle_x, module_const.paddle_y);
 		this.playerTwo = new Paddle(module_const.paddle_width, module_const.paddle_height, module_const.paddle2_color, module_const.paddle2_x, module_const.paddle_y);
-
-		console.log('dasd');
-
-		// this.interval = setInterval(() => { this.update(); this.render(); }, 1000 / 50); //50 fps
 	}
 
 	check_for_collisions = ext_check_for_collisions;
@@ -49,13 +36,6 @@ export class GameArea {
 	add_ball = ext_add_ball;
 	boost_ult = ext_boost_ult;
 	export = ext_export;
-
-
-	startGame() //set up everything
-	{
-		this.pause = false;
-		this.start = true;
-	}
 
 
 
@@ -72,10 +52,16 @@ export class GameArea {
 			});
 		}
 
+		if (this.playerOne.ready && this.playerTwo.ready)
+		{
+			this.start = true;
+		}
+
 
 		if (this.playerOne.score >= 10 || this.playerTwo.score >= 10)
 			this.pause = true;
 	}
+	
 
 
 	addPoint(player: Paddle) //add point and reset position

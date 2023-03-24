@@ -17,6 +17,9 @@ export const ball_radius = 5;
 
 export const bounce_angle = 45;
 
-export const score_size = canvas_width / 10;
-export const score1_x = canvas_width / 3;
-export const score2_x = canvas_width / 3 + canvas_width / 3;
+// export const score_size = canvas_width / 10;
+// export const score1_x = canvas_width / 3;
+// export const score2_x = canvas_width / 3 + canvas_width / 3;
+
+
+export const fps = 50;

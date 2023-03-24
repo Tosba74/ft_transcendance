@@ -1,4 +1,5 @@
 import * as module_const from "./constant"
+import { PlayerDto } from "./dto/player.dto";
 
 export class Paddle //set up first playerOne
 {
@@ -7,55 +8,42 @@ export class Paddle //set up first playerOne
 	public width: number;
 	public height: number;
 
-	public speedY: number;
-	public speedX: number;
-
 	public color: string;
-
 	public ultimate: number;
-	public addABALL: boolean;
-	public last_input: boolean; //false:down true: up
 	public score: number;
-	public bonk: number; //for reduce paddle
-	public reducePaddle: boolean; //for reduce paddle
 
-	constructor(width: number, height: number, color: string, x: number, y: number) {
-		//var canvas = document.getElementById("canvas");
-		this.width = width;
-		this.height = height;
-		this.x = x;
-		this.y = y;
-		this.speedY = 0;
-		this.speedX = 0;
-		this.color = color;
-		this.ultimate = 0;
-		this.addABALL = false;
-		this.last_input = false;
-		this.score = 0;
-		this.bonk = -1;
-		this.reducePaddle = false;
-	}
-	
-	update() {
-		this.y += this.speedY;
+	// constructor(width: number, height: number, color: string, x: number, y: number) {
+	constructor() {
 
-		this.y = Math.max(this.y, 0);
-		this.y = Math.min(this.y, module_const.canvas_height - this.height);
+		this.x = 0;
+		this.y = 0;
 		
+		this.width = 0;
+		this.height = 0;
+
+		this.color = 'white';
+		this.ultimate = 0;
+		this.score = 0;
 	}
 	
+	import(player: PlayerDto) {
+		
+		this.x = player.x;
+		this.y = player.y;
+
+		this.width = player.width;
+		this.height = player.height;
+
+		this.ultimate = player.ultimate;
+		this.score = player.score;
+
+		this.color = player.color;
+
+	}
+
 	render(context: CanvasRenderingContext2D) {
+		
 		context.fillStyle = this.color;
 		context.fillRect(this.x, this.y, this.width, this.height);
-	}
-	
-	reset() {
-		this.speedY = 0;
-		this.speedX = 0;
-		this.ultimate = 0;
-		this.addABALL = false;
-		this.reducePaddle = false;
-		this.last_input = false;
-		this.score = 0;
 	}
 }

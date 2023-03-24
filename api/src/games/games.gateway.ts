@@ -56,13 +56,6 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			this.gamesService.gameLife(this.server, game_id);
 		}
 
-
-		// let timer = setInterval(() => {
-
-		// 	this.gamesService.gameLife(this.server, game_id);
-	
-		// }, 1000 / 1)
-
 		this.gamesService.createGame(loggedUser, game_id, game_function);
 	}
 
@@ -85,8 +78,8 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 
-	@SubscribeMessage('playGame')
-	async playGame(client: Socket, body: { action: string }): Promise<void> {
+	@SubscribeMessage('sendAction')
+	async sendAction(client: Socket, body: { action: string }): Promise<void> {
 
 		
 		const loggedUser = this.gamesService.isIdentifed(client);
@@ -94,7 +87,7 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		if (loggedUser == undefined) {
 			throw new WsException('Not identified');
 		}
-		console.log('play')
+		// console.log('play')
 		
 		let game_id = 1;
 
@@ -104,45 +97,4 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 
 
-
-	// create and send message
-	@SubscribeMessage('hostToServer')
-	async createMessage(client: Socket, body: { room_id: number, message: {} }) {
-
-
-		// if (body == undefined || body.room_id == undefined || body.message == undefined) {
-		// 	throw new WsException('Not identified');
-
-		// }
-
-		// if (!client.rooms.has(body.room_id.toString())) {
-		// 	throw new WsException('Room not joined');
-		// }
-
-		const loggedUser = this.gamesService.isIdentifed(client);
-
-		if (loggedUser == undefined) {
-			throw new WsException('Not identified');
-		}
-
-
-		// const myGame = this.hostFindGuest(loggedUser, body.room_id);
-
-
-		// if (body.message.startsWith("/") == true) {
-
-		// 	let messageObj = await this.chatsService.adminCommand(loggedUser, client, body.room_id, body.message);
-
-		// 	if (messageObj != undefined)
-		// 		this.server.to(body.room_id.toString()).emit('broadcastMessage', { room_id: body.room_id.toString(), message: messageObj });
-
-		// }
-		// else {
-
-		// 	let messageObj = await this.chatsService.createMessage(loggedUser, client, body.room_id, body.message);
- 
-		// 	if (messageObj != undefined)
-		// 		this.server.to(body.room_id.toString()).emit('broadcastMessage', { room_id: body.room_id.toString(), message: messageObj });
-		// }
-	}
 }

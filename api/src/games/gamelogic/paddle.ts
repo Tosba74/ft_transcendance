@@ -1,4 +1,5 @@
 import * as module_const from "./constant"
+import { PlayerDto } from "./dto/player.dto";
 
 export class Paddle //set up first playerOne
 {
@@ -6,6 +7,8 @@ export class Paddle //set up first playerOne
 	public y: number;
 	public width: number;
 	public height: number;
+
+	public ready: boolean;
 
 	public speedY: number;
 	public speedX: number;
@@ -20,11 +23,13 @@ export class Paddle //set up first playerOne
 	public reducePaddle: boolean; //for reduce paddle
 
 	constructor(width: number, height: number, color: string, x: number, y: number) {
-		//var canvas = document.getElementById("canvas");
+
 		this.width = width;
 		this.height = height;
 		this.x = x;
 		this.y = y;
+
+		this.ready = false;
 
 		this.speedY = 0;
 		this.speedX = 0;
@@ -46,6 +51,23 @@ export class Paddle //set up first playerOne
 		this.y = Math.max(this.y, 0);
 		this.y = Math.min(this.y, module_const.canvas_height - this.height);
 		
+	}
+
+	export(): PlayerDto {
+
+		return {
+			x: this.x,
+			y: this.y,
+
+			height: this.height, 
+			width: this.width, 
+
+			ready: this.ready,
+			color: this.color,
+			
+			ultimate: this.ultimate, 
+			score: this.score,
+		};
 	}
 	
 	reset() {
