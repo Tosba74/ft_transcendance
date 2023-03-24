@@ -59,8 +59,12 @@ export function draw_progress_bar(elem: HTMLElement, player: Paddle) {
 
 	elem.style.width = player.ultimate + "%";
 
-	if (player.ultimate == 100)
-		elem.style.backgroundColor = "#FE5A52";
-	else
+	if (player.ultimate >= 100) {
+
+		elem.classList.add("super-charged");
+	}
+	else {
+		elem.classList.remove("super-charged");
 		elem.style.backgroundColor = "#4CBB17";
+	}
 }
