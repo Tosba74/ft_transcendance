@@ -10,7 +10,7 @@ import { toFileStream } from 'qrcode';
 import { Response } from 'express';
 
 import { Interval } from '@nestjs/schedule';
-import { Attempts, LIMIT_ATTEMPT, TIME_LIMIT_IN_MIN, TIME_LIMIT_IN_MS } from './attempts';
+import { Attempts, LIMIT_ATTEMPT, NO_ATTEMPT_REMAINING, LIMIT_ATTEMPTS_ERROR, LIMIT_TIME_ERROR, TIME_LIMIT_IN_MIN, TIME_LIMIT_IN_MS} from './attempts';
 
 @Injectable()
 export class TfaService {
@@ -54,16 +54,16 @@ export class TfaService {
         let message = '';
         const attempt = this.checkAttempt(id);
         // console.log(attempt);
-        if (attempt === -1)
+        if (attempt === LIMIT_ATTEMPTS_ERROR)
             throw new UnauthorizedException('Limit of attempts exceeded: retry in a moment');
-        else if (attempt === -2)
+        else if (attempt === LIMIT_TIME_ERROR)
             throw new UnauthorizedException('Time exceeded: restart login');
-        else if (attempt === 2)
+        else if (attempt > NO_ATTEMPT_REMAINING)
             message = `Wrong authentication code: ${attempt} attempts remaining`;
-        else if (attempt === 1)
-            message = `Wrong authentication code: ${attempt} attempts remaining`;
-        else if (attempt === 0)
+        else if (attempt === NO_ATTEMPT_REMAINING)
             message = 'Limit of attempts exceeded: retry in a moment';
+        else
+            throw new InternalServerErrorException();
 
         const isCodeValid: boolean = await this.isTfaValid(tfa_code, id);
         if (!isCodeValid)
@@ -118,17 +118,15 @@ export class TfaService {
 
     checkAttempt(id: number): number {
         const attempt = this.attempts.get(id);
-    
         if (attempt) {
             attempt.attempt_no++;
             if (attempt.attempt_no > LIMIT_ATTEMPT)
-                return -1;
+                return LIMIT_ATTEMPTS_ERROR;
 
-            // tentative restantes
-            return LIMIT_ATTEMPT - attempt.attempt_no ; // return 2,1,0
+            // attempts remaining: 2, 1 or 0
+            return LIMIT_ATTEMPT - attempt.attempt_no ;
         }
-        // id n est plus dans attempt, car trop long donc retiré
-        return -2;
+        return LIMIT_TIME_ERROR;
     }
 
 }
