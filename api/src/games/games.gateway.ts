@@ -79,7 +79,7 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 
 	@SubscribeMessage('sendAction')
-	async sendAction(client: Socket, body: { action: string }): Promise<void> {
+	async sendAction(client: Socket, body: { actions: string[] }): Promise<void> {
 
 		
 		const loggedUser = this.gamesService.isIdentifed(client);
@@ -91,8 +91,8 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		
 		let game_id = 1;
 
+		this.gamesService.playGame(loggedUser, game_id, body.actions);
 
-		this.gamesService.playGame(loggedUser, game_id, body.action);
 	} 
 
 

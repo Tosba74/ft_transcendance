@@ -43,16 +43,6 @@ export class GameArea {
 
 
 
-	startGame() //set up everything
-	{
-
-		document.getElementById('btn_pause')!.style.visibility = 'visible';
-		document.getElementById('btn_restart')!.style.visibility = 'visible';
-		document.getElementById('btn_start')!.style.visibility = 'hidden';
-		// document.getElementById('btn_exportToJson')!.style.visibility = 'visible';
-	}
-
-
 
 	get_elements() {
 		this.canvas = document.getElementById("canvas") as HTMLCanvasElement;
@@ -114,7 +104,7 @@ export class GameArea {
 		
 
 		module_draw.draw_center_line(ctx);
-		module_draw.draw_scores(ctx, this.playerOne.score, this.playerTwo.score);
+		module_draw.draw_scores(ctx, this.playerOne, this.playerTwo);
 
 		if (this.playerOne.progress_bar != null)
 			module_draw.draw_progress_bar(this.playerOne.progress_bar, this.playerOne);

@@ -2,29 +2,55 @@ import { GameArea } from './pong';
 
 import { Paddle } from './paddle';
 import * as module_const from './constant';
+import * as module_ultimate from './ultimate';
 import { GameDataDto } from './dto/gamedata.dto';
 
 
 
-export function import_action(player: Paddle, action: string) {
+export function import_actions(player: Paddle, actions: string[], other: Paddle) {
 
-  if (action == "w") {
+  let move_actions = ["w", "ArrowUp", "s", "ArrowDown"];
 
-    player.speedY = -module_const.paddle_speed;
-  }
-  else if (action == "s") {
+  actions.forEach((action) => {
+    
+    if (action == "w" || action == "ArrowUp") {
+  
+      player.speedY = -module_const.paddle_speed;
+      player.last_input = false;
+    }
+    else if (action == "s" || action == "ArrowDown") {
+      
+      player.speedY = +module_const.paddle_speed;
+      player.last_input = true;
+    }
+  
+    else if (action == "1" && player.ultimate >= 100) {
+  
+      player.addABALL = true;
+      player.ultimate = 0;
+    }
+    else if (action == "2" && player.ultimate >= 100) {
+  
+      module_ultimate.paddle_dash(player);
+      player.ultimate = 0;
+    }
+    else if (action == "3" && player.ultimate >= 100) {
+  
+      module_ultimate.paddle_reduce(other);
+      player.ultimate = 0;
+    }
+  
+    else if (action == "ready") {
+  
+      player.ready = true;
+    }
+    else if (action == "unready") {
+  
+      player.ready = false;
+    }
+  });
 
-    player.speedY = +module_const.paddle_speed;
-  }
-  else if (action == "ready") {
-
-    player.ready = true;
-  }
-  else if (action == "unready") {
-
-    player.ready = false;
-  }
-  else {
+  if (actions.some((action) => { return move_actions.indexOf(action) != -1 } ) == false) {
 
     player.speedY = 0;
   }

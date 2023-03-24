@@ -25,7 +25,7 @@ export function paddle_reduce(player: Paddle) {
 
 export function ext_add_ball(this: GameArea, angle: number, x: number, y: number) //create another ball
 {
-	this.balls.push(new Ball(x, y, module_const.ball_radius, this.balls[this.balls.length - 1].speed / 1.5));
+	this.balls.push(new Ball(x, y, module_const.ball_radius, Math.max(this.balls[this.balls.length - 1].speed / 1.5, module_const.ball_spawn_speed)));
 
 	this.balls[this.balls.length - 1].changeAngle(-angle);
 }

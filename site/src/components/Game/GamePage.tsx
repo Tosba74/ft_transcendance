@@ -41,7 +41,7 @@ export default function GamePage({ gamer }: GamePageProps) {
 			width: "0%",
 			height: "30px",
 			backgroundColor: "#4CBB17",
-			float: "right"
+			// float: "right"
 		},
 
 		myTable: {
@@ -63,7 +63,7 @@ export default function GamePage({ gamer }: GamePageProps) {
 
 
 	let keys: string[] = [];
-	let controls = ["w", "s"];
+	let controls = ["w", "s", "ArrowUp", "ArrowDown", "1", "2", "3"];
 
 	window.onkeyup = (e: KeyboardEvent): any => {
 		if (controls.indexOf(e.key) == -1)
@@ -76,7 +76,7 @@ export default function GamePage({ gamer }: GamePageProps) {
 
 
 		if (keys.length == 0)
-			gamer.playGame("");
+			gamer.playGame([]);
 
 	}
 
@@ -88,7 +88,9 @@ export default function GamePage({ gamer }: GamePageProps) {
 		keys.push(e.key);
 
 		if (keys.length > 0)
-			gamer.playGame(e.key);
+		{
+			gamer.playGame(keys);
+		}
 	}
 
 
@@ -157,20 +159,9 @@ export default function GamePage({ gamer }: GamePageProps) {
 				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_start" onClick={() => { gamer.gameArea.current?.get_elements(); }}>
 					Get
 				</button>
-				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_start" onClick={() => { gamer.gameArea.current?.startGame() }}>
+				
+				{/* <button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_start" onClick={() => { gamer.gameArea.current?.startGame() }}>
 					Start
-				</button>
-				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_pause" style={{ visibility: 'hidden' }} onClick={() => { gamer.gameArea.current?.do_pause() }}>
-					Pause
-				</button>
-				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_restart" style={{ visibility: 'hidden' }} onClick={() => { gamer.gameArea.current?.restart() }}>
-					restart
-				</button>
-				{/* <button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" style={{visibility: 'hidden'}} id="btn_exportToJson" onClick={gameArea.exportToJson_pone}>
-					export to JSON for P1
-				</button>
-				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" style={{visibility: 'hidden'}} id="btn_exportToJson" onClick={gameArea.exportToJson_ptwo}>
-					export to JSON for P2
 				</button> */}
 			</div>
 			<p>/!CONTROL!\</p>

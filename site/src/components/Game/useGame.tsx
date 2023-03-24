@@ -87,10 +87,10 @@ const useGame = ({ logged, token }: useGameProps) => {
   }
 
 
-  const playGame = (action: string) => {
+  const playGame = (actions: string[]) => {
 
     gameSocketRef.current &&
-      gameSocketRef.current.emit("sendAction", { action: action }, (response: void) => {});
+      gameSocketRef.current.emit("sendAction", { actions: actions }, (response: void) => {});
   }
 
 

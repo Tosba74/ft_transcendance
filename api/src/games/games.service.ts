@@ -7,7 +7,7 @@ import { GameModel } from "./models/game.model";
 
 
 import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
-import { import_action } from './gamelogic/export';
+import { import_actions } from './gamelogic/export';
 import { GameArea } from './gamelogic/pong';
 import * as module_const from './gamelogic/constant';
 
@@ -18,10 +18,6 @@ class GameRoom {
   timer: NodeJS.Timer;
 
   game: GameArea = new GameArea();
-
-  // constructor() {
-  //   this.game = new GameData();
-  // }
 }
 
 
@@ -39,7 +35,6 @@ export class GamesService {
   constructor(@InjectRepository(GameModel) private gamesRepository: Repository<GameModel>) { }
 
   currentGames: { [key: number]: GameRoom } = {};
-  // currentGames: Map<number, GameRoom>;
 
   clients: WebsocketUser[] = [];
 
@@ -92,7 +87,7 @@ export class GamesService {
   
 
 
-  playGame(user: WebsocketUser, game_id: number, action: string) {
+  playGame(user: WebsocketUser, game_id: number, actions: string[]) {
 
     if (this.currentGames[game_id] == undefined)
     {
@@ -103,12 +98,12 @@ export class GamesService {
 
     if (this.currentGames[game_id].host && this.currentGames[game_id].host?.user.id == user.user.id) {
 
-      import_action(this.currentGames[game_id].game.playerOne, action);
+      import_actions(this.currentGames[game_id].game.playerOne, actions, this.currentGames[game_id].game.playerTwo);
     }
     
     else if (this.currentGames[game_id].guest && this.currentGames[game_id].guest?.user.id == user.user.id) {
       
-      import_action(this.currentGames[game_id].game.playerTwo, action);
+      import_actions(this.currentGames[game_id].game.playerTwo, actions, this.currentGames[game_id].game.playerOne);
     }
   }
 

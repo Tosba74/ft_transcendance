@@ -10,6 +10,8 @@ export class Ball {
 	public yunits: number;
 	public radians: number;
 	public goal: boolean;
+
+	public first_bounce: boolean;
 	
 	constructor(x: number, y: number, radius: number, speed: number) {
 		this.x = x;
@@ -22,6 +24,7 @@ export class Ball {
 		this.radians = 0;
 		this.changeAngle(0);
 		this.goal = false;
+		this.first_bounce = true;
 	}
 
 	changeAngle(angle: number) {

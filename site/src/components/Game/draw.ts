@@ -26,7 +26,7 @@ export function draw_center_line(context: CanvasRenderingContext2D) //draw line 
 	}
 }
 
-export function draw_scores(context: CanvasRenderingContext2D, score1: number, score2: number) //draw score p1 & p2
+export function draw_scores(context: CanvasRenderingContext2D, player1: Paddle, player2: Paddle) //draw score p1 & p2
 {
 	context.fillStyle = "white";
 	context.font = module_const.score_size + "px pixel";
@@ -35,25 +35,21 @@ export function draw_scores(context: CanvasRenderingContext2D, score1: number, s
 	let txt_W_Pone = module_const.score1_x;
 	let txt_W_Ptwo = module_const.score2_x;
 
-	context.fillText(score1.toString(), txt_W_Pone, txt_H);
-	context.fillText(score2.toString(), txt_W_Ptwo, txt_H);
+	context.fillText(player1.score.toString(), txt_W_Pone, txt_H);
+	context.fillText(player2.score.toString(), txt_W_Ptwo, txt_H);
 
-	if (score1 >= 10) {
-
-		document.getElementById('btn_pause')!.style.visibility = 'hidden';
+	if (player1.score >= 10) {
 
 		context.font = module_const.canvas_width / 10 + "px pixel";
-		context.fillStyle = module_const.paddle_color;
+		context.fillStyle = player1.color;
 		context.textAlign = "center";
 		context.fillText("player one WON!", module_const.canvas_width / 2, module_const.canvas_height / 2);
 	}
 
-	if (score2 >= 10) {
-
-		document.getElementById('btn_pause')!.style.visibility = 'hidden';
+	if (player2.score >= 10) {
 
 		context.font = module_const.canvas_width / 10 + "px pixel";
-		context.fillStyle = module_const.paddle2_color;
+		context.fillStyle = player2.color;
 		context.textAlign = "center";
 		context.fillText("player two WON!", module_const.canvas_width / 2, module_const.canvas_height / 2);
 	}
