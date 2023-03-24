@@ -65,7 +65,6 @@ export class GameArea {
 
 	public canvas: HTMLCanvasElement | null;
 	public context: CanvasRenderingContext2D | null;
-	public progress_bar: HTMLElement | null;
 
 	// public interval: any;
 	public pause = false;
@@ -80,14 +79,14 @@ export class GameArea {
 
 		this.canvas = null;
 		this.context = null;
-		this.progress_bar = null;
 
 
 		this.balls.push(new Ball(module_const.ball_x, module_const.ball_y, module_const.ball_radius, module_const.ball_speed / 3));
 
 		this.playerOne = new Paddle(module_const.paddle_width, module_const.paddle_height, module_const.paddle_color, module_const.paddle_x, module_const.paddle_y);
 		this.playerTwo = new Paddle(module_const.paddle_width, module_const.paddle_height, module_const.paddle2_color, module_const.paddle2_x, module_const.paddle_y);
-
+		this.playerOne.ultimate = 100;
+		this.playerTwo.ultimate = 30;
 		console.log('dasd');
 
 		// this.interval = setInterval(() => { this.update(); this.render(); }, 1000 / 50); //50 fps
@@ -123,8 +122,11 @@ export class GameArea {
 		if (this.context == null)
 			return ;
 
-		this.progress_bar = document.getElementById("myBar");
-		if (this.progress_bar == null)
+		this.playerOne.progress_bar = document.getElementById("myBar");
+		if (this.playerOne.progress_bar == null)
+			return ;
+		this.playerTwo.progress_bar = document.getElementById("myBar2");
+		if (this.playerTwo.progress_bar == null)
 			return ;
 	}
 
@@ -191,8 +193,10 @@ export class GameArea {
 
 				module_draw.draw_center_line(ctx);
 				module_draw.draw_scores(ctx, this.playerOne.score, this.playerTwo.score);
-				if (this.progress_bar != null)
-					module_draw.draw_progress_bar(this.progress_bar, this.playerOne);
+				if (this.playerOne.progress_bar != null)
+					module_draw.draw_progress_bar(this.playerOne.progress_bar, this.playerOne);
+				if (this.playerTwo.progress_bar != null)
+					module_draw.draw_progress_bar(this.playerTwo.progress_bar, this.playerTwo);
 
 				ctx.restore();
 			// }

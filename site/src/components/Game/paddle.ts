@@ -18,6 +18,7 @@ export class Paddle //set up first playerOne
 	public score: number;
 	public bonk: number; //for reduce paddle
 	public reducePaddle: boolean; //for reduce paddle
+	public progress_bar: HTMLElement | null;
 
 	constructor(width: number, height: number, color: string, x: number, y: number) {
 		//var canvas = document.getElementById("canvas");
@@ -34,21 +35,22 @@ export class Paddle //set up first playerOne
 		this.score = 0;
 		this.bonk = -1;
 		this.reducePaddle = false;
+		this.progress_bar = null;
 	}
-	
+
 	update() {
 		this.y += this.speedY;
 
 		this.y = Math.max(this.y, 0);
 		this.y = Math.min(this.y, module_const.canvas_height - this.height);
-		
+
 	}
-	
+
 	render(context: CanvasRenderingContext2D) {
 		context.fillStyle = this.color;
 		context.fillRect(this.x, this.y, this.width, this.height);
 	}
-	
+
 	reset() {
 		this.speedY = 0;
 		this.speedX = 0;

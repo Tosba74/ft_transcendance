@@ -36,14 +36,33 @@ export default function GamePage({ gamer }: GamePageProps) {
 	const styles = {
 		myProgress: {
 			width: "100%",
-			backgroundColor: "#ddd"
+			backgroundColor: "#ddd",
+			border: "1px solid black"
 		},
-
+		myProgress2: {
+			width: "100%",
+			backgroundColor: "#ddd",
+			border: "1px solid black",
+			overflow: "hidden"
+		},
 		myBar: {
 			width: "0%",
 			height: "30px",
 			backgroundColor: "#4CBB17"
 		},
+		myBar2: {
+			width: "0%",
+			height: "30px",
+			backgroundColor: "#4CBB17",
+			float: "right"
+		},
+
+		myTable: {
+			width: "100%",
+			backgroundColor: "#CBD18F",
+			border: "1px solid black"
+
+		}
 	};
 
 
@@ -129,10 +148,30 @@ export default function GamePage({ gamer }: GamePageProps) {
 					<a className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" id="btn_ult2">
 						3: Reduce paddle
 					</a>
-					<div id="myProgress" style={styles.myProgress}>
-						<div id="myBar" style={styles.myBar}>
-						</div>
-					</div>
+					<table style={styles.myTable}>
+						<tr>
+							<td style={{ width: "50%" }}>
+								<p style={{ textAlign: 'center', width: "100%" }}>player 1</p>
+							</td>
+							<td style={{ width: "50%" }}>
+								<p style={{ textAlign: 'center', width: "100%" }}>player 2</p>
+							</td>
+						</tr>
+						<tr >
+							<td style={{ width: "50%", paddingRight: "40px" }}>
+								<div id="myProgress" style={styles.myProgress}>
+									<div id="myBar" style={styles.myBar}>
+									</div>
+								</div>
+							</td>
+							<td style={{ width: "50%", paddingLeft: "40px" }}>
+								<div id="myProgress2" style={styles.myProgress2}>
+									<div id="myBar2" style={styles.myBar2}>
+									</div>
+								</div>
+							</td>
+						</tr>
+					</table>
 				</div>
 				<canvas className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" id="canvas" style={{ border: '1px solid rgba(255, 255, 255, 0.85)', backgroundColor: 'rgba(0, 0, 0, 0.85)', width: '100%', maxWidth: '2000px' }}>
 				</canvas>
