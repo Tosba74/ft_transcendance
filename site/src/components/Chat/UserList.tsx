@@ -1,23 +1,30 @@
-import { channel } from 'diagnostics_channel';
-import { Fragment, useState } from 'react';
+
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Channel } from './Channel'
-import { Mock_Channel } from './Mock_Channel';
 import { Profile } from '../Profile/Profile'
 import { Mock_Profile } from '../Profile/Mock_Profile';
 
-export default function UserList() {
-	const [channels] = useState<Channel[]>(Mock_Channel);
+interface UserListProps {
+	lstChannel: Channel[];
+	setCurrChannel: Function;
+}
+
+export default function UserList({lstChannel, setCurrChannel }: UserListProps) {
 	const [clients] = useState<Profile[]>(Mock_Profile);
+	const handleChange = (chan: Channel) => {
+		setCurrChannel(chan.id);
+	}
+	// const [channels] = useState<Channel[]>(Mock_Channel);
 	return (
 		<div className="h-screen w-full p-2">
 			<div className="h-1/3 bg-gray-800 p-2 shadow-inner-lg rounded-md"> 
 				<div className="scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
-					{channels.map((channel) => (
+					{lstChannel.map((channel) => (
 						<div>
-							<Link to='#'>
+							<button type="button" onClick={() => {handleChange(channel)}}>
 								<strong>{channel.name}</strong> <small>{channel.title}</small>
-							</Link>
+							</button>
 						</div>
 					))}
 				</div>

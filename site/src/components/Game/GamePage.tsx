@@ -9,7 +9,7 @@ export default function GamePage() {
 
 
     return (
-        <div className="w-full h-screen flex flex-wrap p-8 ">
+        <div className="w-full h-screen p-6 flex flex-col lg:flex-row gap-4">
             <div className="h-4/6 w-full lg:w-2/3 bg-black">
                 Game!!
             </div>
