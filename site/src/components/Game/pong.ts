@@ -85,8 +85,6 @@ export class GameArea {
 
 		this.playerOne = new Paddle(module_const.paddle_width, module_const.paddle_height, module_const.paddle_color, module_const.paddle_x, module_const.paddle_y);
 		this.playerTwo = new Paddle(module_const.paddle_width, module_const.paddle_height, module_const.paddle2_color, module_const.paddle2_x, module_const.paddle_y);
-		this.playerOne.ultimate = 100;
-		this.playerTwo.ultimate = 30;
 		console.log('dasd');
 
 		// this.interval = setInterval(() => { this.update(); this.render(); }, 1000 / 50); //50 fps

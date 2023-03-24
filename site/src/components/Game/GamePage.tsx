@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { CSSProperties } from "react";
 
 import { GameArea } from "./pong";
 
@@ -43,7 +44,6 @@ export default function GamePage({ gamer }: GamePageProps) {
 			width: "100%",
 			backgroundColor: "#ddd",
 			border: "1px solid black",
-			overflow: "hidden"
 		},
 		myBar: {
 			width: "0%",
@@ -54,7 +54,8 @@ export default function GamePage({ gamer }: GamePageProps) {
 			width: "0%",
 			height: "30px",
 			backgroundColor: "#4CBB17",
-			float: "right"
+			marginLeft: "auto",
+			marginRight: "0"
 		},
 
 		myTable: {
@@ -72,7 +73,8 @@ export default function GamePage({ gamer }: GamePageProps) {
 			width: '100%',
 			maxWidth: '2000px'
 		}
-	};
+	}
+
 
 
 	window.onkeyup = (e: KeyboardEvent): any => {
