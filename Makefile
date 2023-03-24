@@ -54,17 +54,19 @@ renginx:
 			${DOCKER} restart nginx
 
 
-run:		
+run:
 			${DOCKER} exec front sh
-runapi:		
+runapi:
 			${DOCKER} exec back sh
-runnginx:		
+runnginx:
 			${DOCKER} exec nginx bash
-runpostg:		
+runpostg:
 			${DOCKER} exec postgres bash
-rundb:		
+rundb:
 			${DOCKER} exec postgres psql --host=postgres --dbname=test_db --username=user -W
 
+prettier:
+			${DOCKER} exec front yarn prettier
 
 migrate-create:
 			@echo "Usage: make migrate-create DEST=name";
