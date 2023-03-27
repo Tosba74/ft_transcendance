@@ -66,6 +66,7 @@ export default function GamePage({ gamer }: GamePageProps) {
 
 	let keys: string[] = [];
 	let controls = ["w", "s", "ArrowUp", "ArrowDown", "1", "2", "3"];
+	// let move_actions = ["w", "ArrowUp", "s", "ArrowDown"];
 
 	window.onkeyup = (e: KeyboardEvent): any => {
 		if (controls.indexOf(e.key) == -1)
@@ -76,9 +77,8 @@ export default function GamePage({ gamer }: GamePageProps) {
 		if (ind != -1)
 			keys.splice(ind, 1);
 
-
-		if (keys.length == 0)
-			gamer.playGame([]);
+		// if (!keys.some((action) => { return move_actions.indexOf(action) != -1 }))
+			gamer.playGame(keys);
 
 	}
 
@@ -89,15 +89,14 @@ export default function GamePage({ gamer }: GamePageProps) {
 
 		keys.push(e.key);
 
-		if (keys.length > 0)
-		{
+		if (keys.length > 0) {
 			gamer.playGame(keys);
 		}
 	}
 
 
 	return (
-		
+
 		<div className="bg-yellow-400 w-full h-full">
 			{/* <h2>ICI !!! on game !!</h2> */}
 			<div className="bg-gray-800 w-full z-50 top-10 px-40">
@@ -162,7 +161,7 @@ export default function GamePage({ gamer }: GamePageProps) {
 				<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_start" onClick={() => { gamer.gameArea.current?.get_elements(); }}>
 					Get
 				</button>
-				
+
 				{/* <button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_start" onClick={() => { gamer.gameArea.current?.startGame() }}>
 					Start
 				</button> */}
