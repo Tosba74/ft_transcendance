@@ -76,10 +76,11 @@ export default function BannedList() {
         {users.map((user) => {
           return (
             <li key={user.id} className="text-slate-500 line-through">
-              <span className="cursor-pointer">
+              {/* <span className="cursor-pointer"> */}
+              <User user={user}>
                 <MdClose className="inline-block" />
-                <User user={user}></User>
-              </span>
+              </User>
+              {/* </span> */}
             </li>
           );
         })}

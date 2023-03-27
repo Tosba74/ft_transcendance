@@ -21,6 +21,11 @@ export default function UserStatus({ status }: { status: string }) {
   }
 
   return (
-    <span className={`mr-1 inline-block h-3 w-3 rounded-full ${color}`}></span>
+    <>
+      <span
+        title={status}
+        className={`mr-1 inline-block h-3 w-3 rounded-full ${color}`}
+      ></span>
+    </>
   );
 }
