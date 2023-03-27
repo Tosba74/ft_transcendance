@@ -67,6 +67,7 @@ export default function GamePage({ gamer }: GamePageProps) {
 
 	let keys: string[] = [];
 	let controls = ["w", "s", "ArrowUp", "ArrowDown", "1", "2", "3"];
+	// let move_actions = ["w", "ArrowUp", "s", "ArrowDown"];
 
 	window.onkeyup = (e: KeyboardEvent): any => {
 		if (controls.indexOf(e.key) == -1)
@@ -77,9 +78,8 @@ export default function GamePage({ gamer }: GamePageProps) {
 		if (ind != -1)
 			keys.splice(ind, 1);
 
-
-		if (keys.length == 0)
-			gamer.playGame([]);
+		// if (!keys.some((action) => { return move_actions.indexOf(action) != -1 }))
+			gamer.playGame(keys);
 
 	}
 
@@ -90,8 +90,7 @@ export default function GamePage({ gamer }: GamePageProps) {
 
 		keys.push(e.key);
 
-		if (keys.length > 0)
-		{
+		if (keys.length > 0) {
 			gamer.playGame(keys);
 		}
 	}
