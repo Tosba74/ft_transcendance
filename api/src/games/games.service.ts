@@ -128,6 +128,8 @@ export class GamesService {
 
     // console.log('emit');
     server.emit("gameInfos", { game: game.export() });
+	if (game.playerOne.score >= 10 || game.playerTwo.score >= 10)
+			clearInterval(this.currentGames[game_id].timer);
   }
 
 
