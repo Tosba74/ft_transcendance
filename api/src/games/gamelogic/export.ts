@@ -18,7 +18,7 @@ export function import_actions(player: Paddle, actions: string[], other: Paddle,
 
 		player.speedY = -module_const.paddle_speed;
 		player.last_input = false;
-		player.ultimate = 100;
+		//player.ultimate = 100;
 		}
 		else if (action == "s" || action == "ArrowDown") {
 
