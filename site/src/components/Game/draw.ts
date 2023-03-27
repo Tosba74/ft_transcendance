@@ -55,16 +55,18 @@ export function draw_scores(context: CanvasRenderingContext2D, player1: Paddle, 
 	}
 }
 
-export function draw_progress_bar(elem: HTMLElement, player: Paddle) {
+export function draw_progress_bar(elem: HTMLElement, player: Paddle, style: string) {
 
 	elem.style.width = player.ultimate + "%";
 
 	if (player.ultimate >= 100) {
 
 		elem.classList.add("super-charged");
+		elem.classList.add(style);
 	}
 	else {
 		elem.classList.remove("super-charged");
+		elem.classList.remove(style);
 		elem.style.backgroundColor = "#4CBB17";
 	}
 }

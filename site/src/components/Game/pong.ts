@@ -107,10 +107,10 @@ export class GameArea {
 		module_draw.draw_scores(ctx, this.playerOne, this.playerTwo);
 
 		if (this.playerOne.progress_bar != null)
-			module_draw.draw_progress_bar(this.playerOne.progress_bar, this.playerOne);
+			module_draw.draw_progress_bar(this.playerOne.progress_bar, this.playerOne, "super-charged-left");
 
 		if (this.playerTwo.progress_bar != null)
-			module_draw.draw_progress_bar(this.playerTwo.progress_bar, this.playerTwo);
+			module_draw.draw_progress_bar(this.playerTwo.progress_bar, this.playerTwo, "super-charged-right");
 
 
 		ctx.restore();

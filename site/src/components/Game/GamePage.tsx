@@ -97,6 +97,7 @@ export default function GamePage({ gamer }: GamePageProps) {
 
 
 	return (
+		
 		<div className="bg-yellow-400 w-full h-full">
 			{/* <h2>ICI !!! on game !!</h2> */}
 			<div className="bg-gray-800 w-full z-50 top-10 px-40">
