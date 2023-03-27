@@ -31,7 +31,7 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	@SubscribeMessage('identify')
 	@UseGuards(WsAuthGuard)
-	async identify(@ConnectedSocket() client: Socket): Promise<{ error: string | undefined }> { 
+	async identify(@ConnectedSocket() client: Socket): Promise<{ error: string | undefined }> {
 
 		const user = (client.handshake as any).user as LoggedUserDto;
 
@@ -44,13 +44,13 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@SubscribeMessage('createGame')
 	async createGame(client: Socket, body: { }): Promise<void> {
 
-		
+
 		const loggedUser = this.gamesService.isIdentifed(client);
-		
+
 		if (loggedUser == undefined) {
 			throw new WsException('Not identified');
 		}
-		
+
 		let game_id = 1;
 		let game_function = () => {
 			this.gamesService.gameLife(this.server, game_id);
@@ -63,13 +63,13 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@SubscribeMessage('joinGame')
 	async joinGame(client: Socket, body: { }): Promise<void> {
 
-		
+
 		const loggedUser = this.gamesService.isIdentifed(client);
-		
+
 		if (loggedUser == undefined) {
 			throw new WsException('Not identified');
 		}
-		
+
 		let game_id = 1;
 
 
@@ -81,19 +81,19 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@SubscribeMessage('sendAction')
 	async sendAction(client: Socket, body: { actions: string[] }): Promise<void> {
 
-		
+
 		const loggedUser = this.gamesService.isIdentifed(client);
-		
+
 		if (loggedUser == undefined) {
 			throw new WsException('Not identified');
 		}
 		// console.log('play')
-		
+
 		let game_id = 1;
 
 		this.gamesService.playGame(loggedUser, game_id, body.actions);
 
-	} 
+	}
 
 
 

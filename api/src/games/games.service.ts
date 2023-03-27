@@ -74,17 +74,17 @@ export class GamesService {
       console.log('joined game not exists');
       return;
     }
-    
+
     if (this.currentGames[game_id].guest == undefined) {
-      
+
       this.currentGames[game_id].guest = user;
     }
-    
+
     console.log('join');
-    
+
   }
-  
-  
+
+
 
 
   playGame(user: WebsocketUser, game_id: number, actions: string[]) {
@@ -98,12 +98,12 @@ export class GamesService {
 
     if (this.currentGames[game_id].host && this.currentGames[game_id].host?.user.id == user.user.id) {
 
-      import_actions(this.currentGames[game_id].game.playerOne, actions, this.currentGames[game_id].game.playerTwo);
+      import_actions(this.currentGames[game_id].game.playerOne, actions, this.currentGames[game_id].game.playerTwo, this.currentGames[game_id].game.balls);
     }
-    
-    else if (this.currentGames[game_id].guest && this.currentGames[game_id].guest?.user.id == user.user.id) {
-      
-      import_actions(this.currentGames[game_id].game.playerTwo, actions, this.currentGames[game_id].game.playerOne);
+
+    else if (this.currentGames[game_id].guest && this.currentGames[game_id].guest?.user.id == user.user.id, this.currentGames[game_id].game.balls) {
+
+      import_actions(this.currentGames[game_id].game.playerTwo, actions, this.currentGames[game_id].game.playerOne, this.currentGames[game_id].game.balls);
     }
   }
 

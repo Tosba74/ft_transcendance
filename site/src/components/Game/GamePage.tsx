@@ -48,7 +48,8 @@ export default function GamePage({ gamer }: GamePageProps) {
 		myTable: {
 			width: "100%",
 			backgroundColor: "#CBD18F",
-			border: "1px solid black"
+			border: "1px solid black",
+			maxWidth: '2000px',
 		},
 		padding: {
 			paddingLeft: "40px",
@@ -58,7 +59,7 @@ export default function GamePage({ gamer }: GamePageProps) {
 			border: '1px solid rgba(255, 255, 255, 0.85)',
 			backgroundColor: 'rgba(0, 0, 0, 0.85)',
 			width: '100%',
-			maxWidth: '2000px'
+			maxWidth: '2000px',
 		}
 	}
 
@@ -98,21 +99,12 @@ export default function GamePage({ gamer }: GamePageProps) {
 	return (
 
 		<div className="bg-yellow-400 w-full h-full">
-			{/* <h2>ICI !!! on game !!</h2> */}
-			<div className="bg-gray-800 w-full z-50 top-10 px-40">
-				<div className="flex flex-row space-x-4 rounded bg-gray-400 border border-gray-300 w-40 text-center items-center basis-1 md:basis-1/2 ld:basis-1/4 bg-gray-300">
-					<div className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300">01</div>
-					<div className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300">02</div>
-					<div className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300">03</div>
-					<div className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300">04</div>
-				</div>
-			</div>
 			<div style={styles.padding}>
 				<div >
-					<p>ULTIME :</p>
-					{/* <button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_add_ball" onClick={() => { gameArea.boost_ult() }}>
+					<p>ULTIME:</p>
+					{ /*<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_add_ball" onClick={() => { gamer.boost_ult() }}>
 						ADMIN: BOOST ULT
-					</button> */}
+						</button>*/ }
 					<a className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" id="btn_ult0">
 						1: Add a ball
 					</a>
@@ -123,28 +115,32 @@ export default function GamePage({ gamer }: GamePageProps) {
 						3: Reduce paddle
 					</a>
 					<table style={styles.myTable}>
-						<tr>
-							<td style={{ width: "50%" }}>
-								<p style={{ textAlign: 'center', width: "100%" }}>player 1</p>
-							</td>
-							<td style={{ width: "50%" }}>
-								<p style={{ textAlign: 'center', width: "100%" }}>player 2</p>
-							</td>
-						</tr>
-						<tr >
-							<td style={{ width: "50%", paddingRight: "40px" }}>
-								<div id="myProgress" style={styles.myProgress}>
-									<div id="myBar" style={styles.myBar}>
+						<thead>
+							<tr>
+								<td style={{ width: "50%" }}>
+									<p style={{ textAlign: 'center', width: "100%" }}>player 1</p>
+								</td>
+								<td style={{ width: "50%" }}>
+									<p style={{ textAlign: 'center', width: "100%" }}>player 2</p>
+								</td>
+							</tr>
+						</thead>
+						<tbody>
+							<tr >
+								<td style={{ width: "50%", paddingRight: "40px" }}>
+									<div id="myProgress" style={styles.myProgress}>
+										<div id="myBar" style={styles.myBar}>
+										</div>
 									</div>
-								</div>
-							</td>
-							<td style={{ width: "50%", paddingLeft: "40px" }}>
-								<div id="myProgress2" style={styles.myProgress2}>
-									<div id="myBar2" style={styles.myBar2}>
+								</td>
+								<td style={{ width: "50%", paddingLeft: "40px" }}>
+									<div id="myProgress2" style={styles.myProgress2}>
+										<div id="myBar2" style={styles.myBar2}>
+										</div>
 									</div>
-								</div>
-							</td>
-						</tr>
+								</td>
+							</tr>
+						</tbody>
 					</table>
 				</div>
 				<canvas className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" id="canvas" style={styles.myCanvas}>
