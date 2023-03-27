@@ -10,12 +10,34 @@ export function ext_boost_ult(this: GameArea) {
 	this.playerOne.ultimate = 100;
 }
 
-export function paddle_dash(player: Paddle) {
-	if (player.last_input == false)
+export function paddle_dash(player: Paddle, balls : Ball[]) {
+	/*if (player.last_input == false)
 		player.y -= 100;
-
 	if (player.last_input == true)
-		player.y += 100;
+		player.y += 100;*/
+	let closestW = module_const.canvas_width;
+	let closestY = 0;
+	let val = player.x;
+	balls.forEach(element => {
+		if (player.x < module_const.canvas_width && closestW > element.x)
+		{
+			closestW = element.x;
+			closestY = element.y;
+		}
+		if (player.x > module_const.canvas_width && closestW < element.x)
+		{
+			closestW = element.x;
+			closestY = element.y;
+		}
+	});
+	player.y = closestY - (player.height / 2);
+	player.color = "#FAFA33";
+	setTimeout(function() {
+		if (player.x < module_const.canvas_width / 2)
+			player.color = module_const.paddle_color;
+		else
+			player.color = module_const.paddle2_color;
+	}, 100);
 }
 
 export function paddle_reduce(player: Paddle) {

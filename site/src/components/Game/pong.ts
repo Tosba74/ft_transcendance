@@ -85,23 +85,22 @@ export class GameArea {
 		}
 		let ctx = this.context;
 
-
-
 		this.canvas.width = module_const.canvas_width;
 		this.canvas.height = module_const.canvas_height;
+
 		this.canvas.tabIndex = 1;
 
-		
+
 		ctx.save();
 		ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-		
+
 		this.playerOne.render(ctx);
 		this.playerTwo.render(ctx);
-		
+
 		this.balls.forEach((value) => {
 			value.render(ctx);
 		});
-		
+
 
 		module_draw.draw_center_line(ctx);
 		module_draw.draw_scores(ctx, this.playerOne, this.playerTwo);
