@@ -98,7 +98,7 @@ export default function GamePage({ gamer }: GamePageProps) {
 
 
 	return (
-		
+
 		<div className="bg-yellow-400 w-full h-full">
 			<div style={styles.padding}>
 				<div >

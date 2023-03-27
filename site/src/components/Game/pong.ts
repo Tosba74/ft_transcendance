@@ -97,10 +97,13 @@ export class GameArea {
 		this.playerOne.render(ctx);
 		this.playerTwo.render(ctx);
 
-		this.balls.forEach((value) => {
-			value.render(ctx);
-		});
-
+		if (this.playerOne.score < 10 && this.playerTwo.score < 10)
+		{
+			this.balls.forEach((value) => {
+				if (this.playerOne.score < 10 && this.playerTwo.score < 10)
+					value.render(ctx);
+			});
+		}
 
 		module_draw.draw_center_line(ctx);
 		module_draw.draw_scores(ctx, this.playerOne, this.playerTwo);
