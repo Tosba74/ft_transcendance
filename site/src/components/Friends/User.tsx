@@ -1,25 +1,29 @@
 import React from "react";
-import UserStatus from "./UserStatus";
 
 interface UserProps {
-  id: number;
+  user: {
+    id: number;
+    login_name: string;
+    pseudo: string;
+    avatar_url: string;
+    is_admin: boolean;
+    access_token: null;
+    color: number;
+    tfa_enabled: boolean;
+    status_updated_at: string;
+    created_at: string;
+    updated_at: string;
+    validate_date: null;
+    status: string;
+  };
   children?: React.ReactNode;
 }
 
 export default function User(props: UserProps) {
-  let name: string = "Random";
-  if (props.id === 1) {
-    name = "Victor";
-  } else if (props.id === 2) {
-    name = "Jarom";
-  } else if (props.id === 3) {
-    name = "Julien";
-  }
-
   return (
     <>
       {props.children}
-      {name}
+      {props.user.login_name}
     </>
   );
 }
