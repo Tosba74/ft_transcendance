@@ -9,6 +9,7 @@ then
     yarn add react-router-dom
     yarn add axios
     yarn add tailwindcss postcss autoprefixer classnames
+    yarn add react-icons
     yarn add --dev prettier prettier-plugin-tailwindcss
     yarn add jwt-decode
     yarn add randomstring
