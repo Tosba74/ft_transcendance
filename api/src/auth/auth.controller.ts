@@ -101,7 +101,7 @@ export class AuthController {
                 headers: {
                     'Authorization': `Bearer ${access_token}`
                 }
-            })
+            });
 
             try {
                 const coal_data: any = await axios.get(`https://api.intra.42.fr/v2/users/${datas.data.login}/coalitions_users`, {

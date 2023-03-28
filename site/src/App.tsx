@@ -4,7 +4,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 
 import ReactPage from "./components/ReactPage";
-import GamePage from "./components/Game/GamePage";
 import HomePage from "./components/Home/HomePage";
 import ProfilePage from "./components/Settings/SettingsPage";
 import LogPage from "./components/Log/LogPage";
@@ -20,13 +19,27 @@ import { UseLoginDto } from "./components/Log/dto/useLogin.dto";
 import useLogin from "./components/Log/useLogin";
 import UserListPage from "./components/UserList/UserListPage";
 import ChatPage from "./components/Chat/ChatMenu";
+import GamePage from "./components/Game/GamePage";
 import TfaCodePage from "./components/Log/TfaCodePage";
 import CreateAccountPage from "./components/Log/CreateAccountPage";
 import FriendsPage from "./components/Friends/FriendsPage";
+import { UseChatDto } from "./components/Chat/dto/useChat.dto";
+import { UseGameDto } from "./components/Game/dto/useGame.dto";
+import useChat from "./components/Chat/useChat";
+import useGame from "./components/Game/useGame";
 
 export default function App() {
   const loginer: UseLoginDto = useLogin();
   const [openedMenu, setOpenedMenu] = React.useState("");
+
+  let chats: UseChatDto = useChat({
+    logged: loginer.logged,
+    token: loginer.token,
+  });
+  let gamer: UseGameDto = useGame({
+    logged: loginer.logged,
+    token: loginer.token,
+  });
 
   return (
     <Router>
@@ -55,7 +68,7 @@ export default function App() {
                 path="/settings"
                 element={<SettingsPage loginer={loginer} />}
               />
-              <Route path="/game" element={<GamePage />} />
+              <Route path="/game" element={<GamePage gamer={gamer} />} />
               <Route path="/history" element={<ReactPage />} />
             </>
           )}

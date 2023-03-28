@@ -1,182 +1,107 @@
-import * as module_const from './constant'
+import * as module_const from "./constant";
 
+import * as module_draw from "./draw";
+import { Paddle } from "./paddle";
+import { Ball } from "./ball";
 
-
-import * as module_draw from './draw'
-import { Paddle } from './paddle';
-import { Ball } from './ball';
-
-import { ext_check_for_collisions, ext_calculate_impact } from './impact';
-import { ext_add_ball, ext_boost_ult } from './ultimate';
-import { ext_bounce_action } from './impact';
-
-
+import { GameDataDto } from "./dto/gamedata.dto";
 
 export class GameArea {
+  public canvas: HTMLCanvasElement | null;
+  public context: CanvasRenderingContext2D | null;
 
-	public canvas: HTMLCanvasElement | null;
-	public context: CanvasRenderingContext2D | null;
-	public progress_bar: HTMLElement | null;
+  // public interval: any;
+  public pause = false;
+  public start = false;
 
-	public interval: any;
-	public pause = false;
-	public start = false;
+  public playerOne: Paddle;
+  public playerTwo: Paddle;
 
-	public playerOne: Paddle;
-	public playerTwo: Paddle;
+  public balls: Ball[] = [];
 
-	public balls: Ball[] = [];
+  constructor() {
+    this.canvas = null;
+    this.context = null;
 
-	constructor() {
+    // this.playerOne = new Paddle(module_const.paddle_width, module_const.paddle_height, module_const.paddle_color, module_const.paddle_x, module_const.paddle_y);
+    // this.playerTwo = new Paddle(module_const.paddle_width, module_const.paddle_height, module_const.paddle2_color, module_const.paddle2_x, module_const.paddle_y);
 
-		this.canvas = null;
-		this.context = null;
-		this.progress_bar = null;
+    this.playerOne = new Paddle();
+    this.playerTwo = new Paddle();
 
+    console.log("dasd");
 
-		this.balls.push(new Ball(module_const.ball_x, module_const.ball_y, module_const.ball_radius, module_const.ball_speed / 3));
+    // this.interval = setInterval(() => { this.update(); this.render(); }, 1000 / 50); //50 fps
+  }
 
-		this.playerOne = new Paddle(module_const.paddle_width, module_const.paddle_height, module_const.paddle_color, module_const.paddle_x, module_const.paddle_y);
-		this.playerTwo = new Paddle(module_const.paddle_width, module_const.paddle_height, module_const.paddle2_color, module_const.paddle2_x, module_const.paddle_y);
+  get_elements() {
+    this.canvas = document.getElementById("canvas") as HTMLCanvasElement;
+    if (this.canvas == null) return;
 
-		this.interval = setInterval(() => { this.update(); this.render(); }, 1000 / 50); //50 fps
-	}
+    this.context = this.canvas.getContext("2d");
+    if (this.context == null) return;
 
-	check_for_collisions = ext_check_for_collisions;
-	calculate_impact = ext_calculate_impact;
-	bounce_action = ext_bounce_action;
-	add_ball = ext_add_ball;
-	boost_ult = ext_boost_ult;
+    this.playerOne.progress_bar = document.getElementById("myBar");
+    if (this.playerOne.progress_bar == null) return;
+    this.playerTwo.progress_bar = document.getElementById("myBar2");
+    if (this.playerTwo.progress_bar == null) return;
+  }
 
+  import(game: GameDataDto) {
+    this.playerOne.import(game.player1);
+    this.playerTwo.import(game.player2);
 
+    this.balls = [];
+    game.balls.forEach((ball) => {
+      this.balls.push(
+        new Ball(ball.x, ball.y, ball.radius, ball.xunits, ball.yunits)
+      );
+    });
 
-	startGame() //set up everything
-	{
-		this.pause = false;
-		this.start = true;
+    this.render();
+  }
 
-		document.getElementById('btn_pause')!.style.visibility = 'visible';
-		document.getElementById('btn_restart')!.style.visibility = 'visible';
-		document.getElementById('btn_start')!.style.visibility = 'hidden';
-		// document.getElementById('btn_exportToJson')!.style.visibility = 'visible';
-	}
+  render() {
+    if (this.canvas == null || this.context == null) {
+      return;
+    }
+    let ctx = this.context;
 
+    this.canvas.width = module_const.canvas_width;
+    this.canvas.height = module_const.canvas_height;
 
-	update() {
+    this.canvas.tabIndex = 1;
 
-		if (this.pause == false) {
+    ctx.save();
+    ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-			this.playerOne.update();
-			this.playerTwo.update();
+    this.playerOne.render(ctx);
+    this.playerTwo.render(ctx);
 
-			this.balls.forEach((value) => {
-				this.check_for_collisions(value);
-			});
+    if (this.playerOne.score < 10 && this.playerTwo.score < 10) {
+      this.balls.forEach((value) => {
+        if (this.playerOne.score < 10 && this.playerTwo.score < 10)
+          value.render(ctx);
+      });
+    }
 
-		}
+    module_draw.draw_center_line(ctx);
+    module_draw.draw_scores(ctx, this.playerOne, this.playerTwo);
 
-	}
+    if (this.playerOne.progress_bar != null)
+      module_draw.draw_progress_bar(
+        this.playerOne.progress_bar,
+        this.playerOne,
+        "super-charged-left"
+      );
 
-	get() {
-		this.canvas = document.getElementById("canvas") as HTMLCanvasElement;
-		this.context = this.canvas.getContext("2d");
+    if (this.playerTwo.progress_bar != null)
+      module_draw.draw_progress_bar(
+        this.playerTwo.progress_bar,
+        this.playerTwo,
+        "super-charged-right"
+      );
 
-		this.progress_bar = document.getElementById("myBar");
-
-	}
-
-
-	render() {
-
-
-		if (this.canvas == null || this.context == null) {
-			return;
-		}
-		let ctx = this.context;
-
-
-		if (this.pause == false) {
-
-			this.canvas.width = module_const.canvas_width;
-			this.canvas.height = module_const.canvas_height;
-			this.canvas.tabIndex = 1;
-
-
-			if (this.start == true) {
-				ctx.save();
-				ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-				this.playerOne.render(ctx);
-				this.playerTwo.render(ctx);
-
-				this.balls.forEach((value) => {
-					value.render(ctx);
-				});
-
-				module_draw.draw_center_line(ctx);
-				module_draw.draw_scores(ctx, this.playerOne.score, this.playerTwo.score);
-				if (this.progress_bar != null)
-					module_draw.draw_progress_bar(this.progress_bar, this.playerOne);
-
-				ctx.restore();
-			}
-		}
-
-		if (this.playerOne.score >= 10 || this.playerTwo.score >= 10)
-			this.pause = true;
-	}
-
-
-	addPoint(player: Paddle) //add point and reset position
-	{
-		player.score += 1;
-
-		if (this.balls.every((element) => (element.goal))) {
-
-			this.reset(Math.random() * ((module_const.canvas_height - module_const.canvas_height / 3) - module_const.canvas_height / 3) + module_const.canvas_height / 3);
-			this.balls[0].changeAngle(180 - this.balls[0].angle);
-
-		}
-	}
-	
-	
-	
-	do_pause() //when button pause pressed
-	{
-		this.pause = !this.pause;
-	}
-	
-	reset(y: number) {
-		this.balls[0].x = module_const.canvas_width / 2;
-		this.balls[0].y = y;
-		this.balls[0].speed = module_const.ball_spawn_speed;
-		this.balls[0].goal = false;
-		
-		this.balls.splice(1, this.balls.length);
-
-		this.playerOne.y = module_const.paddle_y;
-		this.playerTwo.y = module_const.paddle_y;
-		this.playerOne.height = module_const.paddle_height;
-		this.playerTwo.height = module_const.paddle_height;
-
-		this.playerOne.addABALL = false;
-		this.playerOne.reducePaddle = false;
-		this.playerTwo.addABALL = false;
-		this.playerTwo.reducePaddle = false;
-	}
-
-	restart() //when button restart pressed
-	{
-		document.getElementById('btn_pause')!.style.visibility = 'visible';
-		this.pause = false;
-		this.start = true;
-
-		this.reset(module_const.canvas_height / 2);
-		this.balls[0].angle = 0;
-		this.playerOne.reset();
-		this.playerTwo.reset();
-	}
-
+    ctx.restore();
+  }
 }
-
-

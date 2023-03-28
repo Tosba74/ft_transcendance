@@ -25,6 +25,7 @@ import { TfaModule } from './tfa/tfa.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AppGuard } from './auth/app.guard';
 import { MeModule } from './me/me.module';
+import { GamesModule } from './games/games.module';
 
 import { ScheduleModule } from '@nestjs/schedule';
 
@@ -33,15 +34,16 @@ import { ScheduleModule } from '@nestjs/schedule';
     TypeOrmModule.forRoot(config),
     UsersModule, UserStatusModule, FriendTypesModule, FriendsModule, FriendTypesModule, BlockedsModule,
     ChatTypesModule, ChatRolesModule, ChatsModule, ChatMessagesModule, ChatParticipantsModule,
-    AuthModule, TfaModule, ScheduleModule.forRoot(), MeModule,
-    ChatModule,
+    GamesModule, ChatModule,
+    AuthModule, TfaModule, MeModule,
+    ScheduleModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [AppService,
-    {
-      provide: APP_GUARD,
-      useClass: AppGuard
-    }
+     {
+       provide: APP_GUARD,
+       useClass: AppGuard
+     }
   ],
 })
 export class AppModule { }

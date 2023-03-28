@@ -31,7 +31,7 @@ export class ChatMessagesController {
   @ApiCreatedResponse({ description: 'Chat message created successfully', type: ChatMessageModel })
   @ApiBadRequestResponse({ description: 'Chat message validation error' })
   public create(@Body() createMessageDto: CreateMessageDto): Promise<ChatMessageModel> {
-    return this.chatMessagesService.create(createMessageDto);
+    return this.chatMessagesService.create(createMessageDto.message, createMessageDto.user_id, createMessageDto.chat_id);
   }
 
   @Delete(':id')

@@ -16,7 +16,7 @@ export function ext_check_for_collisions(this: GameArea, ball: Ball) //if ball h
 			ball.goal = true;
 			this.addPoint(this.playerOne);
 		}
-		
+
 		if (ball.x < 0 && ball.goal == false) {
 			ball.goal = true;
 			this.addPoint(this.playerTwo);
@@ -38,7 +38,7 @@ export function ext_check_for_collisions(this: GameArea, ball: Ball) //if ball h
 		ball.radians = ball.angle / (180 * Math.PI) * 10;
 		ball.xunits = Math.cos(ball.radians) * ball.speed;
 		ball.yunits = Math.sin(ball.radians) * ball.speed;
-		
+
 		/*let x1 = playerOne.x;
 		let x2 = (playerOne.x + playerOne.width);
 		let x3 = ball.x;
@@ -87,7 +87,7 @@ export function ext_bounce_action(this: GameArea, bouncer: Paddle, other: Paddle
 		other.height = module_const.paddle_height / 2;
 		other.y += module_const.paddle_height / 4;
 	}
-	
+
 	if (bouncer.bonk >= 0) {
 		bouncer.bonk++;
 
@@ -114,21 +114,28 @@ export function ext_calculate_impact(this: GameArea, x1: number, x2: number, x3:
 
 	if (t > 0 && t < 1 && u > 0 && u < 1) {
 		if (ball.x < module_const.canvas_width / 2) {
+
 			const map_angle = (map(t, 0, 1, -module_const.bounce_angle, module_const.bounce_angle));
 
-			this.playerOne.ultimate = Math.min(100, this.playerOne.ultimate + Math.abs(map_angle));
-
+			if (ball.first_bounce == true)
+				ball.first_bounce = false;
+			else
+				this.playerOne.ultimate = Math.min(100, this.playerOne.ultimate + Math.abs(map_angle));
 
 			ball.changeAngle(map_angle);
-
 			this.bounce_action(this.playerOne, this.playerTwo, ball);
 		}
 		else {
-			const map_angle = (map(t, 0, 1, 180 + module_const.bounce_angle, 180 - module_const.bounce_angle));
-			
-			ball.changeAngle(map_angle);
-			
-			this.bounce_action (this.playerTwo, this.playerOne, ball);
+
+			const map_angle = (map(t, 0, 1, module_const.bounce_angle, -module_const.bounce_angle));
+
+			if (ball.first_bounce == true)
+				ball.first_bounce = false;
+			else
+				this.playerTwo.ultimate = Math.min(100, this.playerTwo.ultimate + Math.abs(map_angle));
+				
+			ball.changeAngle(180 + map_angle);
+			this.bounce_action(this.playerTwo, this.playerOne, ball);
 		}
 
 		ball.speed = Math.max(ball.speed, module_const.ball_speed);

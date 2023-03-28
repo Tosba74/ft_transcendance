@@ -1,5 +1,5 @@
 
-APP_NAME	= ft_transcendance
+APP_NAME	= ft_transcendance_pong
 
 COMPOSE_DEV		= -f ./docker-compose.yml -f ./docker-compose.dev.yml
 COMPOSE_PROD	= -f ./docker-compose.yml -f ./docker-compose.override.yml
@@ -22,7 +22,7 @@ setup:
 
 
 start:
-			${DOCKER} up -d
+			${DOCKER} up -d --build
 
 ps:
 			${DOCKER} ps -a
