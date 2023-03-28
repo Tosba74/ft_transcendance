@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import "./App.css";
@@ -22,6 +22,7 @@ import UserListPage from "./components/UserList/UserListPage";
 import ChatPage from "./components/Chat/ChatMenu";
 import TfaCodePage from "./components/Log/TfaCodePage";
 import CreateAccountPage from "./components/Log/CreateAccountPage";
+import FriendsPage from "./components/Friends/FriendsPage";
 
 export default function App() {
   const loginer: UseLoginDto = useLogin();
@@ -45,6 +46,7 @@ export default function App() {
                 path="/profile"
                 element={<SettingsPage loginer={loginer} />}
               />
+              <Route path="/friends" element={<FriendsPage />} />
               <Route
                 path="/players"
                 element={<UserListPage loginer={loginer} />}
