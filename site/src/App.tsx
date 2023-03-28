@@ -6,132 +6,78 @@ import "./App.css";
 import ReactPage from "./components/ReactPage";
 import GamePage from "./components/Game/GamePage";
 import HomePage from "./components/Home/HomePage";
-import ProfilePage from "./components/Profile/ProfilePage";
-import LogPage from "./components/Profile/LogPage";
+import ProfilePage from "./components/Settings/SettingsPage";
+import LogPage from "./components/Log/LogPage";
 
 import NavBar from "./components/NavBar/NavBar";
-import ChatPage from "./components/Chat/ChatPage";
+import ChatIcon from "./components/Chat/ChatIcon";
 
-import LoginApi from "./components/Profile/LoginApi";
-import Logout from "./components/Profile/Logout";
+import LoginApi from "./components/Log/LoginApi";
+import Logout from "./components/Log/Logout";
 
-import axios from "axios";
-import { LoggedUser } from "./components/Profile/LoggedUser";
-import jwt_decode from "jwt-decode";
+import SettingsPage from "./components/Settings/SettingsPage";
+import { UseLoginDto } from "./components/Log/dto/useLogin.dto";
+import useLogin from "./components/Log/useLogin";
+import UserListPage from "./components/UserList/UserListPage";
+import ChatPage from "./components/Chat/ChatMenu";
+import TfaCodePage from "./components/Log/TfaCodePage";
+import CreateAccountPage from "./components/Log/CreateAccountPage";
 import FriendsPage from "./components/Friends/FriendsPage";
 
 export default function App() {
-  const [logged, setLogged] = React.useState(false);
-  const [userInfos, setUserInfos] = React.useState(new LoggedUser());
-
-  function fetchData() {
-    try {
-      const token = localStorage.getItem("token");
-      if (token != null) {
-        const user: LoggedUser = jwt_decode(token);
-        setUserInfos(user);
-        setLogged(true);
-        return;
-
-        // axios.get('/api/me',
-        //   {
-        //     headers: ({
-        //       Authorization: 'Bearer ' + token,
-        //     })
-        //   })
-        //   .then(res => {
-        //     if (res.status === 200) {
-        //       // console.log(res.data);
-        //       setUserInfos(res.data);
-        //       setLogged(true);
-        //       return;
-        //     }
-        //   })
-        //   .catch(error => {
-        //   });
-      }
-    } catch {}
-
-    setLogged(false);
-  }
-
-  useEffect(fetchData, [logged]);
-
-  // const [tokenMessage, setTokenMessage] = React.useState('');
-
-  // Au moment du refresh verifier aussi d'abord si le token est toujours valable (pseudo code en dessous)
-  // si non: setLogged a false + setUserInfos a {}
-  function refreshTokenAndUserInfos() {
-    const token = localStorage.getItem("token");
-
-    // if token still available
-    axios
-      .get("/api/login/refresh_token", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        const newtoken: string = res.data["access_token"];
-        if (newtoken) {
-          localStorage.setItem("token", newtoken);
-          const user: LoggedUser = jwt_decode(newtoken);
-          setUserInfos(user);
-        }
-      })
-      .catch((error) => {
-        // setTokenMessage('Error while refreshing user\'s token');
-        console.log(error);
-      });
-    // else
-    // log out the user
-  }
+  const loginer: UseLoginDto = useLogin();
+  const [openedMenu, setOpenedMenu] = React.useState("");
 
   return (
     <Router>
-      <div className="bg_white">
-        <NavBar logged={logged} />
+      <NavBar
+        loginer={loginer}
+        openedMenu={openedMenu}
+        setOpenedMenu={setOpenedMenu}
+      />
+
+      <div className="grow bg-gray-100 dark:bg-gray-400">
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route
-            path="/players"
-            element={
-              <ProfilePage
-                user={userInfos}
-                refreshUserInfos={refreshTokenAndUserInfos}
+
+          {loginer.logged && (
+            <>
+              <Route
+                path="/profile"
+                element={<SettingsPage loginer={loginer} />}
               />
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <ProfilePage
-                user={userInfos}
-                refreshUserInfos={refreshTokenAndUserInfos}
+              <Route path="/friends" element={<FriendsPage />} />
+              <Route
+                path="/players"
+                element={<UserListPage loginer={loginer} />}
               />
-            }
-          />
-          <Route
-            path="/profile/:id"
-            element={
-              <ProfilePage
-                user={userInfos}
-                refreshUserInfos={refreshTokenAndUserInfos}
+              <Route
+                path="/settings"
+                element={<SettingsPage loginer={loginer} />}
               />
-            }
-          />
-          <Route path="/game" element={<GamePage />} />
-          <Route path="/chat" element={<ChatPage />} />
-          <Route path="/friends" element={<FriendsPage />} />
-          <Route path="/history" element={<ReactPage />} />
-          <Route path="/login" element={<LogPage setLogged={setLogged} />} />
+              <Route path="/game" element={<GamePage />} />
+              <Route path="/history" element={<ReactPage />} />
+            </>
+          )}
+          <Route path="/login" element={<LogPage loginer={loginer} />} />
+          <Route path="/loginapi" element={<LoginApi loginer={loginer} />} />
           <Route
-            path="/loginapi"
-            element={<LoginApi setLogged={setLogged} />}
+            path="/login_tfa"
+            element={<TfaCodePage loginer={loginer} />}
           />
-          <Route path="/logout" element={<Logout />} />
+          <Route path="/logout" element={<Logout loginer={loginer} />} />
+
+          {process.env.BUILD_TYPE != "Production" && (
+            <>
+              <Route path="/createaccount" element={<CreateAccountPage />} />
+            </>
+          )}
         </Routes>
       </div>
+
+      <ChatIcon openedMenu={openedMenu} setOpenedMenu={setOpenedMenu} />
+
+      <ChatPage openedMenu={openedMenu} setOpenedMenu={setOpenedMenu} />
     </Router>
   );
 }

@@ -1,4 +1,4 @@
-import { Controller, Request, Get, Post, UseGuards, UnauthorizedException, Body, Redirect, HttpStatus } from '@nestjs/common';
+import { Controller, Request, Get, Post, UseGuards, UnauthorizedException, Body, Redirect, HttpStatus, Res } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import axios from 'axios';
 
@@ -10,6 +10,7 @@ import { AllowLogged, AllowPublic } from './auth.decorators';
 import { IsLoginNameAlreadyExistConstraint } from 'src/users/validation/is-user-already-exist';
 import { Oauth2Dto } from './dto/oauth2.dto';
 import { DataSource } from 'typeorm';
+import { LoggedUserDto } from './dto/logged_user.dto';
 
 @Controller('api/login')
 @ApiTags('api/login')
@@ -19,13 +20,34 @@ export class AuthController {
     @Post('basic')
     @AllowPublic()
     @UseGuards(LocalAuthGuard)
-    async basicLogin(@Request() req: any): Promise<any> {
-        if (req.user.tfa_enabled === false)
-            return this.authService.login(req.user);
+    async basicLogin(@Request() req: any, @Res({ passthrough: true }) response: any): Promise<any> {
 
-        // response.status(206);
-        this.authService.addAttempt(req.user.id);
-        return {id: req.user.id};
+        if (process.env.BUILD_TYPE != "Production") {
+
+            const user = req.user as LoggedUserDto;
+
+            if (user.tfa_enabled === false)
+                return this.authService.login(user);
+
+            response.status(206);
+            this.authService.addAttempt(user.id);
+            return { id: user.id };
+        }
+
+        throw new UnauthorizedException('Disabled in prod');
+    }
+
+    @Post('create')
+    @AllowPublic()
+    async basicSignin(@Body() body: { username: string, password: string }): Promise<any> {
+
+        if (process.env.BUILD_TYPE != "Production") {
+
+            return this.authService.signin(body.username, body.password);
+
+        }
+
+        throw new UnauthorizedException('Disabled in prod');
     }
 
 
@@ -34,7 +56,7 @@ export class AuthController {
     async refreshToken(@Request() req: any): Promise<any> {
         delete req.user.exp;
         delete req.user.iat;
-        return this.authService.login(req.user);
+        return this.authService.login(req.user as LoggedUserDto);
     }
 
 
@@ -57,7 +79,7 @@ export class AuthController {
 
     @Post('apicallback')
     @AllowPublic()
-    async apiLogin(@Body() oauth2Dto: Oauth2Dto): Promise<any> {
+    async apiLogin(@Body() oauth2Dto: Oauth2Dto, @Res({ passthrough: true }) response: any): Promise<any> {
         this.authService.checkState(oauth2Dto.state);
 
         try {
@@ -88,22 +110,22 @@ export class AuthController {
                     }
                 });
 
-                coal_data.data.forEach(function (element: any) {
+                coal_data.data.forEach((element: any) => {
                     if (element['coalition_id'] >= 191 && element['coalition_id'] <= 193)
                         datas.data['coalition_id'] = element['coalition_id'];
                 });
             }
-            catch (error) {}
+            catch (error) { }
 
             const user = await this.authService.validateOrCreateUser(datas.data.login, datas.data);
 
             if (user) {
-                if (user.tfa_enabled === true)
-                {
-                    this.authService.addAttempt(user.id);
-                    return {id: user.id};
+                if (user.tfa_enabled === false) {
+                    return this.authService.login(user);
                 }
-                return this.authService.login(user);
+                response.status(206);
+                this.authService.addAttempt(user.id);
+                return { id: user.id };
             }
             throw new UnauthorizedException('Api user validation error');
         }

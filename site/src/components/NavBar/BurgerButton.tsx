@@ -2,16 +2,43 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import classNames from "classnames";
 
+import { UseLoginDto } from "../Log/dto/useLogin.dto";
+
 interface BurgerButtonProps {
-  logged: boolean;
+  loginer: UseLoginDto;
+  openedMenu: string;
+  setOpenedMenu: Function;
 }
 
-export default function BurgerButton({ logged }: BurgerButtonProps) {
-  const [isOpen, setOpen] = useState(false);
+export default function BurgerButton({
+  loginer,
+  openedMenu,
+  setOpenedMenu,
+}: BurgerButtonProps) {
+  //
 
   const handleClick = () => {
-    setOpen(!isOpen);
+    if (openedMenu == "burger") {
+      setOpenedMenu("");
+    } else {
+      setOpenedMenu("burger");
+    }
   };
+
+  // const styles = {
+  // 	myProgress: {
+  // 		width: "100%",
+  // 		backgroundColor: "#ddd"
+  // 	},
+
+  // 	myBar: {
+  // 		width: "0%",
+  // 		height: "30px",
+  // 		backgroundColor: "#4CBB17"
+  // 	},
+  // };
+
+  //  style={styles.myProgress}>
 
   return (
     <div>
@@ -19,7 +46,7 @@ export default function BurgerButton({ logged }: BurgerButtonProps) {
         data-collapse-toggle="mobile-menu"
         type="button"
         onClick={handleClick}
-        className="ml-1 inline-flex items-center rounded-lg p-2 text-sm text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600 md:hidden"
+        className="ml-1 inline-flex items-center justify-end rounded-lg p-2 text-sm text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600 md:hidden"
         aria-controls="mobile-menu"
         aria-expanded="false"
       >
@@ -40,29 +67,23 @@ export default function BurgerButton({ logged }: BurgerButtonProps) {
       </button>
       <div
         className={classNames(
-          "absolute right-2 items-center justify-end sm:justify-between md:visible md:relative md:order-1 md:flex md:w-auto md:justify-between",
-          isOpen ? "visible" : "invisible"
+          "absolute right-0 w-full items-center justify-end shadow-lg sm:justify-center md:visible md:relative md:order-1 md:flex md:w-auto md:justify-between",
+          openedMenu == "burger" ? "visible" : "invisible"
         )}
       >
-        <ul className="mt-4 flex flex-col rounded-lg border border-cyan-500 bg-gray-50 p-4 dark:border-cyan-500 dark:bg-gray-800 md:visible md:mt-0 md:flex-row md:space-x-8 md:border-0 md:bg-white md:text-sm md:font-medium md:dark:bg-gray-900">
-          <Link
-            to="/"
-            className="block rounded bg-cyan-500 py-2 pl-3 pr-4 text-white dark:text-white md:bg-transparent md:p-0 md:text-cyan-500"
-            aria-current="page"
-          >
-            Home
-          </Link>
+        <ul className="mt-4 flex flex-col bg-gray-50 p-4 dark:border-cyan-500 dark:bg-gray-800 md:visible md:mt-0 md:flex-row md:space-x-8 md:rounded-lg md:border-0 md:bg-white md:text-sm md:font-medium md:dark:bg-gray-900">
           <Link
             to="/game"
-            className="block rounded py-2 pl-3 pr-4 text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white"
+            className="block rounded bg-cyan-500 py-2 pl-3 pr-4 text-white dark:text-white md:bg-transparent md:p-0 md:text-cyan-500"
+            aria-current="page"
           >
             Game
           </Link>
           <Link
-            to="/chat"
+            to="/setprofil"
             className="block rounded py-2 pl-3 pr-4 text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white"
           >
-            Chat
+            Profil
           </Link>
           <Link
             to="/friends"
@@ -70,13 +91,10 @@ export default function BurgerButton({ logged }: BurgerButtonProps) {
           >
             Friends
           </Link>
-          <Link
-            to="/players"
-            className="block rounded py-2 pl-3 pr-4 text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white"
-          >
+          <Link to="/players" className="">
             Players
           </Link>
-          {logged && (
+          {loginer.logged && (
             <Link
               to="/profile"
               className="block rounded py-2 pl-3 pr-4 text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white"
