@@ -1,43 +1,30 @@
 import axios from "axios";
 import React, { SyntheticEvent, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
+import { UseLoginDto } from "./dto/useLogin.dto";
 
+interface LogoutProps {
+  loginer: UseLoginDto;
+}
 
-export default function Logout() {
+export default function Logout({ loginer }: LogoutProps) {
+  const [pageMessage, setPageMessage] = React.useState("Logout");
+  const navigate = useNavigate();
 
-    const [pageMessage, setPageMessage] = React.useState('Logout');
-    const navigate = useNavigate()
+  React.useEffect(() => {
+    if (loginer.token != undefined && loginer.token != "") {
+      localStorage.clear();
 
-    React.useEffect(() => {
-        localStorage.clear();
+      loginer.setToken(localStorage.getItem("token") || "");
+    } else {
+      setPageMessage("Logout successful, redirecting...");
+      loginer.getUserData();
 
-        const token = localStorage.getItem('token');
+      setTimeout(() => {
+        navigate("/");
+      }, 3000);
+    }
+  }, [loginer.token]);
 
-        if (token == null) {
-            setPageMessage('Logout successful, redirecting...');
-
-            // axios.post("/api/login/apicallback",
-            //         {
-            //             'code': code,
-            //             'state': state,
-            //         })
-            //         .then(res => {   
-            //         })
-            //         .catch(error => {
-            //             setPageMessage('Login error');
-            //             // console.log('error', error);
-            //         });
-
-
-            setTimeout(() => { navigate('/') }, 3000);
-        }
-        else {
-            setPageMessage('Logout error');
-        }
-    }, [setPageMessage])
-
-
-    return (
-        <div className="mt-3 h-6 text-sm text-center">{pageMessage}</div>
-    );
+  return <div className="mt-3 h-6 text-center text-sm">{pageMessage}</div>;
 }
