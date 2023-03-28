@@ -51,6 +51,17 @@ export class MeService {
   }
 
 
+  async updatePseudo(user: LoggedUserDto, pseudo: string): Promise<boolean> {
+
+    return this.usersService.updatePseudo(user.id, pseudo);
+  }
+
+  async updateAvatar(user: LoggedUserDto, filename: string): Promise<string> {
+
+    return this.usersService.updateAvatar(user.id, filename);
+  }
+
+
 
   async listBlockedBy(user: LoggedUserDto): Promise<BlockedModel[]> {
 

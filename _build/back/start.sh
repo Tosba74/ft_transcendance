@@ -28,6 +28,8 @@ then
     yarn add qrcode @types/qrcode
 
     yarn add @types/multer
+
+    yarn add  @nestjs/schedule @types/cron
 fi
 
 
