@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { ChatMessageModel } from "./models/chat_message.model";
 import { CreateMessageDto } from './dto/create-message';
 import { UserModel } from 'src/users/models/user.model';
+import { createDecipheriv } from 'crypto';
 
 @Injectable()
 export class ChatMessagesService {
@@ -17,36 +18,32 @@ export class ChatMessagesService {
 
   async findOneById(id: number): Promise<ChatMessageModel> {
     try {
-      const chatMessage = await this.chatMessagesRepository.findOneOrFail({ 
-        where: { id } 
+      const chatMessage = await this.chatMessagesRepository.findOneOrFail({
+        where: { id }
       });
       return chatMessage;
     }
     catch (error) {
-      throw new NotFoundException();
+      throw new NotFoundException('Chat message id not found');
     }
   }
 
-  async create(createMessageDto: CreateMessageDto): Promise<ChatMessageModel> {
+  async create(message: string, sender_id: number, room_id: number): Promise<ChatMessageModel> {
 
     const res = this.chatMessagesRepository.create({
-      message: createMessageDto.message,
+      message: message,
 
-      sender: { id: createMessageDto.user_id },
-      room: { id: createMessageDto.chat_id },
+      sender: { id: sender_id },
+      room: { id: room_id },
       sent_at: new Date(),
     });
 
 
+    const created = await this.chatMessagesRepository.save(res).catch((err: any) => {
+      throw new BadRequestException('Chat message creation error');
+    });
 
-    try {
-      const created = await this.chatMessagesRepository.save(res);
-
-      return created;
-    }
-    catch (error) {
-      throw new BadRequestException();
-    }
+    return created;
   }
 
 
@@ -56,7 +53,7 @@ export class ChatMessagesService {
       this.chatMessagesRepository.delete({ id: id });
     }
     catch (error) {
-      throw new NotFoundException();
+      throw new NotFoundException('Chat message id not found');
     }
   }
 }

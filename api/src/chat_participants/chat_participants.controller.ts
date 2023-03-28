@@ -1,6 +1,6 @@
 import { Controller, HttpCode, Param, Body, Get, Post, Put, Patch, Delete, UseFilters, ParseIntPipe, } from '@nestjs/common';
 import { ApiOkResponse, ApiNotFoundResponse, ApiNoContentResponse, ApiCreatedResponse, ApiUnprocessableEntityResponse, ApiTags, ApiBadRequestResponse } from '@nestjs/swagger';
-import { HttpExceptionFilter } from '../_common/filters/http-exception.filter';
+import { HttpExceptionFilter } from 'src/_common/filters/http-exception.filter';
 
 import { ChatParticipantsService } from './chat_participants.service';
 import { CreateParticipantDto } from './dto/create-participant';
@@ -9,8 +9,8 @@ import { UpdateRoleDto } from './dto/update-role';
 import { ChatParticipantModel } from "./models/chat_participant.model";
 
 
-@Controller('api/chatParticipant')
-@ApiTags('api/chatParticipant')
+@Controller('api/chat_participant')
+@ApiTags('api/chat_participant')
 @UseFilters(HttpExceptionFilter)
 export class ChatParticipantsController {
   constructor(private readonly chatParticipantsService: ChatParticipantsService) { }
@@ -33,7 +33,7 @@ export class ChatParticipantsController {
   @ApiCreatedResponse({ description: 'Chat participant created successfully', type: ChatParticipantModel })
   @ApiBadRequestResponse({ description: 'Chat participant validation error' })
   public create(@Body() createMessageDto: CreateParticipantDto): Promise<ChatParticipantModel> {
-    return this.chatParticipantsService.create(createMessageDto);
+    return this.chatParticipantsService.create(createMessageDto.user_id, createMessageDto.chat_id, createMessageDto.role_id);
   }
 
   @Patch(':id/change_role')

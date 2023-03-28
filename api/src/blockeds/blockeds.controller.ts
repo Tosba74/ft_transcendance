@@ -1,6 +1,6 @@
 import { Controller, HttpCode, Param, Body, Get, Post, Put, Delete, UseFilters, ParseIntPipe, } from '@nestjs/common';
 import { ApiOkResponse, ApiNotFoundResponse, ApiCreatedResponse, ApiNoContentResponse, ApiUnprocessableEntityResponse, ApiTags, ApiBadRequestResponse } from '@nestjs/swagger';
-import { HttpExceptionFilter } from '../_common/filters/http-exception.filter';
+import { HttpExceptionFilter } from 'src/_common/filters/http-exception.filter';
 
 import { BlockedsService } from './blockeds.service';
 import { BlockedModel } from "./models/blocked.model";
@@ -44,7 +44,7 @@ export class BlockedsController {
   @ApiCreatedResponse({ description: 'Blocked created successfully', type: BlockedModel })
   @ApiBadRequestResponse({ description: 'Blocked validation error' })
   public blockUser(@Param('id', ParseIntPipe) id: number, @Body() blockedDto: BlockedDto): Promise<BlockedModel> {
-    return this.blockedsService.blockUser(id, blockedDto);
+    return this.blockedsService.blockUser(id, blockedDto.blocked_id);
   }
 
   @Delete(':id')
@@ -52,7 +52,7 @@ export class BlockedsController {
 	@ApiNoContentResponse({ description: 'Blocked deleted successfully.'})
 	@ApiNotFoundResponse({ description: 'Blocked not found.' })
 	public unblockUser(@Param('id', ParseIntPipe) id: number, @Body() blockedDto: BlockedDto): Promise<void> {  
-		return this.blockedsService.unblockUser(id, blockedDto);
+		return this.blockedsService.unblockUser(id, blockedDto.blocked_id);
 	}
 
 }

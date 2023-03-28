@@ -6,7 +6,7 @@ export class FriendTypeModel {
 
     @ApiResponseProperty({ type: Number })
     @PrimaryGeneratedColumn()
-    id?: number;
+    id: number;
 
     @ApiResponseProperty({ type: String })
     @Column()

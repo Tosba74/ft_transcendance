@@ -1,5 +1,5 @@
 
-APP_NAME	= ft_transcendance
+APP_NAME	= ft_transcendance_pong
 
 COMPOSE_DEV		= -f ./docker-compose.yml -f ./docker-compose.dev.yml
 COMPOSE_PROD	= -f ./docker-compose.yml -f ./docker-compose.override.yml
@@ -14,13 +14,15 @@ all:		start
 
 build:
 			${DOCKER} build
+certs:
+			openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj '/C=CH/ST=Vaud/L=Renens/O=transcendance/OU=IT/CN=localhost' -keyout _build/nginx/certs/nginx.key -out _build/nginx/certs/nginx.crt
 
 setup:
 			${DOCKER} -f ./docker-compose.setup.yml up --build -d
 
 
 start:
-			${DOCKER} up -d
+			${DOCKER} up -d --build
 
 ps:
 			${DOCKER} ps -a
@@ -52,17 +54,19 @@ renginx:
 			${DOCKER} restart nginx
 
 
-run:		
+run:
 			${DOCKER} exec front sh
-runapi:		
+runapi:
 			${DOCKER} exec back sh
-runnginx:		
+runnginx:
 			${DOCKER} exec nginx bash
-runpostg:		
+runpostg:
 			${DOCKER} exec postgres bash
-rundb:		
+rundb:
 			${DOCKER} exec postgres psql --host=postgres --dbname=test_db --username=user -W
 
+prettier:
+			${DOCKER} exec front yarn prettier
 
 migrate-create:
 			@echo "Usage: make migrate-create DEST=name";
