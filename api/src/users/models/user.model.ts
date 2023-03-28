@@ -26,8 +26,8 @@ export class UserModel {
     pseudo: string;
     
     @ApiResponseProperty({ type: String })
-    @Column({ nullable: true, default: null })
-    avatar_url?: string;
+    @Column()
+    avatar_url: string;
 
     @ApiResponseProperty({ type: Boolean })
     @Column({ default: false })
@@ -48,12 +48,8 @@ export class UserModel {
     tfa_enabled: boolean;
     
     @ApiResponseProperty({ type: String })
-    @Column({ nullable: true, default: null })
-    tfa_email: string;
-    
-    @ApiResponseProperty({ type: String })
-    @Column({ nullable: true, default: null })
-    tfa_code: string;
+    @Column({ nullable: true, default: null, select: false })
+    tfa_secret: string;
 
     //--------------------------------------------
     

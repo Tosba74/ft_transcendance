@@ -1,43 +1,115 @@
-import { ConsoleLogger, Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { ConsoleLogger, Injectable, NotFoundException, BadRequestException, PreconditionFailedException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
+
+import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
 
 import { UserModel } from 'src/users/models/user.model';
 import { UsersService } from 'src/users/users.service';
-import { FriendsService } from 'src/friends/friends.service';
 
-import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
+import { FriendsService } from 'src/friends/friends.service';
 import { FriendModel } from 'src/friends/models/friend.model';
 
+import { BlockedModel } from 'src/blockeds/models/blocked.model';
+import { BlockedsService } from 'src/blockeds/blockeds.service';
+
+import { ChatParticipantsService } from 'src/chat_participants/chat_participants.service';
+import { ChatParticipantModel } from 'src/chat_participants/models/chat_participant.model';
+
+import { ChatsService } from 'src/chats/chats.service';
+import { ChatModel } from 'src/chats/models/chat.model';
+
+import { ChatRoleModel } from 'src/chat_roles/models/chat_role.model';
+import { ChatTypeModel } from 'src/chat_types/models/chat_type.model';
+
+import { JoinChatDto } from './dto/join_chat';
 
 @Injectable()
 export class MeService {
   constructor(
     private usersService: UsersService,
     private friendsService: FriendsService,
+    private blockedsService: BlockedsService,
+    private chatsService: ChatsService,
+    private chatParticipantService: ChatParticipantsService,
   ) { }
+
+  async listFriends(user: LoggedUserDto): Promise<UserModel[]> {
+
+    return this.friendsService.findFriends(user.id);
+  }
 
   async addFriend(user: LoggedUserDto, friend_id: number): Promise<FriendModel> {
 
-    // const user = await this.usersService.findOneByLoginName(loginname);
+    return this.friendsService.createFriendship(user.id, friend_id);
+  }
 
-    // if (user && user.password && await bcrypt.compare(password, user.password)) {
+  async removeFriend(user: LoggedUserDto, friend_id: number): Promise<void> {
 
-    //   // const loggedUser = user as LoggedUserDto;
+    return this.friendsService.deleteFriendship(user.id, friend_id);
+  }
 
-    //   const loggedUser: LoggedUserDto = {
-    //     id: user.id,
-    //     login_name: user.login_name,
-    //     pseudo: user.pseudo,
-    //     avatar_url: user.avatar_url,
-    //     is_admin: user.is_admin,
-    //   };
 
-    //   return loggedUser;
-    // }
 
-    // return null;
+  async listBlockedBy(user: LoggedUserDto): Promise<BlockedModel[]> {
 
-    return new FriendModel();
+    return this.blockedsService.blockedBy(user.id);
+  }
+
+  async listBlockeds(user: LoggedUserDto): Promise<BlockedModel[]> {
+
+    return this.blockedsService.blockedUsers(user.id);
+  }
+
+  async addBlocked(user: LoggedUserDto, blocked_id: number): Promise<BlockedModel> {
+
+    return this.blockedsService.blockUser(user.id, blocked_id);
+  }
+
+  async removeBlocked(user: LoggedUserDto, blocked_id: number): Promise<void> {
+
+    return this.blockedsService.unblockUser(user.id, blocked_id);
+  }
+
+
+  async listChats(user: LoggedUserDto): Promise<ChatParticipantModel[]> {
+
+    return this.chatParticipantService.listChats(user.id);
+  }
+
+
+  async joinChat(user: LoggedUserDto, chat_id: number, joinInfos: JoinChatDto): Promise<ChatParticipantModel> {
+
+    const chat = await this.chatsService.findOneById(chat_id);
+
+    if (chat.type.id != ChatTypeModel.PUBLIC_TYPE) {
+
+      throw new UnauthorizedException('Room not public type');
+    }
+
+
+    if (chat.participants.some(element => { 
+      return element.participant.id === user.id && element.role.id === ChatRoleModel.BAN_ROLE
+    })) {
+
+      throw new PreconditionFailedException('Banned from this room');
+    }
+
+    else if (chat.participants.some(element => { 
+      return element.participant.id === user.id 
+    })) {
+
+      throw new PreconditionFailedException('Already member of the room');
+    }
+
+
+    if (chat.password != undefined && joinInfos.password != undefined && await bcrypt.compare(joinInfos.password, chat.password)) {
+
+      throw new UnauthorizedException('Missing password or password wrong');
+    }
+
+
+    return this.chatParticipantService.create(user.id, chat_id, ChatRoleModel.USER_ROLE);
   }
 }

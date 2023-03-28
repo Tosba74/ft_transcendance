@@ -3,7 +3,7 @@ apk add nano
 
 # sleep 1000000
 
-# yarn global add @nestjs/cli
+yarn global add @nestjs/cli
 
 # # Create application
 if [ "$BUILD_TYPE" = "Setup" ]; 
@@ -23,6 +23,13 @@ then
 
     yarn add @nestjs/passport passport passport-local @types/passport-local
     yarn add @nestjs/jwt passport-jwt @types/passport-jwt
+
+    yarn add otplib 
+    yarn add qrcode @types/qrcode
+
+    yarn add @types/multer
+
+    yarn add  @nestjs/schedule @types/cron
 fi
 
 

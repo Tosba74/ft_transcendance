@@ -11,10 +11,10 @@ export class UpdateUserDto extends PartialType(OmitType(CreateUserDto, [] as con
     login_name?: string;
     
     @ApiPropertyOptional({ type: String })
-    password?: string;
-    
-    @ApiPropertyOptional({ type: String })
     pseudo?: string;
+
+    @ApiPropertyOptional({ type: String })
+    password?: string;
 }
   
 // export class UpdateUserPasswordDto extends PickType(CreateUserDto, ['password'] as const) {}

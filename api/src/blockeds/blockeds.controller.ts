@@ -44,7 +44,7 @@ export class BlockedsController {
   @ApiCreatedResponse({ description: 'Blocked created successfully', type: BlockedModel })
   @ApiBadRequestResponse({ description: 'Blocked validation error' })
   public blockUser(@Param('id', ParseIntPipe) id: number, @Body() blockedDto: BlockedDto): Promise<BlockedModel> {
-    return this.blockedsService.blockUser(id, blockedDto);
+    return this.blockedsService.blockUser(id, blockedDto.blocked_id);
   }
 
   @Delete(':id')
@@ -52,7 +52,7 @@ export class BlockedsController {
 	@ApiNoContentResponse({ description: 'Blocked deleted successfully.'})
 	@ApiNotFoundResponse({ description: 'Blocked not found.' })
 	public unblockUser(@Param('id', ParseIntPipe) id: number, @Body() blockedDto: BlockedDto): Promise<void> {  
-		return this.blockedsService.unblockUser(id, blockedDto);
+		return this.blockedsService.unblockUser(id, blockedDto.blocked_id);
 	}
 
 }

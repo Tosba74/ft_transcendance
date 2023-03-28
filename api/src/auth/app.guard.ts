@@ -13,7 +13,6 @@ export class AppGuard extends JwtAuthGuard implements CanActivate {
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    
     const isPublic = this.reflector.getAllAndOverride<boolean>(ALLOW_PUBLIC, [
       context.getHandler(),
       context.getClass(),

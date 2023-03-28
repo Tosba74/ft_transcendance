@@ -1,21 +1,24 @@
 
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException, forwardRef, Inject } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { NotFoundException } from '@nestjs/common';
-import axios from 'axios';
+
+import { UserModel } from '../users/models/user.model';
 
 import { LoggedUserDto } from './dto/logged_user.dto';
 import { title } from 'process';
 
+import { TfaService } from 'src/tfa/tfa.service';
+
 @Injectable()
 export class AuthService {
-    constructor(private usersService: UsersService, private jwtService: JwtService) { }
+    constructor(private usersService: UsersService, private jwtService: JwtService, @Inject(forwardRef(() => TfaService)) private tfaService: TfaService) { }
+    private states: Array<string> = [];
 
     async validateUser(loginname: string, password: string): Promise<LoggedUserDto | null> {
 
-        const user = await this.usersService.findOneByLoginName(loginname);
+        const user: UserModel = await this.usersService.findOneByLoginName(loginname);
 
         if (user && user.password && await bcrypt.compare(password, user.password)) {
 
@@ -27,6 +30,7 @@ export class AuthService {
                 pseudo: user.pseudo,
                 color: user.color,
                 avatar_url: user.avatar_url,
+                tfa_enabled: user.tfa_enabled,
                 is_admin: user.is_admin,
             };
 
@@ -36,9 +40,8 @@ export class AuthService {
         return null;
     }
 
-
     async validateOrCreateUser(loginname: string, infos: any = {}): Promise<LoggedUserDto | null> {
-
+        
         try {
             const user = await this.usersService.findOneByLoginName(loginname);
 
@@ -48,6 +51,7 @@ export class AuthService {
                 pseudo: user.pseudo,
                 color: user.color,
                 avatar_url: user.avatar_url,
+                tfa_enabled: user.tfa_enabled,
                 is_admin: user.is_admin,
             };
 
@@ -96,18 +100,34 @@ export class AuthService {
                 pseudo: user.pseudo,
                 color: color,
                 avatar_url: user.avatar_url,
+                tfa_enabled: user.tfa_enabled,
                 is_admin: user.is_admin,
             };
 
             return loggedUser;
         }
-        return null
+        return null;
+    }
+    
+    async login(user: any) {
+        const access_token = this.jwtService.sign(user);
+        return {access_token: access_token};
     }
 
-    async login(user: LoggedUserDto) {
-        const access_token = this.jwtService.sign(user);
+    addState(state: string) {
+        this.states.push(state);
+    }
+    
+    checkState(state: string) {
+        const index: number = this.states.findIndex(el => el === state);
+        if (index == -1) {
+            throw new BadRequestException('State doesn\'t exists');
+        }
+        this.states.splice(index, 1);
+    }
 
-        return { ...user, access_token: access_token };
+    addAttempt(id: number) {
+        this.tfaService.addAttempt(id);
     }
 
 }
