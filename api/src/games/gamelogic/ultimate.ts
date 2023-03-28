@@ -4,6 +4,7 @@ import * as module_const from "./constant"
 import { GameArea } from "./pong";
 import { Paddle } from "./paddle";
 import { Ball } from "./ball";
+import { emitKeypressEvents } from "readline";
 
 
 export function ext_boost_ult(this: GameArea) {
@@ -11,20 +12,22 @@ export function ext_boost_ult(this: GameArea) {
 }
 
 export function paddle_dash(player: Paddle, balls : Ball[]) {
-	/*if (player.last_input == false)
-		player.y -= 100;
-	if (player.last_input == true)
-		player.y += 100;*/
-	let closestW = module_const.canvas_width;
-	let closestY = 0;
-	let val = player.x;
+	let closestW : any;
+	if (player.x < module_const.canvas_width / 2)
+		closestW = module_const.canvas_width;
+	else
+		closestW = 0;
+	let closestY = module_const.canvas_height / 2;
 	balls.forEach(element => {
-		if (player.x < module_const.canvas_width && closestW > element.x)
+		console.log(closestW);
+		console.log(element.x);
+		console.log("\n");
+		if (player.x < module_const.canvas_width / 2 && closestW > element.x  && element.xunits < 0 && element.goal == false)
 		{
 			closestW = element.x;
 			closestY = element.y;
 		}
-		if (player.x > module_const.canvas_width && closestW < element.x)
+		else if (player.x > module_const.canvas_width / 2 && closestW < element.x && element.xunits > 0 && element.goal == false)
 		{
 			closestW = element.x;
 			closestY = element.y;

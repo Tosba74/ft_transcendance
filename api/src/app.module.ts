@@ -38,10 +38,10 @@ import { GamesModule } from './games/games.module';
   ],
   controllers: [AppController],
   providers: [AppService,
-    {
-      provide: APP_GUARD,
-      useClass: AppGuard
-    }
+     {
+       provide: APP_GUARD,
+       useClass: AppGuard
+     }
   ],
 })
 export class AppModule { }

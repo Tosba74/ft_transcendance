@@ -59,7 +59,8 @@ export class GamesService {
 
     this.currentGames[game_id] = new GameRoom();
 
-    this.currentGames[game_id].timer = setInterval(() => { game_function() }, 1000 / module_const.fps);
+	if (this.currentGames[game_id].timer == undefined)
+		this.currentGames[game_id].timer = setInterval(() => { game_function() }, 1000 / module_const.fps);
 
     this.currentGames[game_id].host = user;
     console.log('create');
