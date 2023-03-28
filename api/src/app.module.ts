@@ -27,14 +27,16 @@ import { AppGuard } from './auth/app.guard';
 import { MeModule } from './me/me.module';
 import { GamesModule } from './games/games.module';
 
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(config),
     UsersModule, UserStatusModule, FriendTypesModule, FriendsModule, FriendTypesModule, BlockedsModule,
     ChatTypesModule, ChatRolesModule, ChatsModule, ChatMessagesModule, ChatParticipantsModule,
-    GamesModule,
+    GamesModule, ChatModule,
     AuthModule, TfaModule, MeModule,
+    ScheduleModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [AppService,

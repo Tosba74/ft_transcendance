@@ -17,7 +17,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: LoggedUserDto) {
+  async validate(payload: any): Promise<LoggedUserDto> {
 
     if (!payload || payload.id == undefined) {
       throw new UnauthorizedException('User validation error');
@@ -25,8 +25,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     // lorsque un user modifie ses infos, pour refresh le token avec les nouvelles datas
     const user: LoggedUserDto = await this.usersService.findOneById(payload.id);
-    payload.pseudo = user.pseudo;
-    payload.avatar_url = user.avatar_url;
 
     // const loggedUser: LoggedUserDto = {
     //     id: payload.id,
@@ -37,6 +35,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     // };
 
     // const loggedUser = payload as LoggedUserDto;
-    return payload;
+    return user;
   }
 }

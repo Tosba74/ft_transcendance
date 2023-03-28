@@ -1,5 +1,5 @@
 export interface ChatResponse<T> {
-	error?: string;
+  error?: string;
 
-    value: T | undefined;
+  value: T | undefined;
 }

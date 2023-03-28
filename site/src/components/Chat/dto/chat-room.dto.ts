@@ -1,8 +1,8 @@
-import { ChatMessage } from './chat-message.dto';
+import { ChatMessage } from "./chat-message.dto";
 
 export interface ChatRoom {
-	id: number;
-	name: string;
+  id: number;
+  name: string;
 
-	messages: ChatMessage[];
+  messages: ChatMessage[];
 }

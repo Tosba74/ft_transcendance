@@ -1,14 +1,13 @@
-
 export interface PlayerDto {
-	x: number;
-	y: number;
-	
-	height: number;
-	width: number;
+  x: number;
+  y: number;
 
-	ready: boolean;
-	ultimate: number;
-	score: number;
+  height: number;
+  width: number;
 
-	color:	string;
+  ready: boolean;
+  ultimate: number;
+  score: number;
+
+  color: string;
 }

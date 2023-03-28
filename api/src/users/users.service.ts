@@ -7,7 +7,7 @@ import { UserModel } from "./models/user.model";
 import { UserStatusModel } from 'src/user_status/models/user_status.model';
 
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdatePseudoDto } from './dto/update-pseudo.dto';
+import { UpdatePseudoDto } from '../me/dto/update-pseudo.dto';
 import * as fs from 'fs';
 import { extname } from 'path';
 
@@ -21,7 +21,8 @@ export class UsersService {
       --------- CRUD usual methods ---------
   */
 
-  findAll(): Promise<UserModel[]> {
+ 
+ findAll(): Promise<UserModel[]> {
     return this.usersRepository.find();
   }
 
@@ -52,17 +53,17 @@ export class UsersService {
 
 
 
-  async create(createUserDto: CreateUserDto): Promise<UserModel> {
+  async create(pseudo: string, login_name: string, password: string): Promise<UserModel> {
     const newuser = new UserModel();
 
-    newuser.pseudo = createUserDto.pseudo;
-    newuser.login_name = createUserDto.login_name;
+    newuser.pseudo = pseudo;
+    newuser.login_name = login_name;
 
     const saltRounds: number = 10;
-    const hash: string = await bcrypt.hash(createUserDto.password, saltRounds);
+    const hash: string = await bcrypt.hash(password, saltRounds);
     newuser.password = hash;
     
-    newuser.avatar_url = 'https://avatars/default-avatar.jpg';
+    newuser.avatar_url = '/avatars/default-avatar.jpg';
 
     newuser.tfa_enabled = false;
     newuser.tfa_secret = '';
@@ -162,12 +163,12 @@ export class UsersService {
 
   // }
 
-  async updatePseudo(id: number, updatePseudo: UpdatePseudoDto): Promise<boolean> {
+  async updatePseudo(id: number, pseudo: string): Promise<boolean> {
     try {
       let user: UserModel = await this.findOneById(id);
 
-      if (updatePseudo.pseudo)
-        user.pseudo = updatePseudo.pseudo;
+      if (pseudo)
+        user.pseudo = pseudo;
 
       await this.usersRepository.save(user).catch((err: any) => {
         throw new BadRequestException('User pseudo update error');
@@ -216,11 +217,12 @@ export class UsersService {
       --------- TFA methods ---------
   */
     
-  async setTfaEnabled(id: number) {
+  async setTfaEnabled(id: number, state: boolean): Promise<boolean> {
     try {
       let user: UserModel = await this.findOneById(id);
-      user.tfa_enabled = !user.tfa_enabled;
+      user.tfa_enabled = state;
       await this.usersRepository.save(user);
+      return user.tfa_enabled;
     }
     catch (error) {
       throw new NotFoundException('User id not found');

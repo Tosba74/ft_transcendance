@@ -1,108 +1,104 @@
 import React, { SyntheticEvent, useState } from "react";
-
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import TfaCode from "./TfaCode";
 
-import { Profile } from '../Profile/Profile';
+import TfaCode from "./TfaCodePage";
+import { UseLoginDto } from "./dto/useLogin.dto";
 
 interface LogPageProps {
-    setLogged: Function,
-    setToken: Function,
+  loginer: UseLoginDto;
 }
 
+export default function LogPage({ loginer }: LogPageProps) {
+  const [pageMessage, setPageMessage] = React.useState("");
 
-export default function LogPage({ setLogged, setToken }: LogPageProps) {
+  const [loginName, setLoginName] = React.useState("");
+  const [password, setPassword] = React.useState("");
 
-    const [focus, setFocused] = useState(false);
+  const navigate = useNavigate();
 
-    const [userId, setUserId] = React.useState(-1);
-    const [tfa, setTfa] = React.useState(false);
-    const [pageMessage, setPageMessage] = React.useState('');
+  const handleSubmit = async (event: SyntheticEvent) => {
+    event.preventDefault();
 
-    const [loginName, setLoginName] = React.useState('');
-    const [password, setPassword] = React.useState('');
-    const [tfaCode, setTfaCode] = React.useState('');
-    
-    const navigate = useNavigate();
-    
-    const loginUser = () => {
-        setPageMessage('Login successful, redirecting...');
-        // setLogged(true);
-        setTimeout(() => { navigate('/') }, 3000);
-    }
-    
-    const handleSubmit = async (event: SyntheticEvent) => {
-        event.preventDefault();
+    // if (tfa === false) {
+    axios
+      .post("/api/login/basic", {
+        username: loginName,
+        password: password,
+      })
+      .then((res) => {
+        if (res.status == 201 && res.data["access_token"]) {
+          localStorage.setItem("token", res.data["access_token"]);
+          loginer.setToken(res.data["access_token"]);
 
-        if (tfa === false) {
-            axios.post("/api/login/basic", {
-                'username': loginName,
-                'password': password,
-            })
-            .then(res => {
-                if (res.data['access_token']) {
-                    localStorage.setItem('token', res.data['access_token']);
-                    setToken(res.data['access_token']);
-                    loginUser();
-                }
-                else {
-                    setTfa(true);
-                    setUserId(res.data.id);
-                    setPageMessage('');
-                }
-            })
-            .catch(() => setPageMessage('Password invalid'));
+          setPageMessage("Login successful, redirecting...");
+          setTimeout(() => {
+            navigate("/");
+          }, 3000);
+        } //
+        else if (res.status == 206 && res.data["id"] !== undefined) {
+          loginer.tfaUserId.current = res.data["id"];
+
+          setPageMessage("Tfa needed, redirecting...");
+          setTimeout(() => {
+            navigate("/login_tfa");
+          }, 3000);
+        } //
+        else {
+          // setTfa(true);
+          // setUserId(res.data.id);
+          // setPageMessage("");
         }
-    };
+      })
+      .catch(() => setPageMessage("Login error"));
+    // }
+  };
 
-    return (
-        <div className="flex justify-center mt-6">
-            <form className="bg-gray-200 w-98 py-2 pt-10 border border-gray-500 shadow-lg center justify-center">
-                <div className="content sm:w-98 lg:w-98 w-full center content-center text-center items-center justify-center mh-8">
+  return (
+    <div className="mt-6 flex justify-center">
+      <form className="w-98 center justify-center border border-gray-500 bg-gray-200 py-2 pt-10 shadow-lg">
+        <div className="content sm:w-98 lg:w-98 center mh-8 w-full content-center items-center justify-center text-center">
+          {/* {!tfa && ( */}
+          <>
+            <div className="center mb-6 flex w-80 content-center justify-center px-6 text-center">
+              <label className="text-sl block w-2/5 pr-4 text-right font-medium text-gray-900 dark:text-gray-800">
+                Login name
+              </label>
+              <input
+                id="loginName"
+                className="block w-3/5 rounded-lg border border-gray-300 bg-gray-50 p-1.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                type="text"
+                value={loginName}
+                onChange={(e) => setLoginName(e.target.value)}
+                required
+              />
+            </div>
 
-                { !tfa &&
-                    <>
-                    <div className="mb-6 flex text-center content-center justify-center center w-80 px-6">
-                        <label className="text-right pr-4 block w-2/5 text-sl font-medium text-gray-900 dark:text-gray-800">
-                            Login name
-                        </label>
-                        <input 
-                            id="loginName" 
-                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-3/5 p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-300 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-                            type="text" 
-                            value={loginName}
-                            onChange={e => setLoginName(e.target.value)} 
-                            required 
-                        />
-                    </div>
+            <div className="center mb-6 flex w-80 content-center justify-center px-6 text-center">
+              <label className="text-sl block w-2/5 pr-4 text-right font-medium text-gray-900 dark:text-gray-800">
+                Password
+              </label>
+              <input
+                id="password"
+                className="block w-3/5 rounded-lg border border-gray-300 bg-gray-50 p-1.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
 
-                    <div className="mb-6 flex text-center content-center justify-center center w-80 px-6">
-                        <label className="text-right pr-4 block w-2/5 text-sl font-medium text-gray-900 dark:text-gray-800">
-                            Password
-                        </label>
-                        <input 
-                            id="password" 
-                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-3/5 p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            type="password" 
-                            value={password} 
-                            onChange={e => setPassword(e.target.value)}
-                            required
-                        />
-                    </div>
-                    
-                    <button onClick={handleSubmit} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 center content-center text-center font-medium rounded-lg text-sm md:w-auto px-5 py-1 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                        Log in
-                    </button>
-                    </>
-                }
+            <button
+              onClick={handleSubmit}
+              className="center content-center rounded-lg bg-blue-700 px-5 py-1 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 md:w-auto"
+            >
+              Log in
+            </button>
+          </>
 
-                { tfa && 
-                    <TfaCode userId={userId} loginUser={loginUser} errorMsg={setPageMessage}/>
-                }
-                    <div className="mt-3 h-6 text-sm text-center">{pageMessage}</div>
-                </div>
-            </form >
+          <div className="mt-3 h-6 text-center text-sm">{pageMessage}</div>
         </div>
-    );
+      </form>
+    </div>
+  );
 }

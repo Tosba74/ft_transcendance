@@ -33,6 +33,11 @@
   - Sign in
 
 
+- Ranking
+  - my stats
+  - ladder
+
+
 - Profile
   - Personal profile
 
@@ -58,3 +63,7 @@
 - Matchmaking
   - Quick play
   - Join _with id_
+
+/!\ status players
+/!\ match history
+/!\ chat public, or private, or protected 
