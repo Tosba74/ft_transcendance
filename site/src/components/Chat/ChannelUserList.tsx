@@ -2,8 +2,6 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { UserDto } from "src/_shared_dto/user.dto";
 
-import { Channel } from "./Channel";
-
 interface UserListProps {
   users: UserDto[];
 }

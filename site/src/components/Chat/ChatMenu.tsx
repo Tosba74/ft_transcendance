@@ -3,8 +3,7 @@ import ChatBulleSend from "./MessageBulleSend";
 
 import UserList from "./ChannelUserList";
 import { useState } from "react";
-import { Channel } from "./Channel";
-import { Mock_Channel } from "./Mock_Channel";
+
 import MessageConv from "./MessagePanel";
 import MessageInput from "./MessageInput";
 import ChannelPanel from "./ChannelPanel";
@@ -16,7 +15,7 @@ interface ChatMenuProps {
 }
 
 export default function ChatMenu({ openedMenu, setOpenedMenu }: ChatMenuProps) {
-  const [currChannel, setCurrChannel] = useState("");
+  const [currChannel, setCurrChannel] = useState(0);
 
   const [modeChannel, setModeChannel] = useState(false);
 
@@ -35,7 +34,7 @@ export default function ChatMenu({ openedMenu, setOpenedMenu }: ChatMenuProps) {
               onClick={handleClick}
             >
               {modeChannel && <div className="px-4">Channel List</div>}
-              {!modeChannel && <div className="px-4">Chat Modffsdde</div>}
+              {!modeChannel && <div className="px-4">Chat Mode</div>}
             </button>
             <button
               className="w-10"
@@ -61,7 +60,13 @@ export default function ChatMenu({ openedMenu, setOpenedMenu }: ChatMenuProps) {
 
           <div className="flex flex-grow flex-col rounded">
             {!modeChannel && <MessagePanel />}
-            {modeChannel && <ChannelPanel setChannel={setCurrChannel} />}
+            {modeChannel && (
+              <ChannelPanel
+                currChannel={currChannel}
+                setChannel={setCurrChannel}
+                setModeChannel={setModeChannel}
+              />
+            )}
           </div>
         </div>
       )}
