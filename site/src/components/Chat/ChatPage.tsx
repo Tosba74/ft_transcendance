@@ -5,8 +5,14 @@ import UserList from "./UserList";
 import { useState } from "react";
 import { Channel } from "./Channel";
 import { Mock_Channel } from "./Mock_Channel";
+import ChatChannel from "./ChatChannel";
 
-export default function ChatPage({ shutUp }: { shutUp: Function }) {
+interface ChatPageProps {
+  shutUp: Function;
+  changeMode: Function;
+}
+
+export default function ChatPage({ shutUp, changeMode }: ChatPageProps) {
   const [channels] = useState<Channel[]>(Mock_Channel);
   const [currChannel, setCurrChannel] = useState(0);
   const [isMode, setMode] = useState(false);
@@ -16,8 +22,8 @@ export default function ChatPage({ shutUp }: { shutUp: Function }) {
   };
 
   return (
-    <div className="h-full lg:w-1/3 flex flex-col p-2 bg-gray-300 dark:bg-gray-800 rounded-lg shadow-lg">
-      <div className="w-full flex flex-row justify-between items-center shadow-lg dark:bg-gray-700 dark:text-white bg-gray-200 p-2 text-center rounded">
+    <div className="flex h-full flex-col rounded-lg bg-gray-300 p-2 shadow-lg dark:bg-gray-800 lg:w-1/3">
+      <div className="flex w-full flex-row items-center justify-between rounded bg-gray-200 p-2 text-center shadow-lg dark:bg-gray-700 dark:text-white">
         <button
           className="w-full text-center"
           type="button"
@@ -33,7 +39,7 @@ export default function ChatPage({ shutUp }: { shutUp: Function }) {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-6 h-6"
+            className="h-6 w-6"
           >
             <path
               strokeLinecap="round"
@@ -43,20 +49,19 @@ export default function ChatPage({ shutUp }: { shutUp: Function }) {
           </svg>
         </button>
       </div>
-      <div className="h-full bg-gray-200 dark:bg-gray-700 dark:text-white mt-2 shadow-lg rounded overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
+      <div className="scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch mt-2 h-full overflow-y-auto rounded bg-gray-200 shadow-lg dark:bg-gray-700 dark:text-white">
         {!isMode && (
           <div>
-            <ChatBulleRecv />
-            <ChatBulleRecv />
-            <ChatBulleSend />
-            <ChatBulleRecv />
-            <ChatBulleSend />
-            <ChatBulleSend />
+            <ChatChannel chan={channels[currChannel]} />
           </div>
         )}
         {isMode && (
           <div>
-            <UserList lstChannel={channels} setCurrChannel={setCurrChannel} />
+            <UserList
+              lstChannel={channels}
+              setCurrChannel={setCurrChannel}
+              mode={handleClick}
+            />
           </div>
         )}
       </div>

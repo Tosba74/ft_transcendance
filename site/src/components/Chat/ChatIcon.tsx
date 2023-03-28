@@ -1,19 +1,20 @@
 import classNames from "classnames";
 import React, { useState, useContext } from "react";
 import ChatPage from "./ChatPage";
+import SendBar from "./SendBar";
 // import Icon from '../../assets/svg/balloon-heart.svg'
 
 export default function ChatIcon() {
   const [isOpen, setOpen] = useState(false);
+  const [Mode, selectMode] = useState(false);
   const [message, setMessage] = useState("");
+
+  const handleMode = () => {
+    selectMode(!Mode);
+  };
 
   const handleClick = () => {
     setOpen(!isOpen);
-    // (isOpen &&
-    //
-    // )
-    // setOpen(true);
-    // send msg
   };
 
   const handleChange = (event: any) => {
@@ -21,27 +22,31 @@ export default function ChatIcon() {
     console.log(message);
   };
 
-  const handleSend = () => {};
+  const handleSend = (e: any) => {
+    e.preventDefault();
+    console.log({ userName: localStorage.getItem("userName"), message });
+    setMessage("");
+  };
 
   return (
     <div
       className={classNames(
-        "lg:flex lg:flex-col pt-16 pb-20 md:pt-20 w-screen",
+        "w-screen pt-16 pb-20 md:pt-20 lg:flex lg:flex-col",
         isOpen ? "h-screen" : "h-full"
       )}
     >
       {isOpen && (
-        <div className="lg:flex lg:flex-row-reverse w-screen p-2 lg:pr-2 h-full">
-          <ChatPage shutUp={() => handleClick()} />
+        <div className="h-full w-screen p-2 lg:flex lg:flex-row-reverse lg:pr-2">
+          <ChatPage shutUp={() => handleClick()} changeMode={handleMode} />
         </div>
       )}
-      <div className="flex justify-end justify-content-end right-2 lg:pr-2 rounded-full">
+      <div className="justify-content-end right-2 flex justify-end rounded-full lg:pr-2">
         {!isOpen && (
           <div>
             <button
               type="button"
               onClick={handleClick}
-              className="flex h-12 shadow-lg rounded-full items-center transition duration-500 ease-in-out text-white bg-cyan-500 hover:bg-blue-400 focus:outline-none w-12 justify-end"
+              className="flex h-12 w-12 items-center justify-end rounded-full bg-cyan-500 text-white shadow-lg transition duration-500 ease-in-out hover:bg-cyan-500 focus:outline-none"
             >
               <div className="flex">
                 <div className="mr-4">
@@ -63,42 +68,7 @@ export default function ChatIcon() {
             </button>
           </div>
         )}
-        {isOpen && (
-          <div>
-            <button
-              type="button"
-              onClick={handleChange}
-              className="flex h-12 rounded-full shadow-lg items-center transition duration-500 ease-in-out text-white bg-cyan-500 hover:bg-blue-400 focus:outline-none justify-between"
-            >
-              <input
-                type="text"
-                placeholder="Write your message!"
-                value={message}
-                onChange={handleChange}
-                className={classNames(
-                  "w-80 pl-6 py-1 ml-3 focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 bg-gray-200 rounded-full",
-                  isOpen ? "visible" : "invisible"
-                )}
-              />
-              <div className="flex mr-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="w-9 h-9 ml-1"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12.75 15l3-3m0 0l-3-3m3 3h-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </div>
-            </button>
-          </div>
-        )}
+        {isOpen && !Mode && <SendBar />}
       </div>
     </div>
   );
