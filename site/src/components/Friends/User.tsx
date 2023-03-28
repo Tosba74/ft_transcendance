@@ -1,5 +1,6 @@
 import React from "react";
 import { useState, useEffect, useRef } from "react";
+import ModalUser from "./ModalUser";
 
 interface UserProps {
   user: {
@@ -23,23 +24,19 @@ interface UserProps {
 export default function User(props: UserProps) {
   const [isOpen, setOpen] = useState(false);
   const [position, setPosition] = useState(0);
-  // const modalRef = useRef(document.querySelector(".modalRef"));
-  const modalRef = useRef(document.createElement("div"));
+  const modalRef = useRef<HTMLUListElement | null>(null);
 
   const handleClick = (event: any) => {
-    setOpen(!isOpen);
+    setOpen(true);
     setPosition(event.clientX);
-    modalRef.current = event.target;
   };
 
   useEffect(() => {
     const checkIfClickedOutside = (e: any) => {
-      // console.log(modalRef.current);
-      // console.log(e.target);
-      // console.log(modalRef.current !== e.target);
-      console.log(modalRef.current.contains(e.target));
-      if (isOpen && modalRef.current && !modalRef.current.contains(e.target)) {
-        setOpen(false);
+      if (modalRef) {
+        if (isOpen && !modalRef.current?.contains(e.target)) {
+          setOpen(false);
+        }
       }
     };
 
@@ -53,21 +50,11 @@ export default function User(props: UserProps) {
   return (
     <div>
       {props.children}
-      {/* <button className="modalRef" ref={modalRef} onClick={handleClick}> */}
       <button className="modalRef" onClick={handleClick}>
         {props.user.login_name}
       </button>
       {isOpen && (
-        <ul
-          style={{ left: position + "px" }}
-          className="absolute bg-white py-1 px-3 text-black drop-shadow-md"
-        >
-          <li>View</li>
-          <li>MP</li>
-          <li>Play</li>
-          <li>Remove</li>
-          <li>Block</li>
-        </ul>
+        <ModalUser user={props.user} modalRef={modalRef} position={position} />
       )}
     </div>
   );

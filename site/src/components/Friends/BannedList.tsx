@@ -49,23 +49,24 @@ const users: {
   },
 ];
 
-interface UserProps {
-  user: {
-    id: number;
-    login_name: string;
-    pseudo: string;
-    avatar_url: string;
-    is_admin: boolean;
-    access_token: null;
-    color: number;
-    tfa_enabled: boolean;
-    status_updated_at: string;
-    created_at: string;
-    updated_at: string;
-    validate_date: null;
-    status: string;
-  };
-  children?: React.ReactNode;
+interface user {
+  id: number;
+  login_name: string;
+  pseudo: string;
+  avatar_url: string;
+  is_admin: boolean;
+  access_token: null;
+  color: number;
+  tfa_enabled: boolean;
+  status_updated_at: string;
+  created_at: string;
+  updated_at: string;
+  validate_date: null;
+  status: string;
+}
+
+function handleUnblock(user: user) {
+  console.log("should remove " + user?.login_name + " from ban list");
 }
 
 export default function BannedList() {
@@ -76,11 +77,12 @@ export default function BannedList() {
         {users.map((user) => {
           return (
             <li key={user.id} className="text-slate-500 line-through">
-              {/* <span className="cursor-pointer"> */}
               <User user={user}>
-                <MdClose className="inline-block" />
+                <MdClose
+                  onClick={() => handleUnblock(user)}
+                  className="inline-block cursor-pointer"
+                />
               </User>
-              {/* </span> */}
             </li>
           );
         })}

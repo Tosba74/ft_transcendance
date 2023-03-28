@@ -79,25 +79,6 @@ const users: {
   },
 ];
 
-// function handleClick(event: any) {
-//   console.log(event);
-//   let modal = document.querySelector(".modal");
-
-//   console.log(modal);
-//   if (modal?.classList.contains("hidden")) {
-//     modal?.classList.remove("hidden");
-//     // modal?.classList.add("modal absolute");
-//     // modal?.classList.add("top-[" + (event.screenX + 30) + "px]");
-//     // modal?.classList.add("left-[" + (event.screenY + 30) + "px]");
-//     modal?.classList.add("top-[" + 30 + "px]");
-//     modal?.classList.add("left-[" + 30 + "px]");
-//   }
-//   console.log(modal);
-//   // modal
-//   // modal?.className = "modal absolute";
-//   // event.
-// }
-
 export default function FriendsList() {
   return (
     <>
