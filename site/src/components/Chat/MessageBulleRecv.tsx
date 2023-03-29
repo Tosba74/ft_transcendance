@@ -1,12 +1,15 @@
-export default function MessageBulleRecv() {
+interface MessageBulleRecvProps {
+  text: string;
+}
+
+export default function MessageBulleRecv({ text }: MessageBulleRecvProps) {
   return (
     <div className="mx-1 ml-1 mb-1">
       <div className="flex items-end">
         <div className="order-2 mx-2 my-1 flex max-w-xs flex-col items-start space-y-2 text-xs">
           <div>
             <span className="inline-block rounded-lg rounded-bl-none bg-gray-300 px-4 py-2 text-gray-600">
-              Thanks for your message David. I thought I'm alone with this
-              issue. Please, ? the issue to support it :)
+              { text }
             </span>
           </div>
         </div>

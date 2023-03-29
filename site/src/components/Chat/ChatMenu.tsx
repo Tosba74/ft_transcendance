@@ -8,13 +8,17 @@ import MessageConv from "./MessagePanel";
 import MessageInput from "./MessageInput";
 import ChannelPanel from "./ChannelPanel";
 import MessagePanel from "./MessagePanel";
+import { UseChatDto } from "./dto/useChat.dto";
+import { UseLoginDto } from "../Log/dto/useLogin.dto";
 
 interface ChatMenuProps {
   openedMenu: string;
   setOpenedMenu: Function;
+  loginer: UseLoginDto;
+  chats: UseChatDto;
 }
 
-export default function ChatMenu({ openedMenu, setOpenedMenu }: ChatMenuProps) {
+export default function ChatMenu({ openedMenu, setOpenedMenu, loginer, chats }: ChatMenuProps) {
   const [currChannel, setCurrChannel] = useState(0);
 
   const [modeChannel, setModeChannel] = useState(false);
@@ -22,6 +26,10 @@ export default function ChatMenu({ openedMenu, setOpenedMenu }: ChatMenuProps) {
   const handleClick = () => {
     setModeChannel(!modeChannel);
   };
+
+  const sendMessage = (text: string) => {
+    chats.sendMessage(text, currChannel)
+  }
 
   return (
     <>
@@ -59,12 +67,13 @@ export default function ChatMenu({ openedMenu, setOpenedMenu }: ChatMenuProps) {
           </div>
 
           <div className="flex flex-grow flex-col rounded">
-            {!modeChannel && <MessagePanel />}
+            {!modeChannel && <MessagePanel selfId={loginer.userInfos?.id || -1} sendMessage={sendMessage} room={chats.rooms && chats.rooms[currChannel]} />}
             {modeChannel && (
               <ChannelPanel
                 currChannel={currChannel}
                 setChannel={setCurrChannel}
                 setModeChannel={setModeChannel}
+                chats={chats}
               />
             )}
           </div>

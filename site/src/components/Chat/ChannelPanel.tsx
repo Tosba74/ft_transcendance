@@ -3,18 +3,23 @@ import { ChannelDto } from "src/_shared_dto/ChannelDto";
 import { UserDto } from "src/_shared_dto/user.dto";
 import ChannelChannelList from "./ChannelChannelList";
 import ChannelUserList from "./ChannelUserList";
+import ChatIcon from "./ChatIcon";
+import { UseChatDto } from "./dto/useChat.dto";
 
 interface ChannelPanelProps {
   currChannel: number;
   setChannel: Function;
   setModeChannel: Function;
+  chats: UseChatDto;
 }
 
 export default function ChannelPanel({
   currChannel,
   setChannel,
   setModeChannel,
+  chats,
 }: ChannelPanelProps) {
+  //
   let users: UserDto[] = [
     {
       id: 1,
@@ -50,29 +55,29 @@ export default function ChannelPanel({
     },
   ];
 
-  let channels: ChannelDto[] = [
-    {
-      id: 1,
-      name: "les coupaiz",
-    },
-    {
-      id: 2,
-      name: "general",
-    },
-    {
-      id: 3,
-      name: "workspace",
-    },
-    {
-      id: 4,
-      name: "cluster 4",
-    },
-  ];
+  // let channels: ChannelDto[] = [
+  //   {
+  //     id: 1,
+  //     name: "les coupaiz",
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "general",
+  //   },
+  //   {
+  //     id: 3,
+  //     name: "workspace",
+  //   },
+  //   {
+  //     id: 4,
+  //     name: "cluster 4",
+  //   },
+  // ];
 
   return (
     <div className="h-full">
       <ChannelChannelList
-        lstChannel={channels}
+        lstChannel={chats.rooms}
         currChannel={currChannel}
         setChannel={setChannel}
         setModeChannel={setModeChannel}

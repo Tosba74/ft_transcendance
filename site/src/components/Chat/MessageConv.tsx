@@ -1,26 +1,26 @@
+import { ChatMessage } from "src/_shared_dto/chat-message.dto";
 import MessageBulleRecv from "./MessageBulleRecv";
 import MessageBulleSend from "./MessageBulleSend";
 
-export default function MessageConv() {
+interface MessageConvProps {
+  selfId: number;
+  messages: ChatMessage[];
+
+
+}
+
+export default function MessageConv({ selfId, messages }: MessageConvProps) {
   return (
     <>
-      <MessageBulleRecv />
-      <MessageBulleRecv />
-      <MessageBulleSend />
-      <MessageBulleRecv />
-      <MessageBulleSend />
-      <MessageBulleSend />
-      <MessageBulleSend />
-      <MessageBulleSend />
-      <MessageBulleSend />
-      <MessageBulleSend />
-      <MessageBulleSend />
-      <MessageBulleSend />
-      <MessageBulleSend />
-      <MessageBulleSend />
-      <MessageBulleSend />
-      <MessageBulleSend />
-      <MessageBulleSend />
+      {messages.map((message) => {
+        return (message.senderId == selfId ? 
+          <MessageBulleSend text={message.content} /> :
+          <MessageBulleRecv text={message.content} />
+
+        )
+      })
+
+      }
     </>
   );
 }

@@ -1,4 +1,5 @@
-import { ChatRoom } from "./chat-room.dto";
+import { ChatRoom } from "src/_shared_dto/chat-room.dto";
+
 
 export interface UseChatDto {
   rooms: { [key: string]: ChatRoom } | undefined;

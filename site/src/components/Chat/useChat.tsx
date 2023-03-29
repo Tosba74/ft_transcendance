@@ -1,9 +1,9 @@
 import React from "react";
 import { io, Socket } from "socket.io-client";
 
-import { ChatMessage } from "./dto/chat-message.dto";
-import { ChatResponse } from "./dto/chat-response.dto";
-import { ChatRoom } from "./dto/chat-room.dto";
+import { ChatMessage } from "src/_shared_dto/chat-message.dto";
+import { ChatResponse } from "src/_shared_dto/chat-response.dto";
+import { ChatRoom } from "src/_shared_dto/chat-room.dto";
 
 import { UseChatDto } from "./dto/useChat.dto";
 
@@ -22,17 +22,20 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
   const [rooms, setRooms] = React.useState<{ [key: string]: ChatRoom }>();
 
   const identify = () => {
-    console.log("sent iden");
+    console.log("sent iden chat");
 
     // Send identify to register websocket user
     socketRef.current &&
       socketRef.current.emit(
         "identify",
         {},
-        (response: ChatResponse<ChatRoom[]>) => {
+        (response: ChatResponse<undefined>) => {
           if (response.error != undefined) {
             console.log("identify error", response.error);
           }
+
+          connectRoom(1);
+          connectRoom(2);
         }
       );
   };

@@ -1,6 +1,10 @@
 import React from "react";
 
-export default function MessageInput() {
+interface MessageInputProps {
+  sendMessage: Function;
+}
+
+export default function MessageInput({ sendMessage }: MessageInputProps) {
   const [message, setMessage] = React.useState("");
 
   return (
@@ -15,6 +19,7 @@ export default function MessageInput() {
           value={message}
           onChange={(e) => {
             setMessage(e.currentTarget.value);
+            sendMessage(message);
           }}
           className="ml-3 flex-grow rounded-full bg-gray-200 py-1 pl-6 text-gray-600 placeholder-gray-600 focus:placeholder-gray-400 focus:outline-none"
         />
