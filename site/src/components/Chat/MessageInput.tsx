@@ -1,20 +1,27 @@
-import React from "react";
+import React, { useState, SyntheticEvent } from "react";
 
 export default function MessageInput() {
-  const [message, setMessage] = React.useState("");
+  const [message, setMessage] = useState("");
+
+  function handleSend() {
+    console.log(message);
+    setMessage("");
+  }
 
   return (
     <button
       type="button"
       className="h-12 items-center justify-between rounded-full bg-cyan-500 align-middle text-white transition duration-500 ease-in-out hover:bg-blue-400 focus:outline-none"
+      onClick={handleSend}
     >
       <div className="flex flex-row rounded">
         <input
           type="text"
           placeholder="Write your message!"
           value={message}
-          onChange={(e) => {
-            setMessage(e.currentTarget.value);
+          onChange={(event) => {
+            setMessage(event.target.value);
+            // setMessage(event.currentTarget.value);
           }}
           className="ml-3 flex-grow rounded-full bg-gray-200 py-1 pl-6 text-gray-600 placeholder-gray-600 focus:placeholder-gray-400 focus:outline-none"
         />
