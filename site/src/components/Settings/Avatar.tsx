@@ -25,7 +25,8 @@ export default function Avatar({ loginer }: AvatarProps) {
     if (
       fileInput.current.files[0].type !== "image/png" &&
       fileInput.current.files[0].type !== "image/jpg" &&
-      fileInput.current.files[0].type !== "image/jpeg"
+      fileInput.current.files[0].type !== "image/jpeg" &&
+      fileInput.current.files[0].type !== "image/gif"
     ) {
       setAvatarMessage("Error: the image must be jpg or png");
       return false;
