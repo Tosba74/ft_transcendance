@@ -28,7 +28,7 @@ export default function Avatar({ loginer }: AvatarProps) {
       fileInput.current.files[0].type !== "image/jpeg" &&
       fileInput.current.files[0].type !== "image/gif"
     ) {
-      setAvatarMessage("Error: the image must be jpg or png");
+      setAvatarMessage("Error: the image must be jpg or png or a funny gif");
       return false;
     }
 
