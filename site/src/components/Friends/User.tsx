@@ -1,23 +1,10 @@
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import ModalUser from "./ModalUser";
+import { UserDto } from "src/_shared_dto/user.dto";
 
 interface UserProps {
-  user: {
-    id: number;
-    login_name: string;
-    pseudo: string;
-    avatar_url: string;
-    is_admin: boolean;
-    access_token: null;
-    color: number;
-    tfa_enabled: boolean;
-    status_updated_at: string;
-    created_at: string;
-    updated_at: string;
-    validate_date: null;
-    status: string;
-  };
+  user: UserDto;
   children?: React.ReactNode;
 }
 

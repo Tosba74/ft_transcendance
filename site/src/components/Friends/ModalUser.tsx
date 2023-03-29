@@ -1,44 +1,29 @@
 import ModalLink from "./ModalLink";
-
-interface users {
-  id: number;
-  login_name: string;
-  pseudo: string;
-  avatar_url: string;
-  is_admin: boolean;
-  access_token: null;
-  color: number;
-  tfa_enabled: boolean;
-  status_updated_at: string;
-  created_at: string;
-  updated_at: string;
-  validate_date: null;
-  status: string;
-}
+import { UserDto } from "src/_shared_dto/user.dto";
 
 interface ModalProps {
-  user: users;
+  user: UserDto;
   modalRef: React.MutableRefObject<HTMLUListElement | null>;
   position: number;
 }
 
-function handleView(user: users) {
+function handleView(user: UserDto) {
   console.log("view profile " + user.login_name);
 }
 
-function handleMP(user: users) {
+function handleMP(user: UserDto) {
   console.log("should mp " + user.login_name);
 }
 
-function handlePlay(user: users) {
+function handlePlay(user: UserDto) {
   console.log("should invite to play " + user.login_name);
 }
 
-function handleUpdate(user: users) {
+function handleUpdate(user: UserDto) {
   console.log("should add or rm " + user.login_name);
 }
 
-function handleBlock(user: users) {
+function handleBlock(user: UserDto) {
   console.log("should block " + user.login_name);
 }
 
