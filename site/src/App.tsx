@@ -56,7 +56,8 @@ export default function App() {
 
           {loginer.logged && (
             <>
-              <Route path="/players/:id"
+              <Route
+                path="/players/:id"
                 element={<PublicProfilePage player={loginer.userInfos} />}
               />
               <Route path="/friends" element={<FriendsPage />} />
