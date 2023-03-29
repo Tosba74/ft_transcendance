@@ -27,7 +27,7 @@ export default function ChannelChannelList({
 
   // const [channels] = useState<Channel[]>(Mock_Channel);
   return (
-    <div className="shadow-inner-lg  h-1/3 w-full rounded-md bg-gray-800 p-2 p-2">
+    <div className="shadow-inner-lg  h-1/3 w-full rounded-md bg-gray-800 p-2">
       <div className="scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
 
         {lstChannel && Object.keys(lstChannel).map(key => {
