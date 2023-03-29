@@ -1,5 +1,4 @@
 import React from "react";
-import { ChannelDto } from "src/_shared_dto/ChannelDto";
 import { UserDto } from "src/_shared_dto/user.dto";
 import ChannelChannelList from "./ChannelChannelList";
 import ChannelUserList from "./ChannelUserList";
@@ -20,40 +19,40 @@ export default function ChannelPanel({
   chats,
 }: ChannelPanelProps) {
   //
-  let users: UserDto[] = [
-    {
-      id: 1,
-      login_name: "jjaqueme",
-      pseudo: "jerome",
-      color: 10,
-      avatar_url: ".",
-      is_admin: false,
-    },
-    {
-      id: 2,
-      login_name: "jjaqueme",
-      pseudo: "jerome",
-      color: 10,
-      avatar_url: ".",
-      is_admin: false,
-    },
-    {
-      id: 3,
-      login_name: "jjaqueme",
-      pseudo: "jerome",
-      color: 10,
-      avatar_url: ".",
-      is_admin: false,
-    },
-    {
-      id: 4,
-      login_name: "jjaqueme",
-      pseudo: "jerome",
-      color: 10,
-      avatar_url: ".",
-      is_admin: false,
-    },
-  ];
+  // let users: UserDto[] = [
+  //   {
+  //     id: 1,
+  //     login_name: "jjaqueme",
+  //     pseudo: "jerome",
+  //     color: 10,
+  //     avatar_url: ".",
+  //     is_admin: false,
+  //   },
+  //   {
+  //     id: 2,
+  //     login_name: "jjaqueme",
+  //     pseudo: "jerome",
+  //     color: 10,
+  //     avatar_url: ".",
+  //     is_admin: false,
+  //   },
+  //   {
+  //     id: 3,
+  //     login_name: "jjaqueme",
+  //     pseudo: "jerome",
+  //     color: 10,
+  //     avatar_url: ".",
+  //     is_admin: false,
+  //   },
+  //   {
+  //     id: 4,
+  //     login_name: "jjaqueme",
+  //     pseudo: "jerome",
+  //     color: 10,
+  //     avatar_url: ".",
+  //     is_admin: false,
+  //   },
+  // ];
 
   // let channels: ChannelDto[] = [
   //   {
@@ -74,6 +73,8 @@ export default function ChannelPanel({
   //   },
   // ];
 
+  console.log(chats.rooms && chats.rooms[currChannel.toString()]);
+
   return (
     <div className="h-full">
       <ChannelChannelList
@@ -82,7 +83,14 @@ export default function ChannelPanel({
         setChannel={setChannel}
         setModeChannel={setModeChannel}
       />
-      <ChannelUserList users={users} />
+      <ChannelUserList
+        users={
+          (chats.rooms &&
+            chats.rooms[currChannel] &&
+            chats.rooms[currChannel].participants) ||
+          []
+        }
+      />
     </div>
   );
 }

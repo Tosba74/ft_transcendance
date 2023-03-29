@@ -1,14 +1,18 @@
-import { ChatRoom } from "src/_shared_dto/chat-room.dto";
+import { ChatRoomDto } from "src/_shared_dto/chat-room.dto";
 import MessageConv from "./MessageConv";
 import MessageInput from "./MessageInput";
 
 interface MessagePanelProps {
   selfId: number;
   sendMessage: Function;
-  room: ChatRoom | undefined;
+  room: ChatRoomDto | undefined;
 }
 
-export default function MessagePanel({ selfId, sendMessage, room }: MessagePanelProps) {
+export default function MessagePanel({
+  selfId,
+  sendMessage,
+  room,
+}: MessagePanelProps) {
   return (
     <>
       <div className="bg-yellow-400">{room?.name || "No room selected"}</div>

@@ -9,7 +9,7 @@ export default function MessageBulleRecv({ text }: MessageBulleRecvProps) {
         <div className="order-2 mx-2 my-1 flex max-w-xs flex-col items-start space-y-2 text-xs">
           <div>
             <span className="inline-block rounded-lg rounded-bl-none bg-gray-300 px-4 py-2 text-gray-600">
-              { text }
+              {text}
             </span>
           </div>
         </div>

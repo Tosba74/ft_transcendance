@@ -18,7 +18,12 @@ interface ChatMenuProps {
   chats: UseChatDto;
 }
 
-export default function ChatMenu({ openedMenu, setOpenedMenu, loginer, chats }: ChatMenuProps) {
+export default function ChatMenu({
+  openedMenu,
+  setOpenedMenu,
+  loginer,
+  chats,
+}: ChatMenuProps) {
   const [currChannel, setCurrChannel] = useState(0);
 
   const [modeChannel, setModeChannel] = useState(false);
@@ -28,8 +33,8 @@ export default function ChatMenu({ openedMenu, setOpenedMenu, loginer, chats }: 
   };
 
   const sendMessage = (text: string) => {
-    chats.sendMessage(text, currChannel)
-  }
+    chats.sendMessage(text, currChannel);
+  };
 
   return (
     <>
@@ -67,7 +72,13 @@ export default function ChatMenu({ openedMenu, setOpenedMenu, loginer, chats }: 
           </div>
 
           <div className="flex flex-grow flex-col rounded">
-            {!modeChannel && <MessagePanel selfId={loginer.userInfos?.id || -1} sendMessage={sendMessage} room={chats.rooms && chats.rooms[currChannel]} />}
+            {!modeChannel && (
+              <MessagePanel
+                selfId={loginer.userInfos?.id || -1}
+                sendMessage={sendMessage}
+                room={chats.rooms && chats.rooms[currChannel.toString()]}
+              />
+            )}
             {modeChannel && (
               <ChannelPanel
                 currChannel={currChannel}

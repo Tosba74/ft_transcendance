@@ -1,9 +1,9 @@
 import React from "react";
 import { io, Socket } from "socket.io-client";
 
-import { ChatMessage } from "src/_shared_dto/chat-message.dto";
-import { ChatResponse } from "src/_shared_dto/chat-response.dto";
-import { ChatRoom } from "src/_shared_dto/chat-room.dto";
+import { ChatMessageDto } from "src/_shared_dto/chat-message.dto";
+import { ChatResponseDto } from "src/_shared_dto/chat-response.dto";
+import { ChatRoomDto } from "src/_shared_dto/chat-room.dto";
 
 import { UseChatDto } from "./dto/useChat.dto";
 
@@ -14,12 +14,12 @@ interface useChatProps {
 
 interface broadcastMessageProps {
   room_id: string;
-  message: ChatMessage;
+  message: ChatMessageDto;
 }
 
 const useChat = ({ logged, token }: useChatProps): UseChatDto => {
   const socketRef = React.useRef<Socket>();
-  const [rooms, setRooms] = React.useState<{ [key: string]: ChatRoom }>();
+  const [rooms, setRooms] = React.useState<{ [key: string]: ChatRoomDto }>();
 
   const identify = () => {
     console.log("sent iden chat");
@@ -29,7 +29,7 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
       socketRef.current.emit(
         "identify",
         {},
-        (response: ChatResponse<undefined>) => {
+        (response: ChatResponseDto<undefined>) => {
           if (response.error != undefined) {
             console.log("identify error", response.error);
           }
@@ -48,9 +48,9 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
       socketRef.current.emit(
         "connectRoom",
         { room: room_id },
-        (response: ChatResponse<ChatRoom>) => {
+        (response: ChatResponseDto<ChatRoomDto>) => {
           if (response.error == undefined && response.value) {
-            let room: ChatRoom = response.value;
+            let room: ChatRoomDto = response.value;
 
             console.log("connected", room.id);
 
