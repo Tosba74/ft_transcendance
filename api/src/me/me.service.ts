@@ -1,4 +1,4 @@
-import { ConsoleLogger, Injectable, NotFoundException, BadRequestException, PreconditionFailedException, UnauthorizedException } from '@nestjs/common';
+import { ConsoleLogger, Injectable, NotFoundException, BadRequestException, PreconditionFailedException, UnauthorizedException, forwardRef, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -31,6 +31,7 @@ export class MeService {
     private usersService: UsersService,
     private friendsService: FriendsService,
     private blockedsService: BlockedsService,
+    @Inject(forwardRef(() => ChatsService))
     private chatsService: ChatsService,
     private chatParticipantService: ChatParticipantsService,
   ) { }
@@ -48,6 +49,17 @@ export class MeService {
   async removeFriend(user: LoggedUserDto, friend_id: number): Promise<void> {
 
     return this.friendsService.deleteFriendship(user.id, friend_id);
+  }
+
+
+  async updatePseudo(user: LoggedUserDto, pseudo: string): Promise<boolean> {
+
+    return this.usersService.updatePseudo(user.id, pseudo);
+  }
+
+  async updateAvatar(user: LoggedUserDto, filename: string): Promise<string> {
+
+    return this.usersService.updateAvatar(user.id, filename);
   }
 
 

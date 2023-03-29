@@ -1,4 +1,4 @@
-import { Controller, Res, HttpCode, Param, Body, Get, Post, Put, Delete, UseFilters, ParseIntPipe, UseGuards, Request, StreamableFile } from '@nestjs/common';
+import { Controller, Res, HttpCode, Param, Body, Get, Post, Put, Delete, UseFilters, ParseIntPipe, UseGuards, Request, Patch, UseInterceptors, UploadedFile, StreamableFile } from '@nestjs/common';
 import { ApiOkResponse, ApiNotFoundResponse, ApiCreatedResponse, ApiNoContentResponse, ApiUnprocessableEntityResponse, ApiTags, ApiBadRequestResponse } from '@nestjs/swagger';
 import { HttpExceptionFilter } from 'src/_common/filters/http-exception.filter';
 
@@ -16,6 +16,10 @@ import { UserModel } from 'src/users/models/user.model';
 import { BlockedModel } from 'src/blockeds/models/blocked.model';
 import { ChatParticipantModel } from 'src/chat_participants/models/chat_participant.model';
 import { JoinChatDto } from './dto/join_chat';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { UpdatePseudoDto } from './dto/update-pseudo.dto';
+import { imageFileFilter } from './validation/file-upload.utils';
 
 
 @Controller('api/me')
@@ -24,11 +28,11 @@ import { JoinChatDto } from './dto/join_chat';
 @UseFilters(HttpExceptionFilter)
 export class MeController {
     constructor(private meService: MeService) { }
-    
+
     @Get()
-    @ApiOkResponse({ description: 'User infos retrieved successfully', type: LoggedUserDto})
+    @ApiOkResponse({ description: 'User infos retrieved successfully', type: LoggedUserDto })
     getMe(@Request() req: any): LoggedUserDto {
-        console.log(req.user);
+        
         return req.user as LoggedUserDto;
     }
 
@@ -43,7 +47,7 @@ export class MeController {
 
         return this.meService.listFriends(req.user as LoggedUserDto);
     }
-    
+
     @Post('friends/:id')
     @ApiCreatedResponse({ description: 'Friend created successfully', type: FriendModel })
     @ApiBadRequestResponse({ description: 'Friend validation error' })
@@ -73,7 +77,7 @@ export class MeController {
 
         return this.meService.listBlockedBy(req.user as LoggedUserDto);
     }
-    
+
     @Post('frienblockedds/:id')
     @ApiCreatedResponse({ description: 'Blocked created successfully', type: BlockedModel })
     @ApiBadRequestResponse({ description: 'Blocked validation error' })
@@ -111,7 +115,7 @@ export class MeController {
 
     //     return this.meService.listBlockedBy(req.user as LoggedUserDto);
     // }
-    
+
     // @Post('frienblockedds/:id')
     // @ApiCreatedResponse({ description: 'Blocked created successfully', type: BlockedModel })
     // @ApiBadRequestResponse({ description: 'Blocked validation error' })
@@ -127,4 +131,56 @@ export class MeController {
 
     //     return this.meService.removeBlocked(req.user as LoggedUserDto, id);
     // }
+
+
+
+
+    @Patch('update_pseudo')
+    @AllowLogged()
+    @ApiCreatedResponse({ description: 'Pseudo updated successfully', type: UpdatePseudoDto })
+    @ApiNotFoundResponse({ description: 'User not found' })
+    @ApiBadRequestResponse({ description: 'User validation error' })
+    public update_pseudo(@Request() req: any, @Body() updatePseudo: UpdatePseudoDto): Promise<boolean> {
+
+        return this.meService.updatePseudo(req.user as LoggedUserDto, updatePseudo.pseudo);
+    }
+
+    // // conserver au cas ou ca reste utile pour l api
+    // @Get('avatar')
+    // @AllowLogged()
+    // @ApiCreatedResponse({ description: 'Avatar retrieved successfully', type: UserModel })
+    // getFile(@Request() req: any, @Res({ passthrough: true }) res: Response): StreamableFile {
+
+    //   const path = req.user.avatar_url;
+    //   const extension: string = extname(path);
+
+    //   res.set({'Content-Type': `image/${extension}`});
+
+    //   const file = createReadStream(path, {encoding: "base64"});
+    //   return new StreamableFile(file);
+    // }
+
+    @Put('upload_image')
+    @AllowLogged()
+    @UseInterceptors(
+        FileInterceptor('avatar', {
+            storage: diskStorage({
+                destination: '../app-datas/avatars',
+                filename: (req: any, file, cb) => {
+                    cb(null, file.originalname);
+                },
+            }),
+            limits: {
+                fileSize: 1000000
+            },
+            fileFilter: imageFileFilter,
+        }),
+    )
+    @ApiCreatedResponse({ description: 'Avatar updated successfully', type: UpdatePseudoDto })
+    @ApiNotFoundResponse({ description: 'User not found' })
+    @ApiBadRequestResponse({ description: 'User validation error' })
+    public uploadFileAndPassValidation(@Request() req: any, @UploadedFile() file: Express.Multer.File): Promise<string> {
+
+        return this.meService.updateAvatar(req.user as LoggedUserDto, file.originalname);
+    }
 }

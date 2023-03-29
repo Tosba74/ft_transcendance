@@ -32,8 +32,8 @@ services:
     stdin_open:  true # docker run -i
     tty: true        # docker run -t
 
-    ports:
-      - "3001:3001"
+    # ports:
+    #   - "3001:3001"
 
     networks:
       - netpong
@@ -47,8 +47,8 @@ services:
     stdin_open:  true # docker run -i
     tty: true        # docker run -t
 
-    ports:
-      - "4000:4000"
+    # ports:
+    #   - "4000:4000"
 
 
   front:
@@ -57,8 +57,8 @@ services:
     stdin_open:  true # docker run -i
     tty: true        # docker run -t
 
-    ports:
-      - "3000:3000"
+    # ports:
+    #   - "3000:3000"
 
 
   nginx:

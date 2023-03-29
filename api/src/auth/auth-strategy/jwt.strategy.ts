@@ -1,7 +1,7 @@
 
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 
 import { UsersService } from 'src/users/users.service';
 import { LoggedUserDto } from '../dto/logged_user.dto';
@@ -17,13 +17,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: LoggedUserDto) {
+  async validate(payload: any): Promise<LoggedUserDto> {
+
+    if (!payload || payload.id == undefined) {
+      throw new UnauthorizedException('User validation error');
+    }
 
     // lorsque un user modifie ses infos, pour refresh le token avec les nouvelles datas
     const user: LoggedUserDto = await this.usersService.findOneById(payload.id);
-    payload.pseudo = user.pseudo;
-    payload.avatar_url = user.avatar_url;
-    payload.tfa_enabled = user.tfa_enabled;
 
     // const loggedUser: LoggedUserDto = {
     //     id: payload.id,
@@ -34,6 +35,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     // };
 
     // const loggedUser = payload as LoggedUserDto;
-    return payload;
+    return user;
   }
 }

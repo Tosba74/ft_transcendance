@@ -9,6 +9,7 @@ import { JwtStrategy } from './auth-strategy/jwt.strategy';
 import { AuthService } from './auth.service';
 import { UsersModule } from 'src/users/users.module';
 import { AuthController } from './auth.controller';
+import { WsjwtStrategy } from './auth-strategy/ws.strategy';
 import { TfaModule } from 'src/tfa/tfa.module';
 
 @Module({
@@ -19,7 +20,7 @@ import { TfaModule } from 'src/tfa/tfa.module';
             signOptions: { expiresIn: '2h' },
         }), 
     ],
-    providers: [ AuthService, LocalStrategy, JwtStrategy, ],
+    providers: [ AuthService, LocalStrategy, JwtStrategy, WsjwtStrategy ],
     controllers: [AuthController],
     exports: [AuthService],
 })

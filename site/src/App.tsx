@@ -30,79 +30,27 @@ import useChat from "./components/Chat/useChat";
 import useGame from "./components/Game/useGame";
 
 export default function App() {
-  const [logged, setLogged] = React.useState(false);
-  const [userInfos, setUserInfos] = React.useState(new LoggedUser());
+  const loginer: UseLoginDto = useLogin();
+  const [openedMenu, setOpenedMenu] = React.useState("");
 
-  function fetchData() {
-    try {
-      const token = localStorage.getItem('token');
-      if (token != null) {
-        const user: LoggedUser = jwt_decode(token);
-        setUserInfos(user);
-        setLogged(true);
-        return;
-
-        // axios.get('/api/me',
-        //   {
-        //     headers: ({
-        //       Authorization: 'Bearer ' + token,
-        //     })
-        //   })
-        //   .then(res => {
-        //     if (res.status === 200) {
-        //       // console.log(res.data);
-        //       setUserInfos(res.data);
-        //       setLogged(true);
-        //       return;
-        //     }
-        //   })
-        //   .catch(error => {
-        //   });
-
-      }
-    } catch {
-
-    }
-
-    setLogged(false)
-  }
-
-  useEffect(fetchData, [logged]);
-
-
-  // const [tokenMessage, setTokenMessage] = React.useState('');
-
-  // Au moment du refresh verifier aussi d'abord si le token est toujours valable (pseudo code en dessous)
-  // si non: setLogged a false + setUserInfos a {}
-  function refreshTokenAndUserInfos() {
-    const token = localStorage.getItem('token');
-
-    // if token still available
-        axios.get("/api/login/refresh_token", {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            }
-        })
-        .then(res => {
-            const newtoken: string = res.data['access_token'];
-            if (newtoken) {
-                localStorage.setItem('token', newtoken);
-                const user: LoggedUser = jwt_decode(newtoken);
-                setUserInfos(user);
-            }
-        })
-        .catch((error) => {
-            // setTokenMessage('Error while refreshing user\'s token');
-            console.log(error);
-        });
-    // else
-        // log out the user
-  }
+  let chats: UseChatDto = useChat({
+    logged: loginer.logged,
+    token: loginer.token,
+  });
+  let gamer: UseGameDto = useGame({
+    logged: loginer.logged,
+    token: loginer.token,
+  });
 
   return (
     <Router>
-      <div className="bg_white">
-        <NavBar logged={logged} />
+      <NavBar
+        loginer={loginer}
+        openedMenu={openedMenu}
+        setOpenedMenu={setOpenedMenu}
+      />
+
+      <div className="grow bg-gray-100 dark:bg-gray-400">
         <Routes>
           <Route path="/" element={<HomePage />} />
 
@@ -139,6 +87,10 @@ export default function App() {
           )}
         </Routes>
       </div>
+
+      <ChatIcon openedMenu={openedMenu} setOpenedMenu={setOpenedMenu} />
+
+      <ChatPage openedMenu={openedMenu} setOpenedMenu={setOpenedMenu} />
     </Router>
   );
 }

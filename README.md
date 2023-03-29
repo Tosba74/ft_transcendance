@@ -4,7 +4,7 @@ First site with pong game
 
 ## Docker install
 Create certificates in build/nginx/certs folder, must be named nginx.crt and nginx.key
-They can be generated automatically by executing `make setup`.
+They can be generated automatically by executing `make setup` or `make certs` if you have openssl locally.
 
 Create the .env file by copying the .env.example file
 
