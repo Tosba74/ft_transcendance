@@ -2,10 +2,12 @@ import React from "react";
 import { useState, useEffect, useRef } from "react";
 import ModalUser from "./ModalUser";
 import { UserDto } from "src/_shared_dto/user.dto";
+import { UseLoginDto } from "../Log/dto/useLogin.dto";
 
 interface UserProps {
   user: UserDto;
   children?: React.ReactNode;
+  loginer: UseLoginDto;
 }
 
 export default function User(props: UserProps) {
@@ -41,7 +43,12 @@ export default function User(props: UserProps) {
         {props.user.login_name}
       </button>
       {isOpen && (
-        <ModalUser user={props.user} modalRef={modalRef} position={position} />
+        <ModalUser
+          loginer={props.loginer}
+          user={props.user}
+          modalRef={modalRef}
+          position={position}
+        />
       )}
     </div>
   );
