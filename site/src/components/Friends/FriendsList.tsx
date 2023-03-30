@@ -20,20 +20,22 @@ export default function FriendsList({ loginer }: { loginer: UseLoginDto }) {
       .catch((error) => {});
   }, []);
 
+  const content: JSX.Element[] = users.map((user) => (
+    <li key={user.id}>
+      <User loginer={loginer} user={user}>
+        <UserStatus status={user.color} />
+      </User>
+    </li>
+  ));
+
   return (
     <>
       <h2 className="text-2xl">Friends list</h2>
-      <ul className="mb-4 pl-1">
-        {users.map((user) => {
-          return (
-            <li key={user.id}>
-              <User user={user}>
-                <UserStatus status={user.color} />
-              </User>
-            </li>
-          );
-        })}
-      </ul>
+      {users.length ? (
+        <ul className="mb-4 pl-1">{content}</ul>
+      ) : (
+        <p>Vous n'avez pas encore d'amis</p>
+      )}
     </>
   );
 }

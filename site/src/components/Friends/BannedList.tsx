@@ -17,7 +17,7 @@ export default function BannedList({ loginer }: { loginer: UseLoginDto }) {
       .get("/api/me/blockeds", loginer.get_headers())
       .then((res) => {
         if (res.status === 200) {
-          // console.log(res.data as UserDto);
+          // console.log(res.data as UserDto[]);
           setUsers(res.data as UserDto[]);
 
           return;
@@ -26,23 +26,25 @@ export default function BannedList({ loginer }: { loginer: UseLoginDto }) {
       .catch((error) => {});
   }, []);
 
+  const content: JSX.Element[] = users.map((user) => (
+    <li key={user.id}>
+      <User loginer={loginer} user={user}>
+        <MdClose
+          onClick={() => handleUnblock(user)}
+          className="inline-block cursor-pointer"
+        />
+      </User>
+    </li>
+  ));
+
   return (
     <>
-      <h2 className="text-2xl">Banned list</h2>
-      <ul className="mb-4 pl-1">
-        {users.map((user) => {
-          return (
-            <li key={user.id} className="text-slate-500 line-through">
-              <User user={user}>
-                <MdClose
-                  onClick={() => handleUnblock(user)}
-                  className="inline-block cursor-pointer"
-                />
-              </User>
-            </li>
-          );
-        })}
-      </ul>
+      {users.length > 0 && (
+        <>
+          <h2 className="text-2xl">Banned list</h2>
+          <ul className="mb-4 pl-1">{content}</ul>
+        </>
+      )}
     </>
   );
 }
