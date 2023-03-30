@@ -59,6 +59,14 @@ export class MeController {
         return this.meService.addFriend(req.user as LoggedUserDto, id);
     }
 
+    @Post('friends/slug/:slug')
+    @ApiCreatedResponse({ description: 'Friend created successfully', type: FriendModel })
+    @ApiBadRequestResponse({ description: 'Friend validation error' })
+    public createFriendshipBySlug(@Request() req: any, @Param('slug') slug: string): Promise<FriendModel> {
+
+        return this.meService.addFriendBySlug(req.user as LoggedUserDto, slug);
+    }
+
     @Delete('friends/:id')
     @HttpCode(204)
     @ApiNoContentResponse({ description: 'Friend deleted successfully' })

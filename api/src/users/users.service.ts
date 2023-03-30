@@ -51,6 +51,18 @@ export class UsersService {
     }
   }
 
+  async findOneByPseudo(pseudo: string): Promise<UserModel> {
+    try {
+      const user = await this.usersRepository.findOneOrFail({
+        where: { pseudo: pseudo }
+      });
+      return user;
+    }
+    catch (error) {
+      throw new NotFoundException('User login not found');
+    }
+  }
+
 
 
   async create(pseudo: string, login_name: string, password: string): Promise<UserModel> {
