@@ -142,19 +142,19 @@ export class FriendsService {
     });
 
     if (reverseFriend != null) {
-      await this.friendsRepository.delete(reverseFriend);
+      await this.friendsRepository.delete(reverseFriend.id);
     }
-
-
+    
+    
     const goodDirection = await this.friendsRepository.findOne({
       where: {
         first_user: { id: friender_id },
         second_user: { id: newfriend_id },
       }
     });
-
+    
     if (goodDirection != null) {
-      await this.friendsRepository.delete(goodDirection);
+      await this.friendsRepository.delete(goodDirection.id);
     }
   }
 }

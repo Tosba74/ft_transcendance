@@ -60,6 +60,7 @@ export class MeController {
     }
 
     @Delete('friends/:id')
+    @HttpCode(204)
     @ApiNoContentResponse({ description: 'Friend deleted successfully' })
     @ApiBadRequestResponse({ description: 'Friend validation error' })
     public deleteFriendship(@Request() req: any, @Param('id', ParseIntPipe) id: number): Promise<void> {
@@ -90,6 +91,7 @@ export class MeController {
     }
 
     @Delete('blockeds/:id')
+    @HttpCode(204)
     @ApiNoContentResponse({ description: 'Blocked deleted successfully' })
     @ApiBadRequestResponse({ description: 'Blocked validation error' })
     public deleteBlocked(@Request() req: any, @Param('id', ParseIntPipe) id: number): Promise<void> {
