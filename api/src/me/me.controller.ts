@@ -78,7 +78,7 @@ export class MeController {
         return this.meService.listBlockedBy(req.user as LoggedUserDto);
     }
 
-    @Post('frienblockedds/:id')
+    @Post('blockeds/:id')
     @ApiCreatedResponse({ description: 'Blocked created successfully', type: BlockedModel })
     @ApiBadRequestResponse({ description: 'Blocked validation error' })
     public createBlocked(@Request() req: any, @Param('id', ParseIntPipe) id: number): Promise<BlockedModel> {
@@ -86,7 +86,7 @@ export class MeController {
         return this.meService.addBlocked(req.user as LoggedUserDto, id);
     }
 
-    @Delete('blocked/:id')
+    @Delete('blockeds/:id')
     @ApiNoContentResponse({ description: 'Blocked deleted successfully' })
     @ApiBadRequestResponse({ description: 'Blocked validation error' })
     public deleteBlocked(@Request() req: any, @Param('id', ParseIntPipe) id: number): Promise<void> {
