@@ -46,6 +46,13 @@ export class MeService {
     return this.friendsService.createFriendship(user.id, friend_id);
   }
 
+  async addFriendBySlug(user: LoggedUserDto, slug: string): Promise<FriendModel> {
+
+    const foundUser = await this.usersService.findOneByPseudo(slug);
+
+    return this.friendsService.createFriendship(user.id, foundUser.id);
+  }
+
   async removeFriend(user: LoggedUserDto, friend_id: number): Promise<void> {
 
     return this.friendsService.deleteFriendship(user.id, friend_id);
