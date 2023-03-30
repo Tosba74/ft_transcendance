@@ -51,6 +51,20 @@ export class MeController {
         return this.meService.listFriends(req.user as LoggedUserDto);
     }
 
+    @Get('friends/received')
+    @ApiOkResponse({ description: 'Friends retrieved successfully', type: [UserDto] })
+    public listReceivedFriendships(@Request() req: any): Promise<UserDto[]> {
+
+        return this.meService.listReceivedFriends(req.user as LoggedUserDto);
+    }
+
+    @Get('friends/sent')
+    @ApiOkResponse({ description: 'Friends retrieved successfully', type: [UserDto] })
+    public listSentFriendships(@Request() req: any): Promise<UserDto[]> {
+
+        return this.meService.listSentFriends(req.user as LoggedUserDto);
+    }
+
     @Post('friends/:id')
     @ApiCreatedResponse({ description: 'Friend created successfully', type: FriendModel })
     @ApiBadRequestResponse({ description: 'Friend validation error' })

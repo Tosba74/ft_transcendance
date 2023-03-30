@@ -41,6 +41,18 @@ export class MeService {
     return this.friendsService.findFriends(user.id);
   }
 
+  async listReceivedFriends(user: LoggedUserDto): Promise<UserModel[]> {
+
+    return this.friendsService.listReceivedFriends(user.id);
+  }
+
+  async listSentFriends(user: LoggedUserDto): Promise<UserModel[]> {
+
+    return this.friendsService.listSentFriends(user.id);
+  }
+
+
+
   async addFriend(user: LoggedUserDto, friend_id: number): Promise<FriendModel> {
 
     return this.friendsService.createFriendship(user.id, friend_id);
