@@ -39,7 +39,7 @@ export default function ChatMenu({
   return (
     <>
       {openedMenu == "chat" && (
-        <div className="absolute top-20 bottom-10 right-5 left-5 z-50 ml-auto flex flex-col rounded-lg bg-gray-300 p-2 shadow-lg dark:bg-gray-800 lg:w-1/3">
+        <div className="absolute top-16 bottom-10 z-50 flex w-full flex-col rounded-lg bg-gray-300 p-2 shadow-lg dark:bg-gray-800 md:top-20 lg:right-2 lg:top-20 lg:w-1/3">
           <div className="flex flex-row items-center justify-between rounded bg-gray-200 p-2 text-center shadow-lg dark:bg-gray-700 dark:text-white">
             <button
               className="w-full text-center"
@@ -71,7 +71,7 @@ export default function ChatMenu({
             </button>
           </div>
 
-          <div className="flex flex-grow flex-col rounded">
+          <div className="right-2 left-2 flex w-full flex-grow flex-col rounded">
             {!modeChannel && (
               <MessagePanel
                 selfId={loginer.userInfos?.id || -1}

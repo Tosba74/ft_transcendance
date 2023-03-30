@@ -5,11 +5,11 @@ interface MessageBulleSendProps {
 export default function MessageBulleSend({ text }: MessageBulleSendProps) {
   return (
     <div className="mx-3 mb-1">
-      <div className="chat-message">
+      <div className="chat-message break-words">
         <div className="flex items-end justify-end">
           <div className="order-1 mx-2 flex max-w-xs flex-col items-end space-y-2 text-xs">
             <div>
-              <span className="inline-block rounded-lg bg-cyan-500 px-4 py-2 text-white ">
+              <span className="inline-block text-ellipsis rounded-lg bg-cyan-500 px-4 py-2 text-white ">
                 {text}
               </span>
             </div>
