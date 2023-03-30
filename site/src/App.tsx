@@ -58,7 +58,7 @@ export default function App() {
             <>
               <Route
                 path="/players/:id"
-                element={<PublicProfilePage player={loginer.userInfos} />}
+                element={<PublicProfilePage loginer={loginer} />}
               />
               <Route path="/friends" element={<FriendsPage />} />
               <Route
