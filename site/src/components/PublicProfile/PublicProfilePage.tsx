@@ -12,49 +12,55 @@ interface UserListPageProps {
 
 export default function ProfilePublic({ loginer }: UserListPageProps) {
   const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
+  const [error, setError] = React.useState<string>();
   const [user, setUser] = React.useState<UserDto>();
   const params = useParams();
   const id = Number(params.id);
 
   React.useEffect(() => {
-	setLoading(true);
+    setLoading(true);
     axios
       .get(`/api/users/${id}`, loginer.get_headers())
       .then((res: any) => {
         if (res.status === 200) {
           setUser(res.data as UserDto);
-          setLoading(false);
-          return;
-        }
+        } //
 		else
-			console.log("prout");
+		{
+			setError("non valide")
+		}
+		setLoading(false);
       })
-	  .catch((e) => {
-		console.log(e.message);
+      .catch((e) => {
+        console.log(e.message);
         setError(e.message);
         setLoading(false);
       });
-
   }, []);
 
   return (
     <>
       {loading && (
         <div className="row">
-			<div className="card large error">
-				<div className="text-center p-4 mb-4 text-sm text-blue-1000 rounded-lg bg-blue-500 dark:bg-gray-800 dark:text-red-400" role="alert">
-					<h3 className="font-medium">loading..</h3>
-				</div>
-			</div>
-	  </div>
+          <div className="card large error">
+            <div
+              className="text-blue-1000 mb-4 rounded-lg bg-blue-500 p-4 text-center dark:bg-gray-800 dark:text-red-400"
+              role="alert"
+            >
+              <h1 className="font-medium text-2xl">loading...</h1>
+            </div>
+          </div>
+        </div>
       )}
       {error && (
         <div className="row">
           <div className="card large error">
-				<div className="text-center p-4 mb-4 text-sm text-red-1000 rounded-lg bg-red-500 dark:bg-gray-800 dark:text-red-400" role="alert">
-					<h3 className="font-medium">ERROR!</h3> {error}
-				</div>
+            <div
+              className="text-red-1000 mb-4 rounded-lg bg-red-500 p-4 text-center dark:bg-gray-800 dark:text-red-400"
+              role="alert"
+            >
+              <h1 className="font-medium text-2xl">ERROR! {error}</h1>
+            </div>
           </div>
         </div>
       )}
