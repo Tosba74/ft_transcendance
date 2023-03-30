@@ -37,7 +37,7 @@ export default function User(props: UserProps) {
   }, [isOpen]);
 
   return (
-    <div>
+    <>
       {props.children}
       <button className="modalRef" onClick={handleClick}>
         {props.user.login_name}
@@ -50,6 +50,6 @@ export default function User(props: UserProps) {
           position={position}
         />
       )}
-    </div>
+    </>
   );
 }
