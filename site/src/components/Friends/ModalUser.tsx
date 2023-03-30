@@ -3,7 +3,7 @@ import { UserDto } from "src/_shared_dto/user.dto";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
 import React from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { NavigateFunction, useNavigate } from "react-router-dom";
 
 interface ModalProps {
   loginer: UseLoginDto;
@@ -12,7 +12,7 @@ interface ModalProps {
   position: number;
 }
 
-function handleView(navigate: any, user: UserDto) {
+function handleView(navigate: NavigateFunction, user: UserDto) {
   navigate("/players/" + user.id);
 }
 
