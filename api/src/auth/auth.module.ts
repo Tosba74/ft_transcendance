@@ -17,7 +17,7 @@ import { TfaModule } from 'src/tfa/tfa.module';
         UsersModule, PassportModule, forwardRef(() => TfaModule),
         JwtModule.register({
             secret: process.env.JWT_SECRET,
-            signOptions: { expiresIn: '2h' },
+            signOptions: { expiresIn: '30d' },
         }), 
     ],
     providers: [ AuthService, LocalStrategy, JwtStrategy, WsjwtStrategy ],

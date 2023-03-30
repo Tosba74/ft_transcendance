@@ -23,6 +23,7 @@ import GamePage from "./components/Game/GamePage";
 import TfaCodePage from "./components/Log/TfaCodePage";
 import CreateAccountPage from "./components/Log/CreateAccountPage";
 import FriendsPage from "./components/Friends/FriendsPage";
+import PublicProfilePage from "./components/PublicProfile/PublicProfilePage";
 import { UseChatDto } from "./components/Chat/dto/useChat.dto";
 import { UseGameDto } from "./components/Game/dto/useGame.dto";
 import useChat from "./components/Chat/useChat";
@@ -56,8 +57,8 @@ export default function App() {
           {loginer.logged && (
             <>
               <Route
-                path="/profile"
-                element={<SettingsPage loginer={loginer} />}
+                path="/players/:id"
+                element={<PublicProfilePage loginer={loginer} />}
               />
               <Route
                 path="/friends"

@@ -24,7 +24,7 @@ export class UsersController {
   constructor(private usersService: UsersService) { }
 
 
-  /* 
+  /*
       --------- CRUD usual routes ---------
   */
 
@@ -35,6 +35,7 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
+  @AllowLogged()
   @Get(':id')
   @ApiOkResponse({ description: 'User retrieved successfully', type: UserModel })
   @ApiNotFoundResponse({ description: 'User not found' })
@@ -68,7 +69,7 @@ export class UsersController {
 
 
 
-  /* 
+  /*
       --------- OUR APP additional routes ---------
   */
 
