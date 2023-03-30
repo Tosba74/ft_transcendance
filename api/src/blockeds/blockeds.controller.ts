@@ -5,6 +5,7 @@ import { HttpExceptionFilter } from 'src/_common/filters/http-exception.filter';
 import { BlockedsService } from './blockeds.service';
 import { BlockedModel } from "./models/blocked.model";
 import { BlockedDto } from './dto/blocked.dto';
+import { UserModel } from 'src/users/models/user.model';
 
 
 @Controller('api/blockeds')
@@ -29,14 +30,14 @@ export class BlockedsController {
 
 
   @Get(':id/blocked_users')
-  @ApiOkResponse({ description: 'Blocked users retrieved successfully', type: BlockedModel, isArray: true })
-  public blockedUsers(@Param('id', ParseIntPipe) id: number): Promise<BlockedModel[]> {
+  @ApiOkResponse({ description: 'Blocked users retrieved successfully', type: UserModel, isArray: true })
+  public blockedUsers(@Param('id', ParseIntPipe) id: number): Promise<UserModel[]> {
     return this.blockedsService.blockedUsers(id);
   }
 
   @Get(':id/blocked_by')
-  @ApiOkResponse({ description: 'Blocked retrieved successfully', type: BlockedModel, isArray: true })
-  public blockedBy(@Param('id', ParseIntPipe) id: number): Promise<BlockedModel[]> {
+  @ApiOkResponse({ description: 'Blocked retrieved successfully', type: UserModel, isArray: true })
+  public blockedBy(@Param('id', ParseIntPipe) id: number): Promise<UserModel[]> {
     return this.blockedsService.blockedBy(id);
   }
 

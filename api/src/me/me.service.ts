@@ -64,12 +64,12 @@ export class MeService {
 
 
 
-  async listBlockedBy(user: LoggedUserDto): Promise<BlockedModel[]> {
+  async listBlockedBy(user: LoggedUserDto): Promise<UserModel[]> {
 
     return this.blockedsService.blockedBy(user.id);
   }
 
-  async listBlockeds(user: LoggedUserDto): Promise<BlockedModel[]> {
+  async listBlockeds(user: LoggedUserDto): Promise<UserModel[]> {
 
     return this.blockedsService.blockedUsers(user.id);
   }

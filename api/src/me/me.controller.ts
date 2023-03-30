@@ -21,6 +21,9 @@ import { diskStorage } from 'multer';
 import { UpdatePseudoDto } from './dto/update-pseudo.dto';
 import { imageFileFilter } from './validation/file-upload.utils';
 
+import { UserDto } from '../_shared_dto/user.dto';
+
+
 
 @Controller('api/me')
 @ApiTags('api/me')
@@ -42,8 +45,8 @@ export class MeController {
     // }
 
     @Get('friends')
-    @ApiOkResponse({ description: 'Friends retrieved successfully', type: [FriendModel] })
-    public listFriendships(@Request() req: any): Promise<UserModel[]> {
+    @ApiOkResponse({ description: 'Friends retrieved successfully', type: [UserDto] })
+    public listFriendships(@Request() req: any): Promise<UserDto[]> {
 
         return this.meService.listFriends(req.user as LoggedUserDto);
     }
@@ -65,15 +68,15 @@ export class MeController {
     }
 
     @Get('blockeds')
-    @ApiOkResponse({ description: 'Blockeds retrieved successfully', type: [FriendModel] })
-    public listBlockeds(@Request() req: any): Promise<BlockedModel[]> {
+    @ApiOkResponse({ description: 'Blockeds retrieved successfully', type: [UserDto] })
+    public listBlockeds(@Request() req: any): Promise<UserDto[]> {
 
         return this.meService.listBlockeds(req.user as LoggedUserDto);
     }
 
     @Get('blockedby')
-    @ApiOkResponse({ description: 'Blockeds by retrieved successfully', type: [FriendModel] })
-    public listBlockedBy(@Request() req: any): Promise<BlockedModel[]> {
+    @ApiOkResponse({ description: 'Blockeds by retrieved successfully', type: [UserDto] })
+    public listBlockedBy(@Request() req: any): Promise<UserDto[]> {
 
         return this.meService.listBlockedBy(req.user as LoggedUserDto);
     }
