@@ -25,11 +25,10 @@ export default function ProfilePublic({ loginer }: UserListPageProps) {
         if (res.status === 200) {
           setUser(res.data as UserDto);
         } //
-		else
-		{
-			setError("non valide")
-		}
-		setLoading(false);
+        else {
+          setError("non valide");
+        }
+        setLoading(false);
       })
       .catch((e) => {
         setError(e.message);
@@ -46,7 +45,7 @@ export default function ProfilePublic({ loginer }: UserListPageProps) {
               className="text-blue-1000 mb-4 rounded-lg bg-blue-500 p-4 text-center dark:bg-gray-800 dark:text-red-400"
               role="alert"
             >
-              <h1 className="font-medium text-2xl">loading...</h1>
+              <h1 className="text-2xl font-medium">loading...</h1>
             </div>
           </div>
         </div>
@@ -58,7 +57,7 @@ export default function ProfilePublic({ loginer }: UserListPageProps) {
               className="text-red-1000 mb-4 rounded-lg bg-red-500 p-4 text-center dark:bg-gray-800 dark:text-red-400"
               role="alert"
             >
-              <h1 className="font-medium text-2xl">ERROR! {error}</h1>
+              <h1 className="text-2xl font-medium">ERROR! {error}</h1>
             </div>
           </div>
         </div>
@@ -111,30 +110,30 @@ export default function ProfilePublic({ loginer }: UserListPageProps) {
                   <span className="text-blueGray-400 text-sm">Ladder</span>
                 </div>
               </div>
-			  {loginer.userInfos && user.id != loginer.userInfos.id &&
-              <div className="mt-5 mb-5">
-                <button
-                  className="inline-flex items-center rounded-lg bg-cyan-500 px-4 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                  type="button"
-                  id="btn_friend"
-                  onClick={() => {
-                    console.log(`${user.id} button add friend pressed`);
-                  }}
-                >
-                  Add friend
-                </button>
-                <button
-                  className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-center text-sm font-medium text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:border-gray-700 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
-                  type="button"
-                  id="btn_friend"
-                  onClick={() => {
-                    console.log(`${user.id} button message pressed`);
-                  }}
-                >
-                  Message
-                </button>
-              </div>
-				}
+              {loginer.userInfos && user.id != loginer.userInfos.id && (
+                <div className="mt-5 mb-5">
+                  <button
+                    className="inline-flex items-center rounded-lg bg-cyan-500 px-4 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    type="button"
+                    id="btn_friend"
+                    onClick={() => {
+                      console.log(`${user.id} button add friend pressed`);
+                    }}
+                  >
+                    Add friend
+                  </button>
+                  <button
+                    className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-center text-sm font-medium text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:border-gray-700 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
+                    type="button"
+                    id="btn_friend"
+                    onClick={() => {
+                      console.log(`${user.id} button message pressed`);
+                    }}
+                  >
+                    Message
+                  </button>
+                </div>
+              )}
             </div>
             <div className="border-blueGray-200 mt-5 border-t py-5 text-center">
               <h3 className="text-blueGray-700 mb-5 text-center text-4xl font-semibold leading-normal">
