@@ -5,11 +5,16 @@ import axios from "axios";
 export default function AddFriend({ loginer }: { loginer: UseLoginDto }) {
   const [loginName, setLoginName] = React.useState("");
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event: any) => {
     // example friend_id
-	event.preventDefault();
+    event.preventDefault();
+    // /api/me/friends/slug/{slug}
     axios
-      .post(`/api/me/friends/${loginName}`,{ friend_id: loginName }, loginer.get_headers())
+      .post(
+        `/api/me/friends/slug/${loginName}`,
+        { slug: loginName },
+        loginer.get_headers()
+      )
       .then((res) => {
         if (res.status === 201) {
           console.log(res.data);
@@ -22,7 +27,10 @@ export default function AddFriend({ loginer }: { loginer: UseLoginDto }) {
   };
 
   return (
-    <form className="flex flex-col pt-3" onSubmit={(event) => handleSubmit(event)}>
+    <form
+      className="flex flex-col pt-3"
+      onSubmit={(event) => handleSubmit(event)}
+    >
       <div className="center mx-auto mb-3 flex flex-row items-center">
         <label className="text-sl pr-4 text-right font-medium text-gray-900 dark:text-white">
           Add Friend
