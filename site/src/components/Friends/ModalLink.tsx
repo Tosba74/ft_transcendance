@@ -8,8 +8,11 @@ export default function ModalLink({
   children: React.ReactNode;
 }) {
   return (
-    <li className="cursor-pointer hover:bg-slate-200 py-1 px-3 " onClick={onClick}>
+    <span
+      className="cursor-pointer py-1 px-3 ring-blue-500 hover:bg-slate-200 hover:ring-2 dark:hover:bg-gray-800"
+      onClick={onClick}
+    >
       {children}
-    </li>
+    </span>
   );
 }

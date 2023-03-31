@@ -8,13 +8,13 @@ interface UserProps {
   user: UserDto;
   children?: React.ReactNode;
   loginer: UseLoginDto;
-	type: string;
+  type: string;
 }
 
 export default function User(props: UserProps) {
   const [isOpen, setOpen] = useState(false);
   const [position, setPosition] = useState(0);
-  const modalRef = useRef<HTMLUListElement | null>(null);
+  const modalRef = useRef<HTMLDivElement | null>(null);
 
   const handleClick = (event: any) => {
     setOpen(true);
