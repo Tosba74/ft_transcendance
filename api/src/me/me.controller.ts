@@ -20,6 +20,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { UpdatePseudoDto } from './dto/update-pseudo.dto';
 import { imageFileFilter } from './validation/file-upload.utils';
+import { ChatModel } from 'src/chats/models/chat.model';
 
 
 @Controller('api/me')
@@ -40,6 +41,7 @@ export class MeController {
     // public findAll(): Promise<FriendModel[]> {
     //     return this.friendsService.findAll();
     // }
+
 
     @Get('friends')
     @ApiOkResponse({ description: 'Friends retrieved successfully', type: [FriendModel] })
@@ -63,6 +65,7 @@ export class MeController {
 
         return this.meService.removeFriend(req.user as LoggedUserDto, id);
     }
+
 
     @Get('blockeds')
     @ApiOkResponse({ description: 'Blockeds retrieved successfully', type: [FriendModel] })
@@ -95,12 +98,27 @@ export class MeController {
     }
 
 
-    @Get('chats')
-    @ApiOkResponse({ description: 'Blockeds retrieved successfully', type: [ChatParticipantModel] })
-    public chats(@Request() req: any): Promise<ChatParticipantModel[]> {
+    @Get('chats/available')
+    @ApiOkResponse({ description: 'Chats retrieved successfully', type: [ChatModel], isArray: true })
+    public availableChannels(@Request() req: any): Promise<ChatModel[]> {
 
-        return this.meService.listChats(req.user as LoggedUserDto);
+        return this.meService.listAvailableUserChats(req.user as LoggedUserDto);
     }
+
+    @Get('chats/joined')
+    @ApiOkResponse({ description: 'Chats retrieved successfully', type: [ChatModel], isArray: true })
+    public myChannels(@Request() req: any): Promise<ChatModel[]> {
+
+        return this.meService.listUserChats(req.user as LoggedUserDto);
+    }
+
+    @Get('chats/banned')
+    @ApiOkResponse({ description: 'Chats retrieved successfully', type: [ChatModel], isArray: true })
+    public bannedChannels(@Request() req: any): Promise<ChatModel[]> {
+
+        return this.meService.listBannedUserChats(req.user as LoggedUserDto);
+    }
+
 
     @Post('chats/join/:id')
     @ApiOkResponse({ description: 'Chat joined successfully', type: ChatParticipantModel })

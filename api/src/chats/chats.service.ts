@@ -13,6 +13,7 @@ import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
 import { ChatRoleModel } from 'src/chat_roles/models/chat_role.model';
 import { MeService } from 'src/me/me.service';
 import { ChatMessagesService } from 'src/chat_messages/chat_messages.service';
+import { ChatParticipantModel } from 'src/chat_participants/models/chat_participant.model';
 
 
 interface WebsocketUser {
@@ -54,6 +55,21 @@ export class ChatsService {
       throw new NotFoundException('Chat id not found');
     }
   }
+
+
+  async findPublicChats(): Promise<ChatModel[]> {
+
+    const publicChats = this.chatsRepository.find({
+      where: {
+        type: { id: ChatTypeModel.PUBLIC_TYPE },
+      },
+    });
+
+    return publicChats;
+  }
+
+
+
 
   async create(name: string | undefined, type_id: number, password?: string): Promise<ChatModel> {
 
@@ -170,7 +186,7 @@ export class ChatsService {
 
       newroom.id = room_id;
       newroom.name = room.name.toString();
-      
+
       //Get all messages from the db
       newroom.messages = [];
 

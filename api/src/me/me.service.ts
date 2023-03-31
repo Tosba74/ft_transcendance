@@ -85,9 +85,20 @@ export class MeService {
   }
 
 
-  async listChats(user: LoggedUserDto): Promise<ChatParticipantModel[]> {
 
-    return this.chatParticipantService.listChats(user.id);
+  async listAvailableUserChats(user: LoggedUserDto): Promise<ChatModel[]> {
+
+    return this.chatParticipantService.listAvailableUserChats(user.id);
+  }
+
+  async listUserChats(user: LoggedUserDto): Promise<ChatModel[]> {
+
+    return this.chatParticipantService.listUserChats(user.id);
+  }
+
+  async listBannedUserChats(user: LoggedUserDto): Promise<ChatModel[]> {
+
+    return this.chatParticipantService.listBannedUserChats(user.id);
   }
 
 

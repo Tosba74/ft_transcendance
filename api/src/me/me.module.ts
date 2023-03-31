@@ -10,7 +10,7 @@ import { ChatsModule } from 'src/chats/chats.module';
 import { ChatParticipantsModule } from 'src/chat_participants/chat_participants.module';
 
 @Module({
-  imports: [UsersModule, FriendsModule, BlockedsModule, forwardRef(() => ChatsModule), ChatParticipantsModule],
+  imports: [UsersModule, FriendsModule, BlockedsModule, forwardRef(() => ChatsModule), forwardRef(() => ChatParticipantsModule)],
   providers: [MeService],
   controllers: [MeController],
   exports: [MeService],

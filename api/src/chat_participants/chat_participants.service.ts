@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException, } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException, } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Not, Repository } from 'typeorm';
 
@@ -6,12 +6,18 @@ import { ChatParticipantModel } from "./models/chat_participant.model";
 import { UpdateRoleDto } from './dto/update-role';
 import { MuteParticipantDto } from './dto/mute-participant';
 import { ChatRoleModel } from 'src/chat_roles/models/chat_role.model';
+import { ChatsService } from 'src/chats/chats.service';
+import { ChatModel } from 'src/chats/models/chat.model';
 
 
 @Injectable()
 export class ChatParticipantsService {
 
-  constructor(@InjectRepository(ChatParticipantModel) private chatParticipantsRepository: Repository<ChatParticipantModel>) { }
+  constructor(
+    @InjectRepository(ChatParticipantModel) private chatParticipantsRepository: Repository<ChatParticipantModel>,
+    @Inject(forwardRef(() => ChatsService))
+    private chatsService: ChatsService
+  ) { }
 
   findAll(): Promise<ChatParticipantModel[]> {
     return this.chatParticipantsRepository.find();
@@ -29,19 +35,56 @@ export class ChatParticipantsService {
     }
   }
 
-  async listChats(id: number): Promise<ChatParticipantModel[]> {
-    const chats = await this.chatParticipantsRepository.find({
+
+
+  async listAvailableUserChats(id: number): Promise<ChatModel[]> {
+
+    let publicChats = await this.chatsService.findPublicChats();
+
+    const myChats = await this.chatParticipantsRepository.find({
+      where: {
+        participant: { id: id },
+      },
+    });
+
+    const myChatsId = myChats.map(chat => chat.id);
+    
+    publicChats = publicChats.filter(chat => myChatsId.indexOf(chat.id) == -1);
+    
+
+    return publicChats;
+  }
+
+
+
+  async listUserChats(id: number): Promise<ChatModel[]> {
+    const myChats = await this.chatParticipantsRepository.find({
       where: {
         participant: { id: id },
         role: { id: Not(ChatRoleModel.BAN_ROLE) },
       },
-      relations: { 
-        room: { messages: { sender: true } }
+      relations: {
+        room: true
       },
     });
 
-    return chats;
+    return myChats.map(chat => chat.room);
   }
+
+  async listBannedUserChats(id: number): Promise<ChatModel[]> {
+    const chats = await this.chatParticipantsRepository.find({
+      where: {
+        participant: { id: id },
+        role: { id: ChatRoleModel.BAN_ROLE },
+      },
+      relations: {
+        room: true
+      },
+    });
+
+    return chats.map(chat => chat.room);
+  }
+
 
   async create(user_id: number, chat_id: number, role_id: number): Promise<ChatParticipantModel> {
 
