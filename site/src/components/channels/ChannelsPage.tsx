@@ -2,20 +2,61 @@ import { UseLoginDto } from "../Log/dto/useLogin.dto";
 import PublicList from "./PublicList";
 import BannedList from "./BannedList";
 import CurrentList from "./CurrentList";
+import { ChannelDto } from "src/_shared_dto/channel.dto";
 
 interface ChannelsPageProps {
-	   loginer: UseLoginDto;
-  }
+  loginer: UseLoginDto;
+}
 
-  export default function ChannelsPage({ loginer }: ChannelsPageProps) {
-	return (
-		<div className="mx-auto max-w-md">
-		<h1 className="pb-4 text-center text-3xl">Friends List</h1>
-		<div className="flex flex-col px-4">
-		  <PublicList />
-		  <BannedList />
-		  <CurrentList />
-		</div>
-	  </div>
-	);
-  }
+export default function ChannelsPage({ loginer }: ChannelsPageProps) {
+  let channelsPublic: ChannelDto[] = [
+    {
+      id: 1,
+      name: "le groupe de lundivvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv vvvvvvvvvvvvvvvvvvvvvvvvvvvv",
+      password: false,
+    },
+    {
+      id: 2,
+      name: "Fred et Sebaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      password: true,
+    },
+    {
+      id: 3,
+      name: "Fake private chat",
+      password: false,
+    },
+  ];
+  let channelsBanned: ChannelDto[] = [
+    {
+      id: 5,
+      name: "Raspberry group",
+      password: false,
+    },
+  ];
+  let channelsCurrent: ChannelDto[] = [
+    {
+      id: 6,
+      name: "Smash group",
+      password: false,
+    },
+  ];
+  return (
+    <div className="mx-auto max-w-md">
+      <div className="flex flex-col px-4">
+        <PublicList channels={channelsPublic} />
+        <BannedList channels={channelsBanned} />
+        <CurrentList channels={channelsCurrent} />
+        <button
+		className="mt-16 h-16 rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700"
+		type="button"
+				  id="btn_new"
+				  onClick={() => {
+					console.log(`button open pressed`);
+				  }}
+		>
+          New channel
+        </button>
+      </div>
+    </div>
+  );
+}

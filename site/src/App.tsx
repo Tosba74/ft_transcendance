@@ -61,7 +61,7 @@ export default function App() {
                 element={<SettingsPage loginer={loginer} />}
               />
               <Route path="/friends" element={<FriendsPage />} />
-			  <Route
+              <Route
                 path="/channels"
                 element={<ChannelsPage loginer={loginer} />}
               />
