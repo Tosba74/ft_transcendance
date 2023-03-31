@@ -15,6 +15,7 @@ export default function FriendsList({ loginer }: { loginer: UseLoginDto }) {
       .get("/api/me/friends", loginer.get_headers())
       .then((res) => {
         if (res.status === 200 && res.data) {
+          // console.log(res.data);
           setUsers(res.data as UserDto[]);
           setLoading(false);
           return;
@@ -24,9 +25,9 @@ export default function FriendsList({ loginer }: { loginer: UseLoginDto }) {
   }, []);
 
   const content: JSX.Element[] = users.map((user) => (
-    <li className="flex items-center" key={user.id}>
+    <li key={user.id} className="flex items-center">
       <User type={"friend"} loginer={loginer} user={user}>
-        <UserStatus status={user.color} />
+        <UserStatus status={user.statusId} />
       </User>
     </li>
   ));
