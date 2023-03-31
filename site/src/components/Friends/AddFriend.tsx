@@ -5,25 +5,26 @@ import axios from "axios";
 export default function AddFriend({ loginer }: { loginer: UseLoginDto }) {
   const [loginName, setLoginName] = React.useState("");
 
-  const handleSubmit = () => {
-    // example
-    // axios
-    //   .post(`/api/me/friends/${user.id}`, loginer.get_headers())
-    //   .then((res) => {
-    //     if (res.status === 201) {
-    //       console.log(res.data);
-    //       // setUsers(res.data as UserDto[]);
-    //       return;
-    //     }
-    //   })
-    //   .catch((error) => {});
-    console.log("hello");
+  const handleSubmit = (event) => {
+    // example friend_id
+	event.preventDefault();
+    axios
+      .post(`/api/me/friends/${loginName}`,{ friend_id: loginName }, loginer.get_headers())
+      .then((res) => {
+        if (res.status === 201) {
+          console.log(res.data);
+          // setUsers(res.data as UserDto[]);
+          return;
+        }
+      })
+      .catch((error) => {});
+    console.log(loginName);
   };
 
   return (
-    <form className="flex flex-col pt-3" onSubmit={handleSubmit}>
+    <form className="flex flex-col pt-3" onSubmit={(event) => handleSubmit(event)}>
       <div className="center mx-auto mb-3 flex flex-row items-center">
-        <label className="text-sl pr-4 text-right font-medium text-gray-900 dark:text-gray-800">
+        <label className="text-sl pr-4 text-right font-medium text-gray-900 dark:text-white">
           Add Friend
         </label>
         <input
@@ -36,8 +37,7 @@ export default function AddFriend({ loginer }: { loginer: UseLoginDto }) {
       </div>
       <button
         type="submit"
-        onClick={handleSubmit}
-        className="mx-auto rounded-lg bg-blue-700 px-5 py-1 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        className="mx-auto rounded-lg bg-cyan-500 px-4 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
       >
         Add Friend
       </button>
