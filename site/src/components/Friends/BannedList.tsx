@@ -44,10 +44,10 @@ export default function BannedList({ loginer }: { loginer: UseLoginDto }) {
 
   const content: JSX.Element[] = users.map((user) => (
     <li className="flex items-center text-slate-500" key={user.id}>
-      <User loginer={loginer} user={user}>
+      <User type={"ban"} loginer={loginer} user={user}>
         <FiUserX
           onClick={() => handleUnblock(user)}
-          className="mr-1 inline-block cursor-pointer text-black"
+          className="mr-1 inline-block cursor-pointer text-black dark:text-white"
         />
       </User>
     </li>

@@ -25,7 +25,7 @@ export default function FriendsList({ loginer }: { loginer: UseLoginDto }) {
 
   const content: JSX.Element[] = users.map((user) => (
     <li className="flex items-center" key={user.id}>
-      <User loginer={loginer} user={user}>
+      <User type={"friend"} loginer={loginer} user={user}>
         <UserStatus status={user.color} />
       </User>
     </li>

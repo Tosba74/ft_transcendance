@@ -6,6 +6,7 @@ import axios from "axios";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 
 interface ModalProps {
+  type: string;
   loginer: UseLoginDto;
   user: UserDto;
   modalRef: React.MutableRefObject<HTMLUListElement | null>;
@@ -40,7 +41,7 @@ function handleRemove(loginer: UseLoginDto, user: UserDto) {
 
 function handleAdd(loginer: UseLoginDto, user: UserDto) {
   axios
-    .post(`/api/me/friends/${user.id}`, loginer.get_headers())
+    .post(`/api/me/friends/${user.id}`, { friend_id: user.id }, loginer.get_headers())
     .then((res) => {
       if (res.status === 201) {
         console.log(res.data);
@@ -53,7 +54,7 @@ function handleAdd(loginer: UseLoginDto, user: UserDto) {
 
 function handleAccept(loginer: UseLoginDto, user: UserDto) {
   // axios
-  //   .post(`/api/me/friends/${user.id}`, loginer.get_headers())
+  //   .post(`/api/me/friends/${user.id}`, { friend_id: user.id }, loginer.get_headers())
   //   .then((res) => {
   //     if (res.status === 201) {
   //       console.log(res.data);
@@ -102,28 +103,62 @@ function handleUnblock(loginer: UseLoginDto, user: UserDto) {
 }
 
 export default function ModalUser({
+  type, 
   loginer,
   user,
   modalRef,
   position,
 }: ModalProps) {
   const navigate = useNavigate();
+  let content;
+  if(type === "friend")
+  {
+	content = <>
+		<ModalLink onClick={() => handleView(navigate, user)}>View</ModalLink>
+		<ModalLink onClick={() => handleMP(loginer, user)}>MP</ModalLink>
+		<ModalLink onClick={() => handlePlay(loginer, user)}>Play</ModalLink>
+		<ModalLink onClick={() => handleRemove(loginer, user)}>Remove</ModalLink>
+		<ModalLink onClick={() => handleBlock(loginer, user)}>Block</ModalLink>
+	</>
+  }
+  else if (type === "ask")
+  {
+	content = <>
+		<ModalLink onClick={() => handleView(navigate, user)}>View</ModalLink>
+		<ModalLink onClick={() => handleMP(loginer, user)}>MP</ModalLink>
+		<ModalLink onClick={() => handlePlay(loginer, user)}>Play</ModalLink>
+		<ModalLink onClick={() => handleAccept(loginer, user)}>Accept</ModalLink>
+		<ModalLink onClick={() => handleBlock(loginer, user)}>Block</ModalLink>
+	</>
+  }
+  else if (type === "ban")
+  {
+	content = <>
+		<ModalLink onClick={() => handleView(navigate, user)}>View</ModalLink>
+		<ModalLink onClick={() => handleMP(loginer, user)}>MP</ModalLink>
+		<ModalLink onClick={() => handlePlay(loginer, user)}>Play</ModalLink>
+		<ModalLink onClick={() => handleUnblock(loginer, user)}>
+			Unblock
+      </ModalLink>
+	</>
+  }
+  else
+  {
+	content = <>
+		<ModalLink onClick={() => handleView(navigate, user)}>View</ModalLink>
+		<ModalLink onClick={() => handleMP(loginer, user)}>MP</ModalLink>
+		<ModalLink onClick={() => handlePlay(loginer, user)}>Play</ModalLink>
+		<ModalLink onClick={() => handleAdd(loginer, user)}>Add</ModalLink>
+		<ModalLink onClick={() => handleBlock(loginer, user)}>Block</ModalLink>
+	</>
+  }
   return (
     <ul
       ref={modalRef}
       style={{ left: position + "px" }}
-      className="absolute bg-white py-1 px-3 text-black drop-shadow-md"
+      className="absolute bg-white text-black drop-shadow-md"
     >
-      <ModalLink onClick={() => handleView(navigate, user)}>View</ModalLink>
-      <ModalLink onClick={() => handleMP(loginer, user)}>MP</ModalLink>
-      <ModalLink onClick={() => handlePlay(loginer, user)}>Play</ModalLink>
-      <ModalLink onClick={() => handleAdd(loginer, user)}>Add</ModalLink>
-      <ModalLink onClick={() => handleAccept(loginer, user)}>Accept</ModalLink>
-      <ModalLink onClick={() => handleRemove(loginer, user)}>Remove</ModalLink>
-      <ModalLink onClick={() => handleBlock(loginer, user)}>Block</ModalLink>
-      <ModalLink onClick={() => handleUnblock(loginer, user)}>
-        Unblock
-      </ModalLink>
+		{content}
     </ul>
   );
 }

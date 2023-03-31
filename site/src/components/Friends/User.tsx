@@ -8,6 +8,7 @@ interface UserProps {
   user: UserDto;
   children?: React.ReactNode;
   loginer: UseLoginDto;
+	type: string;
 }
 
 export default function User(props: UserProps) {
@@ -44,6 +45,7 @@ export default function User(props: UserProps) {
       </button>
       {isOpen && (
         <ModalUser
+          type={props.type}
           loginer={props.loginer}
           user={props.user}
           modalRef={modalRef}

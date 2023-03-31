@@ -54,7 +54,7 @@ export default function PendingList({ loginer }: { loginer: UseLoginDto }) {
 
   const content: JSX.Element[] = users.map((user) => (
     <li className="flex items-center" key={user.id}>
-      <User loginer={loginer} user={user}>
+      <User type={"ask"} loginer={loginer} user={user}>
         <FiUserPlus
           onClick={(event) => handlePending(user)}
           className="mr-1 inline-block cursor-pointer"
