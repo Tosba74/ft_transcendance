@@ -1,5 +1,7 @@
 import { MdPublic } from "react-icons/md";
 import { MdKey } from "react-icons/md";
+import { MdOutlineEmail } from "react-icons/md";
+import { MdVpnLock } from "react-icons/md";
 import { ChannelDto } from "src/_shared_dto/channel.dto";
 
 interface PublicListProps {
@@ -15,7 +17,7 @@ export default function PublicList({ channels }: PublicListProps) {
             <MdPublic className="inline-block" />
             Public Channels
           </h3>
-          <ul>
+          <ul className="overflow-y-scroll h-24">
             {channels.map((channel) => {
               return (
                 <div key={channel.id} className="text-blueGray-700 mb-2 flex text-lg">

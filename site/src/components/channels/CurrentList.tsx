@@ -1,5 +1,8 @@
 import { MdPlace } from "react-icons/md";
 import { MdKey } from "react-icons/md";
+import { MdOutlineEmail } from "react-icons/md";
+import { MdVpnLock } from "react-icons/md";
+import { MdPublic } from "react-icons/md";
 import { ChannelDto } from "src/_shared_dto/channel.dto";
 
 interface CurrentListProps {
@@ -14,7 +17,7 @@ export default function CurrentList({ channels }: CurrentListProps) {
             <MdPlace className="inline-block" />
             Current Channel
           </h3>
-          <ul>
+          <ul className="overflow-y-scroll h-24">
             {channels.map((channel) => {
               return (
                 <div key={channel.id} className="text-blueGray-700 mb-2 flex text-lg">
@@ -22,6 +25,15 @@ export default function CurrentList({ channels }: CurrentListProps) {
                     <li className="w-14 basis-5/6 truncate">{channel.name}</li>
                     {channel.password && (
                       <MdKey className="basis-1/6 self-center" />
+                    )}
+					{channel.type == 1 && (
+                      <MdOutlineEmail className="basis-1/6 self-center" />
+                    )}
+					{channel.type == 2 && (
+                      <MdPublic className="basis-1/6 self-center" />
+                    )}
+					{channel.type == 3 && (
+                      <MdVpnLock className="basis-1/6 self-center" />
                     )}
                   </div>
                   <button
