@@ -5,11 +5,19 @@ import React from "react";
 import { UserDto } from "src/_shared_dto/user.dto";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
 
-export default function FriendsList({ loginer }: { loginer: UseLoginDto }) {
+export default function FriendsList({
+  loginer,
+  doReload,
+}: {
+  loginer: UseLoginDto;
+  doReload: Function;
+}) {
   const [users, setUsers] = React.useState<UserDto[]>([]);
   const [loading, setLoading] = React.useState(false);
 
   React.useEffect(() => {
+    // console.log("loadgin", reload);
+
     setLoading(true);
     axios
       .get("/api/me/friends", loginer.get_headers())
@@ -22,11 +30,11 @@ export default function FriendsList({ loginer }: { loginer: UseLoginDto }) {
         }
       })
       .catch((error) => {});
-  }, []);
+  }, [doReload]);
 
   const content: JSX.Element[] = users.map((user) => (
     <li key={user.id} className="flex items-center">
-      <User type={"friend"} loginer={loginer} user={user}>
+      <User type={"friend"} loginer={loginer} user={user} doReload={doReload}>
         <UserStatus status={user.status} />
       </User>
     </li>

@@ -5,7 +5,13 @@ import { FiUserX } from "react-icons/fi";
 import { UserDto } from "src/_shared_dto/user.dto";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
 
-export default function BannedList({ loginer }: { loginer: UseLoginDto }) {
+export default function BannedList({
+  loginer,
+  doReload,
+}: {
+  loginer: UseLoginDto;
+  doReload: Function;
+}) {
   const [users, setUsers] = React.useState<UserDto[]>([]);
 
   const handleUnblock = (user: UserDto) => {
@@ -13,6 +19,7 @@ export default function BannedList({ loginer }: { loginer: UseLoginDto }) {
       .delete(`/api/me/blockeds/${user.id}`, loginer.get_headers())
       .then((res) => {
         if (res.status === 204) {
+          doReload();
           // console.log(res);
           return;
         }
@@ -40,11 +47,11 @@ export default function BannedList({ loginer }: { loginer: UseLoginDto }) {
         }
       })
       .catch((error) => {});
-  }, []);
+  }, [doReload]);
 
   const content: JSX.Element[] = users.map((user) => (
     <li className="flex items-center text-slate-500" key={user.id}>
-      <User type={"ban"} loginer={loginer} user={user}>
+      <User type={"ban"} loginer={loginer} user={user} doReload={doReload}>
         <FiUserX
           onClick={() => handleUnblock(user)}
           className="mr-1 inline-block cursor-pointer text-black dark:text-white"

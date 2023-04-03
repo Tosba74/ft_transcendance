@@ -9,6 +9,7 @@ interface UserProps {
   children?: React.ReactNode;
   loginer: UseLoginDto;
   type: string;
+  doReload: Function;
 }
 
 export default function User(props: UserProps) {
@@ -54,6 +55,7 @@ export default function User(props: UserProps) {
           modalRef={modalRef}
           posX={posX}
           posY={posY}
+          doReload={props.doReload}
         />
       )}
     </>

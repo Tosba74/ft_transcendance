@@ -3,6 +3,7 @@ import { UserDto } from "src/_shared_dto/user.dto";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
 import axios from "axios";
 import { NavigateFunction, useNavigate } from "react-router-dom";
+import { useContext } from "react";
 
 interface ModalProps {
   type: string;
@@ -11,6 +12,7 @@ interface ModalProps {
   modalRef: React.MutableRefObject<HTMLDivElement | null>;
   posX: number;
   posY: number;
+  doReload: Function;
 }
 
 function handleView(navigate: NavigateFunction, user: UserDto) {
@@ -25,11 +27,16 @@ function handlePlay(loginer: UseLoginDto, user: UserDto) {
   console.log("should invite to play " + user.login_name + "(" + user.id + ")");
 }
 
-function handleRemove(loginer: UseLoginDto, user: UserDto) {
+function handleRemove(
+  loginer: UseLoginDto,
+  user: UserDto,
+  doReload: Function
+) {
   axios
     .delete(`/api/me/friends/${user.id}`, loginer.get_headers())
     .then((res) => {
       if (res.status === 204) {
+        doReload();
         // console.log(res);
         return;
       }
@@ -39,11 +46,12 @@ function handleRemove(loginer: UseLoginDto, user: UserDto) {
   // console.log("should rm " + user.login_name + "(" + user.id + ")");
 }
 
-function handleAdd(loginer: UseLoginDto, user: UserDto) {
+function handleAdd(loginer: UseLoginDto, user: UserDto, doReload: Function) {
   axios
     .post(`/api/me/friends/${user.id}`, {}, loginer.get_headers())
     .then((res) => {
       if (res.status === 201) {
+        doReload();
         // console.log(res.data);
         return;
       }
@@ -52,8 +60,12 @@ function handleAdd(loginer: UseLoginDto, user: UserDto) {
   // console.log("should add" + user.login_name + "(" + user.id + ")");
 }
 
-function handleAccept(loginer: UseLoginDto, user: UserDto) {
-  handleAdd(loginer, user);
+function handleAccept(
+  loginer: UseLoginDto,
+  user: UserDto,
+  doReload: Function
+) {
+  handleAdd(loginer, user, doReload);
   // console.log(
   //   "should accept " +
   //     user.login_name +
@@ -64,25 +76,31 @@ function handleAccept(loginer: UseLoginDto, user: UserDto) {
   // );
 }
 
-function handleBlock(loginer: UseLoginDto, user: UserDto) {
+function handleBlock(loginer: UseLoginDto, user: UserDto, doReload: Function) {
   axios
     .post(`/api/me/blockeds/${user.id}`, {}, loginer.get_headers())
     .then((res) => {
       if (res.status === 201) {
         // console.log(res.data);
-        handleRemove(loginer, user);
+        // doReload(); Not needed if handleRemove
+        handleRemove(loginer, user, doReload);
         return;
       }
     })
     .catch((error) => {});
 }
 
-function handleUnblock(loginer: UseLoginDto, user: UserDto) {
+function handleUnblock(
+  loginer: UseLoginDto,
+  user: UserDto,
+  doReload: Function
+) {
   axios
     .delete(`/api/me/blockeds/${user.id}`, loginer.get_headers())
     .then((res) => {
       if (res.status === 204) {
         console.log(res);
+        doReload();
         return;
       }
     })
@@ -97,6 +115,7 @@ export default function ModalUser({
   modalRef,
   posX,
   posY,
+  doReload,
 }: ModalProps) {
   const navigate = useNavigate();
   let content = [
@@ -124,13 +143,13 @@ export default function ModalUser({
       </ModalLink>,
       <ModalLink
         key={`modalUserRemove-${user.id}`}
-        onClick={() => handleRemove(loginer, user)}
+        onClick={() => handleRemove(loginer, user, doReload)}
       >
         Remove
       </ModalLink>,
       <ModalLink
         key={`modalUserBlock-${user.id}`}
-        onClick={() => handleBlock(loginer, user)}
+        onClick={() => handleBlock(loginer, user, doReload)}
       >
         Block
       </ModalLink>
@@ -151,19 +170,19 @@ export default function ModalUser({
       </ModalLink>,
       <ModalLink
         key={`modalUserAccept-${user.id}`}
-        onClick={() => handleAccept(loginer, user)}
+        onClick={() => handleAccept(loginer, user, doReload)}
       >
         Accept
       </ModalLink>,
       <ModalLink
         key={`modalUserRemove-${user.id}`}
-        onClick={() => handleRemove(loginer, user)}
+        onClick={() => handleRemove(loginer, user, doReload)}
       >
         Remove
       </ModalLink>,
       <ModalLink
         key={`modalUserBlock-${user.id}`}
-        onClick={() => handleBlock(loginer, user)}
+        onClick={() => handleBlock(loginer, user, doReload)}
       >
         Block
       </ModalLink>
@@ -184,13 +203,13 @@ export default function ModalUser({
       </ModalLink>,
       <ModalLink
         key={`modalUserRemove-${user.id}`}
-        onClick={() => handleRemove(loginer, user)}
+        onClick={() => handleRemove(loginer, user, doReload)}
       >
         Remove
       </ModalLink>,
       <ModalLink
         key={`modalUserBlock-${user.id}`}
-        onClick={() => handleBlock(loginer, user)}
+        onClick={() => handleBlock(loginer, user, doReload)}
       >
         Block
       </ModalLink>
@@ -199,7 +218,7 @@ export default function ModalUser({
     content.push(
       <ModalLink
         key={`modalUserUnBlock-${user.id}`}
-        onClick={() => handleUnblock(loginer, user)}
+        onClick={() => handleUnblock(loginer, user, doReload)}
       >
         Unblock
       </ModalLink>
@@ -220,13 +239,13 @@ export default function ModalUser({
       </ModalLink>,
       <ModalLink
         key={`modalUserAdd-${user.id}`}
-        onClick={() => handleAdd(loginer, user)}
+        onClick={() => handleAdd(loginer, user, doReload)}
       >
         Add
       </ModalLink>,
       <ModalLink
         key={`modalUserBlock-${user.id}`}
-        onClick={() => handleBlock(loginer, user)}
+        onClick={() => handleBlock(loginer, user, doReload)}
       >
         Block
       </ModalLink>
