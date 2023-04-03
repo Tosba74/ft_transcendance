@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 
 import { BlockedModel } from "./models/blocked.model";
 import { UserModel } from 'src/users/models/user.model';
+import { UserDto } from 'src/_shared_dto/user.dto';
 
 @Injectable()
 export class BlockedsService {
@@ -28,25 +29,36 @@ export class BlockedsService {
   }
 
 
-  async blockedUsers(id: number): Promise<UserModel[]> {
+  async blockedUsers(id: number): Promise<UserDto[]> {
     const blockeds = await this.blockedsRepository.find({
       where: { blocker: { id: id } },
       relations: { blocked: true, }
     });
 
-    let res: UserModel[] = blockeds.map(value => value.blocked);
+    let res: UserDto[] = await Promise.all(blockeds.map(async (value) => {
+      return {
+        ...value.blocked.toUserDto(),
+        status: '', // Not needed ?
+      }
+    }));
+
 
     return res;
   }
 
 
-  async blockedBy(id: number): Promise<UserModel[]> {
+  async blockedBy(id: number): Promise<UserDto[]> {
     const blockeds = await this.blockedsRepository.find({
       where: { blocked: { id: id } },
       relations: { blocker: true, }
     });
 
-    let res: UserModel[] = blockeds.map(value => value.blocked);
+    let res: UserDto[] = await Promise.all(blockeds.map(async (value) => {
+      return {
+        ...value.blocked,
+        status: '', // Not needed ?
+      }
+    }));
 
     return res;
   }

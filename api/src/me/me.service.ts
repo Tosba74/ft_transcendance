@@ -42,12 +42,12 @@ export class MeService {
     return this.friendsService.findFriends(user.id);
   }
 
-  async listReceivedFriends(user: LoggedUserDto): Promise<UserModel[]> {
+  async listReceivedFriends(user: LoggedUserDto): Promise<UserDto[]> {
 
     return this.friendsService.listReceivedFriends(user.id);
   }
 
-  async listSentFriends(user: LoggedUserDto): Promise<UserModel[]> {
+  async listSentFriends(user: LoggedUserDto): Promise<UserDto[]> {
 
     return this.friendsService.listSentFriends(user.id);
   }
@@ -84,12 +84,12 @@ export class MeService {
 
 
 
-  async listBlockedBy(user: LoggedUserDto): Promise<UserModel[]> {
+  async listBlockedBy(user: LoggedUserDto): Promise<UserDto[]> {
 
     return this.blockedsService.blockedBy(user.id);
   }
 
-  async listBlockeds(user: LoggedUserDto): Promise<UserModel[]> {
+  async listBlockeds(user: LoggedUserDto): Promise<UserDto[]> {
 
     return this.blockedsService.blockedUsers(user.id);
   }

@@ -6,6 +6,7 @@ import { BlockedsService } from './blockeds.service';
 import { BlockedModel } from "./models/blocked.model";
 import { BlockedDto } from './dto/blocked.dto';
 import { UserModel } from 'src/users/models/user.model';
+import { UserDto } from 'src/_shared_dto/user.dto';
 
 
 @Controller('api/blockeds')
@@ -30,14 +31,14 @@ export class BlockedsController {
 
 
   @Get(':id/blocked_users')
-  @ApiOkResponse({ description: 'Blocked users retrieved successfully', type: UserModel, isArray: true })
-  public blockedUsers(@Param('id', ParseIntPipe) id: number): Promise<UserModel[]> {
+  @ApiOkResponse({ description: 'Blocked users retrieved successfully', type: UserDto, isArray: true })
+  public blockedUsers(@Param('id', ParseIntPipe) id: number): Promise<UserDto[]> {
     return this.blockedsService.blockedUsers(id);
   }
 
   @Get(':id/blocked_by')
-  @ApiOkResponse({ description: 'Blocked retrieved successfully', type: UserModel, isArray: true })
-  public blockedBy(@Param('id', ParseIntPipe) id: number): Promise<UserModel[]> {
+  @ApiOkResponse({ description: 'Blocked retrieved successfully', type: UserDto, isArray: true })
+  public blockedBy(@Param('id', ParseIntPipe) id: number): Promise<UserDto[]> {
     return this.blockedsService.blockedBy(id);
   }
 

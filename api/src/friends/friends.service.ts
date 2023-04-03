@@ -81,7 +81,7 @@ export class FriendsService {
   }
 
 
-  async listReceivedFriends(id: number): Promise<UserModel[]> {
+  async listReceivedFriends(id: number): Promise<UserDto[]> {
 
     const receivedFriends = await this.friendsRepository.find({
       where: {
@@ -93,12 +93,17 @@ export class FriendsService {
       }
     });
 
-    let res: UserModel[] = receivedFriends.map(value => value.first_user);
-
+    let res: UserDto[] = await Promise.all(receivedFriends.map(async (value) => {
+      return {
+        ...value.first_user.toUserDto(),
+        status: await this.usersService.getUserStatus(value.first_user.id),
+      }
+    }));
+    
     return res;
   }
-
-  async listSentFriends(id: number): Promise<UserModel[]> {
+  
+  async listSentFriends(id: number): Promise<UserDto[]> {
 
     const sentFriends = await this.friendsRepository.find({
       where: {
@@ -109,8 +114,13 @@ export class FriendsService {
         second_user: true,
       }
     });
-
-    let res: UserModel[] = sentFriends.map(value => value.second_user);
+    
+    let res: UserDto[] = await Promise.all(sentFriends.map(async (value) => {
+      return {
+        ...value.second_user.toUserDto(),
+        status: await this.usersService.getUserStatus(value.second_user.id),
+      }
+    }));
 
     return res;
   }
@@ -195,15 +205,15 @@ export class FriendsService {
     if (reverseFriend != null) {
       await this.friendsRepository.delete(reverseFriend.id);
     }
-    
-    
+
+
     const goodDirection = await this.friendsRepository.findOne({
       where: {
         first_user: { id: friender_id },
         second_user: { id: newfriend_id },
       }
     });
-    
+
     if (goodDirection != null) {
       await this.friendsRepository.delete(goodDirection.id);
     }
