@@ -64,7 +64,7 @@ export default function Pseudo({ loginer }: PseudoProps) {
       <div className="flex h-10 justify-between px-20">
         <label>Pseudo :</label>
         <input
-          className="ml-12 w-96 bg-slate-300 px-3 py-1 dark:bg-gray-800 dark:text-white"
+          className="ml-4 w-96 bg-slate-300 px-3 py-1 dark:bg-gray-800 dark:text-white md:ml-12"
           type="text"
           name="pseudo"
           value={pseudoInput}

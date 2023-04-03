@@ -12,13 +12,13 @@ export default function SettingsPage({ loginer }: SettingsPageProps) {
   //
   return (
     <div>
-      <div className="h-screen w-full justify-center">
-        <div className="mt-2 flex h-5/6 w-full flex-col gap-2 rounded bg-gray-700 p-2 lg:flex-row">
-          <div className="h-2/3 w-full lg:h-full lg:w-2/3">
+      <div className="h-screen w-full md:flex md:justify-center">
+        <div className="mt-2 flex h-5/6 w-full flex-col gap-2 rounded bg-gray-700 p-2 md:w-5/6 lg:w-full lg:flex-row">
+          <div className="h-1/2 w-full lg:h-full lg:w-2/3">
             <Avatar loginer={loginer} />
             <Pseudo loginer={loginer} />
           </div>
-          <div className="h-1/3 w-full justify-end bg-yellow-500 lg:h-full lg:w-1/3">
+          <div className="h-1/2 w-full justify-end rounded border border-gray-700 bg-gray-800 p-2 shadow-inner lg:h-full lg:w-1/3">
             <TfaButton loginer={loginer} />
           </div>
         </div>

@@ -93,12 +93,12 @@ export default function TfaButton({ loginer }: TfaButtonProps) {
   }
 
   return (
-    <>
+    <div className="flex w-full flex-col justify-center p-2 dark:text-white">
       <form onSubmit={handleSubmit}>
-        <label>Two factor authentication is {tfaLabelMessage}</label>
+        <label>Two factor authentication is {tfaLabelMessage} . </label>
         <button
           id="tfa_enable"
-          className="bg-blue-700 px-3 py-1 text-white"
+          className="mr-2 bg-red-700 px-3 py-1 text-white"
           type="submit"
           name="tfa_enable"
           value={tfaInput}
@@ -116,6 +116,6 @@ export default function TfaButton({ loginer }: TfaButtonProps) {
         />
       )}
       <div>{tfaMessage}</div>
-    </>
+    </div>
   );
 }
