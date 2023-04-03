@@ -7,9 +7,8 @@ interface UserListProps {
 }
 
 export default function ChannelUserList({ users }: UserListProps) {
-  //
+  console.log(users);
 
-  // const [channels] = useState<Channel[]>(Mock_Channel);
   return (
     <div className="p-4">
       {users.map((user) => (

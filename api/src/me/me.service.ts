@@ -24,6 +24,7 @@ import { ChatRoleModel } from 'src/chat_roles/models/chat_role.model';
 import { ChatTypeModel } from 'src/chat_types/models/chat_type.model';
 
 import { JoinChatDto } from './dto/join_chat';
+import { UserDto } from 'src/_shared_dto/user.dto';
 
 @Injectable()
 export class MeService {
@@ -36,7 +37,7 @@ export class MeService {
     private chatParticipantService: ChatParticipantsService,
   ) { }
 
-  async listFriends(user: LoggedUserDto): Promise<UserModel[]> {
+  async listFriends(user: LoggedUserDto): Promise<UserDto[]> {
 
     return this.friendsService.findFriends(user.id);
   }

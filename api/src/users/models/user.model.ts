@@ -1,7 +1,6 @@
 import { ApiResponseProperty } from "@nestjs/swagger";
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne, Unique } from "typeorm"
 
-import { UserStatusModel } from "src/user_status/models/user_status.model";
 import { ChatMessageModel } from "src/chat_messages/models/chat_message.model";
 import { ChatParticipantModel } from "src/chat_participants/models/chat_participant.model";
 
@@ -63,13 +62,13 @@ export class UserModel {
     
     //--------------------------------------------
     
-    @ApiResponseProperty({ type: Number })
-    @ManyToOne(() => UserStatusModel)
-    status: UserStatusModel;
+    // @ApiResponseProperty({ type: Number })
+    // @ManyToOne(() => UserStatusModel)
+    // status: UserStatusModel;
     
-    @ApiResponseProperty({ type: Date })
-    @Column()
-    status_updated_at: Date;
+    // @ApiResponseProperty({ type: Date })
+    // @Column()
+    // status_updated_at: Date;
     
     //--------------------------------------------
     

@@ -23,6 +23,7 @@ export default function ChannelPanel({
       color: 10,
       avatar_url: ".",
       is_admin: false,
+      status: "",
     },
     {
       id: 2,
@@ -31,6 +32,7 @@ export default function ChannelPanel({
       color: 10,
       avatar_url: ".",
       is_admin: false,
+      status: "",
     },
     {
       id: 3,
@@ -39,6 +41,7 @@ export default function ChannelPanel({
       color: 10,
       avatar_url: ".",
       is_admin: false,
+      status: "",
     },
     {
       id: 4,
@@ -47,6 +50,7 @@ export default function ChannelPanel({
       color: 10,
       avatar_url: ".",
       is_admin: false,
+      status: "",
     },
   ];
 

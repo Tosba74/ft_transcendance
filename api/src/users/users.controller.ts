@@ -9,6 +9,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 
 
 import { AllowLogged } from '../auth/auth.decorators';
+import { UserDto } from 'src/_shared_dto/user.dto';
 
 // import { extname } from 'path';
 // import { createReadStream } from 'fs';
@@ -31,16 +32,19 @@ export class UsersController {
   @AllowLogged()
   @Get()
   @ApiOkResponse({ description: 'Users retrieved successfully', type: UserModel, isArray: true })
-  public findAll(): Promise<UserModel[]> {
-    return this.usersService.findAll();
+  public findAll(@Request() req: any): Promise<UserModel[] | UserDto[]> {
+
+
+    return this.usersService.findAll(req.user && req.user.is_admin);
   }
 
   @Get(':id')
   @ApiOkResponse({ description: 'User retrieved successfully', type: UserModel })
   @ApiNotFoundResponse({ description: 'User not found' })
   @ApiBadRequestResponse({ description: 'User validation error' })
-  public findOne(@Param('id', ParseIntPipe) id: number): Promise<UserModel> {
-    return this.usersService.findOneById(id);
+  public findOne(@Request() req: any, @Param('id', ParseIntPipe) id: number): Promise<UserModel | UserDto> {
+
+    return this.usersService.findOneById(id, req.user && req.user.is_admin);
   }
 
   @Post()

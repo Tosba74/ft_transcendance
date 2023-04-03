@@ -20,6 +20,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { UpdatePseudoDto } from './dto/update-pseudo.dto';
 import { imageFileFilter } from './validation/file-upload.utils';
+import { UserDto } from 'src/_shared_dto/user.dto';
 
 
 @Controller('api/me')
@@ -43,7 +44,7 @@ export class MeController {
 
     @Get('friends')
     @ApiOkResponse({ description: 'Friends retrieved successfully', type: [FriendModel] })
-    public listFriendships(@Request() req: any): Promise<UserModel[]> {
+    public listFriendships(@Request() req: any): Promise<UserDto[]> {
 
         return this.meService.listFriends(req.user as LoggedUserDto);
     }
