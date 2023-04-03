@@ -1,99 +1,59 @@
 import User from "./User";
 import UserStatus from "./UserStatus";
+import axios from "axios";
+import React from "react";
+import { UserDto } from "src/_shared_dto/user.dto";
+import { UseLoginDto } from "../Log/dto/useLogin.dto";
 
-const users: {
-  id: number;
-  login_name: string;
-  pseudo: string;
-  avatar_url: string;
-  is_admin: boolean;
-  access_token: null;
-  color: number;
-  tfa_enabled: boolean;
-  status_updated_at: string;
-  created_at: string;
-  updated_at: string;
-  validate_date: null;
-  status: string;
-}[] = [
-  {
-    id: 1,
-    login_name: "passmac",
-    pseudo: "passmac",
-    avatar_url:
-      "https://cdn.intra.42.fr/users/c858143fe558f853c994ee70fe21185f/jjaqueme.jpg",
-    is_admin: false,
-    access_token: null,
-    color: -1,
-    tfa_enabled: true,
-    status_updated_at: "2023-03-24T17:43:53.540Z",
-    created_at: "2023-03-24T17:43:53.589Z",
-    updated_at: "2023-03-27T08:32:16.294Z",
-    validate_date: null,
-    status: "connected",
-  },
-  {
-    id: 3,
-    login_name: "jarom",
-    pseudo: "jarom",
-    avatar_url: "/avatars/default-avatar.jpg",
-    is_admin: false,
-    access_token: null,
-    color: -1,
-    tfa_enabled: false,
-    status_updated_at: "2023-03-27T10:12:23.608Z",
-    created_at: "2023-03-27T10:12:23.619Z",
-    updated_at: "2023-03-27T10:12:23.619Z",
-    validate_date: null,
-    status: "idle",
-  },
-  {
-    id: 4,
-    login_name: "Julien",
-    pseudo: "jarom",
-    avatar_url: "/avatars/default-avatar.jpg",
-    is_admin: false,
-    access_token: null,
-    color: -1,
-    tfa_enabled: false,
-    status_updated_at: "2023-03-27T10:12:23.608Z",
-    created_at: "2023-03-27T10:12:23.619Z",
-    updated_at: "2023-03-27T10:12:23.619Z",
-    validate_date: null,
-    status: "ig",
-  },
-  {
-    id: 5,
-    login_name: "Julien",
-    pseudo: "jarom",
-    avatar_url: "/avatars/default-avatar.jpg",
-    is_admin: false,
-    access_token: null,
-    color: -1,
-    tfa_enabled: false,
-    status_updated_at: "2023-03-27T10:12:23.608Z",
-    created_at: "2023-03-27T10:12:23.619Z",
-    updated_at: "2023-03-27T10:12:23.619Z",
-    validate_date: null,
-    status: "adfdfs",
-  },
-];
+export default function FriendsList({
+  loginer,
+  doReload,
+}: {
+  loginer: UseLoginDto;
+  doReload: Function;
+}) {
+  const [users, setUsers] = React.useState<UserDto[]>([]);
+  const [loading, setLoading] = React.useState(false);
 
-export default function FriendsList() {
+  React.useEffect(() => {
+    // console.log("loadgin", reload);
+
+    setLoading(true);
+    axios
+      .get("/api/me/friends", loginer.get_headers())
+      .then((res) => {
+        if (res.status === 200 && res.data) {
+          // console.log(res.data);
+          setLoading(false);
+          setUsers(res.data as UserDto[]);
+          return;
+        }
+      })
+      .catch((error) => {});
+  }, [doReload]);
+
+  const content: JSX.Element[] = users.map((user) => (
+    <li key={user.id} className="flex items-center">
+      <User type={"friend"} loginer={loginer} user={user} doReload={doReload}>
+        <UserStatus status={user.status} />
+      </User>
+    </li>
+  ));
+
   return (
     <>
       <h2 className="text-2xl">Friends list</h2>
-      <ul className="mb-4 pl-1">
-        {users.map((user) => {
-          return (
-            <li key={user.id}>
-              <User user={user}>
-                <UserStatus status={user.status} />
-              </User>
-            </li>
-          );
-        })}
-      </ul>
+      {loading ? (
+        <p className="mb-4 pl-1">Loading...</p>
+      ) : (
+        <>
+          {content.length > 0 ? (
+            <ul className="mb-4 pl-1">{content}</ul>
+          ) : (
+            <p className="mb-4 pl-1">Vous n'avez pas encore d'amis</p>
+          )}
+        </>
+      )}
     </>
   );
 }

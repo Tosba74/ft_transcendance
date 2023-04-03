@@ -2,15 +2,15 @@ export default function UserStatus({ status }: { status: string }) {
   let color: string;
 
   switch (status) {
-    case "connected": {
+    case "Connected": {
       color = "bg-green-600";
       break;
     }
-    case "ig": {
+    case "In game": {
       color = "bg-yellow-400";
       break;
     }
-    case "idle": {
+    case "Do not disturb": {
       color = "bg-red-600";
       break;
     }
