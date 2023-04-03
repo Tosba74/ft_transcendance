@@ -90,13 +90,27 @@ export default function Avatar({ loginer }: AvatarProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <img className="h-60 w-auto" src={avatarUrl} />
-      <label>Change avatar :</label>
-      <input className="bg-slate-300 px-3 py-1" type="file" ref={fileInput} />
-      <button type="submit" className="bg-blue-700 px-3 py-1 text-white">
-        Save
-      </button>
+    <form className="h-2/3 w-full" onSubmit={handleSubmit}>
+      <div className="flex h-2/3 w-full justify-center">
+        <img
+          className=" mt-6 h-28 w-28 rounded-full object-cover"
+          src={avatarUrl}
+        />
+      </div>
+      <div className="flex h-10 justify-between px-20">
+        <label>Change avatar :</label>
+        <input
+          className="w-96 bg-slate-300 px-3 py-1 dark:bg-gray-800 dark:text-white"
+          type="file"
+          ref={fileInput}
+        />
+        <button
+          type="submit"
+          className="rounded bg-cyan-500 px-3 py-1 text-white"
+        >
+          Save
+        </button>
+      </div>
       <div>{avatarMessage}</div>
     </form>
   );
