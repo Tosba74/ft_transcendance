@@ -94,6 +94,9 @@ export class MeService {
 
   async createChat(user: LoggedUserDto, joinInfos: CreateChatDto): Promise<ChatModel> {
 
+	console.log(joinInfos.name)
+	console.log(joinInfos.password)
+	console.log(joinInfos.type_id)
     // const chat = await this.chatsService.findOneById(chat_id);
 
     // if (chat.type.id != ChatTypeModel.PUBLIC_TYPE) {
@@ -102,15 +105,15 @@ export class MeService {
     // }
 
 
-    // if (chat.participants.some(element => { 
+    // if (chat.participants.some(element => {
     //   return element.participant.id === user.id && element.role.id === ChatRoleModel.BAN_ROLE
     // })) {
 
     //   throw new PreconditionFailedException('Banned from this room');
     // }
 
-    // else if (chat.participants.some(element => { 
-    //   return element.participant.id === user.id 
+    // else if (chat.participants.some(element => {
+    //   return element.participant.id === user.id
     // })) {
 
     //   throw new PreconditionFailedException('Already member of the room');
@@ -136,15 +139,15 @@ export class MeService {
     }
 
 
-    if (chat.participants.some(element => { 
+    if (chat.participants.some(element => {
       return element.participant.id === user.id && element.role.id === ChatRoleModel.BAN_ROLE
     })) {
 
       throw new PreconditionFailedException('Banned from this room');
     }
 
-    else if (chat.participants.some(element => { 
-      return element.participant.id === user.id 
+    else if (chat.participants.some(element => {
+      return element.participant.id === user.id
     })) {
 
       throw new PreconditionFailedException('Already member of the room');
