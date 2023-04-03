@@ -1,29 +1,24 @@
 export default function UserStatus({ status }: { status: string }) {
   let color: string;
-  let statusName: string;
 
-  // switch (status) {
-  //   case 193: {
-  color = "bg-green-600";
-  //     statusName = "Connected";
-  //     break;
-  //   }
-  //   case 100: {
-  //     color = "bg-yellow-400";
-  //     statusName = "In game";
-  //     break;
-  //   }
-  //   case 200: {
-  //     color = "bg-red-600";
-  //     statusName = "Do not disturb";
-  //     break;
-  //   }
-  //   default: {
-  //     color = "bg-slate-400";
-  //     statusName = "Disconnected";
-  //     break;
-  //   }
-  // }
+  switch (status) {
+    case "Connected": {
+      color = "bg-green-600";
+      break;
+    }
+    case "In game": {
+      color = "bg-yellow-400";
+      break;
+    }
+    case "Do not disturb": {
+      color = "bg-red-600";
+      break;
+    }
+    default: {
+      color = "bg-slate-400";
+      break;
+    }
+  }
 
   return (
     <>
