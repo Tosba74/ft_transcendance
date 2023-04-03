@@ -20,6 +20,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { UpdatePseudoDto } from './dto/update-pseudo.dto';
 import { imageFileFilter } from './validation/file-upload.utils';
+import { ChatModel } from 'src/chats/models/chat.model';
+import { CreateChatDto } from 'src/chats/dto/create-chat.dto';
 
 
 @Controller('api/me')
@@ -100,6 +102,13 @@ export class MeController {
     public chats(@Request() req: any): Promise<ChatParticipantModel[]> {
 
         return this.meService.listChats(req.user as LoggedUserDto);
+    }
+
+    @Post('chats/create')
+    @ApiOkResponse({ description: 'Chat created successfully', type: ChatModel })
+    public createChat(@Request() req: any, @Body() createInfos: CreateChatDto): Promise<ChatModel> {
+
+        return this.meService.createChat(req.user as LoggedUserDto, createInfos);
     }
 
     @Post('chats/join/:id')
