@@ -44,7 +44,7 @@ export default function User(props: UserProps) {
     <>
       {props.children}
       <button className="modalRef" onClick={handleClick}>
-        {props.user.login_name}
+        {props.user.pseudo}
       </button>
       {isOpen && (
         <ModalUser

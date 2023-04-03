@@ -14,7 +14,7 @@ export default function PendingList({ loginer }: { loginer: UseLoginDto }) {
       .post(`/api/me/friends/${user.id}`, {}, loginer.get_headers())
       .then((res) => {
         if (res.status === 201) {
-          console.log(res.data);
+          // console.log(res.data);
           return;
         }
       })

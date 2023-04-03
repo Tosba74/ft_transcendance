@@ -17,7 +17,7 @@ export default function AddFriend({ loginer }: { loginer: UseLoginDto }) {
         }
       })
       .catch((error) => {});
-    console.log(loginName);
+    // console.log(loginName);
   };
 
   return (
