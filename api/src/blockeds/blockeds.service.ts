@@ -92,7 +92,7 @@ export class BlockedsService {
     });
 
     if (blocked != null)
-      this.blockedsRepository.delete(blocked);
+      this.blockedsRepository.delete(blocked.id);
     else
       throw new NotFoundException('Blocked id not found');
   }
