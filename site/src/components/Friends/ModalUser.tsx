@@ -120,22 +120,22 @@ export default function ModalUser({
     >
       View
     </ModalLink>,
-    <ModalLink
-      key={`modalUserMP-${user.id}`}
-      onClick={() => handleMP(loginer, user)}
-    >
-      MP
-    </ModalLink>,
-    <ModalLink
-      key={`modalUserPlay-${user.id}`}
-      onClick={() => handlePlay(loginer, user)}
-    >
-      Play
-    </ModalLink>,
   ];
 
   if (type === "friend") {
     content.push(
+      <ModalLink
+        key={`modalUserMP-${user.id}`}
+        onClick={() => handleMP(loginer, user)}
+      >
+        MP
+      </ModalLink>,
+      <ModalLink
+        key={`modalUserPlay-${user.id}`}
+        onClick={() => handlePlay(loginer, user)}
+      >
+        Play
+      </ModalLink>,
       <ModalLink
         key={`modalUserRemove-${user.id}`}
         onClick={() => handleRemove(loginer, user)}
@@ -151,6 +151,18 @@ export default function ModalUser({
     );
   } else if (type === "ask") {
     content.push(
+      <ModalLink
+        key={`modalUserMP-${user.id}`}
+        onClick={() => handleMP(loginer, user)}
+      >
+        MP
+      </ModalLink>,
+      <ModalLink
+        key={`modalUserPlay-${user.id}`}
+        onClick={() => handlePlay(loginer, user)}
+      >
+        Play
+      </ModalLink>,
       <ModalLink
         key={`modalUserAccept-${user.id}`}
         onClick={() => handleAccept(loginer, user)}
@@ -175,6 +187,18 @@ export default function ModalUser({
     );
   } else {
     content.push(
+      <ModalLink
+        key={`modalUserMP-${user.id}`}
+        onClick={() => handleMP(loginer, user)}
+      >
+        MP
+      </ModalLink>,
+      <ModalLink
+        key={`modalUserPlay-${user.id}`}
+        onClick={() => handlePlay(loginer, user)}
+      >
+        Play
+      </ModalLink>,
       <ModalLink
         key={`modalUserAdd-${user.id}`}
         onClick={() => handleAdd(loginer, user)}
