@@ -13,12 +13,15 @@ interface UserProps {
 
 export default function User(props: UserProps) {
   const [isOpen, setOpen] = useState(false);
-  const [position, setPosition] = useState(0);
+  const [posX, setPosX] = useState(0);
+  const [posY, setPosY] = useState(0);
   const modalRef = useRef<HTMLDivElement | null>(null);
 
   const handleClick = (event: any) => {
     setOpen(true);
-    setPosition(event.clientX);
+    setPosX(event.clientX);
+    setPosY(event.clientY);
+    // console.log(event);
   };
 
   useEffect(() => {
@@ -49,7 +52,8 @@ export default function User(props: UserProps) {
           loginer={props.loginer}
           user={props.user}
           modalRef={modalRef}
-          position={position}
+          posX={posX}
+          posY={posY}
         />
       )}
     </>

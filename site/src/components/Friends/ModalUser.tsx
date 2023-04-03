@@ -9,7 +9,8 @@ interface ModalProps {
   loginer: UseLoginDto;
   user: UserDto;
   modalRef: React.MutableRefObject<HTMLDivElement | null>;
-  position: number;
+  posX: number;
+  posY: number;
 }
 
 function handleView(navigate: NavigateFunction, user: UserDto) {
@@ -29,59 +30,18 @@ function handleRemove(loginer: UseLoginDto, user: UserDto) {
     .delete(`/api/me/friends/${user.id}`, loginer.get_headers())
     .then((res) => {
       if (res.status === 204) {
-        console.log(res);
+        // console.log(res);
         return;
       }
     })
     .catch((error) => {});
 
-  console.log("should rm " + user.login_name + "(" + user.id + ")");
+  // console.log("should rm " + user.login_name + "(" + user.id + ")");
 }
 
 function handleAdd(loginer: UseLoginDto, user: UserDto) {
   axios
-    .post(
-      `/api/me/friends/${user.id}`,
-      { friend_id: user.id },
-      loginer.get_headers()
-    )
-    .then((res) => {
-      if (res.status === 201) {
-        console.log(res.data);
-        return;
-      }
-    })
-    .catch((error) => {});
-  console.log("should add" + user.login_name + "(" + user.id + ")");
-}
-
-function handleAccept(loginer: UseLoginDto, user: UserDto) {
-  // axios
-  //   .post(`/api/me/friends/${user.id}`, { friend_id: user.id }, loginer.get_headers())
-  //   .then((res) => {
-  //     if (res.status === 201) {
-  //       console.log(res.data);
-  //       return;
-  //     }
-  //   })
-  //   .catch((error) => {});
-  console.log(
-    "should accept " +
-      user.login_name +
-      "(" +
-      user.id +
-      ")" +
-      " from pending list"
-  );
-}
-
-function handleBlock(loginer: UseLoginDto, user: UserDto) {
-  axios
-    .post(
-      `/api/me/blockeds/${user.id}`,
-      { blocked_id: user.id },
-      loginer.get_headers()
-    )
+    .post(`/api/me/friends/${user.id}`, {}, loginer.get_headers())
     .then((res) => {
       if (res.status === 201) {
         // console.log(res.data);
@@ -89,7 +49,32 @@ function handleBlock(loginer: UseLoginDto, user: UserDto) {
       }
     })
     .catch((error) => {});
-  handleRemove(loginer, user);
+  // console.log("should add" + user.login_name + "(" + user.id + ")");
+}
+
+function handleAccept(loginer: UseLoginDto, user: UserDto) {
+  handleAdd(loginer, user);
+  // console.log(
+  //   "should accept " +
+  //     user.login_name +
+  //     "(" +
+  //     user.id +
+  //     ")" +
+  //     " from pending list"
+  // );
+}
+
+function handleBlock(loginer: UseLoginDto, user: UserDto) {
+  axios
+    .post(`/api/me/blockeds/${user.id}`, {}, loginer.get_headers())
+    .then((res) => {
+      if (res.status === 201) {
+        // console.log(res.data);
+        handleRemove(loginer, user);
+        return;
+      }
+    })
+    .catch((error) => {});
 }
 
 function handleUnblock(loginer: UseLoginDto, user: UserDto) {
@@ -97,12 +82,12 @@ function handleUnblock(loginer: UseLoginDto, user: UserDto) {
     .delete(`/api/me/blockeds/${user.id}`, loginer.get_headers())
     .then((res) => {
       if (res.status === 204) {
-        // console.log(res);
+        console.log(res);
         return;
       }
     })
     .catch((error) => {});
-  console.log("should unblock" + user.login_name + "(" + user.id + ")");
+  // console.log("should unblock" + user.login_name + "(" + user.id + ")");
 }
 
 export default function ModalUser({
@@ -110,7 +95,8 @@ export default function ModalUser({
   loginer,
   user,
   modalRef,
-  position,
+  posX,
+  posY,
 }: ModalProps) {
   const navigate = useNavigate();
   let content = [
@@ -170,6 +156,39 @@ export default function ModalUser({
         Accept
       </ModalLink>,
       <ModalLink
+        key={`modalUserRemove-${user.id}`}
+        onClick={() => handleRemove(loginer, user)}
+      >
+        Remove
+      </ModalLink>,
+      <ModalLink
+        key={`modalUserBlock-${user.id}`}
+        onClick={() => handleBlock(loginer, user)}
+      >
+        Block
+      </ModalLink>
+    );
+  } else if (type === "sent") {
+    content.push(
+      <ModalLink
+        key={`modalUserMP-${user.id}`}
+        onClick={() => handleMP(loginer, user)}
+      >
+        MP
+      </ModalLink>,
+      <ModalLink
+        key={`modalUserPlay-${user.id}`}
+        onClick={() => handlePlay(loginer, user)}
+      >
+        Play
+      </ModalLink>,
+      <ModalLink
+        key={`modalUserRemove-${user.id}`}
+        onClick={() => handleRemove(loginer, user)}
+      >
+        Remove
+      </ModalLink>,
+      <ModalLink
         key={`modalUserBlock-${user.id}`}
         onClick={() => handleBlock(loginer, user)}
       >
@@ -216,7 +235,7 @@ export default function ModalUser({
   return (
     <div
       ref={modalRef}
-      style={{ left: position + "px" }}
+      style={{ left: posX + "px", top: posY + "px" }}
       className="absolute flex flex-col bg-white text-center text-black drop-shadow-md dark:bg-gray-700 dark:text-white"
     >
       {content}

@@ -18,14 +18,14 @@ export default function BannedList({ loginer }: { loginer: UseLoginDto }) {
         }
       })
       .catch((error) => {});
-    console.log(
-      "should remove " +
-        user.login_name +
-        "(" +
-        user.id +
-        ")" +
-        " from ban list"
-    );
+    // console.log(
+    //   "should remove " +
+    //     user.login_name +
+    //     "(" +
+    //     user.id +
+    //     ")" +
+    //     " from ban list"
+    // );
   };
 
   React.useEffect(() => {
@@ -55,7 +55,7 @@ export default function BannedList({ loginer }: { loginer: UseLoginDto }) {
 
   return (
     <>
-      {users.length > 0 && (
+      {content && (
         <>
           <h2 className="text-2xl">Banned list</h2>
           <ul className="mb-4 pl-1">{content}</ul>

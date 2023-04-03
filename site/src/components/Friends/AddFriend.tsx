@@ -6,15 +6,9 @@ export default function AddFriend({ loginer }: { loginer: UseLoginDto }) {
   const [loginName, setLoginName] = React.useState("");
 
   const handleSubmit = (event: any) => {
-    // example friend_id
     event.preventDefault();
-    // /api/me/friends/slug/{slug}
     axios
-      .post(
-        `/api/me/friends/slug/${loginName}`,
-        { slug: loginName },
-        loginer.get_headers()
-      )
+      .post(`/api/me/friends/slug/${loginName}`, {}, loginer.get_headers())
       .then((res) => {
         if (res.status === 201) {
           console.log(res.data);
