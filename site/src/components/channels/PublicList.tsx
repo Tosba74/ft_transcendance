@@ -13,8 +13,8 @@ export default function PublicList({ channels }: PublicListProps) {
     <div className="border-blueGray-200 border-b py-5">
       <div className="flex flex-row flex-wrap">
         <div className="w-full">
-          <h3 className="text-blueGray-700 mb-5 text-center text-2xl font-semibold leading-normal">
-            <MdPublic className="inline-block" />
+          <h3 className="flex items-center justify-center text-blueGray-700 mb-5 text-center text-2xl font-semibold leading-normal">
+            <MdPublic className="inline-block " />
             Public Channels
           </h3>
           <ul className="h-44 overflow-y-scroll">

@@ -13,7 +13,7 @@ export default function CurrentList({ channels }: CurrentListProps) {
     <div className="border-blueGray-200 border-b py-5">
       <div className="flex flex-row flex-wrap">
         <div className="w-full">
-          <h3 className="text-blueGray-700 mb-5 text-center text-2xl font-semibold leading-normal">
+          <h3 className="flex items-center justify-center text-blueGray-700 mb-5 text-center text-2xl font-semibold leading-normal">
             <MdPlace className="inline-block" />
             Current Channel
           </h3>
