@@ -1,16 +1,32 @@
 import User from "./User";
 import React from "react";
 import axios from "axios";
-import { MdClose } from "react-icons/md";
+import { FiUserX } from "react-icons/fi";
 import { UserDto } from "src/_shared_dto/user.dto";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
 
-function handleUnblock(user: UserDto) {
-  console.log("should remove " + user?.login_name + " from ban list");
-}
-
 export default function BannedList({ loginer }: { loginer: UseLoginDto }) {
-  let [users, setUsers] = React.useState<UserDto[]>([]);
+  const [users, setUsers] = React.useState<UserDto[]>([]);
+
+  const handleUnblock = (user: UserDto) => {
+    axios
+      .delete(`/api/me/blockeds/${user.id}`, loginer.get_headers())
+      .then((res) => {
+        if (res.status === 204) {
+          // console.log(res);
+          return;
+        }
+      })
+      .catch((error) => {});
+    console.log(
+      "should remove " +
+        user.login_name +
+        "(" +
+        user.id +
+        ")" +
+        " from ban list"
+    );
+  };
 
   React.useEffect(() => {
     axios
@@ -27,11 +43,11 @@ export default function BannedList({ loginer }: { loginer: UseLoginDto }) {
   }, []);
 
   const content: JSX.Element[] = users.map((user) => (
-    <li key={user.id}>
-      <User loginer={loginer} user={user}>
-        <MdClose
+    <li className="flex items-center text-slate-500" key={user.id}>
+      <User type={"ban"} loginer={loginer} user={user}>
+        <FiUserX
           onClick={() => handleUnblock(user)}
-          className="inline-block cursor-pointer"
+          className="mr-1 inline-block cursor-pointer text-black dark:text-white"
         />
       </User>
     </li>

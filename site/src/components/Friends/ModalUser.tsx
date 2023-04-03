@@ -1,19 +1,19 @@
 import ModalLink from "./ModalLink";
 import { UserDto } from "src/_shared_dto/user.dto";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
-import React from "react";
-import { useEffect } from "react";
 import axios from "axios";
+import { NavigateFunction, useNavigate } from "react-router-dom";
 
 interface ModalProps {
+  type: string;
   loginer: UseLoginDto;
   user: UserDto;
-  modalRef: React.MutableRefObject<HTMLUListElement | null>;
+  modalRef: React.MutableRefObject<HTMLDivElement | null>;
   position: number;
 }
 
-function handleView(loginer: UseLoginDto, user: UserDto) {
-  console.log("view profile " + user.login_name + "(" + user.id + ")");
+function handleView(navigate: NavigateFunction, user: UserDto) {
+  navigate("/players/" + user.id);
 }
 
 function handleMP(loginer: UseLoginDto, user: UserDto) {
@@ -25,14 +25,11 @@ function handlePlay(loginer: UseLoginDto, user: UserDto) {
 }
 
 function handleRemove(loginer: UseLoginDto, user: UserDto) {
-  // /api/me/friends/{id}
   axios
     .delete(`/api/me/friends/${user.id}`, loginer.get_headers())
     .then((res) => {
       if (res.status === 204) {
-        // console.log(res.data);
-        // setUsers(res.data as UserDto[]);
-
+        console.log(res);
         return;
       }
     })
@@ -42,7 +39,40 @@ function handleRemove(loginer: UseLoginDto, user: UserDto) {
 }
 
 function handleAdd(loginer: UseLoginDto, user: UserDto) {
+  axios
+    .post(
+      `/api/me/friends/${user.id}`,
+      { friend_id: user.id },
+      loginer.get_headers()
+    )
+    .then((res) => {
+      if (res.status === 201) {
+        console.log(res.data);
+        return;
+      }
+    })
+    .catch((error) => {});
   console.log("should add" + user.login_name + "(" + user.id + ")");
+}
+
+function handleAccept(loginer: UseLoginDto, user: UserDto) {
+  // axios
+  //   .post(`/api/me/friends/${user.id}`, { friend_id: user.id }, loginer.get_headers())
+  //   .then((res) => {
+  //     if (res.status === 201) {
+  //       console.log(res.data);
+  //       return;
+  //     }
+  //   })
+  //   .catch((error) => {});
+  console.log(
+    "should accept " +
+      user.login_name +
+      "(" +
+      user.id +
+      ")" +
+      " from pending list"
+  );
 }
 
 function handleBlock(loginer: UseLoginDto, user: UserDto) {
@@ -54,53 +84,90 @@ function handleBlock(loginer: UseLoginDto, user: UserDto) {
     )
     .then((res) => {
       if (res.status === 201) {
-        console.log(res.data);
-        // setUsers(res.data as UserDto[]);
-
+        // console.log(res.data);
         return;
       }
     })
     .catch((error) => {});
+  handleRemove(loginer, user);
+}
 
-  console.log("should block " + user.login_name + "(" + user.id + ")");
+function handleUnblock(loginer: UseLoginDto, user: UserDto) {
+  axios
+    .delete(`/api/me/blockeds/${user.id}`, loginer.get_headers())
+    .then((res) => {
+      if (res.status === 204) {
+        // console.log(res);
+        return;
+      }
+    })
+    .catch((error) => {});
+  console.log("should unblock" + user.login_name + "(" + user.id + ")");
 }
 
 export default function ModalUser({
+  type,
   loginer,
   user,
   modalRef,
   position,
 }: ModalProps) {
-  // const handleSubmit = async (event: SyntheticEvent) => {
-  //   event.preventDefault();
+  const navigate = useNavigate();
+  let content;
 
-  //   // if (tfa === false) {
-  //   axios
-  //     .post("/api/login/create", {
-  //       username: loginName,
-  //       password: password,
-  //     })
-  //     .then((res) => {
-  //       if (res.status == 201) {
-  //         setPageMessage("Creation successful, redirecting...");
-  //       } //
-  //     })
-  //     .catch(() => setPageMessage("Login error"));
-  //   // }
-  // };
-
+  if (type === "friend") {
+    content = (
+      <>
+        <ModalLink onClick={() => handleView(navigate, user)}>View</ModalLink>
+        <ModalLink onClick={() => handleMP(loginer, user)}>MP</ModalLink>
+        <ModalLink onClick={() => handlePlay(loginer, user)}>Play</ModalLink>
+        <ModalLink onClick={() => handleRemove(loginer, user)}>
+          Remove
+        </ModalLink>
+        <ModalLink onClick={() => handleBlock(loginer, user)}>Block</ModalLink>
+      </>
+    );
+  } else if (type === "ask") {
+    content = (
+      <>
+        <ModalLink onClick={() => handleView(navigate, user)}>View</ModalLink>
+        <ModalLink onClick={() => handleMP(loginer, user)}>MP</ModalLink>
+        <ModalLink onClick={() => handlePlay(loginer, user)}>Play</ModalLink>
+        <ModalLink onClick={() => handleAccept(loginer, user)}>
+          Accept
+        </ModalLink>
+        <ModalLink onClick={() => handleBlock(loginer, user)}>Block</ModalLink>
+      </>
+    );
+  } else if (type === "ban") {
+    content = (
+      <>
+        <ModalLink onClick={() => handleView(navigate, user)}>View</ModalLink>
+        <ModalLink onClick={() => handleMP(loginer, user)}>MP</ModalLink>
+        <ModalLink onClick={() => handlePlay(loginer, user)}>Play</ModalLink>
+        <ModalLink onClick={() => handleUnblock(loginer, user)}>
+          Unblock
+        </ModalLink>
+      </>
+    );
+  } else {
+    content = (
+      <>
+        <ModalLink onClick={() => handleView(navigate, user)}>View</ModalLink>
+        <ModalLink onClick={() => handleMP(loginer, user)}>MP</ModalLink>
+        <ModalLink onClick={() => handlePlay(loginer, user)}>Play</ModalLink>
+        <ModalLink onClick={() => handleAdd(loginer, user)}>Add</ModalLink>
+        <ModalLink onClick={() => handleBlock(loginer, user)}>Block</ModalLink>
+      </>
+    );
+  }
   return (
-    <ul
+    <div
       ref={modalRef}
       style={{ left: position + "px" }}
-      className="absolute bg-white py-1 px-3 text-black drop-shadow-md"
+      className="absolute flex flex-col bg-white text-center text-black drop-shadow-md dark:bg-gray-700 dark:text-white"
     >
-      <ModalLink onClick={() => handleView(loginer, user)}>View</ModalLink>
-      <ModalLink onClick={() => handleMP(loginer, user)}>MP</ModalLink>
-      <ModalLink onClick={() => handlePlay(loginer, user)}>Play</ModalLink>
-      <ModalLink onClick={() => handleAdd(loginer, user)}>Add</ModalLink>
-      <ModalLink onClick={() => handleRemove(loginer, user)}>Remove</ModalLink>
-      <ModalLink onClick={() => handleBlock(loginer, user)}>Block</ModalLink>
-    </ul>
+      {content}
+    </div>
   );
 }
