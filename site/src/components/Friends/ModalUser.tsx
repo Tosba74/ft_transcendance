@@ -113,52 +113,80 @@ export default function ModalUser({
   position,
 }: ModalProps) {
   const navigate = useNavigate();
-  let content;
+  let content = [
+    <ModalLink
+      key={`modalUserView-${user.id}`}
+      onClick={() => handleView(navigate, user)}
+    >
+      View
+    </ModalLink>,
+    <ModalLink
+      key={`modalUserMP-${user.id}`}
+      onClick={() => handleMP(loginer, user)}
+    >
+      MP
+    </ModalLink>,
+    <ModalLink
+      key={`modalUserPlay-${user.id}`}
+      onClick={() => handlePlay(loginer, user)}
+    >
+      Play
+    </ModalLink>,
+  ];
 
   if (type === "friend") {
-    content = (
-      <>
-        <ModalLink onClick={() => handleView(navigate, user)}>View</ModalLink>
-        <ModalLink onClick={() => handleMP(loginer, user)}>MP</ModalLink>
-        <ModalLink onClick={() => handlePlay(loginer, user)}>Play</ModalLink>
-        <ModalLink onClick={() => handleRemove(loginer, user)}>
-          Remove
-        </ModalLink>
-        <ModalLink onClick={() => handleBlock(loginer, user)}>Block</ModalLink>
-      </>
+    content.push(
+      <ModalLink
+        key={`modalUserRemove-${user.id}`}
+        onClick={() => handleRemove(loginer, user)}
+      >
+        Remove
+      </ModalLink>,
+      <ModalLink
+        key={`modalUserBlock-${user.id}`}
+        onClick={() => handleBlock(loginer, user)}
+      >
+        Block
+      </ModalLink>
     );
   } else if (type === "ask") {
-    content = (
-      <>
-        <ModalLink onClick={() => handleView(navigate, user)}>View</ModalLink>
-        <ModalLink onClick={() => handleMP(loginer, user)}>MP</ModalLink>
-        <ModalLink onClick={() => handlePlay(loginer, user)}>Play</ModalLink>
-        <ModalLink onClick={() => handleAccept(loginer, user)}>
-          Accept
-        </ModalLink>
-        <ModalLink onClick={() => handleBlock(loginer, user)}>Block</ModalLink>
-      </>
+    content.push(
+      <ModalLink
+        key={`modalUserAccept-${user.id}`}
+        onClick={() => handleAccept(loginer, user)}
+      >
+        Accept
+      </ModalLink>,
+      <ModalLink
+        key={`modalUserBlock-${user.id}`}
+        onClick={() => handleBlock(loginer, user)}
+      >
+        Block
+      </ModalLink>
     );
   } else if (type === "ban") {
-    content = (
-      <>
-        <ModalLink onClick={() => handleView(navigate, user)}>View</ModalLink>
-        <ModalLink onClick={() => handleMP(loginer, user)}>MP</ModalLink>
-        <ModalLink onClick={() => handlePlay(loginer, user)}>Play</ModalLink>
-        <ModalLink onClick={() => handleUnblock(loginer, user)}>
-          Unblock
-        </ModalLink>
-      </>
+    content.push(
+      <ModalLink
+        key={`modalUserUnBlock-${user.id}`}
+        onClick={() => handleUnblock(loginer, user)}
+      >
+        Unblock
+      </ModalLink>
     );
   } else {
-    content = (
-      <>
-        <ModalLink onClick={() => handleView(navigate, user)}>View</ModalLink>
-        <ModalLink onClick={() => handleMP(loginer, user)}>MP</ModalLink>
-        <ModalLink onClick={() => handlePlay(loginer, user)}>Play</ModalLink>
-        <ModalLink onClick={() => handleAdd(loginer, user)}>Add</ModalLink>
-        <ModalLink onClick={() => handleBlock(loginer, user)}>Block</ModalLink>
-      </>
+    content.push(
+      <ModalLink
+        key={`modalUserAdd-${user.id}`}
+        onClick={() => handleAdd(loginer, user)}
+      >
+        Add
+      </ModalLink>,
+      <ModalLink
+        key={`modalUserBlock-${user.id}`}
+        onClick={() => handleBlock(loginer, user)}
+      >
+        Block
+      </ModalLink>
     );
   }
   return (
