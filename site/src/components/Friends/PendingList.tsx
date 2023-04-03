@@ -77,7 +77,7 @@ export default function PendingList({ loginer }: { loginer: UseLoginDto }) {
 
   return (
     <>
-      {content && (
+      {content.length > 0 && (
         <>
           <h2 className="text-2xl">Pending list</h2>
           <ul className="mb-4 pl-1">{content}</ul>
