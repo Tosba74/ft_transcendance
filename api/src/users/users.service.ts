@@ -35,7 +35,7 @@ export class UsersService {
 
       const usersDto: UserDto[] = await Promise.all(users.map(async (value) => {
         return {
-          ...value,
+          ...value.toUserDto(),
           status: await this.getUserStatus(value.id),
         }
       }));
@@ -59,7 +59,7 @@ export class UsersService {
           where: { id: id }
         });
         return {
-          ...user,
+          ...user.toUserDto(),
           status: await this.getUserStatus(user.id),
         };
       }

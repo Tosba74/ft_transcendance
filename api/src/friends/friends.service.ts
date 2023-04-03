@@ -65,14 +65,14 @@ export class FriendsService {
     // let res: UserDto[] = [];
     let res: UserDto[] = await Promise.all(friends1.map(async (value) => {
       return {
-        ...value.second_user,
+        ...value.second_user.toUserDto(),
         status: await this.usersService.getUserStatus(value.second_user.id),
       } as UserDto;
     }));
 
     res = res.concat(await Promise.all(friends2.map(async (value) => {
       return {
-        ...value.first_user,
+        ...value.first_user.toUserDto(),
         status: await this.usersService.getUserStatus(value.first_user.id),
       } as UserDto;
     })));
