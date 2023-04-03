@@ -14,65 +14,65 @@ export default function ChannelsPage({ loginer }: ChannelsPageProps) {
       id: 1,
       name: "le groupe de lundivvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv vvvvvvvvvvvvvvvvvvvvvvvvvvvv",
       password: false,
-	  type:2,
+      type: 2,
     },
     {
       id: 2,
       name: "Fred et Sebaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       password: true,
-	  type:2,
+      type: 2,
     },
     {
       id: 3,
       name: "Fake private chat",
       password: false,
-	  type:2,
+      type: 2,
     },
-	{
-		id: 8,
-		name: "le groupe de lundivvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv vvvvvvvvvvvvvvvvvvvvvvvvvvvv",
-		password: false,
-		type:2,
-	  },
-	  {
-		id: 9,
-		name: "Fred et Sebaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-		password: true,
-		type:2,
-	  },
-	  {
-		id: 10,
-		name: "Fake private chat",
-		password: false,
-		type:2,
-	  },
+    {
+      id: 8,
+      name: "le groupe de lundivvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv vvvvvvvvvvvvvvvvvvvvvvvvvvvv",
+      password: false,
+      type: 2,
+    },
+    {
+      id: 9,
+      name: "Fred et Sebaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      password: true,
+      type: 2,
+    },
+    {
+      id: 10,
+      name: "Fake private chat",
+      password: false,
+      type: 2,
+    },
   ];
   let channelsBanned: ChannelDto[] = [
     {
       id: 5,
       name: "Raspberry group",
       password: false,
-	  type:2,
+      type: 2,
     },
   ];
   let channelsCurrent: ChannelDto[] = [
-	{
-		id: 6,
-		name: "jarom",
-		password: false,
-		type:1,
-	  },
+    {
+      id: 6,
+      name: "jarom",
+      password: false,
+      type: 1,
+    },
     {
       id: 6,
       name: "Smash group",
       password: true,
-	  type:2,
-	},
-	{
-	  id: 11,
-      name: "Ssbu group",
+      type: 2,
+    },
+    {
+      id: 11,
+      name: "Ssbu groupaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       password: false,
-	  type:3,
+      type: 3,
     },
   ];
   return (
@@ -82,13 +82,13 @@ export default function ChannelsPage({ loginer }: ChannelsPageProps) {
         <BannedList channels={channelsBanned} />
         <CurrentList channels={channelsCurrent} />
         <button
-		className="mt-16 h-16 rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700"
-		type="button"
-				  id="btn_new"
-				  onClick={() => {
-					console.log(`button open pressed`);
-				  }}
-		>
+          className="mt-16 h-16 rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700"
+          type="button"
+          id="btn_new"
+          onClick={() => {
+            console.log(`button open pressed`);
+          }}
+        >
           New channel
         </button>
       </div>
