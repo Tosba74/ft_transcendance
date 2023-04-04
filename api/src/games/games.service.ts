@@ -147,7 +147,7 @@ export class GamesService {
         return "connected";
     }
 
-    return "idle";
+    return "disconnected";
   }
 
 
