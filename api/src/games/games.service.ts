@@ -138,6 +138,17 @@ export class GamesService {
 
 
 
+  async getUserStatus(id: number): Promise<string> {
+    const clientsFound = this.clients.filter((client) => {
+      return client.user.id === id;
+    });
+
+    if (clientsFound.length > 0) {
+        return "connected";
+    }
+
+    return "disconnected";
+  }
 
 
 

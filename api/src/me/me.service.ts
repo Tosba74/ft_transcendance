@@ -24,6 +24,7 @@ import { ChatRoleModel } from 'src/chat_roles/models/chat_role.model';
 import { ChatTypeModel } from 'src/chat_types/models/chat_type.model';
 
 import { JoinChatDto } from './dto/join_chat';
+import { UserDto } from 'src/_shared_dto/user.dto';
 
 @Injectable()
 export class MeService {
@@ -36,17 +37,17 @@ export class MeService {
     private chatParticipantService: ChatParticipantsService,
   ) { }
 
-  async listFriends(user: LoggedUserDto): Promise<UserModel[]> {
+  async listFriends(user: LoggedUserDto): Promise<UserDto[]> {
 
     return this.friendsService.findFriends(user.id);
   }
 
-  async listReceivedFriends(user: LoggedUserDto): Promise<UserModel[]> {
+  async listReceivedFriends(user: LoggedUserDto): Promise<UserDto[]> {
 
     return this.friendsService.listReceivedFriends(user.id);
   }
 
-  async listSentFriends(user: LoggedUserDto): Promise<UserModel[]> {
+  async listSentFriends(user: LoggedUserDto): Promise<UserDto[]> {
 
     return this.friendsService.listSentFriends(user.id);
   }
@@ -83,12 +84,12 @@ export class MeService {
 
 
 
-  async listBlockedBy(user: LoggedUserDto): Promise<UserModel[]> {
+  async listBlockedBy(user: LoggedUserDto): Promise<UserDto[]> {
 
     return this.blockedsService.blockedBy(user.id);
   }
 
-  async listBlockeds(user: LoggedUserDto): Promise<UserModel[]> {
+  async listBlockeds(user: LoggedUserDto): Promise<UserDto[]> {
 
     return this.blockedsService.blockedUsers(user.id);
   }
