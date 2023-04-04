@@ -22,7 +22,7 @@ import ChatPage from "./components/Chat/ChatMenu";
 import GamePage from "./components/Game/GamePage";
 import TfaCodePage from "./components/Log/TfaCodePage";
 import CreateAccountPage from "./components/Log/CreateAccountPage";
-import ChannelsPage from "./components/channels/ChannelsPage";
+import ChannelsPage from "./components/Channels/ChannelsPage";
 import FriendsPage from "./components/Friends/FriendsPage";
 import { UseChatDto } from "./components/Chat/dto/useChat.dto";
 import { UseGameDto } from "./components/Game/dto/useGame.dto";
