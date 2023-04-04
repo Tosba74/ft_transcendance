@@ -1,9 +1,9 @@
 import { ApiResponseProperty } from "@nestjs/swagger";
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne, Unique } from "typeorm"
 
-import { UserStatusModel } from "src/user_status/models/user_status.model";
 import { ChatMessageModel } from "src/chat_messages/models/chat_message.model";
 import { ChatParticipantModel } from "src/chat_participants/models/chat_participant.model";
+import { UserDto } from "src/_shared_dto/user.dto";
 
 @Entity("users")
 @Unique('unique_constraint', ['login_name', 'pseudo'])
@@ -63,13 +63,13 @@ export class UserModel {
     
     //--------------------------------------------
     
-    @ApiResponseProperty({ type: Number })
-    @ManyToOne(() => UserStatusModel)
-    status: UserStatusModel;
+    // @ApiResponseProperty({ type: Number })
+    // @ManyToOne(() => UserStatusModel)
+    // status: UserStatusModel;
     
-    @ApiResponseProperty({ type: Date })
-    @Column()
-    status_updated_at: Date;
+    // @ApiResponseProperty({ type: Date })
+    // @Column()
+    // status_updated_at: Date;
     
     //--------------------------------------------
     
@@ -84,4 +84,19 @@ export class UserModel {
     @ApiResponseProperty({ type: Date })
     @Column({ nullable: true, default: null })
     validate_date?: Date;
+
+    toUserDto(): UserDto {
+        return {
+            id: this.id,
+            
+            login_name: this.login_name,
+            pseudo: this.pseudo,
+
+            status: '',
+
+            avatar_url: this.avatar_url,
+            is_admin: this.is_admin,
+            color: this.color,
+        }
+    }
 }

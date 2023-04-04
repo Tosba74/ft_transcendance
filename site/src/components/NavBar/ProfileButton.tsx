@@ -1,7 +1,5 @@
 import LogoInconnu from "../../assets/img/inconnu.jpeg";
-import { useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
 
 interface ProfileButtonProps {
@@ -16,7 +14,7 @@ export default function ProfileButton({
   setOpenedMenu,
 }: ProfileButtonProps) {
   const handleClick = () => {
-    if (openedMenu == "profile") {
+    if (openedMenu === "profile") {
       setOpenedMenu("");
     } else {
       setOpenedMenu("profile");
@@ -38,7 +36,7 @@ export default function ProfileButton({
   }
 
   return (
-    <div className="flex items-center shadow-lg md:order-2">
+    <div className="flex items-center md:order-2">
       <button
         type="button"
         onClick={handleClick}
@@ -50,18 +48,17 @@ export default function ProfileButton({
       >
         <span className="sr-only">Open user menu</span>
         <img
-          className="h-8 w-8 rounded-full"
-          height="8"
+          className="h-12 w-12 rounded-full object-cover"
           src={
             (loginer.logged &&
               loginer.userInfos &&
               loginer.userInfos.avatar_url) ||
             LogoInconnu
           }
-          alt="user photo"
+          alt={`${loginer.userInfos?.pseudo}`}
         />
       </button>
-      {openedMenu == "profile" && (
+      {openedMenu === "profile" && (
         <div
           className="absolute top-20 right-2 z-40 w-40 list-none divide-y divide-gray-100 rounded-lg bg-white text-base shadow-lg dark:divide-gray-600 dark:bg-gray-700"
           id="user-dropdown"
