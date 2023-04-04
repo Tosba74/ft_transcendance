@@ -2,7 +2,13 @@ import React from "react";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
 import axios from "axios";
 
-export default function AddFriend({ loginer, doReload }: { loginer: UseLoginDto, doReload: Function }) {
+export default function AddFriend({
+  loginer,
+  doReload,
+}: {
+  loginer: UseLoginDto;
+  doReload: Function;
+}) {
   const [loginName, setLoginName] = React.useState("");
   const [error, setError] = React.useState("");
 
@@ -22,7 +28,7 @@ export default function AddFriend({ loginer, doReload }: { loginer: UseLoginDto,
       })
       .catch((error) => {
         if (error.response.status === 404) {
-          setError('User not found');
+          setError("User not found");
         } //
         else {
           setError("Unknown error");
@@ -48,10 +54,7 @@ export default function AddFriend({ loginer, doReload }: { loginer: UseLoginDto,
           required
         />
       </div>
-      {error.length > 0 && (<div className="center mx-auto mb-2">
-        {error}
-      </div>
-      )}
+      {error.length > 0 && <div className="center mx-auto mb-2">{error}</div>}
       <button
         type="submit"
         className="mx-auto rounded-lg bg-cyan-500 px-4 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"

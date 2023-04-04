@@ -27,11 +27,7 @@ function handlePlay(loginer: UseLoginDto, user: UserDto) {
   console.log("should invite to play " + user.login_name + "(" + user.id + ")");
 }
 
-function handleRemove(
-  loginer: UseLoginDto,
-  user: UserDto,
-  doReload: Function
-) {
+function handleRemove(loginer: UseLoginDto, user: UserDto, doReload: Function) {
   axios
     .delete(`/api/me/friends/${user.id}`, loginer.get_headers())
     .then((res) => {
@@ -60,11 +56,7 @@ function handleAdd(loginer: UseLoginDto, user: UserDto, doReload: Function) {
   // console.log("should add" + user.login_name + "(" + user.id + ")");
 }
 
-function handleAccept(
-  loginer: UseLoginDto,
-  user: UserDto,
-  doReload: Function
-) {
+function handleAccept(loginer: UseLoginDto, user: UserDto, doReload: Function) {
   handleAdd(loginer, user, doReload);
   // console.log(
   //   "should accept " +
