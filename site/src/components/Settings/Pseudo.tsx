@@ -62,7 +62,7 @@ export default function Pseudo({ loginer }: PseudoProps) {
   return (
     <form className="h-1/3 w-full" onSubmit={handleSubmit}>
       <div className="flex h-10 justify-between px-20">
-        <label>Pseudo :</label>
+        <label className="dark:text-white">Pseudo: </label>
         <input
           className="ml-4 w-96 bg-slate-300 px-3 py-1 dark:bg-gray-800 dark:text-white md:ml-12"
           type="text"

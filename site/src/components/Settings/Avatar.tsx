@@ -98,7 +98,7 @@ export default function Avatar({ loginer }: AvatarProps) {
         />
       </div>
       <div className="flex h-10 justify-between px-20">
-        <label>Change avatar :</label>
+        <label className="dark:text-white">Change avatar: </label>
         <input
           className="w-96 bg-slate-300 px-3 py-1 dark:bg-gray-800 dark:text-white"
           type="file"
