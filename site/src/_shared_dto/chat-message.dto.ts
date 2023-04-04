@@ -1,7 +1,7 @@
+import { UserDto } from "./user.dto";
+
 export interface ChatMessageDto {
   id: number;
-  senderId: number;
-  senderDiplayName: string;
-  senderAvatar: string;
+  sender: UserDto;
   content: string;
 }

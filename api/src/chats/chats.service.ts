@@ -16,11 +16,12 @@ import { UserDto } from 'src/_shared_dto/user.dto';
 import { ChatResponseDto } from 'src/_shared_dto/chat-response.dto';
 import { ChatRoomDto } from 'src/_shared_dto/chat-room.dto';
 import { ChatMessageDto } from 'src/_shared_dto/chat-message.dto';
+import { UsersService } from 'src/users/users.service';
 
 
 interface WebsocketUser {
   socket: Socket;
-  user: LoggedUserDto;
+  user: UserDto;
 }
 
 @Injectable()
@@ -31,6 +32,7 @@ export class ChatsService {
     @Inject(forwardRef(() => MeService))
     private meService: MeService,
     private chatMessagesService: ChatMessagesService,
+    private usersService: UsersService,
   ) { }
 
   // clients = new Pair<Socket, LoggedUserDto>();
@@ -112,9 +114,11 @@ export class ChatsService {
       return { error: 'Already identified', value: undefined };
     }
 
+    const foundUser = await this.usersService.findOneById(user.id, false) as UserDto;
+
     const newConn: WebsocketUser = {
       socket: client,
-      user: user,
+      user: foundUser,
     }
 
     this.clients.push(newConn);
@@ -142,7 +146,7 @@ export class ChatsService {
   }
 
 
-  isIdentifed(client: Socket): LoggedUserDto | undefined {
+  isIdentifed(client: Socket): UserDto | undefined {
 
     let found = this.clients.find(value => {
       if (value.socket.id == client.id) {
@@ -154,7 +158,7 @@ export class ChatsService {
   }
 
 
-  async connectRoom(user: LoggedUserDto, client: Socket, room_id: number): Promise<ChatResponseDto<ChatRoomDto>> {
+  async connectRoom(user: UserDto, client: Socket, room_id: number): Promise<ChatResponseDto<ChatRoomDto>> {
 
     let res = new ChatResponseDto<ChatRoomDto>();
 
@@ -176,16 +180,14 @@ export class ChatsService {
       newroom.name = room.name.toString();
       newroom.type = room.type.id;
 
-      
+
       //Get all messages from the db
       newroom.messages = [];
 
       room.messages.forEach(value => {
         let msg: ChatMessageDto = new ChatMessageDto();
         msg.id = value.id;
-        msg.senderId = value.sender.id;
-        msg.senderDiplayName = value.sender.pseudo;
-        msg.senderAvatar = value.sender.avatar_url;
+        msg.sender = value.sender.toUserDto();
         msg.content = value.message;
 
         newroom.messages.push(msg);
@@ -197,23 +199,12 @@ export class ChatsService {
       newroom.participants = [];
 
       room.participants.forEach(value => {
-        let usr: UserDto = new UserDto();
-
-        usr.id = value.participant.id;
-        usr.pseudo = value.participant.pseudo;
-        usr.avatar_url = value.participant.avatar_url;
-
-        usr.color = value.participant.color;
-        usr.is_admin = value.participant.is_admin;
-        usr.login_name = value.participant.login_name;
-
-        // console.log('adads ', usr);
+        let usr: UserDto = value.participant.toUserDto();
 
         newroom.participants.push(usr);
 
       });
 
-      // console.log('particip', newroom.participants);
       res.value = newroom;
     }
     else {
@@ -226,7 +217,7 @@ export class ChatsService {
 
 
 
-  async kickCommand(room: ChatModel, user: LoggedUserDto, command: string[]): Promise<string> {
+  async kickCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
 
     // Example {"/kick", "1"}
     // Second argument is userid
@@ -252,8 +243,9 @@ export class ChatsService {
         // Create kick message
         let kickMessage = new ChatMessageDto();
         kickMessage.id = -this.serverMsgId;
-        kickMessage.senderDiplayName = 'Server';
-        kickMessage.senderId = -1;
+
+        kickMessage.sender.id = -1;
+
         kickMessage.content = 'You have been kicked';
         this.serverMsgId++;
 
@@ -282,7 +274,7 @@ export class ChatsService {
 
 
 
-  async adminCommand(user: LoggedUserDto, client: Socket, room_id: number, message: string): Promise<ChatMessageDto | undefined> {
+  async adminCommand(user: UserDto, client: Socket, room_id: number, message: string): Promise<ChatMessageDto | undefined> {
 
     let responseMessage = new ChatMessageDto();
 
@@ -299,8 +291,7 @@ export class ChatsService {
       command[0] = command[0].toLocaleLowerCase()
 
       responseMessage.id = -this.serverMsgId;
-      responseMessage.senderDiplayName = 'Server';
-      responseMessage.senderId = -1;
+      responseMessage.sender.id = -1;
       this.serverMsgId++;
 
       console.log('Command args', command);
@@ -322,8 +313,7 @@ export class ChatsService {
     }
     else {
       responseMessage.id = -this.serverMsgId;
-      responseMessage.senderDiplayName = 'Server';
-      responseMessage.senderId = -1;
+      responseMessage.sender.id = -1;
       responseMessage.content = 'Unauthorized, you are not an admin';
       this.serverMsgId++;
 
@@ -336,7 +326,7 @@ export class ChatsService {
   }
 
 
-  async createMessage(user: LoggedUserDto, client: Socket, room_id: number, message: string): Promise<ChatMessageDto | undefined> {
+  async createMessage(user: UserDto, client: Socket, room_id: number, message: string): Promise<ChatMessageDto | undefined> {
 
     let responseMessage = new ChatMessageDto();
 
@@ -359,16 +349,15 @@ export class ChatsService {
         this.chatMessagesService.create(message, user.id, room_id)
 
         responseMessage.id = -1;
-        responseMessage.senderDiplayName = user.pseudo;
-        responseMessage.senderId = user.id;
+        console.log(user);
+        responseMessage.sender = { ...user, status: '' };
         responseMessage.content = message;
 
         return responseMessage;
       }
       else {
         responseMessage.id = -this.serverMsgId;
-        responseMessage.senderDiplayName = 'Server';
-        responseMessage.senderId = -1;
+        responseMessage.sender.id = -1;
         responseMessage.content = `You are muted until ${participant.muted_until.toUTCString()}`;
         this.serverMsgId++;
 
@@ -379,8 +368,7 @@ export class ChatsService {
     }
     else {
       responseMessage.id = -this.serverMsgId;;
-      responseMessage.senderDiplayName = 'Server';
-      responseMessage.senderId = -1;
+      responseMessage.sender.id = -1;
       responseMessage.content = 'Unauthorized';
       this.serverMsgId++;
 
