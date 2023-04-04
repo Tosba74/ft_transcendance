@@ -78,8 +78,6 @@ export class MeController {
     @ApiBadRequestResponse({ description: 'Friend validation error' })
     public createFriendshipBySlug(@Request() req: any, @Param('slug') slug: string): Promise<FriendModel> {
 
-        console.log(slug);
-
         return this.meService.addFriendBySlug(req.user as LoggedUserDto, slug);
     }
 
