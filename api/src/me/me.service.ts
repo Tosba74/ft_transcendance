@@ -41,9 +41,28 @@ export class MeService {
     return this.friendsService.findFriends(user.id);
   }
 
+  async listReceivedFriends(user: LoggedUserDto): Promise<UserModel[]> {
+
+    return this.friendsService.listReceivedFriends(user.id);
+  }
+
+  async listSentFriends(user: LoggedUserDto): Promise<UserModel[]> {
+
+    return this.friendsService.listSentFriends(user.id);
+  }
+
+
+
   async addFriend(user: LoggedUserDto, friend_id: number): Promise<FriendModel> {
 
     return this.friendsService.createFriendship(user.id, friend_id);
+  }
+
+  async addFriendBySlug(user: LoggedUserDto, slug: string): Promise<FriendModel> {
+
+    const foundUser = await this.usersService.findOneByPseudo(slug);
+
+    return this.friendsService.createFriendship(user.id, foundUser.id);
   }
 
   async removeFriend(user: LoggedUserDto, friend_id: number): Promise<void> {
@@ -64,12 +83,12 @@ export class MeService {
 
 
 
-  async listBlockedBy(user: LoggedUserDto): Promise<BlockedModel[]> {
+  async listBlockedBy(user: LoggedUserDto): Promise<UserModel[]> {
 
     return this.blockedsService.blockedBy(user.id);
   }
 
-  async listBlockeds(user: LoggedUserDto): Promise<BlockedModel[]> {
+  async listBlockeds(user: LoggedUserDto): Promise<UserModel[]> {
 
     return this.blockedsService.blockedUsers(user.id);
   }

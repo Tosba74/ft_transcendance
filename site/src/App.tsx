@@ -60,7 +60,10 @@ export default function App() {
                 path="/players/:id"
                 element={<PublicProfilePage loginer={loginer} />}
               />
-              <Route path="/friends" element={<FriendsPage />} />
+              <Route
+                path="/friends"
+                element={<FriendsPage loginer={loginer} />}
+              />
               <Route
                 path="/players"
                 element={<UserListPage loginer={loginer} />}
@@ -81,7 +84,7 @@ export default function App() {
           />
           <Route path="/logout" element={<Logout loginer={loginer} />} />
 
-          {process.env.BUILD_TYPE != "Production" && (
+          {process.env.BUILD_TYPE !== "Production" && (
             <>
               <Route path="/createaccount" element={<CreateAccountPage />} />
             </>

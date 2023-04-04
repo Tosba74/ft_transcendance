@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { BlockedModel } from "./models/blocked.model";
-import { BlockedDto } from './dto/blocked.dto';
+import { UserModel } from 'src/users/models/user.model';
 
 @Injectable()
 export class BlockedsService {
@@ -28,19 +28,27 @@ export class BlockedsService {
   }
 
 
-  async blockedUsers(id: number): Promise<BlockedModel[]> {
-    return this.blockedsRepository.find({
+  async blockedUsers(id: number): Promise<UserModel[]> {
+    const blockeds = await this.blockedsRepository.find({
       where: { blocker: { id: id } },
       relations: { blocked: true, }
     });
+
+    let res: UserModel[] = blockeds.map(value => value.blocked);
+
+    return res;
   }
 
 
-  async blockedBy(id: number): Promise<BlockedModel[]> {
-    return this.blockedsRepository.find({
+  async blockedBy(id: number): Promise<UserModel[]> {
+    const blockeds = await this.blockedsRepository.find({
       where: { blocked: { id: id } },
       relations: { blocker: true, }
     });
+
+    let res: UserModel[] = blockeds.map(value => value.blocked);
+
+    return res;
   }
 
 
@@ -84,7 +92,7 @@ export class BlockedsService {
     });
 
     if (blocked != null)
-      this.blockedsRepository.delete(blocked);
+      this.blockedsRepository.delete(blocked.id);
     else
       throw new NotFoundException('Blocked id not found');
   }

@@ -21,6 +21,9 @@ import { diskStorage } from 'multer';
 import { UpdatePseudoDto } from './dto/update-pseudo.dto';
 import { imageFileFilter } from './validation/file-upload.utils';
 
+import { UserDto } from '../_shared_dto/user.dto';
+
+
 
 @Controller('api/me')
 @ApiTags('api/me')
@@ -42,10 +45,24 @@ export class MeController {
     // }
 
     @Get('friends')
-    @ApiOkResponse({ description: 'Friends retrieved successfully', type: [FriendModel] })
-    public listFriendships(@Request() req: any): Promise<UserModel[]> {
+    @ApiOkResponse({ description: 'Friends retrieved successfully', type: [UserDto] })
+    public listFriendships(@Request() req: any): Promise<UserDto[]> {
 
         return this.meService.listFriends(req.user as LoggedUserDto);
+    }
+
+    @Get('friends/received')
+    @ApiOkResponse({ description: 'Friends retrieved successfully', type: [UserDto] })
+    public listReceivedFriendships(@Request() req: any): Promise<UserDto[]> {
+
+        return this.meService.listReceivedFriends(req.user as LoggedUserDto);
+    }
+
+    @Get('friends/sent')
+    @ApiOkResponse({ description: 'Friends retrieved successfully', type: [UserDto] })
+    public listSentFriendships(@Request() req: any): Promise<UserDto[]> {
+
+        return this.meService.listSentFriends(req.user as LoggedUserDto);
     }
 
     @Post('friends/:id')
@@ -56,7 +73,16 @@ export class MeController {
         return this.meService.addFriend(req.user as LoggedUserDto, id);
     }
 
+    @Post('friends/slug/:slug')
+    @ApiCreatedResponse({ description: 'Friend created successfully', type: FriendModel })
+    @ApiBadRequestResponse({ description: 'Friend validation error' })
+    public createFriendshipBySlug(@Request() req: any, @Param('slug') slug: string): Promise<FriendModel> {
+
+        return this.meService.addFriendBySlug(req.user as LoggedUserDto, slug);
+    }
+
     @Delete('friends/:id')
+    @HttpCode(204)
     @ApiNoContentResponse({ description: 'Friend deleted successfully' })
     @ApiBadRequestResponse({ description: 'Friend validation error' })
     public deleteFriendship(@Request() req: any, @Param('id', ParseIntPipe) id: number): Promise<void> {
@@ -65,20 +91,20 @@ export class MeController {
     }
 
     @Get('blockeds')
-    @ApiOkResponse({ description: 'Blockeds retrieved successfully', type: [FriendModel] })
-    public listBlockeds(@Request() req: any): Promise<BlockedModel[]> {
+    @ApiOkResponse({ description: 'Blockeds retrieved successfully', type: [UserDto] })
+    public listBlockeds(@Request() req: any): Promise<UserDto[]> {
 
         return this.meService.listBlockeds(req.user as LoggedUserDto);
     }
 
     @Get('blockedby')
-    @ApiOkResponse({ description: 'Blockeds by retrieved successfully', type: [FriendModel] })
-    public listBlockedBy(@Request() req: any): Promise<BlockedModel[]> {
+    @ApiOkResponse({ description: 'Blockeds by retrieved successfully', type: [UserDto] })
+    public listBlockedBy(@Request() req: any): Promise<UserDto[]> {
 
         return this.meService.listBlockedBy(req.user as LoggedUserDto);
     }
 
-    @Post('frienblockedds/:id')
+    @Post('blockeds/:id')
     @ApiCreatedResponse({ description: 'Blocked created successfully', type: BlockedModel })
     @ApiBadRequestResponse({ description: 'Blocked validation error' })
     public createBlocked(@Request() req: any, @Param('id', ParseIntPipe) id: number): Promise<BlockedModel> {
@@ -86,7 +112,8 @@ export class MeController {
         return this.meService.addBlocked(req.user as LoggedUserDto, id);
     }
 
-    @Delete('blocked/:id')
+    @Delete('blockeds/:id')
+    @HttpCode(204)
     @ApiNoContentResponse({ description: 'Blocked deleted successfully' })
     @ApiBadRequestResponse({ description: 'Blocked validation error' })
     public deleteBlocked(@Request() req: any, @Param('id', ParseIntPipe) id: number): Promise<void> {
