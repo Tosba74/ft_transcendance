@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { UseGameDto } from "./dto/useGame.dto";
-import PlayerCard from "./playerCard";
+import PlayerCard from "./PlayerCard";
 import { createPortal } from "react-dom";
 
 interface GamePageProps {
@@ -58,6 +58,12 @@ const users: {
 const rootEl = document.getElementById("root");
 
 export default function GamePage({ gamer }: GamePageProps) {
+	let keys: string[] = [];
+	let controls = ["w", "s", "ArrowUp", "ArrowDown", "1", "2", "3"];
+	const [modal, setModal] = React.useState(true);
+	const [effect, setEffect] = React.useState(false);
+	const [min, setMin] = React.useState(1200);
+
   useEffect(() => {
     gamer.gameArea.current?.get_elements();
     gamer.gameArea.current?.render();
@@ -70,6 +76,7 @@ export default function GamePage({ gamer }: GamePageProps) {
 
         let min = Math.min(around.clientWidth, around.clientHeight * 1.5) * 0.8;
 
+		setMin(min);
         gamer.gameArea.current.canvas.style.width = `${min}px`;
         gamer.gameArea.current.canvas.style.height = `${min / 1.5}px`;
 
@@ -80,11 +87,6 @@ export default function GamePage({ gamer }: GamePageProps) {
     handleResize();
     window.addEventListener("resize", handleResize);
   }, [gamer.gameArea.current]);
-
-  let keys: string[] = [];
-  let controls = ["w", "s", "ArrowUp", "ArrowDown", "1", "2", "3"];
-  const [modal, setModal] = React.useState(true);
-  const [effect, setEffect] = React.useState(false);
 
   window.onkeyup = (e: KeyboardEvent): any => {
     if (controls.indexOf(e.key) === -1) return;
@@ -109,7 +111,7 @@ export default function GamePage({ gamer }: GamePageProps) {
 
   return (
     <div id="around" className="h-full px-3">
-      {modal === true &&
+      {modal === true && rootEl !== null &&
         createPortal(
           <div
             className={`${
@@ -125,7 +127,7 @@ export default function GamePage({ gamer }: GamePageProps) {
             <p>W: Move to UP</p>
             <p>S: Move to DOWN</p>
             <p className="pt-3">
-              You have 3 powers, press to numberss to active it
+              You have 3 powers, press to numbers to active it
             </p>
             <p>1: Add a ball</p>
             <p>2: Paddle Dash</p>
@@ -143,7 +145,7 @@ export default function GamePage({ gamer }: GamePageProps) {
           rootEl
         )}
 
-      <div className="flex flex-row items-center py-3">
+      <div className={`flex flex-row mx-auto w-[${min}px] items-center py-3`}>
         <PlayerCard user={users[0]} id={1} />
         <PlayerCard user={users[1]} id={2} />
       </div>
