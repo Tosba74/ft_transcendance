@@ -7,7 +7,7 @@ import { UpdateRoleDto } from './dto/update-role';
 import { MuteParticipantDto } from './dto/mute-participant';
 import { ChatRoleModel } from 'src/chat_roles/models/chat_role.model';
 import { ChatsService } from 'src/chats/chats.service';
-import { ChatModel } from 'src/chats/models/chat.model';
+import { ChannelDto } from 'src/_shared_dto/channel.dto';
 
 
 @Injectable()
@@ -37,7 +37,7 @@ export class ChatParticipantsService {
 
 
 
-  async listAvailableUserChats(id: number): Promise<ChatModel[]> {
+  async listAvailableUserChats(id: number): Promise<ChannelDto[]> {
 
     let publicChats = await this.chatsService.findPublicChats();
 
@@ -48,41 +48,59 @@ export class ChatParticipantsService {
     });
 
     const myChatsId = myChats.map(chat => chat.id);
-    
-    publicChats = publicChats.filter(chat => myChatsId.indexOf(chat.id) == -1);
-    
 
-    return publicChats;
+    publicChats = publicChats.filter(chat => myChatsId.indexOf(chat.id) == -1);
+
+
+    return publicChats.map(chat => {
+      return {
+        ...chat,
+        password: chat.password != undefined && chat.password.length > 0,
+        type: chat.type.id,
+      }
+    });
   }
 
 
 
-  async listUserChats(id: number): Promise<ChatModel[]> {
+  async listUserChats(id: number): Promise<ChannelDto[]> {
     const myChats = await this.chatParticipantsRepository.find({
       where: {
         participant: { id: id },
         role: { id: Not(ChatRoleModel.BAN_ROLE) },
       },
       relations: {
-        room: true
+        room: { type: true }
       },
     });
 
-    return myChats.map(chat => chat.room);
+    return myChats.map(chat => {
+      return {
+        ...chat.room,
+        password: chat.room.password != undefined && chat.room.password.length > 0,
+        type: chat.room.type.id,
+      }
+    });
   }
 
-  async listBannedUserChats(id: number): Promise<ChatModel[]> {
+  async listBannedUserChats(id: number): Promise<ChannelDto[]> {
     const chats = await this.chatParticipantsRepository.find({
       where: {
         participant: { id: id },
         role: { id: ChatRoleModel.BAN_ROLE },
       },
       relations: {
-        room: true
+        room: { type: true }
       },
     });
 
-    return chats.map(chat => chat.room);
+    return chats.map(chat => {
+      return {
+        ...chat.room,
+        password: chat.room.password != undefined && chat.room.password.length > 0,
+        type: chat.room.type.id,
+      }
+    });
   }
 
 

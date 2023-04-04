@@ -63,6 +63,9 @@ export class ChatsService {
       where: {
         type: { id: ChatTypeModel.PUBLIC_TYPE },
       },
+      relations: {
+        type: true,
+      }
     });
 
     return publicChats;

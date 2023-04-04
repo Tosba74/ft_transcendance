@@ -25,6 +25,7 @@ import { ChatTypeModel } from 'src/chat_types/models/chat_type.model';
 
 import { JoinChatDto } from './dto/join_chat';
 import { CreateChatDto } from 'src/chats/dto/create-chat.dto';
+import { ChannelDto } from 'src/_shared_dto/channel.dto';
 
 @Injectable()
 export class MeService {
@@ -87,17 +88,17 @@ export class MeService {
 
 
 
-  async listAvailableUserChats(user: LoggedUserDto): Promise<ChatModel[]> {
+  async listAvailableUserChats(user: LoggedUserDto): Promise<ChannelDto[]> {
 
     return this.chatParticipantService.listAvailableUserChats(user.id);
   }
 
-  async listUserChats(user: LoggedUserDto): Promise<ChatModel[]> {
+  async listUserChats(user: LoggedUserDto): Promise<ChannelDto[]> {
 
     return this.chatParticipantService.listUserChats(user.id);
   }
 
-  async listBannedUserChats(user: LoggedUserDto): Promise<ChatModel[]> {
+  async listBannedUserChats(user: LoggedUserDto): Promise<ChannelDto[]> {
 
     return this.chatParticipantService.listBannedUserChats(user.id);
   }
