@@ -55,14 +55,14 @@ const users: {
   },
 ];
 
-const rootEl = document.getElementById("root");
 
 export default function GamePage({ gamer }: GamePageProps) {
+	let rootEl = document.getElementById("around");
 	let keys: string[] = [];
 	let controls = ["w", "s", "ArrowUp", "ArrowDown", "1", "2", "3"];
 	const [modal, setModal] = React.useState(true);
 	const [effect, setEffect] = React.useState(false);
-	const [min, setMin] = React.useState(1200);
+	const [minSize, setMinSize] = React.useState("1200");
 
   useEffect(() => {
     gamer.gameArea.current?.get_elements();
@@ -70,14 +70,15 @@ export default function GamePage({ gamer }: GamePageProps) {
 
     function handleResize() {
       let around = document.getElementById("around");
+	  rootEl = document.getElementById("around");
 
       if (gamer.gameArea.current && gamer.gameArea.current?.canvas && around) {
-        console.log(around.clientWidth, around.clientHeight);
+        // console.log(around.clientWidth, around.clientHeight);
 
         let min = Math.min(around.clientWidth, around.clientHeight * 1.5) * 0.8;
 
-		setMin(min);
-        gamer.gameArea.current.canvas.style.width = `${min}px`;
+		setMinSize(`${min}px`);
+        gamer.gameArea.current.canvas.style.width = `${min}`;
         gamer.gameArea.current.canvas.style.height = `${min / 1.5}px`;
 
         gamer.gameArea.current?.render();
@@ -108,6 +109,10 @@ export default function GamePage({ gamer }: GamePageProps) {
       gamer.playGame(keys);
     }
   };
+
+  const css = {
+	width: minSize,
+  }
 
   return (
     <div id="around" className="h-full px-3">
@@ -145,7 +150,7 @@ export default function GamePage({ gamer }: GamePageProps) {
           rootEl
         )}
 
-      <div className={`flex flex-row mx-auto w-[${min}px] items-center py-3`}>
+      <div style={css} id="playersCard" className={`flex flex-row mx-auto items-center py-3 max-w-[${minSize}px]`}>
         <PlayerCard user={users[0]} id={1} />
         <PlayerCard user={users[1]} id={2} />
       </div>
