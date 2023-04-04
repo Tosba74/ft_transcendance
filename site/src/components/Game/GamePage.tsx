@@ -1,67 +1,90 @@
-import React, { useState, useEffect } from "react";
-import { CSSProperties } from "react";
-
-import { GameArea } from "./pong";
-
-import * as module_const from "./constant";
-
+import React, { useEffect } from "react";
 import { UseGameDto } from "./dto/useGame.dto";
+import PlayerCard from "./playerCard";
+import { createPortal } from "react-dom";
 
 interface GamePageProps {
   gamer: UseGameDto;
 }
 
-const styles = {
-  myProgress: {
-    width: "100%",
-    backgroundColor: "#ddd",
-    border: "1px solid black",
+const users: {
+  id: number;
+  login_name: string;
+  pseudo: string;
+  avatar_url: string;
+  is_admin: boolean;
+  access_token: null;
+  color: number;
+  tfa_enabled: boolean;
+  status_updated_at: string;
+  created_at: string;
+  updated_at: string;
+  validate_date: null;
+  status: string;
+}[] = [
+  {
+    id: 1,
+    login_name: "passmac",
+    pseudo: "passmac",
+    avatar_url:
+      "https://cdn.intra.42.fr/users/c858143fe558f853c994ee70fe21185f/jjaqueme.jpg",
+    is_admin: false,
+    access_token: null,
+    color: -1,
+    tfa_enabled: true,
+    status_updated_at: "2023-03-24T17:43:53.540Z",
+    created_at: "2023-03-24T17:43:53.589Z",
+    updated_at: "2023-03-27T08:32:16.294Z",
+    validate_date: null,
+    status: "connected",
   },
-  myProgress2: {
-    width: "100%",
-    backgroundColor: "#ddd",
-    border: "1px solid black",
+  {
+    id: 3,
+    login_name: "jarom",
+    pseudo: "jarom",
+    avatar_url: "/avatars/default-avatar.jpg",
+    is_admin: false,
+    access_token: null,
+    color: -1,
+    tfa_enabled: false,
+    status_updated_at: "2023-03-27T10:12:23.608Z",
+    created_at: "2023-03-27T10:12:23.619Z",
+    updated_at: "2023-03-27T10:12:23.619Z",
+    validate_date: null,
+    status: "idle",
   },
-  myBar: {
-    width: "0%",
-    height: "30px",
-    backgroundColor: "#4CBB17",
-  },
-  myBar2: {
-    width: "0%",
-    height: "30px",
-    backgroundColor: "#4CBB17",
-    marginLeft: "auto",
-    marginRight: "0",
-  },
+];
 
-  myTable: {
-    width: "100%",
-    backgroundColor: "#CBD18F",
-    border: "1px solid black",
-    maxWidth: "2000px",
-  },
-  padding: {
-    paddingLeft: "40px",
-    paddingRight: "40px",
-  },
-  myCanvas: {
-    border: "1px solid rgba(255, 255, 255, 0.85)",
-    backgroundColor: "rgba(0, 0, 0, 0.85)",
-    width: "100%",
-    maxWidth: "2000px",
-  },
-};
+const rootEl = document.getElementById("root");
 
 export default function GamePage({ gamer }: GamePageProps) {
   useEffect(() => {
     gamer.gameArea.current?.get_elements();
     gamer.gameArea.current?.render();
-  }, [gamer.gameArea]);
+
+    function handleResize() {
+      let around = document.getElementById("around");
+
+      if (gamer.gameArea.current && gamer.gameArea.current?.canvas && around) {
+        console.log(around.clientWidth, around.clientHeight);
+
+        let min = Math.min(around.clientWidth, around.clientHeight * 1.5) * 0.8;
+
+        gamer.gameArea.current.canvas.style.width = `${min}px`;
+        gamer.gameArea.current.canvas.style.height = `${min / 1.5}px`;
+
+        gamer.gameArea.current?.render();
+      }
+    }
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+  }, [gamer.gameArea.current]);
 
   let keys: string[] = [];
   let controls = ["w", "s", "ArrowUp", "ArrowDown", "1", "2", "3"];
-  // let move_actions = ["w", "ArrowUp", "s", "ArrowDown"];
+  const [modal, setModal] = React.useState(true);
+  const [effect, setEffect] = React.useState(false);
 
   window.onkeyup = (e: KeyboardEvent): any => {
     if (controls.indexOf(e.key) === -1) return;
@@ -85,86 +108,57 @@ export default function GamePage({ gamer }: GamePageProps) {
   };
 
   return (
-    <div className="container mx-auto h-full bg-yellow-400 px-3">
-      <div>
-        <div>
-          <p>ULTIME:</p>
-          {/*<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_add_ball" onClick={() => { gamer.boost_ult() }}>
-						ADMIN: BOOST ULT
-						</button>*/}
-          <span className="ld:basis-1/4 w-40 items-center rounded border border-gray-300 bg-gray-300 text-center md:basis-1/2">
-            1: Add a ball
-          </span>
-          <span className="ld:basis-1/4 w-40 items-center rounded border border-gray-300 bg-gray-300 text-center md:basis-1/2">
-            2 :Paddle Dash
-          </span>
-          <span className="ld:basis-1/4 w-40 items-center rounded border border-gray-300 bg-gray-300 text-center md:basis-1/2">
-            3: Reduce paddle
-          </span>
+    <div id="around" className="h-full px-3">
+      {modal === true &&
+        createPortal(
+          <div
+            className={`${
+              effect === true
+                ? "animate-fadeOut opacity-0"
+                : "opacity-1 animate-fadeIn"
+            } absolute top-2/4 left-2/4 -translate-x-1/2 -translate-y-1/2 rounded-lg bg-gray-100 p-4 text-center dark:bg-gray-700 dark:text-white`}
+            onAnimationEnd={() => {
+              if (effect) setModal(false);
+            }}
+          >
+            <h2 className="text-2xl">How to play ?</h2>
+            <p>W: Move to UP</p>
+            <p>S: Move to DOWN</p>
+            <p className="pt-3">
+              You have 3 powers, press to numberss to active it
+            </p>
+            <p>1: Add a ball</p>
+            <p>2: Paddle Dash</p>
+            <p>3: Reduce paddle</p>
+            <button
+              type="button"
+              className="mt-3 rounded-lg bg-cyan-500 px-4 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              onClick={() => {
+                setEffect(true);
+              }}
+            >
+              Ready
+            </button>
+          </div>,
+          rootEl
+        )}
 
-          <div className="grid grid-cols-2 gap-4 text-center">
-            <div className="">
-              player 1
-              <div id="myProgress" style={styles.myProgress}>
-                <div id="myBar" style={styles.myBar}></div>
-              </div>
-            </div>
-            <div className="">
-              player 2
-              <div id="myProgress2" style={styles.myProgress2}>
-                <div id="myBar2" style={styles.myBar2}></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <canvas
-          className="ld:basis-1/4 w-40 items-center rounded border border-gray-300 bg-gray-300 text-center md:basis-1/2"
-          id="canvas"
-          style={styles.myCanvas}
-        ></canvas>
+      <div className="flex flex-row items-center py-3">
+        <PlayerCard user={users[0]} id={1} />
+        <PlayerCard user={users[1]} id={2} />
       </div>
 
-      <div style={styles.padding}>
-        <button
-          className="ld:basis-1/4 w-40 items-center rounded border border-gray-300 bg-gray-300 text-center md:basis-1/2"
-          type="button"
-          id="btn_start"
-          onClick={() => {
-            gamer.createGame();
-          }}
-        >
-          Create
-        </button>
-        <button
-          className="ld:basis-1/4 w-40 items-center rounded border border-gray-300 bg-gray-300 text-center md:basis-1/2"
-          type="button"
-          id="btn_start"
-          onClick={() => {
-            gamer.joinGame();
-          }}
-        >
-          Join
-        </button>
-        <button
-          className="ld:basis-1/4 w-40 items-center rounded border border-gray-300 bg-gray-300 text-center md:basis-1/2"
-          type="button"
-          id="btn_start"
-          onClick={() => {
-            gamer.gameArea.current?.get_elements();
-          }}
-        >
-          Get
-        </button>
-
-        {/* <button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_start" onClick={() => { gamer.gameArea.current?.startGame() }}>
-					Start
-				</button> */}
-      </div>
-      <p>/!CONTROL!\</p>
-      <p>W: UP</p>
-      <p>S: DOWN</p>
-      <p>NUMBERS: ULTIMATE</p>
+      <canvas className="mx-auto bg-black" id="canvas"></canvas>
+      <button
+        type="button"
+        className="mx-auto mt-3 flex rounded-lg bg-cyan-500 px-4 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        onClick={() => {
+          setModal(true);
+          setEffect(false);
+        }}
+      >
+        Show rules
+      </button>
     </div>
   );
 }
