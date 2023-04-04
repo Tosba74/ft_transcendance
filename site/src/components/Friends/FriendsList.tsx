@@ -13,12 +13,11 @@ export default function FriendsList({
   doReload: Function;
 }) {
   const [users, setUsers] = React.useState<UserDto[]>([]);
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
     // console.log("loadgin", reload);
 
-    setLoading(true);
     axios
       .get("/api/me/friends", loginer.get_headers())
       .then((res) => {
