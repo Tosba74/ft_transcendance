@@ -21,26 +21,12 @@ export default function ProfileButton({
     }
   };
 
-  // <div class="flex items-center md:order-2">
-  {
-    /* <button type="button" class="flex mr-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom"> */
-  }
-  {
-    /* <span class="sr-only">Open user menu</span> */
-  }
-  {
-    /* <img class="w-8 h-8 rounded-full" src="/docs/images/people/profile-picture-3.jpg" alt="user photo"> */
-  }
-  {
-    /* </button> */
-  }
-
   return (
     <div className="flex items-center shadow-lg md:order-2">
       <button
         type="button"
         onClick={handleClick}
-        className="mr-3 flex rounded-full bg-gray-800 text-sm focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600 md:mr-0"
+        className="mr-3 rounded-full bg-gray-800 text-sm focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600 md:mr-0"
         id="user-menu-button"
         aria-expanded="false"
         data-dropdown-toggle="user-dropdown"
@@ -48,7 +34,7 @@ export default function ProfileButton({
       >
         <span className="sr-only">Open user menu</span>
         <img
-          className="h-12 w-12 rounded-full object-cover"
+          className="h-8 w-8 justify-end rounded-full object-cover md:h-10 md:w-10"
           src={
             (loginer.logged &&
               loginer.userInfos &&

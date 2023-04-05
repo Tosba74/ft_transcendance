@@ -46,10 +46,10 @@ export default function TfaConfirmation(props: TfaConfirmationProps) {
   }
 
   return (
-    <form className="mt-4 flex flex-col justify-center px-4">
-      <label>Scan this qrcode and confirm</label>
-      <img className="h-48 w-48 justify-center" src={qrCode} />
-      <label>Confirmation:</label>
+    <form className="mt-2 flex flex-col items-center justify-center">
+      <label className="text-center">Scan this qrcode and confirm</label>
+      <img className="mt-2 h-48 w-48" src={qrCode} />
+      <label className="mt-2 text-center">Confirmation:</label>
       <div className="mt -4 flex flex-row">
         <input
           className="w-64 bg-slate-300 px-3 py-1"
@@ -60,7 +60,7 @@ export default function TfaConfirmation(props: TfaConfirmationProps) {
         />
         <button
           onClick={handleSubmit}
-          className="bg-blue-700 px-3 py-1 text-white"
+          className="ml-4 rounded bg-cyan-500 px-3 py-1 text-white"
         >
           Confirm
         </button>
