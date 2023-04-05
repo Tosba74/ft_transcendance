@@ -61,18 +61,20 @@ export default function Pseudo({ loginer }: PseudoProps) {
 
   return (
     <form className="h-1/3 w-full" onSubmit={handleSubmit}>
-      <div className="ml-2 flex h-1/3 w-full justify-center gap-2">
+      <div className="flex h-10 items-center justify-center">
         <label className="dark:text-white">Pseudo: </label>
+      </div>
+      <div className="flex h-10 w-full items-center justify-center gap-2">
         <input
-          className="w-96 bg-slate-300 px-3 py-1 dark:bg-gray-800 dark:text-white"
+          className="h-8 w-4/6 bg-slate-300 dark:bg-gray-800 dark:text-white"
           type="text"
           name="pseudo"
-          value={pseudoInput}
+          value={`${pseudoInput}`}
           onChange={(event) => setPseudoInput(event.target.value)}
         />
         <button
           type="submit"
-          className="rounded bg-cyan-500 px-3 py-1 text-white"
+          className="rounded bg-cyan-500 px-2 py-1 text-white"
         >
           Save
         </button>
@@ -80,4 +82,20 @@ export default function Pseudo({ loginer }: PseudoProps) {
       </div>
     </form>
   );
+}
+
+{
+  /* <div className="flex h-10 items-center justify-center gap-2">
+<label className="dark:text-white">Change avatar: </label>
+<input
+  className="w-96 bg-slate-300 dark:bg-gray-800 dark:text-white"
+  type="file"
+  ref={fileInput}
+/>
+<button
+  type="submit"
+  className="rounded bg-cyan-500 px-3 py-1 text-white"
+>
+  Save
+</button> */
 }
