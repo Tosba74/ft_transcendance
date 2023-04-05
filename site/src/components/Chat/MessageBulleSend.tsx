@@ -1,8 +1,14 @@
+import { UserDto } from "src/_shared_dto/user.dto";
+
 interface MessageBulleSendProps {
+  user: UserDto;
   text: string;
 }
 
-export default function MessageBulleSend({ text }: MessageBulleSendProps) {
+export default function MessageBulleSend({
+  user,
+  text,
+}: MessageBulleSendProps) {
   return (
     <div className="mx-3 mb-1">
       <div className="chat-message break-words">
@@ -15,9 +21,10 @@ export default function MessageBulleSend({ text }: MessageBulleSendProps) {
             </div>
           </div>
           <img
-            src="https://images.unsplash.com/photo-1590031905470-a1a1feacbb0b?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=3&amp;w=144&amp;h=144"
-            alt="My profile"
-            className="order-2 h-6 w-6 rounded-full"
+            src={user.avatar_url}
+            alt={user.pseudo}
+            title={user.pseudo}
+            className="order-2 h-6 w-6 rounded-full object-cover"
           />
         </div>
       </div>

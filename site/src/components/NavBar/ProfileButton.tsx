@@ -36,7 +36,7 @@ export default function ProfileButton({
   }
 
   return (
-    <div className="flex items-center shadow-lg md:order-2">
+    <div className="flex items-center md:order-2">
       <button
         type="button"
         onClick={handleClick}
