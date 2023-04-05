@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { UseGameDto } from "./dto/useGame.dto";
-import PlayerCard from "./PlayerCard";
+import PlayerCard from "./playerCard";
 import { createPortal } from "react-dom";
 
 interface GamePageProps {
@@ -55,14 +55,13 @@ const users: {
   },
 ];
 
-
 export default function GamePage({ gamer }: GamePageProps) {
-	let rootEl = document.getElementById("around");
-	let keys: string[] = [];
-	let controls = ["w", "s", "ArrowUp", "ArrowDown", "1", "2", "3"];
-	const [modal, setModal] = React.useState(true);
-	const [effect, setEffect] = React.useState(false);
-	const [minSize, setMinSize] = React.useState("1200");
+  let keys: string[] = [];
+  let controls = ["w", "s", "ArrowUp", "ArrowDown", "1", "2", "3"];
+  const rootEl = document.getElementById("around");
+  const [modal, setModal] = React.useState(true);
+  const [effect, setEffect] = React.useState(false);
+  const [minSize, setMinSize] = React.useState("1200");
 
   useEffect(() => {
     gamer.gameArea.current?.get_elements();
@@ -70,14 +69,13 @@ export default function GamePage({ gamer }: GamePageProps) {
 
     function handleResize() {
       let around = document.getElementById("around");
-	  rootEl = document.getElementById("around");
 
       if (gamer.gameArea.current && gamer.gameArea.current?.canvas && around) {
         // console.log(around.clientWidth, around.clientHeight);
 
         let min = Math.min(around.clientWidth, around.clientHeight * 1.5) * 0.8;
 
-		setMinSize(`${min}px`);
+        setMinSize(`${min}px`);
         gamer.gameArea.current.canvas.style.width = `${min}`;
         gamer.gameArea.current.canvas.style.height = `${min / 1.5}px`;
 
@@ -111,12 +109,13 @@ export default function GamePage({ gamer }: GamePageProps) {
   };
 
   const css = {
-	width: minSize,
-  }
+    width: minSize,
+  };
 
   return (
     <div id="around" className="h-full px-3">
-      {modal === true && rootEl !== null &&
+      {modal === true &&
+        rootEl !== null &&
         createPortal(
           <div
             className={`${
@@ -150,7 +149,11 @@ export default function GamePage({ gamer }: GamePageProps) {
           rootEl
         )}
 
-      <div style={css} id="playersCard" className={`flex flex-row mx-auto items-center py-3 max-w-[${minSize}px]`}>
+      <div
+        style={css}
+        id="playersCard"
+        className={`mx-auto flex flex-row items-center py-3 max-w-[${minSize}px]`}
+      >
         <PlayerCard user={users[0]} id={1} />
         <PlayerCard user={users[1]} id={2} />
       </div>
