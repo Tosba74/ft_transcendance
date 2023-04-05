@@ -1,9 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { CSSProperties } from "react";
-
-import { GameArea } from "./pong";
-
-import * as module_const from "./constant";
 
 import { UseGameDto } from "./dto/useGame.dto";
 
@@ -150,30 +145,67 @@ export default function GamePage({ gamer }: GamePageProps) {
           type="button"
           id="btn_start"
           onClick={() => {
-            gamer.createGame();
+            gamer.inviteGame(5);
           }}
         >
-          Create
+          Invite 5
         </button>
+
         <button
           className="ld:basis-1/4 w-40 items-center rounded border border-gray-300 bg-gray-400 bg-gray-300 text-center md:basis-1/2"
           type="button"
           id="btn_start"
           onClick={() => {
-            gamer.joinGame();
+            gamer.inviteGame(2);
           }}
         >
-          Join
+          Invite 2
         </button>
+
         <button
           className="ld:basis-1/4 w-40 items-center rounded border border-gray-300 bg-gray-400 bg-gray-300 text-center md:basis-1/2"
           type="button"
           id="btn_start"
           onClick={() => {
-            gamer.gameArea.current?.get_elements();
+            gamer.joinGame(1);
           }}
         >
-          Get
+          Join 1
+        </button>
+
+
+        <button
+          className="ld:basis-1/4 w-40 items-center rounded border border-gray-300 bg-gray-400 bg-gray-300 text-center md:basis-1/2"
+          type="button"
+          id="btn_start"
+          onClick={() => {
+            gamer.joinGame(3);
+          }}
+        >
+          Join 3
+        </button>
+
+        <button
+          className="ld:basis-1/4 w-40 items-center rounded border border-gray-300 bg-gray-400 bg-gray-300 text-center md:basis-1/2"
+          type="button"
+          id="btn_start"
+          onClick={() => {
+            gamer.playGame(['ready']);
+          }}
+        >
+          Ready
+        </button>
+
+
+        <button
+          className="ld:basis-1/4 w-40 items-center rounded border border-gray-300 bg-gray-400 bg-gray-300 text-center md:basis-1/2"
+          type="button"
+          id="btn_start"
+          onClick={() => {
+            gamer.playGame(['unready']);
+          }}
+        >
+          Unready
         </button>
 
         {/* <button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_start" onClick={() => { gamer.gameArea.current?.startGame() }}>

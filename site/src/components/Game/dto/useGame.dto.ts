@@ -5,9 +5,7 @@ export interface UseGameDto {
   gameArea: React.MutableRefObject<GameArea | undefined>;
 
   identify: Function;
-  createGame: Function;
+  inviteGame: Function;
   joinGame: Function;
   playGame: Function;
-
-  setGameDrawFunction: Function;
 }

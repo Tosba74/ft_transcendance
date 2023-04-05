@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -10,11 +10,16 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePseudoDto } from '../me/dto/update-pseudo.dto';
 import * as fs from 'fs';
 import { extname } from 'path';
+import { GamesService } from 'src/games/games.service';
 
 @Injectable()
 export class UsersService {
 
-  constructor(@InjectRepository(UserModel) private usersRepository: Repository<UserModel>) { }
+  constructor(
+    @InjectRepository(UserModel) private usersRepository: Repository<UserModel>,
+    @Inject(forwardRef(() => GamesService))
+    private gamesService: GamesService
+  ) { }
 
 
   /* 
