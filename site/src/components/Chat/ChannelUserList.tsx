@@ -19,7 +19,7 @@ export default function ChannelUserList({ users }: UserListProps) {
             alt="Img"
             className="h-6 w-6 rounded-full object-cover"
           />
-          <h2 className="">
+          <h2 className="dark:text-white">
             <Link to="#">
               {user.login_name} <small>{user.pseudo}</small>
             </Link>
