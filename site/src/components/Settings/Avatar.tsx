@@ -93,20 +93,22 @@ export default function Avatar({ loginer }: AvatarProps) {
     <form className="h-2/3 w-full" onSubmit={handleSubmit}>
       <div className="flex h-2/3 w-full justify-center">
         <img
-          className=" mt-6 h-28 w-28 rounded-full object-cover shadow-xl"
+          className=" mt-4 h-28 w-28 rounded-full object-cover shadow-xl"
           src={avatarUrl}
         />
       </div>
-      <div className="flex h-10 justify-between px-20">
+      <div className="flex items-center justify-center">
         <label className="dark:text-white">Change avatar: </label>
+      </div>
+      <div className="flex h-10 w-full items-center justify-center gap-2">
         <input
-          className="w-96 bg-slate-300 px-3 py-1 dark:bg-gray-800 dark:text-white"
+          className="h-8 w-4/6 bg-slate-300 dark:bg-gray-800 dark:text-white"
           type="file"
           ref={fileInput}
         />
         <button
           type="submit"
-          className="rounded bg-cyan-500 px-3 py-1 text-white"
+          className="rounded bg-cyan-500 px-2 py-1 text-white"
         >
           Save
         </button>

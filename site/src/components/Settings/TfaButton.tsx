@@ -93,29 +93,31 @@ export default function TfaButton({ loginer }: TfaButtonProps) {
   }
 
   return (
-    <div className="flex w-full flex-col justify-center p-2 dark:text-white">
-      <form onSubmit={handleSubmit}>
-        <label>Two factor authentication is {tfaLabelMessage} . </label>
-        <button
-          id="tfa_enable"
-          className="mr-2 bg-red-700 px-3 py-1 text-white"
-          type="submit"
-          name="tfa_enable"
-          value={tfaInput}
-          disabled={buttonDisabled}
-        >
-          {tfaButtonMessage}
-        </button>
-      </form>
-      {qrCode !== "" && (
-        <TfaConfirmation
-          loginer={loginer}
-          qrCode={qrCode}
-          switchTfaOn={switchTfaOn}
-          setTfaMessage={setTfaMessage}
-        />
-      )}
-      <div>{tfaMessage}</div>
+    <div className="flex w-full justify-center p-2 dark:text-white">
+      <div className="justify-center dark:text-white">
+        <form onSubmit={handleSubmit}>
+          <label>Two factor authentication is {tfaLabelMessage} . </label>
+          <button
+            id="tfa_enable"
+            className="mr-2 rounded bg-cyan-500 px-3 py-1 text-white"
+            type="submit"
+            name="tfa_enable"
+            value={tfaInput}
+            disabled={buttonDisabled}
+          >
+            {tfaButtonMessage}
+          </button>
+        </form>
+        {qrCode !== "" && (
+          <TfaConfirmation
+            loginer={loginer}
+            qrCode={qrCode}
+            switchTfaOn={switchTfaOn}
+            setTfaMessage={setTfaMessage}
+          />
+        )}
+        <div>{tfaMessage}</div>
+      </div>
     </div>
   );
 }
