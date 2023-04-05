@@ -27,7 +27,9 @@ export default function PlayerCard(props: playerCardProps) {
         alt={`Player-${props.user?.pseudo}`}
       />
       <div className="flex-1 px-3">
-        <span className={`flex ${end}`}>{props.user?.pseudo}</span>
+        <span className={`flex ${end}`}>
+          {props.user?.pseudo || `Waiting player`}
+        </span>
         <div
           id={`myProgress${userId}`}
           className="border border-black bg-slate-200"
