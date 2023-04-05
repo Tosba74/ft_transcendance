@@ -1,12 +1,12 @@
 import { UserDto } from "src/_shared_dto/user.dto";
 import LogoInconnu from "../../assets/img/inconnu.jpeg";
 
-interface userCardProps {
+interface playerCardProps {
   id: number;
   user?: UserDto;
 }
 
-export default function PlayerCard(props: userCardProps) {
+export default function PlayerCard(props: playerCardProps) {
   let userId = "";
   let css = "";
   let position = "";
