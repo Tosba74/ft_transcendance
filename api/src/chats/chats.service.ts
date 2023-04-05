@@ -87,7 +87,7 @@ export class ChatsService {
   async delete(id: number): Promise<void> {
     try {
       const chat = await this.findOneById(id);
-      this.chatsRepository.delete({ id: id });
+      this.chatsRepository.delete(id);
     }
     catch (error) {
       throw new NotFoundException('Chat id not found');
@@ -170,7 +170,7 @@ export class ChatsService {
 
       newroom.id = room_id;
       newroom.name = room.name.toString();
-      
+
       //Get all messages from the db
       newroom.messages = [];
 

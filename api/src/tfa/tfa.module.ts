@@ -10,7 +10,7 @@ import { JwtModule } from '@nestjs/jwt';
     imports: [UsersModule, forwardRef(() => AuthModule),
         JwtModule.register({
             secret: process.env.JWT_SECRET,
-            signOptions: { expiresIn: '2h' },
+            signOptions: { expiresIn: '30d' },
         }), 
     ],
     providers: [TfaService,],
