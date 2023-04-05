@@ -29,6 +29,13 @@ import { UseGameDto } from "./components/Game/dto/useGame.dto";
 import useChat from "./components/Chat/useChat";
 import useGame from "./components/Game/useGame";
 
+import Colorer from "./assets/Colorer";
+
+
+declare global {
+  var colorTheme: string;
+}
+
 export default function App() {
   const loginer: UseLoginDto = useLogin();
   const [openedMenu, setOpenedMenu] = React.useState("");
@@ -41,6 +48,8 @@ export default function App() {
     logged: loginer.logged,
     token: loginer.token,
   });
+
+  globalThis.colorTheme = Colorer(loginer.userInfos?.login_name)
 
   return (
     <Router>
