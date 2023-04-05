@@ -36,7 +36,7 @@ export default function PlayerCard(props: playerCardProps) {
         </div>
         <div
           id={`myProgress${userId}`}
-          className="border border-black bg-slate-200"
+          className="borde rounded-lg bg-slate-200"
         >
           <div
             id={`myBar${userId}`}
