@@ -60,18 +60,23 @@ export default function Pseudo({ loginer }: PseudoProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label>Pseudo :</label>
-      <input
-        className="bg-slate-300 px-3 py-1"
-        type="text"
-        name="pseudo"
-        value={pseudoInput}
-        onChange={(event) => setPseudoInput(event.target.value)}
-      />
-      <button type="submit" className="bg-blue-700 px-3 py-1 text-white">
-        Save
-      </button>
+    <form className="h-1/3 w-full" onSubmit={handleSubmit}>
+      <div className="flex h-10 justify-between px-20">
+        <label className="dark:text-white">Pseudo: </label>
+        <input
+          className="ml-4 w-96 bg-slate-300 px-3 py-1 dark:bg-gray-800 dark:text-white md:ml-12"
+          type="text"
+          name="pseudo"
+          value={pseudoInput}
+          onChange={(event) => setPseudoInput(event.target.value)}
+        />
+        <button
+          type="submit"
+          className="rounded bg-cyan-500 px-3 py-1 text-white"
+        >
+          Save
+        </button>
+      </div>
       <div>{pseudoInputMessage}</div>
     </form>
   );

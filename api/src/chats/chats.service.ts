@@ -180,7 +180,6 @@ export class ChatsService {
       newroom.name = room.name.toString();
       newroom.type = room.type.id;
 
-
       //Get all messages from the db
       newroom.messages = [];
 

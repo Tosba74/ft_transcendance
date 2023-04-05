@@ -15,7 +15,7 @@ export default function MessagePanel({
 }: MessagePanelProps) {
   return (
     <>
-      <div className="mt-2 flex h-10 w-full items-center justify-center rounded-t bg-gray-700 text-center dark:text-white">
+      <div className="mt-2 flex h-10 w-full items-center justify-center rounded-t bg-gray-200 text-center dark:bg-gray-700 dark:text-white">
         <div className="shadow-b mr-2 h-8 items-center justify-center border-b border-gray-900 px-20">
           {room?.name || "No room selected"}
         </div>
