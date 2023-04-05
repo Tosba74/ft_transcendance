@@ -4,6 +4,7 @@ import LogoInconnu from "../../assets/img/inconnu.jpeg";
 interface playerCardProps {
   id: number;
   user?: UserDto;
+  status?: boolean;
 }
 
 export default function PlayerCard(props: playerCardProps) {
@@ -27,9 +28,12 @@ export default function PlayerCard(props: playerCardProps) {
         alt={`Player-${props.user?.pseudo}`}
       />
       <div className="flex-1 px-3">
-        <span className={`flex ${end}`}>
-          {props.user?.pseudo || `Waiting player`}
-        </span>
+        <div className={`flex ${end}`}>
+          <span className={end && "order-last"}>
+            {props.user?.pseudo || `Waiting player`}
+          </span>
+          <span className="px-3">{props.status ? "Ready" : "Unready"}</span>
+        </div>
         <div
           id={`myProgress${userId}`}
           className="border border-black bg-slate-200"

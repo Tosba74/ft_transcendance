@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { UseGameDto } from "./dto/useGame.dto";
 import PlayerCard from "./PlayerCard";
 import { createPortal } from "react-dom";
+import { FiArrowDown, FiArrowUp } from "react-icons/fi";
 
 interface GamePageProps {
   gamer: UseGameDto;
@@ -128,17 +129,25 @@ export default function GamePage({ gamer }: GamePageProps) {
             }}
           >
             <h2 className="text-2xl">How to play ?</h2>
-            <p>W: Move to UP</p>
-            <p>S: Move to DOWN</p>
+            <ul className="inline-block text-left">
+              <li>
+                W and <FiArrowUp className="inline" />: Move to UP
+              </li>
+              <li>
+                S and <FiArrowDown className="inline" />: Move to DOWN
+              </li>
+            </ul>
             <p className="pt-3">
               You have 3 powers, press to numbers to active it
             </p>
-            <p>1: Add a ball</p>
-            <p>2: Paddle Dash</p>
-            <p>3: Reduce paddle</p>
+            <ul className="inline-block text-left">
+              <li>1: Add a ball</li>
+              <li>2: Paddle Dash</li>
+              <li>3: Reduce paddle</li>
+            </ul>
             <button
               type="button"
-              className="mt-3 rounded-lg bg-cyan-500 px-4 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              className="mx-auto mt-3 block rounded-lg bg-cyan-500 px-4 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               onClick={() => {
                 setEffect(true);
               }}
@@ -154,8 +163,8 @@ export default function GamePage({ gamer }: GamePageProps) {
         id="playersCard"
         className={`mx-auto flex flex-row items-center py-3 max-w-[${minSize}px]`}
       >
-        <PlayerCard user={users[0]} id={1} />
-        <PlayerCard user={users[1]} id={2} />
+        <PlayerCard user={users[0]} status={true} id={1} />
+        <PlayerCard user={users[1]} status={false} id={2} />
       </div>
 
       <canvas className="mx-auto bg-black" id="canvas"></canvas>
