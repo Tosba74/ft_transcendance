@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { UseGameDto } from "./dto/useGame.dto";
-import PlayerCard from "./playerCard";
+import PlayerCard from "./PlayerCard";
 import { createPortal } from "react-dom";
 
 interface GamePageProps {
