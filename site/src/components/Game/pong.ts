@@ -80,7 +80,11 @@ export class GameArea {
     this.playerOne.render(ctx);
     this.playerTwo.render(ctx);
 
-    if (this.started && this.playerOne.score < 10 && this.playerTwo.score < 10) {
+    if (
+      this.started &&
+      this.playerOne.score < 10 &&
+      this.playerTwo.score < 10
+    ) {
       this.balls.forEach((value) => {
         if (this.playerOne.score < 10 && this.playerTwo.score < 10)
           value.render(ctx);

@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable, NotFoundException, } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException, } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Server, Socket } from 'socket.io';
@@ -12,10 +12,14 @@ import { GameArea } from './gamelogic/pong';
 import * as module_const from './gamelogic/constant';
 import { GameSetterDto } from 'src/_shared_dto/gamesetter.dto';
 import { UsersService } from 'src/users/users.service';
+import { GameStatusModel } from 'src/game_status/models/game_status.model';
+import { UserModel } from 'src/users/models/user.model';
 
 class GameRoom {
   // host: WebsocketUser | undefined;
   // guest: WebsocketUser | undefined;
+
+  inactivity_count: number;
 
   host_id: number;
   guest_id: number | undefined;
@@ -63,6 +67,28 @@ export class GamesService {
   }
 
 
+
+  async createEmpty(user1_id: number, user2_id: number): Promise<GameModel> {
+
+    const res = new GameModel();
+
+    res.user1_score = -1;
+    res.user2_score = -1;
+
+    res.started_at = new Date();
+    res.ended_at = new Date();
+
+    res.status = new GameStatusModel(GameStatusModel.CREATED_STATUS);
+
+    const created = await this.gamesRepository.save(res).catch((err: any) => {
+      throw new BadRequestException('Game creation error');
+    });
+
+    return created;
+
+  }
+
+
   clientOnlyRoom(client: Socket, user_id: number, game_id: number) {
     const game_room = game_id.toString();
 
@@ -77,6 +103,32 @@ export class GamesService {
   }
 
 
+  async connectGameRoom(client: Socket, user_id: number, game_id: number) {
+
+    this.clientOnlyRoom(client, user_id, game_id);
+    client.emit("setGame", {
+      gameSetter: {
+        userInfos1: await this.usersService.findOneById(this.currentGames[game_id].host_id),
+        userInfos2: await this.usersService.findOneById(this.currentGames[game_id].guest_id || -1),
+
+        game_id: game_id,
+      } as GameSetterDto
+    });
+  }
+
+  async searchConnect(client: Socket, user_id: number) {
+
+    const game_id = this.activeGame.get(user_id);
+
+
+    if (game_id !== undefined) {
+      this.connectGameRoom(client, user_id, game_id);
+    }
+  }
+
+
+
+
   async createGame(client: Socket, user_id: number, invite_id: number, game_id: number, game_function: Function) {
 
     if (this.currentGames[game_id] !== undefined) {
@@ -89,20 +141,13 @@ export class GamesService {
     this.currentGames[game_id].timer = setInterval(() => { game_function() }, 1000 / module_const.fps);
 
 
+
     this.currentGames[game_id].host_id = user_id;
-    this.clientOnlyRoom(client, user_id, game_id);
-
     this.currentGames[game_id].guest_id = invite_id;
+    this.currentGames[game_id].inactivity_count = 0;
 
 
-    client.emit("setGame", {
-      gameSetter: {
-        userInfos1: await this.usersService.findOneById(this.currentGames[game_id].host_id),
-        userInfos2: await this.usersService.findOneById(this.currentGames[game_id].guest_id || -1),
-
-        game_id: game_id,
-      } as GameSetterDto
-    });
+    this.connectGameRoom(client, user_id, game_id);
 
 
     console.log('create');
@@ -117,16 +162,7 @@ export class GamesService {
       return;
     }
 
-    this.clientOnlyRoom(client, user_id, game_id);
-
-    client.emit("setGame", {
-      gameSetter: {
-        userInfos1: await this.usersService.findOneById(this.currentGames[game_id].host_id),
-        userInfos2: await this.usersService.findOneById(this.currentGames[game_id].guest_id || -1),
-
-        game_id: game_id,
-      } as GameSetterDto
-    });
+    this.connectGameRoom(client, user_id, game_id);
 
     console.log('join');
 
@@ -138,7 +174,7 @@ export class GamesService {
   playGame(user_id: number, game_id: number, actions: string[]) {
 
     if (this.currentGames[game_id] == undefined) {
-      console.log('played game not exists');
+      console.log('played game not exists', game_id);
       return;
     }
 
@@ -156,9 +192,7 @@ export class GamesService {
 
 
 
-  gameLife(server: Server, game_id: number) {
-
-    // console.log('life');
+  async gameLife(server: Server, game_id: number) {
 
     if (this.currentGames[game_id] == undefined) {
       console.log('life not existing')
@@ -167,30 +201,65 @@ export class GamesService {
 
     const game = this.currentGames[game_id].game;
 
-    // console.log('actions', game.player1.action, game.player2.action)
-
     game.update();
-    // console.log(game.playerOne.y, game.playerOne.speedY);
 
-    // console.log('emit');
     server.to(game_id.toString()).emit("gameInfos", { game: game.export() });
 
-    if (game.playerOne.score >= 10 || game.playerTwo.score >= 10)
-      clearInterval(this.currentGames[game_id].timer);
-  }
-
-  async getUserStatus(id: number): Promise<string> {
-    const clientsFound = this.clients.filter((client) => {
-      return client.user.id === id;
-    });
-
-    if (clientsFound.length > 0) {
-        return "connected";
+    
+    if ((new Set(this.activeGame.values()).has(game_id))) {
+      this.currentGames[game_id].inactivity_count = 0;
+    }
+    else {
+      this.currentGames[game_id].inactivity_count++;
     }
 
-    return "disconnected";
-  }
+    if (game.playerOne.score >= 10 || game.playerTwo.score >= 10) {
 
+      try {
+        const gameToSave = await this.findOneById(game_id);
+
+        gameToSave.user1 = { id: this.currentGames[game_id].host_id } as UserModel;
+        gameToSave.user2 = { id: this.currentGames[game_id].guest_id } as UserModel;
+
+        gameToSave.user1_score = game.playerOne.score;
+        gameToSave.user2_score = game.playerTwo.score;
+
+        gameToSave.ended_at = new Date();
+        gameToSave.status = new GameStatusModel(GameStatusModel.FINISHED_STATUS);
+
+        this.gamesRepository.save(gameToSave);
+      }
+      catch (e) { }
+
+      clearInterval(this.currentGames[game_id].timer);
+      
+      this.activeGame.forEach((value, key) => {
+        if (value === game_id) {
+          this.activeGame.delete(key);
+        }
+      })
+    }
+    
+    else if (this.currentGames[game_id].inactivity_count > 200) {
+
+      console.log('delete inactivity', game_id)
+
+      try {
+        const gameToSave = await this.findOneById(game_id);
+        gameToSave.ended_at = new Date();
+        gameToSave.status = new GameStatusModel(GameStatusModel.CLOSED_STATUS);
+
+        this.gamesRepository.save(gameToSave);
+      } //
+      catch (e) {
+
+      }
+
+      clearInterval(this.currentGames[game_id].timer);
+
+      delete this.currentGames[game_id];
+    }
+  }
 
 
   async getUserStatus(id: number): Promise<string> {

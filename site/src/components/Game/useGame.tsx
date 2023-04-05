@@ -40,13 +40,17 @@ const useGame = ({ loginer }: useGameProps) => {
       gameSocketRef.current.emit(
         "inviteGame",
         { invited_id: invited_id },
-        (response: void) => { }
+        (response: void) => {}
       );
   };
 
   const joinGame = (game_id: number) => {
     gameSocketRef.current &&
-      gameSocketRef.current.emit("joinGame", { game_id: game_id }, (response: void) => { });
+      gameSocketRef.current.emit(
+        "joinGame",
+        { game_id: game_id },
+        (response: void) => {}
+      );
   };
 
   const playGame = (actions: string[]) => {
@@ -65,7 +69,7 @@ const useGame = ({ loginer }: useGameProps) => {
       gameSocketRef.current.emit(
         "sendAction",
         { game_id: game_id, actions: actions },
-        (response: void) => { }
+        (response: void) => {}
       );
   };
 
@@ -96,16 +100,16 @@ const useGame = ({ loginer }: useGameProps) => {
               gameArea.current?.import(game);
               gameArea.current?.render();
             }
-          );
-
-        gameSocketRef.current &&
-          gameSocketRef.current.on(
-            "setGame",
+            );
+            
+            gameSocketRef.current &&
+            gameSocketRef.current.on(
+              "setGame",
             ({ gameSetter }: { gameSetter: GameSetterDto }) => {
               user1 = gameSetter.userInfos1;
               user2 = gameSetter.userInfos2;
               game_id = gameSetter.game_id;
-
+              
               console.log(`enter game ${game_id} with dd ${user1}  ${user2}`);
             }
           );

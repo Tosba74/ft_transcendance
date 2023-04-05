@@ -67,6 +67,7 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		if (client.data.loggedId !== undefined)
 			this.gamesService.connecteds.add(client.data.loggedId)
 
+		this.gamesService.searchConnect(client, user.id);
 
 		return { error: undefined };
 	}
@@ -79,12 +80,13 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			throw new WsException('Not identified');
 		}
 
-		let game_id = client.data.loggedId;
+		const newGame = await this.gamesService.createEmpty(client.data.loggedId, body.invited_id);
+
 		let game_function = () => {
-			this.gamesService.gameLife(this.server, game_id);
+			this.gamesService.gameLife(this.server, newGame.id);
 		}
 
-		this.gamesService.createGame(client, client.data.loggedId, body.invited_id, game_id, game_function);
+		this.gamesService.createGame(client, client.data.loggedId, body.invited_id, newGame.id, game_function);
 	}
 
 
