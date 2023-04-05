@@ -18,61 +18,6 @@ export default function ChannelPanel({
   setModeChannel,
   chats,
 }: ChannelPanelProps) {
-  //
-  // let users: UserDto[] = [
-  //   {
-  //     id: 1,
-  //     login_name: "jjaqueme",
-  //     pseudo: "jerome",
-  //     color: 10,
-  //     avatar_url: ".",
-  //     is_admin: false,
-  //   },
-  //   {
-  //     id: 2,
-  //     login_name: "jjaqueme",
-  //     pseudo: "jerome",
-  //     color: 10,
-  //     avatar_url: ".",
-  //     is_admin: false,
-  //   },
-  //   {
-  //     id: 3,
-  //     login_name: "jjaqueme",
-  //     pseudo: "jerome",
-  //     color: 10,
-  //     avatar_url: ".",
-  //     is_admin: false,
-  //   },
-  //   {
-  //     id: 4,
-  //     login_name: "jjaqueme",
-  //     pseudo: "jerome",
-  //     color: 10,
-  //     avatar_url: ".",
-  //     is_admin: false,
-  //   },
-  // ];
-
-  // let channels: ChannelDto[] = [
-  //   {
-  //     id: 1,
-  //     name: "les coupaiz",
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "general",
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "workspace",
-  //   },
-  //   {
-  //     id: 4,
-  //     name: "cluster 4",
-  //   },
-  // ];
-
   console.log(chats.rooms && chats.rooms[currChannel.toString()]);
 
   return (
