@@ -23,9 +23,17 @@ export default function MessageConv({ selfId, messages }: MessageConvProps) {
     <>
       {messages.map((message) => {
         return message.sender.id == selfId ? (
-          <MessageBulleSend user={message.sender} text={message.content} />
+          <MessageBulleSend
+            key={message.id}
+            user={message.sender}
+            text={message.content}
+          />
         ) : (
-          <MessageBulleRecv user={message.sender} text={message.content} />
+          <MessageBulleRecv
+            key={message.id}
+            user={message.sender}
+            text={message.content}
+          />
         );
       })}
       <div id="scrollbottom" ref={messagesEndRef}></div>

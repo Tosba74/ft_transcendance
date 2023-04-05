@@ -348,9 +348,9 @@ export class ChatsService {
       // Check if user is muted
       if (participant.muted_until < new Date()) {
 
-        this.chatMessagesService.create(message, user.id, room_id)
+        const msg = await this.chatMessagesService.create(message, user.id, room_id)
 
-        responseMessage.id = -1;
+        responseMessage.id = msg.id;
         console.log(user);
         responseMessage.sender = { ...user, status: '' };
         responseMessage.content = message;
