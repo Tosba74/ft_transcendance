@@ -291,6 +291,7 @@ export class ChatsService {
       command[0] = command[0].toLocaleLowerCase()
 
       responseMessage.id = -this.serverMsgId;
+      responseMessage.sender = new UserDto();
       responseMessage.sender.id = -1;
       this.serverMsgId++;
 
@@ -313,6 +314,7 @@ export class ChatsService {
     }
     else {
       responseMessage.id = -this.serverMsgId;
+      responseMessage.sender = new UserDto();
       responseMessage.sender.id = -1;
       responseMessage.content = 'Unauthorized, you are not an admin';
       this.serverMsgId++;
@@ -357,6 +359,7 @@ export class ChatsService {
       }
       else {
         responseMessage.id = -this.serverMsgId;
+        responseMessage.sender = new UserDto();
         responseMessage.sender.id = -1;
         responseMessage.content = `You are muted until ${participant.muted_until.toUTCString()}`;
         this.serverMsgId++;
@@ -368,6 +371,7 @@ export class ChatsService {
     }
     else {
       responseMessage.id = -this.serverMsgId;;
+      responseMessage.sender = new UserDto();
       responseMessage.sender.id = -1;
       responseMessage.content = 'Unauthorized';
       this.serverMsgId++;
