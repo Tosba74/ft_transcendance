@@ -22,10 +22,6 @@ export default function SettingsPage({ loginer }: SettingsPageProps) {
         </div>
       </div>
 
-      <br />
-      <br />
-      <br />
-
       {/* add informations like stats, friend, channels, etc in the next 2 components */}
       {/* <ProfilePublic user={user} /> */}
       {/* <ProfilePrivate user={user} /> */}
