@@ -266,13 +266,24 @@ export class GamesService {
 
 
   async getUserStatus(id: number): Promise<string> {
-
+    //
     if (this.connecteds.has(id)) {
+      //
+      const connectedGame = this.activeGame.get(id) || -1;
+
+      if (connectedGame !== -1) {
+        const connectedGameRoom = this.currentGames[connectedGame];
+        
+        if (connectedGameRoom.host_id === id || connectedGameRoom.guest_id === id) {
+          //
+          if (connectedGameRoom.game.start === true) {
+            return "ingame";
+          }
+        }
+      }
 
       return "connected";
     }
-
-
 
     return "disconnected";
   }
