@@ -100,16 +100,16 @@ const useGame = ({ loginer }: useGameProps) => {
               gameArea.current?.import(game);
               gameArea.current?.render();
             }
-            );
-            
-            gameSocketRef.current &&
-            gameSocketRef.current.on(
-              "setGame",
+          );
+
+        gameSocketRef.current &&
+          gameSocketRef.current.on(
+            "setGame",
             ({ gameSetter }: { gameSetter: GameSetterDto }) => {
               user1 = gameSetter.userInfos1;
               user2 = gameSetter.userInfos2;
               game_id = gameSetter.game_id;
-              
+
               console.log(`enter game ${game_id} with dd ${user1}  ${user2}`);
             }
           );

@@ -75,6 +75,9 @@ export class GamesService {
     res.user1_score = -1;
     res.user2_score = -1;
 
+    res.user1 = { id: user1_id } as UserModel;
+    res.user2 = { id: user2_id } as UserModel;
+
     res.started_at = new Date();
     res.ended_at = new Date();
 
@@ -199,30 +202,30 @@ export class GamesService {
       return;
     }
 
-    const game = this.currentGames[game_id].game;
+    const gameRoom: GameRoom = this.currentGames[game_id];
 
-    game.update();
+    gameRoom.game.update();
 
-    server.to(game_id.toString()).emit("gameInfos", { game: game.export() });
+    server.to(game_id.toString()).emit("gameInfos", { game: gameRoom.game.export() });
 
-    
-    if ((new Set(this.activeGame.values()).has(game_id))) {
-      this.currentGames[game_id].inactivity_count = 0;
+
+    if ((new Set(this.activeGame.values()).has(game_id)) && (this.connecteds.has(gameRoom.host_id) || this.connecteds.has(gameRoom.guest_id || -1))) {
+      gameRoom.inactivity_count = 0;
     }
     else {
-      this.currentGames[game_id].inactivity_count++;
+      gameRoom.inactivity_count++;
     }
 
-    if (game.playerOne.score >= 10 || game.playerTwo.score >= 10) {
+    if (gameRoom.game.playerOne.score >= 10 || gameRoom.game.playerTwo.score >= 10) {
 
       try {
         const gameToSave = await this.findOneById(game_id);
 
-        gameToSave.user1 = { id: this.currentGames[game_id].host_id } as UserModel;
-        gameToSave.user2 = { id: this.currentGames[game_id].guest_id } as UserModel;
+        gameToSave.user1 = { id: gameRoom.host_id } as UserModel;
+        gameToSave.user2 = { id: gameRoom.guest_id } as UserModel;
 
-        gameToSave.user1_score = game.playerOne.score;
-        gameToSave.user2_score = game.playerTwo.score;
+        gameToSave.user1_score = gameRoom.game.playerOne.score;
+        gameToSave.user2_score = gameRoom.game.playerTwo.score;
 
         gameToSave.ended_at = new Date();
         gameToSave.status = new GameStatusModel(GameStatusModel.FINISHED_STATUS);
@@ -231,16 +234,16 @@ export class GamesService {
       }
       catch (e) { }
 
-      clearInterval(this.currentGames[game_id].timer);
-      
+      clearInterval(gameRoom.timer);
+
       this.activeGame.forEach((value, key) => {
         if (value === game_id) {
           this.activeGame.delete(key);
         }
       })
     }
-    
-    else if (this.currentGames[game_id].inactivity_count > 200) {
+
+    else if (gameRoom.inactivity_count > 200) {
 
       console.log('delete inactivity', game_id)
 
@@ -255,7 +258,7 @@ export class GamesService {
 
       }
 
-      clearInterval(this.currentGames[game_id].timer);
+      clearInterval(gameRoom.timer);
 
       delete this.currentGames[game_id];
     }
