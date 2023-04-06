@@ -4,20 +4,20 @@ import axios from "axios";
 import { UseLoginDto } from "src/components/Log/dto/useLogin.dto";
 interface AvatarProps {
   loginer: UseLoginDto;
+  setSettingsError: Function;
   // refreshUserInfos: Function;
 }
 
-export default function Avatar({ loginer }: AvatarProps) {
+export default function Avatar({ loginer, setSettingsError }: AvatarProps) {
   const [avatarUrl, setAvatarUrl] = React.useState(
     loginer.userInfos?.avatar_url
   );
-  const [avatarMessage, setAvatarMessage] = React.useState("");
 
   const fileInput: any = useRef();
 
   function fileValidation(): boolean {
     if (fileInput.current.files[0] === undefined) {
-      setAvatarMessage("Error: file not detected");
+      setSettingsError("Error: file not detected");
       return false;
     }
 
@@ -27,7 +27,7 @@ export default function Avatar({ loginer }: AvatarProps) {
       fileInput.current.files[0].type !== "image/jpg" &&
       fileInput.current.files[0].type !== "image/jpeg"
     ) {
-      setAvatarMessage("Error: the image must be jpg or png");
+      setSettingsError("Error: the image must be jpg or png");
       return false;
     }
 
@@ -36,7 +36,7 @@ export default function Avatar({ loginer }: AvatarProps) {
       fileInput.current.files[0].size < 1 ||
       fileInput.current.files[0].size > 1000000
     ) {
-      setAvatarMessage("Error: maximum image size 1 MO");
+      setSettingsError("Error: maximum image size 1 MO");
       return false;
     }
 
@@ -72,17 +72,17 @@ export default function Avatar({ loginer }: AvatarProps) {
         })
         .then((res) => {
           // return new avatar_url
-          setAvatarMessage("Image uploaded successfully");
+          setSettingsError("Image uploaded successfully");
           setAvatarUrl(res.data);
           loginer.getUserData();
 
           // refreshUserInfos();
           setTimeout(() => {
-            setAvatarMessage("");
+            setSettingsError("");
           }, 3000);
         })
         .catch(() =>
-          setAvatarMessage(
+          setSettingsError(
             "Error while contacting the API. Retry after reloging."
           )
         );
@@ -113,7 +113,6 @@ export default function Avatar({ loginer }: AvatarProps) {
           Save
         </button>
       </div>
-      <div>{avatarMessage}</div>
     </form>
   );
 }

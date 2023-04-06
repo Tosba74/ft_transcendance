@@ -5,13 +5,13 @@ import { UseLoginDto } from "src/components/Log/dto/useLogin.dto";
 
 interface TfaButtonProps {
   loginer: UseLoginDto;
+  setSettingsError: Function;
 }
 
-export default function TfaButton({ loginer }: TfaButtonProps) {
+export default function TfaButton({ loginer, setSettingsError }: TfaButtonProps) {
   const [tfaInput, setTfaInput] = React.useState("");
 
   const [tfaLabelMessage, setTfaLabelMessage] = React.useState("");
-  const [tfaMessage, setTfaMessage] = React.useState("");
   const [tfaButtonMessage, setTfaButtonMessage] = React.useState("");
 
   const [buttonDisabled, setButtonDisabled] = React.useState(false);
@@ -38,12 +38,12 @@ export default function TfaButton({ loginer }: TfaButtonProps) {
     setQrCode("");
     setTfaInput("yes");
     setTfaLabelMessage("enabled");
-    setTfaMessage("Tfa turned on");
+    setSettingsError("Tfa turned on");
     setTfaButtonMessage("Turn off");
     loginer.getUserData();
     // refreshUserInfos();
     setTimeout(() => {
-      setTfaMessage("");
+      setSettingsError("");
     }, 3000);
   }
 
@@ -52,12 +52,12 @@ export default function TfaButton({ loginer }: TfaButtonProps) {
 
     setTfaInput("no");
     setTfaLabelMessage("disabled");
-    setTfaMessage("Tfa turned off");
+    setSettingsError("Tfa turned off");
     setTfaButtonMessage("Turn on");
     loginer.getUserData();
     // refreshUserInfos();
     setTimeout(() => {
-      setTfaMessage("");
+      setSettingsError("");
     }, 3000);
   }
 
@@ -87,7 +87,7 @@ export default function TfaButton({ loginer }: TfaButtonProps) {
           } else switchTfaOff();
         })
         .catch(() =>
-          setTfaMessage("Error while contacting the API. Retry after reloging.")
+          setSettingsError("Error while contacting the API. Retry after reloging.")
         );
     }
   }
@@ -113,10 +113,9 @@ export default function TfaButton({ loginer }: TfaButtonProps) {
             loginer={loginer}
             qrCode={qrCode}
             switchTfaOn={switchTfaOn}
-            setTfaMessage={setTfaMessage}
+            setSettingsError={setSettingsError}
           />
         )}
-        <div>{tfaMessage}</div>
       </div>
     </div>
   );
