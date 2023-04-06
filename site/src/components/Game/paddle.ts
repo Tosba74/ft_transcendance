@@ -7,6 +7,8 @@ export class Paddle {
   public width: number;
   public height: number;
 
+  public ready: boolean;
+
   public color: string;
   public ultimate: number;
   public score: number;
@@ -21,6 +23,8 @@ export class Paddle {
     this.width = 0;
     this.height = 0;
 
+    this.ready = false;
+
     this.color = "white";
     this.ultimate = 0;
     this.score = 0;
@@ -34,6 +38,8 @@ export class Paddle {
 
     this.width = player.width;
     this.height = player.height;
+
+    this.ready = player.ready;
 
     this.ultimate = player.ultimate;
     this.score = player.score;

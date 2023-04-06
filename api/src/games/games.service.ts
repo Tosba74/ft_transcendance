@@ -40,7 +40,7 @@ export class GamesService {
     @Inject(forwardRef(() => UsersService))
     private usersService: UsersService,
   ) { }
-
+ 
 
   connecteds: Set<number> = new Set<number>();
 
@@ -108,15 +108,18 @@ export class GamesService {
 
   async connectGameRoom(client: Socket, user_id: number, game_id: number) {
 
-    this.clientOnlyRoom(client, user_id, game_id);
-    client.emit("setGame", {
-      gameSetter: {
-        userInfos1: await this.usersService.findOneById(this.currentGames[game_id].host_id),
-        userInfos2: await this.usersService.findOneById(this.currentGames[game_id].guest_id || -1),
+    if (this.currentGames[game_id] !== undefined) {
+      this.clientOnlyRoom(client, user_id, game_id);
+      client.emit("setGame", {
+        gameSetter: {
+          userInfos1: await this.usersService.findOneById(this.currentGames[game_id].host_id),
+          userInfos2: await this.usersService.findOneById(this.currentGames[game_id].guest_id || -1),
+  
+          game_id: game_id,
+        } as GameSetterDto
+      });
+    }
 
-        game_id: game_id,
-      } as GameSetterDto
-    });
   }
 
   async searchConnect(client: Socket, user_id: number) {

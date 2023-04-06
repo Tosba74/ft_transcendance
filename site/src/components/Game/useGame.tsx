@@ -14,12 +14,14 @@ interface useGameProps {
 
 const useGame = ({ loginer }: useGameProps) => {
   const gameSocketRef = React.useRef<Socket>();
-  let game_id = -1;
 
   const gameArea = React.useRef<GameArea>();
 
-  let user1: UserDto | undefined;
-  let user2: UserDto | undefined;
+  const [gameId, setGameId] = React.useState(-1);
+  const [myGame, setMyGame] = React.useState(false);
+  const [amReady, setAmReady] = React.useState(false);
+  const [user1, setUser1] = React.useState<UserDto | undefined>(undefined);
+  const [user2, setUser2] = React.useState<UserDto | undefined>(undefined);
 
   const identify = () => {
     // Send identify to register websocket user
@@ -54,8 +56,9 @@ const useGame = ({ loginer }: useGameProps) => {
   };
 
   const playGame = (actions: string[]) => {
-    if (game_id === -1) {
-      console.log("You are not inn a game");
+    if (gameId === -1) {
+      console.log("You are not inn a game", gameId);
+      return;
     }
     //
     if (
@@ -68,7 +71,7 @@ const useGame = ({ loginer }: useGameProps) => {
     gameSocketRef.current &&
       gameSocketRef.current.emit(
         "sendAction",
-        { game_id: game_id, actions: actions },
+        { game_id: gameId, actions: actions },
         (response: void) => {}
       );
   };
@@ -92,13 +95,31 @@ const useGame = ({ loginer }: useGameProps) => {
         // Send authorization header to authentify socket
         identify();
 
-        // Bind function for message reception
         gameSocketRef.current &&
           gameSocketRef.current.on(
             "gameInfos",
             ({ game }: { game: GameDataDto }) => {
               gameArea.current?.import(game);
               gameArea.current?.render();
+
+              setUser1(
+                (old) =>
+                  old && {
+                    ...old,
+                    status: gameArea.current?.playerOne.ready
+                      ? "ready"
+                      : "unready",
+                  }
+              );
+              setUser2(
+                (old) =>
+                  old && {
+                    ...old,
+                    status: gameArea.current?.playerTwo.ready
+                      ? "ready"
+                      : "unready",
+                  }
+              );
             }
           );
 
@@ -106,11 +127,16 @@ const useGame = ({ loginer }: useGameProps) => {
           gameSocketRef.current.on(
             "setGame",
             ({ gameSetter }: { gameSetter: GameSetterDto }) => {
-              user1 = gameSetter.userInfos1;
-              user2 = gameSetter.userInfos2;
-              game_id = gameSetter.game_id;
+              setUser1(gameSetter.userInfos1);
+              setUser2(gameSetter.userInfos2);
+              setGameId(gameSetter.game_id);
 
-              console.log(`enter game ${game_id} with dd ${user1}  ${user2}`);
+              setMyGame(
+                (loginer.userInfos &&
+                  (gameSetter.userInfos1.id === loginer.userInfos.id ||
+                    gameSetter.userInfos2.id === loginer.userInfos.id)) ||
+                  false
+              );
             }
           );
       });
@@ -119,8 +145,26 @@ const useGame = ({ loginer }: useGameProps) => {
     }
   }, [loginer.logged]);
 
+  React.useEffect(() => {
+    setAmReady(
+      (loginer.userInfos &&
+        ((user1 &&
+          user1.id === loginer.userInfos.id &&
+          gameArea.current?.playerOne.ready) ||
+          (user2 &&
+            user2.id === loginer.userInfos.id &&
+            gameArea.current?.playerTwo.ready))) ||
+        false
+    );
+  }, [user1, user2]);
+
   return {
     gameArea,
+    gameId,
+    myGame,
+    amReady,
+    user1,
+    user2,
     identify,
     inviteGame,
     joinGame,
