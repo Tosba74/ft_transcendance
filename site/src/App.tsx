@@ -93,7 +93,12 @@ export default function App() {
 
       <ChatIcon openedMenu={openedMenu} setOpenedMenu={setOpenedMenu} />
 
-      <ChatPage openedMenu={openedMenu} setOpenedMenu={setOpenedMenu} />
+      <ChatPage
+        openedMenu={openedMenu}
+        setOpenedMenu={setOpenedMenu}
+        loginer={loginer}
+        chats={chats}
+      />
     </Router>
   );
 }
