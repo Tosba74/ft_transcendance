@@ -5,13 +5,16 @@ import { UseLoginDto } from "src/components/Log/dto/useLogin.dto";
 
 interface TfaButtonProps {
   loginer: UseLoginDto;
+  setPageErrorMessage: Function;
 }
 
-export default function TfaButton({ loginer }: TfaButtonProps) {
+export default function TfaButton({
+  loginer,
+  setPageErrorMessage,
+}: TfaButtonProps) {
   const [tfaInput, setTfaInput] = React.useState("");
 
   const [tfaLabelMessage, setTfaLabelMessage] = React.useState("");
-  const [tfaMessage, setTfaMessage] = React.useState("");
   const [tfaButtonMessage, setTfaButtonMessage] = React.useState("");
 
   const [buttonDisabled, setButtonDisabled] = React.useState(false);
@@ -38,12 +41,12 @@ export default function TfaButton({ loginer }: TfaButtonProps) {
     setQrCode("");
     setTfaInput("yes");
     setTfaLabelMessage("enabled");
-    setTfaMessage("Tfa turned on");
+    setPageErrorMessage("Tfa turned on");
     setTfaButtonMessage("Turn off");
     loginer.getUserData();
     // refreshUserInfos();
     setTimeout(() => {
-      setTfaMessage("");
+      setPageErrorMessage("");
     }, 3000);
   }
 
@@ -52,12 +55,12 @@ export default function TfaButton({ loginer }: TfaButtonProps) {
 
     setTfaInput("no");
     setTfaLabelMessage("disabled");
-    setTfaMessage("Tfa turned off");
+    setPageErrorMessage("Tfa turned off");
     setTfaButtonMessage("Turn on");
     loginer.getUserData();
     // refreshUserInfos();
     setTimeout(() => {
-      setTfaMessage("");
+      setPageErrorMessage("");
     }, 3000);
   }
 
@@ -87,37 +90,36 @@ export default function TfaButton({ loginer }: TfaButtonProps) {
           } else switchTfaOff();
         })
         .catch(() =>
-          setTfaMessage("Error while contacting the API. Retry after reloging.")
+          setPageErrorMessage(
+            "Error while contacting the API. Retry after reloging."
+          )
         );
     }
   }
 
   return (
-    <div className="flex w-full justify-center p-2 dark:text-white">
-      <div className="justify-center dark:text-white">
-        <form onSubmit={handleSubmit}>
-          <label>Two factor authentication is {tfaLabelMessage} . </label>
-          <button
-            id="tfa_enable"
-            className="mr-2 rounded bg-cyan-500 px-3 py-1 text-white"
-            type="submit"
-            name="tfa_enable"
-            value={tfaInput}
-            disabled={buttonDisabled}
-          >
-            {tfaButtonMessage}
-          </button>
-        </form>
-        {qrCode !== "" && (
-          <TfaConfirmation
-            loginer={loginer}
-            qrCode={qrCode}
-            switchTfaOn={switchTfaOn}
-            setTfaMessage={setTfaMessage}
-          />
-        )}
-        <div>{tfaMessage}</div>
-      </div>
-    </div>
+    <>
+      <form onSubmit={handleSubmit}>
+        <label>Two factor authentication is {tfaLabelMessage}</label>
+        <button
+          id="tfa_enable"
+          className="bg-blue-700 px-3 py-1 text-white"
+          type="submit"
+          name="tfa_enable"
+          value={tfaInput}
+          disabled={buttonDisabled}
+        >
+          {tfaButtonMessage}
+        </button>
+      </form>
+      {qrCode !== "" && (
+        <TfaConfirmation
+          loginer={loginer}
+          qrCode={qrCode}
+          switchTfaOn={switchTfaOn}
+          setPageErrorMessage={setPageErrorMessage}
+        />
+      )}
+    </>
   );
 }
