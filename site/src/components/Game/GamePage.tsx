@@ -75,7 +75,7 @@ export default function GamePage({ gamer }: GamePageProps) {
       if (gamer.gameArea.current && gamer.gameArea.current?.canvas && around) {
         // console.log(around.clientWidth, around.clientHeight);
 
-        let min = Math.min(around.clientWidth, around.clientHeight * 1.5) * 0.8;
+        let min = Math.min(around.clientWidth, around.clientHeight * 1) * 0.8;
 
         setMinSize(`${min}px`);
         gamer.gameArea.current.canvas.style.width = `${min}`;
@@ -162,7 +162,7 @@ export default function GamePage({ gamer }: GamePageProps) {
       <div
         style={css}
         id="playersCard"
-        className={`mx-auto flex flex-col py-3 landscape:flex-row`}
+        className="mx-auto flex flex-col py-3 sm:flex-row landscape:min-w-[400px] landscape:flex-col landscape:lg:flex-row"
       >
         <PlayerCard user={users[0]} status={true} isRight={false} />
         <PlayerCard user={users[1]} status={false} isRight={true} />
@@ -181,26 +181,6 @@ export default function GamePage({ gamer }: GamePageProps) {
         }}
       >
         Show rules
-      </button>
-      <button
-        className="ld:basis-1/4 w-40 items-center rounded border border-gray-300 bg-gray-300 text-center md:basis-1/2"
-        type="button"
-        id="btn_start"
-        onClick={() => {
-          gamer.createGame();
-        }}
-      >
-        Create
-      </button>
-      <button
-        className="ld:basis-1/4 w-40 items-center rounded border border-gray-300 bg-gray-300 text-center md:basis-1/2"
-        type="button"
-        id="btn_start"
-        onClick={() => {
-          gamer.joinGame();
-        }}
-      >
-        Join
       </button>
     </div>
   );

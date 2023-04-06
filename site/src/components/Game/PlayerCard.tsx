@@ -38,13 +38,17 @@ export default function PlayerCard(props: playerCardProps) {
           </div>
           <div
             id={`myProgress${userId}`}
-            className="borde rounded-lg bg-slate-200 shadow-inner"
+            className="rounded-lg bg-slate-200 shadow-inner"
           >
             <div
               id={`myBar${userId}`}
-              className={classNames("h-8 bg-green-500", {
-                "mr-0 ml-auto": props.isRight,
-              })}
+              className={classNames(
+                "h-8 rounded-lg bg-gradient-to-r from-green-400 to-green-600",
+                {
+                  "from-green-400 to-green-600": !props.isRight,
+                  "mr-0 ml-auto from-green-600 to-green-400": props.isRight,
+                }
+              )}
             ></div>
           </div>
         </div>
