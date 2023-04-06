@@ -55,7 +55,8 @@ export default function Pseudo({ loginer, setSettingsError }: PseudoProps) {
           if (error.response.status === 401)
             var message: string = error.response.data.message;
           else
-            var message: string = "Error while contacting the API. Retry after reloging.";
+            var message: string =
+              "Error while contacting the API. Retry after reloging.";
           setSettingsError(message);
         });
     }

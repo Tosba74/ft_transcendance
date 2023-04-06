@@ -8,7 +8,10 @@ interface TfaButtonProps {
   setSettingsError: Function;
 }
 
-export default function TfaButton({ loginer, setSettingsError }: TfaButtonProps) {
+export default function TfaButton({
+  loginer,
+  setSettingsError,
+}: TfaButtonProps) {
   const [tfaInput, setTfaInput] = React.useState("");
 
   const [tfaLabelMessage, setTfaLabelMessage] = React.useState("");
@@ -87,7 +90,9 @@ export default function TfaButton({ loginer, setSettingsError }: TfaButtonProps)
           } else switchTfaOff();
         })
         .catch(() =>
-          setSettingsError("Error while contacting the API. Retry after reloging.")
+          setSettingsError(
+            "Error while contacting the API. Retry after reloging."
+          )
         );
     }
   }
