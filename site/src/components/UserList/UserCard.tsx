@@ -11,7 +11,7 @@ export default function UserCard({ user }: UserCardProps) {
     // <div className="w-full h-screen">
 
     <div className="flex justify-between">
-      <div className="h-100 mt-5 w-full max-w-sm rounded-lg border border-gray-200 bg-white p-10 shadow dark:border-gray-700 dark:bg-gray-800">
+      <div className="mt-4 h-1/4 w-full max-w-sm rounded-lg border border-gray-200 bg-white p-10 shadow dark:border-gray-700 dark:bg-gray-800">
         <div className="flex h-80 flex-col items-center pb-10">
           <img
             className="mb-3 h-36 w-36 rounded-full object-cover shadow-lg"

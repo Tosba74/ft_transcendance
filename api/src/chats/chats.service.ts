@@ -1,23 +1,27 @@
 import { Injectable, NotFoundException, BadRequestException, forwardRef, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Socket } from 'socket.io';
+
+import { MeService } from 'src/me/me.service';
+import { ChatMessagesService } from 'src/chat_messages/chat_messages.service';
 
 import { ChatModel } from "./models/chat.model";
 import { ChatTypeModel } from 'src/chat_types/models/chat_type.model';
-import { Socket } from 'socket.io';
-
-import { ChatResponse } from './dto/chat-response.dto';
-import { ChatRoom } from './dto/chat-room.dto';
-import { ChatMessage } from './dto/chat-message.dto';
-import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
 import { ChatRoleModel } from 'src/chat_roles/models/chat_role.model';
-import { MeService } from 'src/me/me.service';
-import { ChatMessagesService } from 'src/chat_messages/chat_messages.service';
+
+import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
+
+import { UserDto } from 'src/_shared_dto/user.dto';
+import { ChatResponseDto } from 'src/_shared_dto/chat-response.dto';
+import { ChatRoomDto } from 'src/_shared_dto/chat-room.dto';
+import { ChatMessageDto } from 'src/_shared_dto/chat-message.dto';
+import { UsersService } from 'src/users/users.service';
 
 
 interface WebsocketUser {
   socket: Socket;
-  user: LoggedUserDto;
+  user: UserDto;
 }
 
 @Injectable()
@@ -28,6 +32,7 @@ export class ChatsService {
     @Inject(forwardRef(() => MeService))
     private meService: MeService,
     private chatMessagesService: ChatMessagesService,
+    private usersService: UsersService,
   ) { }
 
   // clients = new Pair<Socket, LoggedUserDto>();
@@ -54,6 +59,7 @@ export class ChatsService {
       throw new NotFoundException('Chat id not found');
     }
   }
+
 
   async create(name: string | undefined, type_id: number, password?: string): Promise<ChatModel> {
 
@@ -98,7 +104,7 @@ export class ChatsService {
 
 
 
-  async identify(user: LoggedUserDto, client: Socket): Promise<ChatResponse<undefined>> {
+  async identify(user: LoggedUserDto, client: Socket): Promise<ChatResponseDto<undefined>> {
 
     if (!user || user.id == undefined) {
       return { error: 'Not logged', value: undefined };
@@ -108,9 +114,11 @@ export class ChatsService {
       return { error: 'Already identified', value: undefined };
     }
 
+    const foundUser = await this.usersService.findOneById(user.id, false) as UserDto;
+
     const newConn: WebsocketUser = {
       socket: client,
-      user: user,
+      user: foundUser,
     }
 
     this.clients.push(newConn);
@@ -138,7 +146,7 @@ export class ChatsService {
   }
 
 
-  isIdentifed(client: Socket): LoggedUserDto | undefined {
+  isIdentifed(client: Socket): UserDto | undefined {
 
     let found = this.clients.find(value => {
       if (value.socket.id == client.id) {
@@ -150,44 +158,56 @@ export class ChatsService {
   }
 
 
-  async connectRoom(user: LoggedUserDto, client: Socket, room_id: number): Promise<ChatResponse<ChatRoom>> {
+  async connectRoom(user: UserDto, client: Socket, room_id: number): Promise<ChatResponseDto<ChatRoomDto>> {
 
-    let res = new ChatResponse<ChatRoom>();
+    let res = new ChatResponseDto<ChatRoomDto>();
 
     const room = await this.findOneById(room_id);
-
 
     if (room.participants.some(element => {
       return element.participant.id === user.id && element.role.id != ChatRoleModel.BAN_ROLE
     })) {
+
 
       // Subscribe websocket to room
       client.join(room_id.toString());
 
 
       // Get all room informations from the db
-      let newroom: ChatRoom = new ChatRoom();
+      let newroom: ChatRoomDto = new ChatRoomDto();
 
       newroom.id = room_id;
       newroom.name = room.name.toString();
+      newroom.type = room.type.id;
 
       //Get all messages from the db
       newroom.messages = [];
 
       room.messages.forEach(value => {
-        let msg: ChatMessage = new ChatMessage();
+        let msg: ChatMessageDto = new ChatMessageDto();
         msg.id = value.id;
-        msg.senderId = value.sender.id;
-        msg.senderDiplayName = value.sender.pseudo;
+        msg.sender = value.sender.toUserDto();
         msg.content = value.message;
 
         newroom.messages.push(msg);
 
       });
 
+      // console.log(room.participants);
+
+      newroom.participants = [];
+
+      room.participants.forEach(value => {
+        let usr: UserDto = value.participant.toUserDto();
+
+        newroom.participants.push(usr);
+
+      });
+
       res.value = newroom;
     }
     else {
+      console.log('connect to unauthorized room');
       res.error = "Error: Unauthorized";
     }
 
@@ -196,7 +216,7 @@ export class ChatsService {
 
 
 
-  async kickCommand(room: ChatModel, user: LoggedUserDto, command: string[]): Promise<string> {
+  async kickCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
 
     // Example {"/kick", "1"}
     // Second argument is userid
@@ -220,10 +240,11 @@ export class ChatsService {
       if (clientsToKick.length > 0) {
 
         // Create kick message
-        let kickMessage = new ChatMessage();
+        let kickMessage = new ChatMessageDto();
         kickMessage.id = -this.serverMsgId;
-        kickMessage.senderDiplayName = 'Server';
-        kickMessage.senderId = -1;
+
+        kickMessage.sender.id = -1;
+
         kickMessage.content = 'You have been kicked';
         this.serverMsgId++;
 
@@ -252,9 +273,9 @@ export class ChatsService {
 
 
 
-  async adminCommand(user: LoggedUserDto, client: Socket, room_id: number, message: string): Promise<ChatMessage | undefined> {
+  async adminCommand(user: UserDto, client: Socket, room_id: number, message: string): Promise<ChatMessageDto | undefined> {
 
-    let responseMessage = new ChatMessage();
+    let responseMessage = new ChatMessageDto();
 
 
     const room = await this.findOneById(room_id);
@@ -269,8 +290,8 @@ export class ChatsService {
       command[0] = command[0].toLocaleLowerCase()
 
       responseMessage.id = -this.serverMsgId;
-      responseMessage.senderDiplayName = 'Server';
-      responseMessage.senderId = -1;
+      responseMessage.sender = new UserDto();
+      responseMessage.sender.id = -1;
       this.serverMsgId++;
 
       console.log('Command args', command);
@@ -292,8 +313,8 @@ export class ChatsService {
     }
     else {
       responseMessage.id = -this.serverMsgId;
-      responseMessage.senderDiplayName = 'Server';
-      responseMessage.senderId = -1;
+      responseMessage.sender = new UserDto();
+      responseMessage.sender.id = -1;
       responseMessage.content = 'Unauthorized, you are not an admin';
       this.serverMsgId++;
 
@@ -306,9 +327,9 @@ export class ChatsService {
   }
 
 
-  async createMessage(user: LoggedUserDto, client: Socket, room_id: number, message: string): Promise<ChatMessage | undefined> {
+  async createMessage(user: UserDto, client: Socket, room_id: number, message: string): Promise<ChatMessageDto | undefined> {
 
-    let responseMessage = new ChatMessage();
+    let responseMessage = new ChatMessageDto();
 
     const room = await this.findOneById(room_id);
 
@@ -326,19 +347,19 @@ export class ChatsService {
       // Check if user is muted
       if (participant.muted_until < new Date()) {
 
-        this.chatMessagesService.create(message, user.id, room_id)
+        const msg = await this.chatMessagesService.create(message, user.id, room_id)
 
-        responseMessage.id = -1;
-        responseMessage.senderDiplayName = user.pseudo;
-        responseMessage.senderId = user.id;
+        responseMessage.id = msg.id;
+        console.log(user);
+        responseMessage.sender = { ...user, status: '' };
         responseMessage.content = message;
 
         return responseMessage;
       }
       else {
         responseMessage.id = -this.serverMsgId;
-        responseMessage.senderDiplayName = 'Server';
-        responseMessage.senderId = -1;
+        responseMessage.sender = new UserDto();
+        responseMessage.sender.id = -1;
         responseMessage.content = `You are muted until ${participant.muted_until.toUTCString()}`;
         this.serverMsgId++;
 
@@ -349,8 +370,8 @@ export class ChatsService {
     }
     else {
       responseMessage.id = -this.serverMsgId;;
-      responseMessage.senderDiplayName = 'Server';
-      responseMessage.senderId = -1;
+      responseMessage.sender = new UserDto();
+      responseMessage.sender.id = -1;
       responseMessage.content = 'Unauthorized';
       this.serverMsgId++;
 

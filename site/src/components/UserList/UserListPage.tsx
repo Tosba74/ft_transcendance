@@ -76,8 +76,8 @@ export default function UserListPage({ loginer }: UserListPageProps) {
 
   return (
     <>
-      <div className="h-full w-full justify-center">
-        <div className="flex flex-wrap gap-4">
+      <div className="h-full w-full justify-center p-2">
+        <div className="flex flex-wrap gap-2">
           {users.map((user) => (
             <div key={user.id}>
               <UserCard user={user} />

@@ -1,4 +1,4 @@
-import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -97,7 +97,7 @@ export class UsersService {
       return user;
     }
     catch (error) {
-      throw new NotFoundException('User login not found');
+      throw new NotFoundException('User pseudo not found');
     }
   }
 
@@ -210,16 +210,22 @@ export class UsersService {
   async updatePseudo(id: number, pseudo: string): Promise<boolean> {
     try {
       let user: UserModel = await this.findOneById(id) as UserModel;
+      
+      const user_exist = await this.usersRepository.findOne({
+        where: { pseudo: pseudo }
+      });
+      if (user_exist)
+        throw new UnauthorizedException()
 
-      if (pseudo)
-        user.pseudo = pseudo;
-
+      user.pseudo = pseudo;
       await this.usersRepository.save(user).catch((err: any) => {
         throw new BadRequestException('User pseudo update error');
       });
       return true;
     }
     catch (error) {
+      if (error instanceof UnauthorizedException)
+        throw new UnauthorizedException('Pseudo already used')
       throw new NotFoundException('User id not found');
     }
   }
