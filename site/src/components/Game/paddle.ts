@@ -1,4 +1,3 @@
-import * as module_const from "./constant";
 import { PlayerDto } from "src/_shared_dto/player.dto";
 
 export class Paddle {

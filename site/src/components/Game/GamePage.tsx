@@ -1,76 +1,106 @@
-import React, { useState, useEffect } from "react";
-
+import React, { useEffect } from "react";
 import { UseGameDto } from "./dto/useGame.dto";
+import PlayerCard from "./PlayerCard";
+import { createPortal } from "react-dom";
+import { FiArrowDown, FiArrowUp } from "react-icons/fi";
 
 interface GamePageProps {
   gamer: UseGameDto;
 }
 
+const users: {
+  id: number;
+  login_name: string;
+  pseudo: string;
+  avatar_url: string;
+  is_admin: boolean;
+  access_token: null;
+  color: number;
+  tfa_enabled: boolean;
+  status_updated_at: string;
+  created_at: string;
+  updated_at: string;
+  validate_date: null;
+  status: string;
+}[] = [
+  {
+    id: 1,
+    login_name: "passmac",
+    pseudo: "passmac",
+    avatar_url:
+      "https://cdn.intra.42.fr/users/c858143fe558f853c994ee70fe21185f/jjaqueme.jpg",
+    is_admin: false,
+    access_token: null,
+    color: -1,
+    tfa_enabled: true,
+    status_updated_at: "2023-03-24T17:43:53.540Z",
+    created_at: "2023-03-24T17:43:53.589Z",
+    updated_at: "2023-03-27T08:32:16.294Z",
+    validate_date: null,
+    status: "connected",
+  },
+  {
+    id: 3,
+    login_name: "jarom",
+    pseudo: "jarom",
+    avatar_url: "/avatars/default-avatar.jpg",
+    is_admin: false,
+    access_token: null,
+    color: -1,
+    tfa_enabled: false,
+    status_updated_at: "2023-03-27T10:12:23.608Z",
+    created_at: "2023-03-27T10:12:23.619Z",
+    updated_at: "2023-03-27T10:12:23.619Z",
+    validate_date: null,
+    status: "idle",
+  },
+];
+
 export default function GamePage({ gamer }: GamePageProps) {
+  let keys: string[] = [];
+  let controls = ["w", "s", "ArrowUp", "ArrowDown", "1", "2", "3"];
+  const rootEl = document.getElementById("around");
+  const [modal, setModal] = React.useState(true);
+  const [effect, setEffect] = React.useState(false);
+  const [minSize, setMinSize] = React.useState("1200");
+
   useEffect(() => {
     gamer.gameArea.current?.get_elements();
     gamer.gameArea.current?.render();
+
+    function handleResize() {
+      let around = document.getElementById("around");
+
+      if (gamer.gameArea.current && gamer.gameArea.current?.canvas && around) {
+        // console.log(around.clientWidth, around.clientHeight);
+
+        let min = Math.min(around.clientWidth, around.clientHeight * 1.5) * 0.8;
+
+        setMinSize(`${min}px`);
+        gamer.gameArea.current.canvas.style.width = `${min}`;
+        gamer.gameArea.current.canvas.style.height = `${min / 1.5}px`;
+
+        gamer.gameArea.current?.render();
+      }
+    }
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
   }, [gamer.gameArea.current]);
 
-  const styles = {
-    myProgress: {
-      width: "100%",
-      backgroundColor: "#ddd",
-      border: "1px solid black",
-    },
-    myProgress2: {
-      width: "100%",
-      backgroundColor: "#ddd",
-      border: "1px solid black",
-    },
-    myBar: {
-      width: "0%",
-      height: "30px",
-      backgroundColor: "#4CBB17",
-    },
-    myBar2: {
-      width: "0%",
-      height: "30px",
-      backgroundColor: "#4CBB17",
-      marginLeft: "auto",
-      marginRight: "0",
-    },
-
-    myTable: {
-      width: "100%",
-      backgroundColor: "#CBD18F",
-      border: "1px solid black",
-      maxWidth: "2000px",
-    },
-    padding: {
-      paddingLeft: "40px",
-      paddingRight: "40px",
-    },
-    myCanvas: {
-      border: "1px solid rgba(255, 255, 255, 0.85)",
-      backgroundColor: "rgba(0, 0, 0, 0.85)",
-      width: "100%",
-      maxWidth: "2000px",
-    },
-  };
-
-  let keys: string[] = [];
-  let controls = ["w", "s", "ArrowUp", "ArrowDown", "1", "2", "3"];
-  // let move_actions = ["w", "ArrowUp", "s", "ArrowDown"];
-
   window.onkeyup = (e: KeyboardEvent): any => {
-    if (controls.indexOf(e.key) == -1) return;
+    if (controls.indexOf(e.key) === -1) return;
 
     let ind = keys.indexOf(e.key);
 
-    if (ind != -1) keys.splice(ind, 1);
+    if (ind !== -1) keys.splice(ind, 1);
 
     // if (!keys.some((action) => { return move_actions.indexOf(action) != -1 }))
     gamer.playGame(keys);
   };
 
   window.onkeydown = (e: KeyboardEvent): any => {
-    if (controls.indexOf(e.key) == -1 || keys.indexOf(e.key) != -1) return;
+    if (controls.indexOf(e.key) === -1 || keys.indexOf(e.key) !== -1) return;
 
     keys.push(e.key);
 
@@ -79,143 +109,94 @@ export default function GamePage({ gamer }: GamePageProps) {
     }
   };
 
+  const css = {
+    width: minSize,
+  };
+
   return (
-    <div className="h-screen w-full bg-yellow-400">
-      <div style={styles.padding}>
-        <div>
-          <p>ULTIME:</p>
-          {/*<button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_add_ball" onClick={() => { gamer.boost_ult() }}>
-						ADMIN: BOOST ULT
-						</button>*/}
-          <a
-            className="ld:basis-1/4 w-40 items-center rounded border border-gray-300 bg-gray-400 bg-gray-300 text-center md:basis-1/2"
-            id="btn_ult0"
+    <div id="around" className="h-full px-3">
+      {modal === true &&
+        rootEl !== null &&
+        createPortal(
+          <div
+            className={`${
+              effect === true
+                ? "animate-fadeOut opacity-0"
+                : "opacity-1 animate-fadeIn"
+            } absolute top-2/4 left-2/4 -translate-x-1/2 -translate-y-1/2 rounded-lg bg-gray-100 p-4 text-center dark:bg-gray-700 dark:text-white`}
+            onAnimationEnd={() => {
+              if (effect) setModal(false);
+            }}
           >
-            1: Add a ball
-          </a>
-          <a
-            className="ld:basis-1/4 w-40 items-center rounded border border-gray-300 bg-gray-400 bg-gray-300 text-center md:basis-1/2"
-            id="btn_ult1"
-          >
-            2 :Paddle Dash
-          </a>
-          <a
-            className="ld:basis-1/4 w-40 items-center rounded border border-gray-300 bg-gray-400 bg-gray-300 text-center md:basis-1/2"
-            id="btn_ult2"
-          >
-            3: Reduce paddle
-          </a>
-          <table style={styles.myTable}>
-            <thead>
-              <tr>
-                <td style={{ width: "50%" }}>
-                  <p style={{ textAlign: "center", width: "100%" }}>player 1</p>
-                </td>
-                <td style={{ width: "50%" }}>
-                  <p style={{ textAlign: "center", width: "100%" }}>player 2</p>
-                </td>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td style={{ width: "50%", paddingRight: "40px" }}>
-                  <div id="myProgress" style={styles.myProgress}>
-                    <div id="myBar" style={styles.myBar}></div>
-                  </div>
-                </td>
-                <td style={{ width: "50%", paddingLeft: "40px" }}>
-                  <div id="myProgress2" style={styles.myProgress2}>
-                    <div id="myBar2" style={styles.myBar2}></div>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <canvas
-          className="ld:basis-1/4 w-40 items-center rounded border border-gray-300 bg-gray-400 bg-gray-300 text-center md:basis-1/2"
-          id="canvas"
-          style={styles.myCanvas}
-        ></canvas>
-        <script> </script>
+            <h2 className="text-2xl">How to play ?</h2>
+            <ul className="inline-block text-left">
+              <li>
+                W and <FiArrowUp className="inline" />: Move to UP
+              </li>
+              <li>
+                S and <FiArrowDown className="inline" />: Move to DOWN
+              </li>
+            </ul>
+            <p className="pt-3">
+              You have 3 powers, press to numbers to active it
+            </p>
+            <ul className="inline-block text-left">
+              <li>1: Add a ball</li>
+              <li>2: Paddle Dash</li>
+              <li>3: Reduce paddle</li>
+            </ul>
+            <button
+              type="button"
+              className="mx-auto mt-3 block rounded-lg bg-cyan-500 px-4 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              onClick={() => {
+                setEffect(true);
+              }}
+            >
+              Ready
+            </button>
+          </div>,
+          rootEl
+        )}
+
+      <div
+        style={css}
+        id="playersCard"
+        className={`mx-auto flex flex-row items-center py-3 max-w-[${minSize}px]`}
+      >
+        <PlayerCard user={users[0]} status={true} id={1} />
+        <PlayerCard user={users[1]} status={false} id={2} />
       </div>
-      <div style={styles.padding}>
-        <button
-          className="ld:basis-1/4 w-40 items-center rounded border border-gray-300 bg-gray-400 bg-gray-300 text-center md:basis-1/2"
-          type="button"
-          id="btn_start"
-          onClick={() => {
-            gamer.inviteGame(5);
-          }}
-        >
-          Invite 5
-        </button>
 
-        <button
-          className="ld:basis-1/4 w-40 items-center rounded border border-gray-300 bg-gray-400 bg-gray-300 text-center md:basis-1/2"
-          type="button"
-          id="btn_start"
-          onClick={() => {
-            gamer.inviteGame(2);
-          }}
-        >
-          Invite 2
-        </button>
+      <canvas className="mx-auto rounded-lg bg-black" id="canvas"></canvas>
+      <button
+        type="button"
+        className="mx-auto mt-3 flex rounded-lg bg-cyan-500 px-4 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        onClick={() => {
+          setModal(true);
+          setEffect(false);
+        }}
+      >
+        Show rules
+      </button>
 
-        <button
-          className="ld:basis-1/4 w-40 items-center rounded border border-gray-300 bg-gray-400 bg-gray-300 text-center md:basis-1/2"
-          type="button"
-          id="btn_start"
-          onClick={() => {
-            gamer.joinGame(1);
-          }}
-        >
-          Join 1
-        </button>
-
-
-        <button
-          className="ld:basis-1/4 w-40 items-center rounded border border-gray-300 bg-gray-400 bg-gray-300 text-center md:basis-1/2"
-          type="button"
-          id="btn_start"
-          onClick={() => {
-            gamer.joinGame(3);
-          }}
-        >
-          Join 3
-        </button>
-
-        <button
-          className="ld:basis-1/4 w-40 items-center rounded border border-gray-300 bg-gray-400 bg-gray-300 text-center md:basis-1/2"
-          type="button"
-          id="btn_start"
-          onClick={() => {
-            gamer.playGame(['ready']);
-          }}
-        >
-          Ready
-        </button>
-
-
-        <button
-          className="ld:basis-1/4 w-40 items-center rounded border border-gray-300 bg-gray-400 bg-gray-300 text-center md:basis-1/2"
-          type="button"
-          id="btn_start"
-          onClick={() => {
-            gamer.playGame(['unready']);
-          }}
-        >
-          Unready
-        </button>
-
-        {/* <button className="rounded bg-gray-400 border border-gray-300 w-40 text-center items-center md:basis-1/2 ld:basis-1/4 bg-gray-300" type="button" id="btn_start" onClick={() => { gamer.gameArea.current?.startGame() }}>
-					Start
-				</button> */}
-      </div>
-      <p>/!CONTROL!\</p>
-      <p>W: UP</p>
-      <p>S: DOWN</p>
-      <p>NUMBERS: ULTIMATE</p>
+      <button
+        type="button"
+        className="mx-auto mt-3 flex rounded-lg bg-cyan-500 px-4 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        onClick={() => {
+          gamer.inviteGame(2);
+        }}
+      >
+        Invite
+      </button>
+      <button
+        type="button"
+        className="mx-auto mt-3 flex rounded-lg bg-cyan-500 px-4 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        onClick={() => {
+          gamer.joinGame(1);
+        }}
+      >
+        Join
+      </button>
     </div>
   );
 }

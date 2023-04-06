@@ -28,7 +28,7 @@ const useGame = ({ loginer }: useGameProps) => {
         "identify",
         {},
         (response: { error: string }) => {
-          if (response.error != undefined) {
+          if (response.error !== undefined) {
             console.log("identify error", response.error);
           }
         }
