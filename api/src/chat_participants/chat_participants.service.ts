@@ -39,14 +39,15 @@ export class ChatParticipantsService {
 
   async listAvailableUserChats(id: number): Promise<ChannelDto[]> {
 
-    const myChats = await this.chatParticipantsRepository.find({
+    const myParticipations = await this.chatParticipantsRepository.find({
       where: {
         participant: { id: id },
       },
+      relations: { room: true },
     });
 
-    const myChatsId = myChats.map(chat => chat.id);
-
+    const myChatsId = myParticipations.map(participation => participation.room.id);
+    
     let publicChats = await this.chatsService.findPublicChats();
     publicChats = publicChats.filter(chat => myChatsId.indexOf(chat.id) == -1);
 
