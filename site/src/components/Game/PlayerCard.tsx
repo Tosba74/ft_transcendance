@@ -19,9 +19,12 @@ export default function PlayerCard(props: playerCardProps) {
     <>
       <div className="flex items-center pb-2">
         <img
-          className={classNames("h-12 w-12 basis-3 rounded-full object-cover", {
-            "order-last": props.isRight,
-          })}
+          className={classNames(
+            "h-[48px] w-[48px] min-w-[48px] rounded-full object-cover",
+            {
+              "order-last": props.isRight,
+            }
+          )}
           src={props.user?.avatar_url || LogoInconnu}
           alt={`Player-${props.user?.pseudo}`}
         />
