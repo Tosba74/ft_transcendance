@@ -2,12 +2,12 @@ import React from "react";
 import classNames from "classnames";
 import { createPortal } from "react-dom";
 
-import PublicList from "./PublicList";
-import BannedList from "./BannedList";
 import CurrentList from "./CurrentList";
 
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
 import { UseChatDto } from "../Chat/dto/useChat.dto";
+import PublicList from "./PublicList";
+import BannedList from "./BannedList";
 
 interface ChannelsPageProps {
   loginer: UseLoginDto;
@@ -20,29 +20,59 @@ export default function ChannelsPage({ loginer, chats }: ChannelsPageProps) {
   const [portalEffect, setPortalEffect] = React.useState(false);
   const [reload, setReload] = React.useState(false);
 
+  const [selectedMenu, setSelectedMenu] = React.useState("current");
+
   function doReload() {
     setReload((old) => !old);
   }
 
+  const inactiveStyle = "bg-white dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700";
+  const activeStyle = "active bg-gray-100 text-gray-900";
+
   //
   return (
-    <div className="mx-auto max-w-md">
-      <div className="flex flex-col px-4">
-        <PublicList
-          loginer={loginer}
-          setErrorMessage={setErrorMessage}
-          reload={reload}
-          doReload={doReload}
-        />
-        <BannedList loginer={loginer} reload={reload} />
-        <CurrentList
-          loginer={loginer}
-          chats={chats}
-          setErrorMessage={setErrorMessage}
-          reload={reload}
-        />
+    <>
+      <div className="mx-auto max-w-md h-5/6 flex flex-col px-4">
+        <ul className="mt-2 hidden text-sm font-medium text-center text-gray-500 divide-x divide-gray-200 rounded-lg shadow sm:flex dark:divide-gray-700 dark:text-gray-400">
+          <li className="w-full">
+            <div onClick={() => setSelectedMenu('public')} className={classNames("inline-block w-full p-4 rounded-l-lg dark:bg-gray-700 dark:text-white", selectedMenu === "public" ? activeStyle : inactiveStyle)}>Public</div>
+          </li>
+          <li className="w-full">
+            <div onClick={() => setSelectedMenu('banned')} className={classNames("inline-block w-full p-4  hover:text-gray-700 hover:bg-gray-50 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700", selectedMenu === "banned" ? activeStyle : inactiveStyle)}>Banned</div>
+          </li>
+          <li className="w-full">
+            <div onClick={() => setSelectedMenu('current')} className={classNames("inline-block w-full p-4 rounded-r-lg hover:text-gray-700  hover:bg-gray-50", selectedMenu === "current" ? activeStyle : inactiveStyle)}>Current</div>
+          </li>
+        </ul>
+
+        {selectedMenu === "public" && (
+          <div className="h-full flex flex-col">
+
+            <PublicList
+              loginer={loginer}
+              setErrorMessage={setErrorMessage}
+              reload={reload}
+              doReload={doReload}
+            />
+            <BannedList loginer={loginer} reload={reload} />
+          </div>
+        )}
+
+        {selectedMenu === "banned" && (
+          <BannedList loginer={loginer} reload={reload} />
+        )}
+
+        {selectedMenu === "current" && (
+          <CurrentList
+            loginer={loginer}
+            chats={chats}
+            setErrorMessage={setErrorMessage}
+            reload={reload}
+          />
+        )}
+
         <button
-          className="mt-16 h-16 rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700"
+          className="mt-10 h-16 rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700"
           type="button"
           id="btn_new"
           onClick={() => {
@@ -83,6 +113,6 @@ export default function ChannelsPage({ loginer, chats }: ChannelsPageProps) {
           </div>,
           rootEl
         )}
-    </div>
+    </>
   );
 }
