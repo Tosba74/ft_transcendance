@@ -10,11 +10,20 @@ import { FiLock, FiRefreshCw } from "react-icons/fi";
 
 import { ChannelDto } from "src/_shared_dto/channel.dto";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
+import { UseChatDto } from "../Chat/dto/useChat.dto";
 
 interface CurrentListProps {
   loginer: UseLoginDto;
+  chats: UseChatDto;
+  setErrorMessage: Function;
+  reload: boolean;
 }
-export default function CurrentList({ loginer }: CurrentListProps) {
+export default function CurrentList({
+  loginer,
+  chats,
+  setErrorMessage,
+  reload,
+}: CurrentListProps) {
   const [channels, setChannels] = React.useState<ChannelDto[]>([]);
   const [effect, setEffect] = React.useState(false);
 
@@ -39,7 +48,7 @@ export default function CurrentList({ loginer }: CurrentListProps) {
 
   React.useEffect(() => {
     refreshData();
-  }, []);
+  }, [reload]);
 
   return (
     <div className="border-blueGray-200 border-b py-5">
@@ -96,7 +105,7 @@ export default function CurrentList({ loginer }: CurrentListProps) {
                     type="button"
                     id="btn_join"
                     onClick={() => {
-                      console.log(`${channel.id} button open pressed`);
+                      chats.connectRoom(channel.id, setErrorMessage);
                     }}
                   >
                     open

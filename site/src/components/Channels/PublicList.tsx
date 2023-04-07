@@ -11,9 +11,17 @@ import { UseLoginDto } from "../Log/dto/useLogin.dto";
 
 interface PublicListProps {
   loginer: UseLoginDto;
+  setErrorMessage: Function;
+  reload: boolean;
+  doReload: Function;
 }
 
-export default function PublicList({ loginer }: PublicListProps) {
+export default function PublicList({
+  loginer,
+  setErrorMessage,
+  reload,
+  doReload,
+}: PublicListProps) {
   const [channels, setChannels] = React.useState<ChannelDto[]>([]);
   const [effect, setEffect] = React.useState(false);
 
@@ -36,9 +44,31 @@ export default function PublicList({ loginer }: PublicListProps) {
     }, 1000);
   }
 
+  function joinChannel(id: number) {
+    axios
+      .post(`/api/me/chats/join/${id}`, {}, loginer.get_headers())
+      .then((res) => {
+        if (res.status === 201) {
+          doReload();
+
+          return;
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        if (error.response.data.message !== undefined) {
+          setErrorMessage(error.response.data.message);
+        }
+
+        if (error.response.status === 412) {
+          doReload();
+        }
+      });
+  }
+
   React.useEffect(() => {
     refreshData();
-  }, []);
+  }, [reload]);
 
   return (
     <div className="border-blueGray-200 border-b py-5">
@@ -80,9 +110,8 @@ export default function PublicList({ loginer }: PublicListProps) {
                   <button
                     className="basis-1/4 self-center rounded bg-blue-500 	font-bold text-white hover:bg-blue-700"
                     type="button"
-                    id="btn_join"
                     onClick={() => {
-                      console.log(`${channel.id} button join pressed`);
+                      joinChannel(channel.id);
                     }}
                   >
                     join

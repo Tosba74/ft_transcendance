@@ -13,8 +13,12 @@ import { UseLoginDto } from "../Log/dto/useLogin.dto";
 
 interface BannedListProps {
   loginer: UseLoginDto;
+  reload: boolean;
 }
-export default function BannedList({ loginer }: BannedListProps) {
+export default function BannedList({
+  loginer,
+  reload,
+}: BannedListProps) {
   const [channels, setChannels] = React.useState<ChannelDto[]>([]);
   const [effect, setEffect] = React.useState(false);
 
@@ -39,7 +43,7 @@ export default function BannedList({ loginer }: BannedListProps) {
 
   React.useEffect(() => {
     refreshData();
-  }, []);
+  }, [reload]);
 
   return (
     <div className="border-blueGray-200 border-b py-5">

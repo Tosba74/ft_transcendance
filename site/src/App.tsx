@@ -18,7 +18,7 @@ import SettingsPage from "./components/Settings/SettingsPage";
 import { UseLoginDto } from "./components/Log/dto/useLogin.dto";
 import useLogin from "./components/Log/useLogin";
 import UserListPage from "./components/UserList/UserListPage";
-import ChatPage from "./components/Chat/ChatMenu";
+import ChatMenu from "./components/Chat/ChatMenu";
 import GamePage from "./components/Game/GamePage";
 import TfaCodePage from "./components/Log/TfaCodePage";
 import CreateAccountPage from "./components/Log/CreateAccountPage";
@@ -66,7 +66,7 @@ export default function App() {
               />
               <Route
                 path="/channels"
-                element={<ChannelsPage loginer={loginer} />}
+                element={<ChannelsPage loginer={loginer} chats={chats} />}
               />
               <Route
                 path="/players"
@@ -96,9 +96,13 @@ export default function App() {
         </Routes>
       </div>
 
-      <ChatIcon openedMenu={openedMenu} setOpenedMenu={setOpenedMenu} />
+      <ChatIcon
+        openedMenu={openedMenu}
+        setOpenedMenu={setOpenedMenu}
+        chats={chats}
+      />
 
-      <ChatPage
+      <ChatMenu
         openedMenu={openedMenu}
         setOpenedMenu={setOpenedMenu}
         loginer={loginer}
