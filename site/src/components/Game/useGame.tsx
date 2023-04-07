@@ -1,8 +1,6 @@
 import React from "react";
 import { io, Socket } from "socket.io-client";
-import { BallDto } from "./dto/ball.dto";
 import { GameDataDto } from "./dto/gamedata.dto";
-import { PlayerDto } from "./dto/player.dto";
 import { GameArea } from "./pong";
 
 interface useGameProps {
@@ -26,7 +24,7 @@ const useGame = ({ logged, token }: useGameProps) => {
         "identify",
         {},
         (response: { error: string }) => {
-          if (response.error != undefined) {
+          if (response.error !== undefined) {
             console.log("identify error", response.error);
           }
         }
