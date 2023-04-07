@@ -22,7 +22,7 @@ export default function GamePage({ gamer }: GamePageProps) {
     if (gamer.gameArea.current && gamer.gameArea.current?.canvas && around) {
       // console.log(around.clientWidth, around.clientHeight);
 
-      let min = Math.min(around.clientWidth, around.clientHeight * 1) * 0.8;
+      let min = Math.min(around.clientWidth, around.clientHeight) * 0.8;
 
       setMinSize(`${min}px`);
       gamer.gameArea.current.canvas.style.width = `${min}`;
