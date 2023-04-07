@@ -223,7 +223,7 @@ export class ChatsService {
   }
 
 
-  async checkPermission(room:ChatModel, command: string[], senderId: number, targetUserId: number, targetRole=0): Promise<string | undefined> {
+  async checkPermission(room:ChatModel, command: string[], senderId: number, targetUserId: number, roleToAssign=0): Promise<string | undefined> {
 
     if (command.length != 2)
       return `${command[0]}: argument error`;
@@ -233,40 +233,45 @@ export class ChatsService {
       return `${command} : Cannot ${command} yourself`;
 
     // already the targeted role (no need this for kick)
-    if (targetRole) {
+    if (roleToAssign) {
       try {
-        const role = await this.chatParticipantsService.get_role(targetUserId, room.id);
-        if (role === targetRole) {
+        const targetCurrentRole = await this.chatParticipantsService.get_role(targetUserId, room.id);
+        if (targetCurrentRole === roleToAssign) {
 
           let message = '';
           switch (command[0]) {
             case "/promote":
-              message = 'promote: no effect, user is already admin';
+              message = `promote: no effect, ${targetUserId} is already admin`;
               break;
             case "/demote":
-              message = 'demote: no effect, user has no special permission';
+              message = `demote: no effect, ${targetUserId} has no special permission`;
               break;
             case "/ban":
-              message = 'ban: no effect, user already banned';
+              message = `ban: no effect, ${targetUserId} already banned`;
               break;
             case "/unban":
-              message = 'unban: no effect, user already in the channel';
+              message = `unban: no effect, ${targetUserId} already in the channel`;
               break;
           }
 
           return message;
         }
+        // admin cant touch admin (for demote, kick, ban)
+        else if (targetCurrentRole === ChatRoleModel.ADMIN_ROLE) {
+          console.log('test1');
+          const senderRole = await this.chatParticipantsService.get_role(senderId, room.id);
+          console.log(senderId);
+          if (senderRole !== ChatRoleModel.OWNER_ROLE)
+            return `${command}: lack of permission: an Admin can't affect another Admin's role. Refer the the Owner instead.`;
+        }
       } catch (error) {
-        return `${command} : user not found or no relation with this channel`;
+        return `${command}: ${targetUserId} not found or no relation with this channel`;
       }
     }
 
-    // admin cant touch admin (for demote, kick, ban)
-    // ...
-    
     // nobody can touch the owner
     if (room.participants.find(value => (value.participant.id == targetUserId && value.role.id == ChatRoleModel.OWNER_ROLE)))
-      return `${command} : lack of permission: can't ${command} the owner of the channel`;
+      return `${command}: lack of permission: ${targetUserId} is the owner of this channel`;
 
     return undefined;
   }
@@ -485,8 +490,6 @@ export class ChatsService {
 
   /* 
   Invite
-  Promote
-  Unmote
   Change password (confirmation ?)
   Remove password method
   */
@@ -511,7 +514,7 @@ export class ChatsService {
       responseMessage.sender.id = -1;
       this.serverMsgId++;
 
-      console.log('Command args', command);
+      // console.log('Command args', command);
       switch (command[0]) {
 
         case "/promote":
@@ -579,7 +582,7 @@ export class ChatsService {
         const msg = await this.chatMessagesService.create(message, user.id, room_id)
 
         responseMessage.id = msg.id;
-        console.log(user);
+        // console.log(user);
         responseMessage.sender = { ...user, status: '' };
         responseMessage.content = message;
 
