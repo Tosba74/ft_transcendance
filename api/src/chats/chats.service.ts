@@ -223,7 +223,10 @@ export class ChatsService {
   }
 
 
-  async checkPermission(room:ChatModel, command: string, senderId: number, targetUserId: number, targetRole=0): Promise<string | undefined> {
+  async checkPermission(room:ChatModel, command: string[], senderId: number, targetUserId: number, targetRole=0): Promise<string | undefined> {
+
+    if (command.length != 2)
+      return `${command[0]}: argument error`;
 
     // not to yourself
     if (targetUserId == senderId)
@@ -236,7 +239,7 @@ export class ChatsService {
         if (role === targetRole) {
 
           let message = '';
-          switch (command) {
+          switch (command[0]) {
             case "/promote":
               message = 'promote: no effect, user is already admin';
               break;
@@ -258,9 +261,12 @@ export class ChatsService {
       }
     }
 
+    // admin cant touch admin (for demote, kick, ban)
+    // ...
+    
     // nobody can touch the owner
     if (room.participants.find(value => (value.participant.id == targetUserId && value.role.id == ChatRoleModel.OWNER_ROLE)))
-      return `${command} : Not enough permissions`;
+      return `${command} : lack of permission: can't ${command} the owner of the channel`;
 
     return undefined;
   }
@@ -268,214 +274,186 @@ export class ChatsService {
 
   async promoteCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
 
-    if (command.length == 2) {
+    let userToPromote = parseInt(command[1]);
 
-      let userToPromote = parseInt(command[1]);
+    const permission = await this.checkPermission(room, command, user.id, userToPromote, ChatRoleModel.ADMIN_ROLE);
+    if (permission !== undefined)
+      return permission
 
-      const permission = await this.checkPermission(room, command[0], user.id, userToPromote, ChatRoleModel.ADMIN_ROLE);
-      if (permission !== undefined)
-        return permission
+    // update role in db
+    let newRole = new UpdateRoleDto();
+    newRole.new_role = ChatRoleModel.ADMIN_ROLE;
+    newRole.participantId = userToPromote;
+    newRole.roomId = room.id;
+    try {
+      await this.chatParticipantsService.update_role(newRole);
+    } catch (error) {
+      return "Promote : user not found or not in this channel";
+    }
 
-      // update role in db
-      let newRole = new UpdateRoleDto();
-      newRole.new_role = ChatRoleModel.ADMIN_ROLE;
-      newRole.participantId = userToPromote;
-      newRole.roomId = room.id;
-      try {
-        await this.chatParticipantsService.update_role(newRole);
-      } catch (error) {
-        return "Promote : user not found or not in this channel";
-      }
+    // Notify the sender (and the promoted user if (multi)connected)
+    let clientsToPromote = this.clients.filter(value => {
+      return value.user.id == userToPromote
+    });
+    if (clientsToPromote.length > 0) {
 
-      // Notify the sender (and the promoted user if (multi)connected)
-      let clientsToPromote = this.clients.filter(value => {
-        return value.user.id == userToPromote
+      let promoteMessage = new ChatMessageDto();
+      promoteMessage.id = -this.serverMsgId;
+      promoteMessage.sender = { ...user, status: '' };      // NEST ERROR: sender was undefined here so cant set his id
+      // promoteMessage.sender = new UserDto();             // either the admin user either -1 ?
+      promoteMessage.sender.id = -1;
+      promoteMessage.content = promoteMessage.sender.pseudo + ' named you Admin of this channel';
+      this.serverMsgId++;
+
+      clientsToPromote.forEach(value => {
+        if (value.socket.rooms.has(room.id.toString())) {
+          value.socket.emit('broadcastMessage', { room_id: room.id, message: promoteMessage });
+        }
       });
-      if (clientsToPromote.length > 0) {
-
-        let promoteMessage = new ChatMessageDto();
-        promoteMessage.id = -this.serverMsgId;
-        promoteMessage.sender = { ...user, status: '' };      // NEST ERROR: sender was undefined here so cant set his id
-        // promoteMessage.sender = new UserDto();             // either the admin user either -1 ?
-        promoteMessage.sender.id = -1;
-        promoteMessage.content = promoteMessage.sender.pseudo + ' named you Admin of this channel';
-        this.serverMsgId++;
-
-        clientsToPromote.forEach(value => {
-          if (value.socket.rooms.has(room.id.toString())) {
-            value.socket.emit('broadcastMessage', { room_id: room.id, message: promoteMessage });
-          }
-        });
-      }
-
-      return "Promote : done";
-
     }
-    else {
-      return "Promote : Argument error";
-    }
+
+    return "Promote : done";
   }
 
   // special permission: only Owner can demote and Admin, Admin cannot demote another Admin cause equal status
   async demoteCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
 
-    if (command.length == 2) {
+    let userToDemote = parseInt(command[1]);
+    
+    const permission = await this.checkPermission(room, command, user.id, userToDemote, ChatRoleModel.USER_ROLE);
+    if (permission !== undefined)
+      return permission
+    
+    // update role in db
+    let newRole = new UpdateRoleDto();
+    newRole.new_role = ChatRoleModel.USER_ROLE;
+    newRole.participantId = userToDemote;
+    newRole.roomId = room.id;
+    try {
+      await this.chatParticipantsService.update_role(newRole);
+    } catch (error) {
+      return "Demote : user not found or not in this channel";
+    }
+    
+    // Notify the sender (and the demoted user if (multi)connected)
+    let clientsToDemote = this.clients.filter(value => {
+      return value.user.id == userToDemote
+    });
+    if (clientsToDemote.length > 0) {
 
-      let userToDemote = parseInt(command[1]);
-      
-      const permission = await this.checkPermission(room, command[0], user.id, userToDemote, ChatRoleModel.USER_ROLE);
-      if (permission !== undefined)
-        return permission
-      
-      // update role in db
-      let newRole = new UpdateRoleDto();
-      newRole.new_role = ChatRoleModel.USER_ROLE;
-      newRole.participantId = userToDemote;
-      newRole.roomId = room.id;
-      try {
-        await this.chatParticipantsService.update_role(newRole);
-      } catch (error) {
-        return "Demote : user not found or not in this channel";
-      }
-      
-      // Notify the sender (and the demoted user if (multi)connected)
-      let clientsToDemote = this.clients.filter(value => {
-        return value.user.id == userToDemote
+      let demoteMessage = new ChatMessageDto();
+      demoteMessage.id = -this.serverMsgId;
+      demoteMessage.sender = { ...user, status: '' };      // NEST ERROR: sender was undefined here so cant set his id
+      // demoteMessage.sender = new UserDto();             // either the admin user either -1 ?
+      demoteMessage.sender.id = -1;
+      demoteMessage.content = demoteMessage.sender.pseudo + ' removed your Admin status';
+      this.serverMsgId++;
+
+      clientsToDemote.forEach(value => {
+        if (value.socket.rooms.has(room.id.toString())) {
+          value.socket.emit('broadcastMessage', { room_id: room.id, message: demoteMessage });
+        }
       });
-      if (clientsToDemote.length > 0) {
-
-        let demoteMessage = new ChatMessageDto();
-        demoteMessage.id = -this.serverMsgId;
-        demoteMessage.sender = { ...user, status: '' };      // NEST ERROR: sender was undefined here so cant set his id
-        // demoteMessage.sender = new UserDto();             // either the admin user either -1 ?
-        demoteMessage.sender.id = -1;
-        demoteMessage.content = demoteMessage.sender.pseudo + ' removed your Admin status';
-        this.serverMsgId++;
-
-        clientsToDemote.forEach(value => {
-          if (value.socket.rooms.has(room.id.toString())) {
-            value.socket.emit('broadcastMessage', { room_id: room.id, message: demoteMessage });
-          }
-        });
-      }
-      
-      return "Demote : done";
-
     }
-    else {
-      return "Demote : Argument error";
-    }
+    
+    return "Demote : done";
   }
 
+  // Example {"/kick", "1"}
+  // Second argument is userid
   async kickCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
 
-    // Example {"/kick", "1"}
-    // Second argument is userid
-    if (command.length == 2) {
+    let userToKick = parseInt(command[1]);
 
-      let userToKick = parseInt(command[1]);
+    const permission = await this.checkPermission(room, command, user.id, userToKick);
+    if (permission !== undefined)
+      return permission
 
-      const permission = await this.checkPermission(room, command[0], user.id, userToKick);
-      if (permission !== undefined)
-        return permission
+    // User could have multiple clients connected, get'em all
+    let clientsToKick = this.clients.filter(value => {
+      return value.user.id == userToKick
+    });
 
-      // User could have multiple clients connected, get'em all
-      let clientsToKick = this.clients.filter(value => {
-        return value.user.id == userToKick
+    if (clientsToKick.length > 0) {
+
+      // Create kick message
+      let kickMessage = new ChatMessageDto();
+      kickMessage.id = -this.serverMsgId;
+      kickMessage.sender = { ...user, status: '' };      // NEST ERROR: sender was undefined here so cant set his id
+      // kickMessage.sender = new UserDto();             // either the admin user either -1 ?
+      kickMessage.sender.id = -1;
+      kickMessage.content = 'You have been kicked';
+      this.serverMsgId++;
+
+      // Send kick message to all clients connected to the room and disconnect them
+      clientsToKick.forEach(value => {
+        if (value.socket.rooms.has(room.id.toString())) {
+
+          value.socket.emit('broadcastMessage', { room_id: room.id, message: kickMessage });
+          value.socket.leave(room.id.toString());
+        }
       });
 
-      if (clientsToKick.length > 0) {
-
-        // Create kick message
-        let kickMessage = new ChatMessageDto();
-        kickMessage.id = -this.serverMsgId;
-        kickMessage.sender = { ...user, status: '' };      // NEST ERROR: sender was undefined here so cant set his id
-        // kickMessage.sender = new UserDto();             // either the admin user either -1 ?
-        kickMessage.sender.id = -1;
-        kickMessage.content = 'You have been kicked';
-        this.serverMsgId++;
-
-        // Send kick message to all clients connected to the room and disconnect them
-        clientsToKick.forEach(value => {
-          if (value.socket.rooms.has(room.id.toString())) {
-
-            value.socket.emit('broadcastMessage', { room_id: room.id, message: kickMessage });
-            value.socket.leave(room.id.toString());
-          }
-        });
-
-        return "Kick : done";
-
-      }
-      else {
-        return "Kick : user not found or connected";
-      }
+      return "Kick : done";
 
     }
     else {
-      return "Kick : Argument error";
+      return "Kick : user not found or connected";
     }
   }
   
   // special permission: only Owner can ban and Admin, Admin cannot ban another Admin cause equal status
   async banCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
 
-    if (command.length == 2) {
+    let userToBan = parseInt(command[1]);
 
-      let userToBan = parseInt(command[1]);
+    const permission = await this.checkPermission(room, command, user.id, userToBan, ChatRoleModel.BAN_ROLE);
+    if (permission !== undefined)
+      return permission
 
-      const permission = await this.checkPermission(room, command[0], user.id, userToBan, ChatRoleModel.BAN_ROLE);
-      if (permission !== undefined)
-        return permission
+    // User could have multiple clients connected, get'em all
+    let clientsToBan = this.clients.filter(value => {
+      return value.user.id == userToBan
+    });
 
-      // User could have multiple clients connected, get'em all
-      let clientsToBan = this.clients.filter(value => {
-        return value.user.id == userToBan
+    // 1. (KICK) + NOTIFY
+    if (clientsToBan.length > 0) {// if active connexions
+      // kick him from channel with message
+
+      // Create kick message
+      let banMessage = new ChatMessageDto();
+      banMessage.id = -this.serverMsgId;
+      banMessage.sender = { ...user, status: '' };      // NEST ERROR: sender was undefined here so cant set his id
+      // banMessage.sender = new UserDto();             // either the admin user either -1 ?
+      banMessage.sender.id = -1;
+      banMessage.content = 'You have been banned';
+      this.serverMsgId++;
+
+      // Send kick message to all clients connected to the room and disconnect them
+      clientsToBan.forEach(value => {
+        if (value.socket.rooms.has(room.id.toString())) {
+
+          value.socket.emit('broadcastMessage', { room_id: room.id, message: banMessage });
+          value.socket.leave(room.id.toString());
+        }
       });
-
-      // 1. (KICK) + NOTIFY
-      if (clientsToBan.length > 0) {// if active connexions
-        // kick him from channel with message
-
-        // Create kick message
-        let banMessage = new ChatMessageDto();
-        banMessage.id = -this.serverMsgId;
-        banMessage.sender = { ...user, status: '' };      // NEST ERROR: sender was undefined here so cant set his id
-        // banMessage.sender = new UserDto();             // either the admin user either -1 ?
-        banMessage.sender.id = -1;
-        banMessage.content = 'You have been banned';
-        this.serverMsgId++;
-
-        // Send kick message to all clients connected to the room and disconnect them
-        clientsToBan.forEach(value => {
-          if (value.socket.rooms.has(room.id.toString())) {
-
-            value.socket.emit('broadcastMessage', { room_id: room.id, message: banMessage });
-            value.socket.leave(room.id.toString());
-          }
-        });
-      }
-      else {// no active connexions
-        // mettre une notif cote front ???
-        console.log('banned without active connection');
-      }
-
-      // 2. CHAT_PARTICIPANTS: USER-ROOM SET ROLE TO BAN
-      let newRole = new UpdateRoleDto();
-      newRole.new_role = ChatRoleModel.BAN_ROLE;
-      newRole.participantId = userToBan;
-      newRole.roomId = room.id;
-      try {
-        await this.chatParticipantsService.update_role(newRole);
-      } catch (error) {
-        return "Ban : user not found or not in this channel";
-      }
-      return "Ban : done";
-
     }
-    else {
-      return "Ban : Argument error";
+    else {// no active connexions
+      // mettre une notif cote front ???
+      console.log('banned without active connection');
     }
+
+    // 2. CHAT_PARTICIPANTS: USER-ROOM SET ROLE TO BAN
+    let newRole = new UpdateRoleDto();
+    newRole.new_role = ChatRoleModel.BAN_ROLE;
+    newRole.participantId = userToBan;
+    newRole.roomId = room.id;
+    try {
+      await this.chatParticipantsService.update_role(newRole);
+    } catch (error) {
+      return "Ban : user not found or not in this channel";
+    }
+    return "Ban : done";
   }
 
   async unbanCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
@@ -484,7 +462,7 @@ export class ChatsService {
 
       let userToUnban = parseInt(command[1]);
 
-      const permission = await this.checkPermission(room, command[0], user.id, userToUnban, ChatRoleModel.USER_ROLE);
+      const permission = await this.checkPermission(room, command, user.id, userToUnban, ChatRoleModel.USER_ROLE);
       if (permission !== undefined)
         return permission
 
