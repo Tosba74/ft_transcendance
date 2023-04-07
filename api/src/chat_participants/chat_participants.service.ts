@@ -156,7 +156,7 @@ export class ChatParticipantsService {
   async delete(id: number): Promise<void> {
     try {
       const participant = await this.findOneById(id);
-      this.chatParticipantsRepository.delete({ id: id });
+      this.chatParticipantsRepository.delete(id);
     }
     catch (error) {
       throw new NotFoundException('Chat participant id not found');

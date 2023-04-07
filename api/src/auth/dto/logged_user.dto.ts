@@ -15,7 +15,7 @@ export class LoggedUserDto {
     color: number;
 
     @ApiProperty({ type: String })
-    avatar_url?: string;
+    avatar_url: string;
 
     @ApiProperty({ type: Boolean })
     tfa_enabled: boolean;
