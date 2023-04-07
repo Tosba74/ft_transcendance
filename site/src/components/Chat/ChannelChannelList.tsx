@@ -34,46 +34,43 @@ export default function ChannelChannelList({
 
   // const [channels] = useState<Channel[]>(Mock_Channel);
   return (
-    <div className="shadow-inner-lg h-1/3 w-full rounded-md bg-gray-300 p-4 dark:bg-gray-800">
-      <div className="scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
+    <div className="w-full h-1/3 shadow-inner scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter rounded scrollbar-w-1 py-1 px-4 scrolling-touch overflow-y-auto rounded-b bg-gray-300 dark:bg-gray-800 dark:text-white">
         {lstChannel &&
           Object.keys(lstChannel).map((key) => {
             return (
               <div
-                className="flex w-full flex-row items-center gap-4"
+                className="flex w-full flex-row justify-center items-center mt-1 gap-2"
                 key={lstChannel[key].id}
               >
-                <div className="justify-center justify-items-center text-start dark:text-white">
-                  Logo
-                </div>
-                <div className="flex basis-5/6">
-                  <li className="w-14 basis-5/6 truncate">
-                    {lstChannel[key].name}
-                  </li>
-                  {lstChannel[key].password && (
+                                <li className="w-6 justify-center items-center list-none" key={lstChannel[key].id}>
+                    {lstChannel[key] && (
+                //   {lstChannel[key].password && (
                     <MdKey
-                      className="basis-1/6 self-center "
+                      className=""
                       title="Protected"
                     />
                   )}
-                  {!lstChannel[key].password && lstChannel[key].type == 1 && (
+                    {!lstChannel[key] && lstChannel[key].type == 1 && (
+                //   {!lstChannel[key].password && lstChannel[key].type == 1 && (
                     <MdOutlineEmail
-                      className="basis-1/6 self-center"
+                      className=""
                       title="Chat"
                     />
                   )}
-                  {!lstChannel[key].password && lstChannel[key].type == 2 && (
+                    {!lstChannel[key] && lstChannel[key].type == 2 && (
+                //   {!lstChannel[key].password && lstChannel[key].type == 2 && (
                     <MdPublic
-                      className="basis-1/6 self-center"
+                      className=""
                       title="Public"
                     />
                   )}
-                  {!lstChannel[key].password && lstChannel[key].type == 3 && (
-                    <FiLock className="basis-1/6 self-center" title="Private" />
-                  )}
-                </div>
-                <button
-                  className="w-5/6 justify-center text-start dark:text-white"
+                    {!lstChannel[key] && lstChannel[key].type == 3 && (
+                //   {!lstChannel[key].password && lstChannel[key].type == 3 && (
+                    <FiLock className="" title="Private" />
+                  )} 
+                  </li>
+                 <button
+                  className="flex w-5/6 justify-start dark:text-white"
                   type="button"
                   onClick={() => {
                     handleShow(lstChannel[key]);
@@ -81,17 +78,18 @@ export default function ChannelChannelList({
                 >
                   <strong>{lstChannel[key].name}</strong>
                 </button>
+                
                 <button
                   type="button"
                   onClick={() => handleChange(lstChannel[key])}
-                  className="h-8 w-8 justify-center bg-cyan-500 p-2 text-white"
-                >
+                  className="rounded justify-center bg-cyan-500 p-1 px-2 text-white"
+                  >
                   JOIN
                 </button>
               </div>
             );
           })}
+
       </div>
-    </div>
   );
 }
