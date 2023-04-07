@@ -108,9 +108,6 @@ export class ChatsService {
   }
 
 
-
-
-
   async identify(user: LoggedUserDto, client: Socket): Promise<ChatResponseDto<undefined>> {
 
     if (!user || user.id == undefined) {
@@ -223,7 +220,7 @@ export class ChatsService {
   }
 
 
-  async checkPermission(room:ChatModel, command: string[], senderId: number, targetUserId: number, roleToAssign=0): Promise<string | undefined> {
+  async commandPermission(room:ChatModel, command: string[], senderId: number, targetUserId: number, roleToAssign=-1): Promise<string | undefined> {
 
     if (command.length != 2)
       return `${command[0]}: argument error`;
@@ -232,41 +229,38 @@ export class ChatsService {
     if (targetUserId == senderId)
       return `${command} : Cannot ${command} yourself`;
 
-    // already the targeted role (no need this for kick)
-    if (roleToAssign) {
-      try {
-        const targetCurrentRole = await this.chatParticipantsService.get_role(targetUserId, room.id);
-        if (targetCurrentRole === roleToAssign) {
+    try {
+      const targetCurrentRole = await this.chatParticipantsService.get_role(targetUserId, room.id);
 
-          let message = '';
-          switch (command[0]) {
-            case "/promote":
-              message = `promote: no effect, ${targetUserId} is already admin`;
-              break;
-            case "/demote":
-              message = `demote: no effect, ${targetUserId} has no special permission`;
-              break;
-            case "/ban":
-              message = `ban: no effect, ${targetUserId} already banned`;
-              break;
-            case "/unban":
-              message = `unban: no effect, ${targetUserId} already in the channel`;
-              break;
-          }
+      // already the targeted role (no need this step for kick)
+      if (roleToAssign != -1 && targetCurrentRole === roleToAssign) {
 
-          return message;
+        let message = '';
+        switch (command[0]) {
+          case "/promote":
+            message = `promote: no effect, ${targetUserId} is already admin`;
+            break;
+          case "/demote":
+            message = `demote: no effect, ${targetUserId} has no special permission`;
+            break;
+          case "/ban":
+            message = `ban: no effect, ${targetUserId} already banned`;
+            break;
+          case "/unban":
+            message = `unban: no effect, ${targetUserId} already in the channel`;
+            break;
         }
-        // admin cant touch admin (for demote, kick, ban)
-        else if (targetCurrentRole === ChatRoleModel.ADMIN_ROLE) {
-          console.log('test1');
-          const senderRole = await this.chatParticipantsService.get_role(senderId, room.id);
-          console.log(senderId);
-          if (senderRole !== ChatRoleModel.OWNER_ROLE)
-            return `${command}: lack of permission: an Admin can't affect another Admin's role. Refer the the Owner instead.`;
-        }
-      } catch (error) {
-        return `${command}: ${targetUserId} not found or no relation with this channel`;
+
+        return message;
       }
+      // admin cant touch admin
+      else if (targetCurrentRole === ChatRoleModel.ADMIN_ROLE) {
+        const senderRole = await this.chatParticipantsService.get_role(senderId, room.id);
+        if (senderRole !== ChatRoleModel.OWNER_ROLE)
+          return `${command}: lack of permission: ${targetUserId} is also Admin. Refer to the Owner.`;
+      }
+    } catch (error) {
+      return `${command}: ${targetUserId} not found or no relation with this channel`;
     }
 
     // nobody can touch the owner
@@ -281,7 +275,7 @@ export class ChatsService {
 
     let userToPromote = parseInt(command[1]);
 
-    const permission = await this.checkPermission(room, command, user.id, userToPromote, ChatRoleModel.ADMIN_ROLE);
+    const permission = await this.commandPermission(room, command, user.id, userToPromote, ChatRoleModel.ADMIN_ROLE);
     if (permission !== undefined)
       return permission
 
@@ -304,8 +298,8 @@ export class ChatsService {
 
       let promoteMessage = new ChatMessageDto();
       promoteMessage.id = -this.serverMsgId;
-      promoteMessage.sender = { ...user, status: '' };      // NEST ERROR: sender was undefined here so cant set his id
-      // promoteMessage.sender = new UserDto();             // either the admin user either -1 ?
+      promoteMessage.sender = { ...user, status: '' };
+      // promoteMessage.sender = new UserDto();
       promoteMessage.sender.id = -1;
       promoteMessage.content = promoteMessage.sender.pseudo + ' named you Admin of this channel';
       this.serverMsgId++;
@@ -325,7 +319,7 @@ export class ChatsService {
 
     let userToDemote = parseInt(command[1]);
     
-    const permission = await this.checkPermission(room, command, user.id, userToDemote, ChatRoleModel.USER_ROLE);
+    const permission = await this.commandPermission(room, command, user.id, userToDemote, ChatRoleModel.USER_ROLE);
     if (permission !== undefined)
       return permission
     
@@ -348,8 +342,8 @@ export class ChatsService {
 
       let demoteMessage = new ChatMessageDto();
       demoteMessage.id = -this.serverMsgId;
-      demoteMessage.sender = { ...user, status: '' };      // NEST ERROR: sender was undefined here so cant set his id
-      // demoteMessage.sender = new UserDto();             // either the admin user either -1 ?
+      demoteMessage.sender = { ...user, status: '' };
+      // demoteMessage.sender = new UserDto();
       demoteMessage.sender.id = -1;
       demoteMessage.content = demoteMessage.sender.pseudo + ' removed your Admin status';
       this.serverMsgId++;
@@ -370,7 +364,7 @@ export class ChatsService {
 
     let userToKick = parseInt(command[1]);
 
-    const permission = await this.checkPermission(room, command, user.id, userToKick);
+    const permission = await this.commandPermission(room, command, user.id, userToKick);
     if (permission !== undefined)
       return permission
 
@@ -412,7 +406,7 @@ export class ChatsService {
 
     let userToBan = parseInt(command[1]);
 
-    const permission = await this.checkPermission(room, command, user.id, userToBan, ChatRoleModel.BAN_ROLE);
+    const permission = await this.commandPermission(room, command, user.id, userToBan, ChatRoleModel.BAN_ROLE);
     if (permission !== undefined)
       return permission
 
@@ -428,8 +422,8 @@ export class ChatsService {
       // Create kick message
       let banMessage = new ChatMessageDto();
       banMessage.id = -this.serverMsgId;
-      banMessage.sender = { ...user, status: '' };      // NEST ERROR: sender was undefined here so cant set his id
-      // banMessage.sender = new UserDto();             // either the admin user either -1 ?
+      banMessage.sender = { ...user, status: '' };
+      // banMessage.sender = new UserDto();
       banMessage.sender.id = -1;
       banMessage.content = 'You have been banned';
       this.serverMsgId++;
@@ -467,7 +461,7 @@ export class ChatsService {
 
       let userToUnban = parseInt(command[1]);
 
-      const permission = await this.checkPermission(room, command, user.id, userToUnban, ChatRoleModel.USER_ROLE);
+      const permission = await this.commandPermission(room, command, user.id, userToUnban, ChatRoleModel.USER_ROLE);
       if (permission !== undefined)
         return permission
 
@@ -517,6 +511,15 @@ export class ChatsService {
       // console.log('Command args', command);
       switch (command[0]) {
 
+        // case "/invite":
+        //   responseMessage.content = await this.promoteCommand(room, user, command);
+        //   break;
+        // case "/changepw":
+        //   responseMessage.content = await this.promoteCommand(room, user, command);
+        //   break;
+        // case "/removepw":
+        //   responseMessage.content = await this.promoteCommand(room, user, command);
+        //   break;
         case "/promote":
           responseMessage.content = await this.promoteCommand(room, user, command);
           break;
@@ -582,7 +585,6 @@ export class ChatsService {
         const msg = await this.chatMessagesService.create(message, user.id, room_id)
 
         responseMessage.id = msg.id;
-        // console.log(user);
         responseMessage.sender = { ...user, status: '' };
         responseMessage.content = message;
 

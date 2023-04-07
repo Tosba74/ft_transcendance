@@ -77,7 +77,6 @@ export class ChatParticipantsService {
 
 
   async get_role(participantId:number, roomId:number): Promise<number> {
-    console.log(participantId);
     const chatParticipant = await this.chatParticipantsRepository.findOneOrFail({
       where: {
         participant: { id: participantId },
@@ -87,7 +86,6 @@ export class ChatParticipantsService {
         role: true
       },
     });
-    console.log(chatParticipant);
     return chatParticipant.role.id;
   }
 
