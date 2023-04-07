@@ -39,8 +39,6 @@ export class ChatParticipantsService {
 
   async listAvailableUserChats(id: number): Promise<ChannelDto[]> {
 
-    let publicChats = await this.chatsService.findPublicChats();
-
     const myChats = await this.chatParticipantsRepository.find({
       where: {
         participant: { id: id },
@@ -49,8 +47,8 @@ export class ChatParticipantsService {
 
     const myChatsId = myChats.map(chat => chat.id);
 
+    let publicChats = await this.chatsService.findPublicChats();
     publicChats = publicChats.filter(chat => myChatsId.indexOf(chat.id) == -1);
-
 
     return publicChats.map(chat => {
       return {
@@ -65,6 +63,7 @@ export class ChatParticipantsService {
 
   async listUserChats(id: number): Promise<ChannelDto[]> {
     const myChats = await this.chatParticipantsRepository.find({
+      select: { id: true, created_at: true, updated_at: true, room: { id: true, name: true, password: true } },
       where: {
         participant: { id: id },
         role: { id: Not(ChatRoleModel.BAN_ROLE) },
@@ -85,6 +84,7 @@ export class ChatParticipantsService {
 
   async listBannedUserChats(id: number): Promise<ChannelDto[]> {
     const chats = await this.chatParticipantsRepository.find({
+      select: { id: true, created_at: true, updated_at: true, room: { id: true, name: true, password: true } },
       where: {
         participant: { id: id },
         role: { id: ChatRoleModel.BAN_ROLE },

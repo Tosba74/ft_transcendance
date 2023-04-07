@@ -1,23 +1,62 @@
+import React from "react";
+import axios from "axios";
+import classNames from "classnames";
+
 import { MdPublic } from "react-icons/md";
 import { MdKey } from "react-icons/md";
-import { MdOutlineEmail } from "react-icons/md";
-import { MdVpnLock } from "react-icons/md";
+import { FiRefreshCw } from "react-icons/fi";
+
 import { ChannelDto } from "src/_shared_dto/channel.dto";
+import { UseLoginDto } from "../Log/dto/useLogin.dto";
 
 interface PublicListProps {
-  channels: ChannelDto[];
+  loginer: UseLoginDto;
 }
 
-export default function PublicList({ channels }: PublicListProps) {
+export default function PublicList({ loginer }: PublicListProps) {
+  const [channels, setChannels] = React.useState<ChannelDto[]>([]);
+  const [effect, setEffect] = React.useState(false);
+
+  function refreshData() {
+    setEffect(true);
+
+    axios
+      .get("/api/me/chats/available", loginer.get_headers())
+      .then((res) => {
+        if (res.status === 200) {
+          setChannels(res.data as ChannelDto[]);
+
+          return;
+        }
+      })
+      .catch((error) => {});
+
+    setTimeout(() => {
+      setEffect(false);
+    }, 1000);
+  }
+
+  React.useEffect(() => {
+    refreshData();
+  }, []);
+
   return (
     <div className="border-blueGray-200 border-b py-5">
       <div className="flex flex-row flex-wrap">
         <div className="w-full">
           <h3 className="text-blueGray-700 mb-5 flex items-center justify-center text-center text-2xl font-semibold leading-normal">
-            <MdPublic className="inline-block " />
+            <MdPublic className="mr-1 inline-block" />
             Public Channels
+            <FiRefreshCw
+              className={classNames(
+                "ml-2 inline-block cursor-pointer text-xl",
+                { "animate-spin": effect }
+              )}
+              title="Force reload"
+              onClick={refreshData}
+            />
           </h3>
-          <ul className="h-44 overflow-y-scroll">
+          <ul className="h-44 overflow-y-scroll pr-1">
             {channels.map((channel) => {
               return (
                 <div
@@ -26,10 +65,15 @@ export default function PublicList({ channels }: PublicListProps) {
                 >
                   <div className="flex basis-5/6">
                     <li className="w-14 basis-5/6 truncate">{channel.name}</li>
-                    {channel.password && (
+                    {(channel.password && (
                       <MdKey
                         className="basis-1/6 self-center"
                         title="Password Required"
+                      />
+                    )) || (
+                      <MdPublic
+                        className="basis-1/6 self-center"
+                        title="Public"
                       />
                     )}
                   </div>
