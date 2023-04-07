@@ -28,6 +28,7 @@ import { UseChatDto } from "./components/Chat/dto/useChat.dto";
 import { UseGameDto } from "./components/Game/dto/useGame.dto";
 import useChat from "./components/Chat/useChat";
 import useGame from "./components/Game/useGame";
+import StartGamePage from "./components/Game/StartGamePage";
 
 export default function App() {
   const loginer: UseLoginDto = useLogin();
@@ -55,6 +56,10 @@ export default function App() {
 
           {loginer.logged && (
             <>
+              <Route
+                path="/start"
+                element={<StartGamePage loginer={loginer} />}
+              />
               <Route
                 path="/players/:id"
                 element={<PublicProfilePage loginer={loginer} />}
