@@ -179,7 +179,6 @@ export class ChatsService {
       return element.participant.id === user.id && element.role.id != ChatRoleModel.BAN_ROLE
     })) {
 
-
       // Subscribe websocket to room
       client.join(room_id.toString());
 
@@ -203,8 +202,6 @@ export class ChatsService {
         newroom.messages.push(msg);
 
       });
-
-      // console.log(room.participants);
 
       newroom.participants = [];
 
@@ -321,8 +318,6 @@ export class ChatsService {
             value.socket.leave(room.id.toString());
           }
         });
-        
-        
       }
       else {// no active connexions
         // mettre une notif cote front ???
@@ -349,67 +344,29 @@ export class ChatsService {
 
   async unbanCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
 
-    // if (command.length == 2) {
+    if (command.length == 2) {
 
-    //   let userToBan = parseInt(command[1]);
+      let userToUnban = parseInt(command[1]);
 
-    //   if (room.participants.find(value => { value.id == userToBan })?.role.id == ChatRoleModel.OWNER_ROLE) {
-    //     return "Ban : Not enough permissions";
-    //   }
-    //   if (user.id == userToBan) {
-    //     return "Ban : Cannot ban yourself";
-    //   }
+      const permission = this.checkPermission(command[0], user.id, userToUnban, room.participants);
+      if (permission !== undefined)
+        return permission
 
-    //   // User could have multiple clients connected, get'em all
-    //   let clientsToBan = this.clients.filter(value => {
-    //     return value.user.id == userToBan
-    //   });
-
-    //   // 1. (KICK) + NOTIFY
-    //   if (clientsToBan.length > 0) {// if active connexions
-    //     // kick him from channel with message
-
-    //     // Create kick message
-    //     let banMessage = new ChatMessageDto();
-    //     banMessage.id = -this.serverMsgId;
-    //     banMessage.sender = { ...user, status: '' };      // NEST ERROR: sender was undefined here so cant set his id
-    //     // banMessage.sender = new UserDto();             // either the admin user either -1 ?
-    //     banMessage.sender.id = -1;
-    //     banMessage.content = 'You have been banned';
-    //     this.serverMsgId++;
-
-    //     // Send kick message to all clients connected to the room and disconnect them
-    //     clientsToBan.forEach(value => {
-    //       if (value.socket.rooms.has(room.id.toString())) {
-
-    //         value.socket.emit('broadcastMessage', { room_id: room.id, message: banMessage });
-    //         value.socket.leave(room.id.toString());
-    //       }
-    //     });
-        
-        
-    //   }
-    //   else {// no active connexions
-    //     // mettre une notif cote front ???
-    //     console.log('banned without active connection');
-    //   }
-
-    //   // 2. CHAT_PARTICIPANTS: USER-ROOM SET ROLE TO BAN
-    //   let newRole = new UpdateRoleDto();
-    //   newRole.new_role = ChatRoleModel.BAN_ROLE;
-    //   newRole.participantId = userToBan;
-    //   newRole.roomId = room.id;
-    //   try {
-    //     await this.chatParticipantsService.update_role(newRole);
-    //   } catch (error) {
-    //     return "Ban : user not found or not in this channel";
-    //   }
+      let newRole = new UpdateRoleDto();
+      newRole.new_role = ChatRoleModel.USER_ROLE;
+      newRole.participantId = userToUnban;
+      newRole.roomId = room.id;
+      try {
+        await this.chatParticipantsService.update_role(newRole);
+      } catch (error) {
+        return "Unban : user not found or not in this channel";
+      }
       return "Unban : done";
 
-    // }
-    // else {
-    //   return "Ban : Argument error";
-    // }
+    }
+    else {
+      return "Unban : Argument error";
+    }
   }
 
   /* 
