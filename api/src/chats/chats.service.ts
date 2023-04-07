@@ -222,15 +222,30 @@ export class ChatsService {
     return (res);
   }
 
-  checkPermission(command: string, senderId: number, targetUserId: number, participants: ChatParticipantModel[]) {
+
+  async checkPermission(command: string, senderId: number, targetUserId: number, room:ChatModel, roleId=-1): Promise<string | undefined> {
     if (targetUserId == senderId)
       return `${command} : Cannot ${command} yourself`;
 
-    if (participants.find(value => (value.participant.id == targetUserId && value.role.id == ChatRoleModel.OWNER_ROLE)))
+    // for promote and demote
+    if (roleId != -1) {
+      try {
+        const role = await this.chatParticipantsService.get_role(targetUserId, room.id);
+        if (role === roleId)
+          return `${command} : user is already ${command}ed`;
+      } catch (error) {
+        return `${command} : user not found or not in this channel`;
+      }
+    }
+
+    // nobody can touch the owner
+    if (room.participants.find(value => (value.participant.id == targetUserId && value.role.id == ChatRoleModel.OWNER_ROLE)))
       return `${command} : Not enough permissions`;
-      
-    return undefined;
+
+      return '';
+    // return undefined;
   }
+
 
   async promoteCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
 
@@ -238,10 +253,20 @@ export class ChatsService {
 
       let userToPromote = parseInt(command[1]);
 
-      const permission = this.checkPermission(command[0], user.id, userToPromote, room.participants);
+      // // check if target already is admin
+      // try {
+      //   const role = await this.chatParticipantsService.get_role(userToPromote, room.id);
+      //   if (role === ChatRoleModel.ADMIN_ROLE)
+      //     return "Promote : user is already Admin";
+      // } catch (error) {
+      //   return "Promote : user not found or not in this channel";
+      // }
+
+      const permission = this.checkPermission(command[0], user.id, userToPromote, room, ChatRoleModel.ADMIN_ROLE);
       if (permission !== undefined)
         return permission
 
+      // update role in db
       let newRole = new UpdateRoleDto();
       newRole.new_role = ChatRoleModel.ADMIN_ROLE;
       newRole.participantId = userToPromote;
@@ -251,6 +276,28 @@ export class ChatsService {
       } catch (error) {
         return "Promote : user not found or not in this channel";
       }
+
+      // Notify the sender (and the promoted user if (multi)connected)
+      let clientsToPromote = this.clients.filter(value => {
+        return value.user.id == userToPromote
+      });
+      if (clientsToPromote.length > 0) {
+
+        let promoteMessage = new ChatMessageDto();
+        promoteMessage.id = -this.serverMsgId;
+        promoteMessage.sender = { ...user, status: '' };      // NEST ERROR: sender was undefined here so cant set his id
+        // promoteMessage.sender = new UserDto();             // either the admin user either -1 ?
+        promoteMessage.sender.id = -1;
+        promoteMessage.content = promoteMessage.sender.pseudo + ' named you Admin of this channel';
+        this.serverMsgId++;
+
+        clientsToPromote.forEach(value => {
+          if (value.socket.rooms.has(room.id.toString())) {
+            value.socket.emit('broadcastMessage', { room_id: room.id, message: promoteMessage });
+          }
+        });
+      }
+
       return "Promote : done";
 
     }
@@ -259,16 +306,27 @@ export class ChatsService {
     }
   }
 
+  // special permission: only Owner can demote and Admin, Admin cannot demote another Admin cause equal status
   async demoteCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
 
     if (command.length == 2) {
 
       let userToDemote = parseInt(command[1]);
-
-      const permission = this.checkPermission(command[0], user.id, userToDemote, room.participants);
+      
+      // // check if target already has user permission
+      // try {
+      //   const role = await this.chatParticipantsService.get_role(userToDemote, room.id);
+      //   if (role === ChatRoleModel.USER_ROLE)
+      //     return "Demote : user is not admin";
+      // } catch (error) {
+      //   return "Demote : user not found or not in this channel";
+      // }
+      
+      const permission = this.checkPermission(command[0], user.id, userToDemote, room, ChatRoleModel.USER_ROLE);
       if (permission !== undefined)
         return permission
-
+      
+      // update role in db
       let newRole = new UpdateRoleDto();
       newRole.new_role = ChatRoleModel.USER_ROLE;
       newRole.participantId = userToDemote;
@@ -278,6 +336,28 @@ export class ChatsService {
       } catch (error) {
         return "Demote : user not found or not in this channel";
       }
+      
+      // Notify the sender (and the demoted user if (multi)connected)
+      let clientsToDemote = this.clients.filter(value => {
+        return value.user.id == userToDemote
+      });
+      if (clientsToDemote.length > 0) {
+
+        let demoteMessage = new ChatMessageDto();
+        demoteMessage.id = -this.serverMsgId;
+        demoteMessage.sender = { ...user, status: '' };      // NEST ERROR: sender was undefined here so cant set his id
+        // demoteMessage.sender = new UserDto();             // either the admin user either -1 ?
+        demoteMessage.sender.id = -1;
+        demoteMessage.content = demoteMessage.sender.pseudo + ' removed your Admin status';
+        this.serverMsgId++;
+
+        clientsToDemote.forEach(value => {
+          if (value.socket.rooms.has(room.id.toString())) {
+            value.socket.emit('broadcastMessage', { room_id: room.id, message: demoteMessage });
+          }
+        });
+      }
+      
       return "Demote : done";
 
     }
@@ -294,7 +374,7 @@ export class ChatsService {
 
       let userToKick = parseInt(command[1]);
 
-      const permission = this.checkPermission(command[0], user.id, userToKick, room.participants);
+      const permission = this.checkPermission(command[0], user.id, userToKick, room);
       if (permission !== undefined)
         return permission
 
@@ -336,13 +416,14 @@ export class ChatsService {
     }
   }
   
+  // special permission: only Owner can ban and Admin, Admin cannot ban another Admin cause equal status
   async banCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
 
     if (command.length == 2) {
 
       let userToBan = parseInt(command[1]);
 
-      const permission = this.checkPermission(command[0], user.id, userToBan, room.participants);
+      const permission = this.checkPermission(command[0], user.id, userToBan, room);
       if (permission !== undefined)
         return permission
 
@@ -402,7 +483,7 @@ export class ChatsService {
 
       let userToUnban = parseInt(command[1]);
 
-      const permission = this.checkPermission(command[0], user.id, userToUnban, room.participants);
+      const permission = this.checkPermission(command[0], user.id, userToUnban, room);
       if (permission !== undefined)
         return permission
 
@@ -456,6 +537,9 @@ export class ChatsService {
 
         case "/promote":
           responseMessage.content = await this.promoteCommand(room, user, command);
+          break;
+        case "/demote":
+          responseMessage.content = await this.demoteCommand(room, user, command);
           break;
         case "/kick":
           responseMessage.content = await this.kickCommand(room, user, command);

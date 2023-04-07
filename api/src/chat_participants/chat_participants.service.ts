@@ -76,7 +76,23 @@ export class ChatParticipantsService {
   }
 
 
-  async update_role(updateRoleDto: UpdateRoleDto): Promise<ChatParticipantModel | null> {
+  async get_role(participantId:number, roomId:number): Promise<number> {
+    console.log(participantId);
+    const chatParticipant = await this.chatParticipantsRepository.findOneOrFail({
+      where: {
+        participant: { id: participantId },
+        room: { id: roomId },
+      },
+      relations: { 
+        role: true
+      },
+    });
+    console.log(chatParticipant);
+    return chatParticipant.role.id;
+  }
+
+
+  async update_role(updateRoleDto: UpdateRoleDto): Promise<ChatParticipantModel> {
     const destUser = await this.findParticipant(updateRoleDto.participantId, updateRoleDto.roomId); 
     destUser.role = new ChatRoleModel(updateRoleDto.new_role);
 
