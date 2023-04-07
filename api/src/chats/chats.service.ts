@@ -294,13 +294,14 @@ export class ChatsService {
         return "Ban : Cannot ban yourself";
       }
 
-
       // User could have multiple clients connected, get'em all
       let clientsToBan = this.clients.filter(value => {
         return value.user.id == userToBan
       });
 
-      if (clientsToBan.length > 0) {
+      // 1 (KICK) + NOTIFY
+      if (clientsToBan.length > 0) {// if active connexions
+        // kick him from channel with message
 
         // Create kick message
         let banMessage = new ChatMessageDto();
@@ -320,18 +321,24 @@ export class ChatsService {
           }
         });
         
-        // MODIFIER LE chat_participants EN DB POUR PASSER LE USER EN ROLE 4
-        let newRole = new UpdateRoleDto();
-        newRole.new_role = ChatRoleModel.BAN_ROLE;
-        newRole.participantId = userToBan;
-        newRole.roomId = room.id;
-        this.chatParticipantsService.update_role(newRole);
-        return "Ban : done";
-
+        
       }
-      else {
+      else {// no active connexions
+        // mettre une notif cote front ???
+        console.log('banned without active connection');
+      }
+
+      // 2 CHAT_PARTICIPANTS: USER-ROOM SET ROLE TO BAN
+      let newRole = new UpdateRoleDto();
+      newRole.new_role = ChatRoleModel.BAN_ROLE;
+      newRole.participantId = userToBan;
+      newRole.roomId = room.id;
+      try {
+        await this.chatParticipantsService.update_role(newRole);
+      } catch (error) {
         return "Ban : user not found or connected";
       }
+      return "Ban : done";
 
     }
     else {
@@ -343,8 +350,7 @@ export class ChatsService {
 
   /* 
   Invite
-  Kick (should be already good)
-  Ban
+  Unban
   Promote
   Unmote
   Change password (confirmation ?)

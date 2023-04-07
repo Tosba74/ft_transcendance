@@ -45,7 +45,7 @@ export class ChatParticipantsController {
   @Patch(':id/change_role')
   @ApiOkResponse({ description: 'New role updated successfully', type: ChatParticipantModel })
   @ApiBadRequestResponse({ description: 'New role validation error' })
-  public update_role(@Param('id', ParseIntPipe) id: number, @Body() updateRoleDto: UpdateRoleDto): Promise<ChatParticipantModel> {
+  public update_role(@Param('id', ParseIntPipe) id: number, @Body() updateRoleDto: UpdateRoleDto): Promise<ChatParticipantModel | null> {
     updateRoleDto.participantId = id;
     return this.chatParticipantsService.update_role(updateRoleDto);
   }
