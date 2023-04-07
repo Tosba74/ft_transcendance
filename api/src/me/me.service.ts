@@ -124,6 +124,13 @@ export class MeService {
   }
 
 
+  async getOrCreateConversation(user: LoggedUserDto, user2_id: number): Promise<ChannelDto> {
+
+    const chat = await this.chatsService.getOrCreateConversation(user.id, user2_id);
+
+    return { ...chat, password: false, type: ChatTypeModel.DISCUSSION_TYPE } as ChannelDto;
+  }
+
   async createChat(user: LoggedUserDto, joinInfos: CreateChatDto): Promise<ChatModel> {
 
     // const chat = await this.chatsService.findOneById(chat_id);
@@ -168,15 +175,15 @@ export class MeService {
     }
 
 
-    if (chat.participants.some(element => { 
+    if (chat.participants.some(element => {
       return element.participant.id === user.id && element.role.id === ChatRoleModel.BAN_ROLE
     })) {
 
       throw new PreconditionFailedException('Banned from this room');
     }
 
-    else if (chat.participants.some(element => { 
-      return element.participant.id === user.id 
+    else if (chat.participants.some(element => {
+      return element.participant.id === user.id
     })) {
 
       throw new PreconditionFailedException('Already member of the room');

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException, forwardRef, Inject } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, forwardRef, Inject, PreconditionFailedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Socket } from 'socket.io';
@@ -6,6 +6,7 @@ import { Socket } from 'socket.io';
 import { UsersService } from 'src/users/users.service';
 import { MeService } from 'src/me/me.service';
 import { ChatMessagesService } from 'src/chat_messages/chat_messages.service';
+import { ChatParticipantsService } from 'src/chat_participants/chat_participants.service';
 
 import { ChatModel } from "./models/chat.model";
 import { ChatTypeModel } from 'src/chat_types/models/chat_type.model';
@@ -32,6 +33,8 @@ export class ChatsService {
     private meService: MeService,
     private chatMessagesService: ChatMessagesService,
     private usersService: UsersService,
+    @Inject(forwardRef(() => ChatParticipantsService))
+    private chatParticipantsService: ChatParticipantsService,
   ) { }
 
   // clients = new Pair<Socket, LoggedUserDto>();
@@ -97,6 +100,9 @@ export class ChatsService {
       const hash: string = await bcrypt.hash(password, saltRounds);
 
       res.password = hash;
+    } // See if better idea to authorize null on password
+    else {
+      res.password = '';
     }
 
     const created = await this.chatsRepository.save(res).catch((err: any) => {
@@ -104,7 +110,55 @@ export class ChatsService {
     });
 
     return created;
+  }
 
+
+  async getOrCreateConversation(user1_id: number, user2_id: number): Promise<ChatModel> {
+
+    if (user1_id === user2_id) {
+      throw new PreconditionFailedException('Same user for conversation is unauthorized');
+    }
+
+
+    // try {
+    const discussions = await this.chatsRepository.find({
+      where: {
+        type: { id: ChatTypeModel.DISCUSSION_TYPE },
+      },
+      relations: { participants: { participant: true } },
+    });
+
+    const foundDiscussion = discussions.find(discussion => {
+      return (
+        discussion.participants.find(participant => { return participant.participant.id === user1_id }) !== undefined &&
+        discussion.participants.find(participant => { return participant.participant.id === user2_id }) !== undefined);
+    });
+
+    if (foundDiscussion !== undefined) {
+      return foundDiscussion;
+    }
+
+
+    return this.createConversation(user1_id, user2_id);
+  }
+
+
+  async createConversation(user1_id: number, user2_id: number): Promise<ChatModel> {
+
+    if (user1_id === user2_id) {
+      throw new PreconditionFailedException('Same user for conversation is unauthorized');
+    }
+
+    const user1 = await this.usersService.findOneById(user1_id);
+    const user2 = await this.usersService.findOneById(user2_id);
+
+    const createdDiscussion = await this.create(`${user1.pseudo} - ${user2.pseudo}`, ChatTypeModel.DISCUSSION_TYPE);
+  
+
+    this.chatParticipantsService.create(user1.id, createdDiscussion.id, ChatRoleModel.USER_ROLE);
+    this.chatParticipantsService.create(user2.id, createdDiscussion.id, ChatRoleModel.USER_ROLE);
+
+    return createdDiscussion;
   }
 
   async delete(id: number): Promise<void> {
@@ -150,16 +204,6 @@ export class ChatsService {
       if (value.socket.id != client.id)
         return true;
     });
-  }
-
-
-  async idList() {
-    // this.clients.forEach((value) => {
-
-    //   console.log('list item', value.socket.id, value.user.id);
-
-    // });
-    // console.log('list end');
   }
 
 
