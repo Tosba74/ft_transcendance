@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException,UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -17,6 +17,7 @@ export class UsersService {
 
   constructor(
     @InjectRepository(UserModel) private usersRepository: Repository<UserModel>,
+    @Inject(forwardRef(() => GamesService))
     private gamesService: GamesService
   ) { }
 

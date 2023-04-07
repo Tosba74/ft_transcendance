@@ -38,8 +38,7 @@ export default function App() {
     token: loginer.token,
   });
   let gamer: UseGameDto = useGame({
-    logged: loginer.logged,
-    token: loginer.token,
+    loginer: loginer,
   });
 
   return (

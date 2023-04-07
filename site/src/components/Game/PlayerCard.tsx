@@ -5,7 +5,7 @@ import classNames from "classnames";
 interface playerCardProps {
   isRight: boolean;
   user?: UserDto;
-  status?: boolean;
+  status: string;
 }
 
 export default function PlayerCard(props: playerCardProps) {
@@ -34,7 +34,7 @@ export default function PlayerCard(props: playerCardProps) {
             <span className={classNames({ "order-last": props.isRight })}>
               {props.user?.pseudo || `Waiting player`}
             </span>
-            <span className="px-3">{props.status ? "Ready" : "Unready"}</span>
+            <span className="px-3">{props.status}</span>
           </div>
           <div
             id={`myProgress${userId}`}

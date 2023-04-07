@@ -14,7 +14,7 @@ import { ext_export } from './export';
 export class GameArea {
 
 	public pause = false;
-	public start = true;
+	public start = false;
 
 	public playerOne: Paddle;
 	public playerTwo: Paddle;
@@ -45,7 +45,7 @@ export class GameArea {
 		this.playerOne.update();
 		this.playerTwo.update();
 
-		if (this.start == true) {
+		if (this.start == true && this.pause == false) {
 
 			this.balls.forEach((value) => {
 				this.check_for_collisions(value);
