@@ -111,8 +111,8 @@ export function ext_calculate_impact(this: GameArea, x1: number, x2: number, x3:
 
 	const t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / den;
 	const u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / den;
-
-	if (t > 0 && t < 1 && u > 0 && u < 1) {
+	
+	if (t > -0.05 && t < 1.05 && u > 0 && u < 1) {
 		if (ball.x < module_const.canvas_width / 2) {
 
 			const map_angle = (map(t, 0, 1, -module_const.bounce_angle, module_const.bounce_angle));

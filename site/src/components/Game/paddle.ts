@@ -1,5 +1,4 @@
-import * as module_const from "./constant";
-import { PlayerDto } from "./dto/player.dto";
+import { PlayerDto } from "src/_shared_dto/player.dto";
 
 export class Paddle {
   //set up first playerOne
@@ -7,6 +6,8 @@ export class Paddle {
   public y: number;
   public width: number;
   public height: number;
+
+  public ready: boolean;
 
   public color: string;
   public ultimate: number;
@@ -22,6 +23,8 @@ export class Paddle {
     this.width = 0;
     this.height = 0;
 
+    this.ready = false;
+
     this.color = "white";
     this.ultimate = 0;
     this.score = 0;
@@ -35,6 +38,8 @@ export class Paddle {
 
     this.width = player.width;
     this.height = player.height;
+
+    this.ready = player.ready;
 
     this.ultimate = player.ultimate;
     this.score = player.score;
