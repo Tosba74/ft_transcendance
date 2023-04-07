@@ -1,22 +1,30 @@
 import React, { useEffect } from "react";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
 import { createPortal } from "react-dom";
+import { useNavigate } from "react-router-dom";
+
+const startEL = document.getElementById("root");
 
 export default function QuickPlay({ loginer }: { loginer: UseLoginDto }) {
-  const [modal, setModal] = React.useState(false);
+  const [portal, setPortal] = React.useState(false);
   const ref = React.useRef<HTMLDivElement | null>(null);
-  const startEL = document.getElementById("root");
+  const navigate = useNavigate();
 
-  const handleClickQuickPlay = () => {
-    console.log("hello modal");
-    setModal(true);
+  const handleClickStart = () => {
+    console.log("create game");
+    // navigate("/game");
+  };
+
+  const handleClickPortal = () => {
+    console.log("hello portal");
+    setPortal(true);
   };
 
   useEffect(() => {
     const checkIfClickedOutside = (e: any) => {
       if (ref) {
-        if (modal && !ref.current?.contains(e.target)) {
-          setModal(false);
+        if (portal && !ref.current?.contains(e.target)) {
+          setPortal(false);
         }
       }
     };
@@ -26,22 +34,22 @@ export default function QuickPlay({ loginer }: { loginer: UseLoginDto }) {
     return () => {
       document.removeEventListener("mousedown", checkIfClickedOutside);
     };
-  }, [modal]);
+  }, [portal]);
 
   return (
     <>
       <button
-        onClick={handleClickQuickPlay}
+        onClick={handleClickPortal}
         className="mx-auto my-2 rounded-lg bg-cyan-500 px-4 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
       >
         Quick play
       </button>
-      {modal &&
+      {portal &&
         startEL !== null &&
         createPortal(
           <div
             ref={ref}
-            className="absolute top-1/4 left-1/2 flex w-full max-w-md -translate-x-1/2  -translate-y-1/2 flex-col bg-red-600"
+            className="absolute top-1/4 left-1/2 flex w-full max-w-md -translate-x-1/2 -translate-y-1/2 flex-col rounded-lg bg-red-600  p-8 shadow-lg"
           >
             <label className="relative inline-flex cursor-pointer items-center">
               <input type="checkbox" value="" className="peer sr-only" />
@@ -53,7 +61,12 @@ export default function QuickPlay({ loginer }: { loginer: UseLoginDto }) {
             <label htmlFor="">
               <input type="text" />
             </label>
-            hello
+            <button
+              onClick={handleClickStart}
+              className="my-2 mx-auto rounded-lg bg-cyan-500 px-4 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            >
+              Start
+            </button>
           </div>,
           startEL
         )}
