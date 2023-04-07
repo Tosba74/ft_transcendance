@@ -6,6 +6,9 @@ import { Socket } from 'socket.io';
 import { MeService } from 'src/me/me.service';
 import { ChatMessagesService } from 'src/chat_messages/chat_messages.service';
 
+import { ChatParticipantsService } from 'src/chat_participants/chat_participants.service';
+import { UpdateRoleDto } from 'src/chat_participants/dto/update-role'
+
 import { ChatModel } from "./models/chat.model";
 import { ChatTypeModel } from 'src/chat_types/models/chat_type.model';
 import { ChatRoleModel } from 'src/chat_roles/models/chat_role.model';
@@ -32,6 +35,7 @@ export class ChatsService {
     @Inject(forwardRef(() => MeService))
     private meService: MeService,
     private chatMessagesService: ChatMessagesService,
+    private chatParticipantsService: ChatParticipantsService,
     private usersService: UsersService,
   ) { }
 
@@ -56,7 +60,8 @@ export class ChatsService {
       return chat;
     }
     catch (error) {
-      throw new NotFoundException('Chat id not found');
+      // throw new NotFoundException('Chat id not found');
+      throw new NotFoundException('Chat id ' + id + ' not found');
     }
   }
 
@@ -159,10 +164,14 @@ export class ChatsService {
 
 
   async connectRoom(user: UserDto, client: Socket, room_id: number): Promise<ChatResponseDto<ChatRoomDto>> {
-
+    
     let res = new ChatResponseDto<ChatRoomDto>();
-
+    
     const room = await this.findOneById(room_id);
+    
+    // console.log('try to connect to room', room_id);
+    // console.log(room);
+    // console.log(room.participants);
 
     if (room.participants.some(element => {
       return element.participant.id === user.id && element.role.id != ChatRoleModel.BAN_ROLE
@@ -242,9 +251,9 @@ export class ChatsService {
         // Create kick message
         let kickMessage = new ChatMessageDto();
         kickMessage.id = -this.serverMsgId;
-
+        kickMessage.sender = { ...user, status: '' };      // NEST ERROR: sender was undefined here so cant set his id
+        // kickMessage.sender = new UserDto();             // either the admin user either -1 ?
         kickMessage.sender.id = -1;
-
         kickMessage.content = 'You have been kicked';
         this.serverMsgId++;
 
@@ -269,10 +278,78 @@ export class ChatsService {
       return "Kick : Argument error";
     }
   }
+  
+  async banCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
+
+    // Example {"/ban", "1"}
+    // Second argument is userid
+    if (command.length == 2) {
+
+      let userToBan = parseInt(command[1]);
+
+      if (room.participants.find(value => { value.id == userToBan })?.role.id == ChatRoleModel.OWNER_ROLE) {
+        return "Ban : Not enough permissions";
+      }
+      if (user.id == userToBan) {
+        return "Ban : Cannot ban yourself";
+      }
+
+
+      // User could have multiple clients connected, get'em all
+      let clientsToBan = this.clients.filter(value => {
+        return value.user.id == userToBan
+      });
+
+      if (clientsToBan.length > 0) {
+
+        // Create kick message
+        let banMessage = new ChatMessageDto();
+        banMessage.id = -this.serverMsgId;
+        banMessage.sender = { ...user, status: '' };      // NEST ERROR: sender was undefined here so cant set his id
+        // banMessage.sender = new UserDto();             // either the admin user either -1 ?
+        banMessage.sender.id = -1;
+        banMessage.content = 'You have been banned';
+        this.serverMsgId++;
+
+        // Send kick message to all clients connected to the room and disconnect them
+        clientsToBan.forEach(value => {
+          if (value.socket.rooms.has(room.id.toString())) {
+
+            value.socket.emit('broadcastMessage', { room_id: room.id, message: banMessage });
+            value.socket.leave(room.id.toString());
+          }
+        });
+        
+        // MODIFIER LE chat_participants EN DB POUR PASSER LE USER EN ROLE 4
+        let newRole = new UpdateRoleDto();
+        newRole.new_role = ChatRoleModel.BAN_ROLE;
+        newRole.participantId = userToBan;
+        newRole.roomId = room.id;
+        this.chatParticipantsService.update_role(newRole);
+        return "Ban : done";
+
+      }
+      else {
+        return "Ban : user not found or connected";
+      }
+
+    }
+    else {
+      return "Ban : Argument error";
+    }
+  }
 
 
 
-
+  /* 
+  Invite
+  Kick (should be already good)
+  Ban
+  Promote
+  Unmote
+  Change password (confirmation ?)
+  Remove password method
+  */
   async adminCommand(user: UserDto, client: Socket, room_id: number, message: string): Promise<ChatMessageDto | undefined> {
 
     let responseMessage = new ChatMessageDto();
@@ -299,6 +376,9 @@ export class ChatsService {
 
         case "/kick":
           responseMessage.content = await this.kickCommand(room, user, command);
+          break;
+        case "/ban":
+          responseMessage.content = await this.banCommand(room, user, command);
           break;
 
         default:

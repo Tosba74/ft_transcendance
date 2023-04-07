@@ -36,11 +36,18 @@ export class ChatParticipantsController {
     return this.chatParticipantsService.create(createMessageDto.user_id, createMessageDto.chat_id, createMessageDto.role_id);
   }
 
+  // @Patch(':id/change_role')
+  // @ApiOkResponse({ description: 'New role updated successfully', type: ChatParticipantModel })
+  // @ApiBadRequestResponse({ description: 'New role validation error' })
+  // public update_role(@Param('id', ParseIntPipe) id: number, @Body() updateRoleDto: UpdateRoleDto): Promise<ChatParticipantModel> {
+  //   return this.chatParticipantsService.update_role(id, updateRoleDto);
+  // }
   @Patch(':id/change_role')
   @ApiOkResponse({ description: 'New role updated successfully', type: ChatParticipantModel })
   @ApiBadRequestResponse({ description: 'New role validation error' })
   public update_role(@Param('id', ParseIntPipe) id: number, @Body() updateRoleDto: UpdateRoleDto): Promise<ChatParticipantModel> {
-    return this.chatParticipantsService.update_role(id, updateRoleDto);
+    updateRoleDto.participantId = id;
+    return this.chatParticipantsService.update_role(updateRoleDto);
   }
 
   @Patch(':id/mute')

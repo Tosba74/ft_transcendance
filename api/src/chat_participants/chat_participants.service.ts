@@ -29,6 +29,20 @@ export class ChatParticipantsService {
     }
   }
 
+  async findParticipant(participantId: number, roomId: number): Promise<ChatParticipantModel> {
+    try {
+      const chatParticipant = await this.chatParticipantsRepository.findOneOrFail({
+        where: {
+          participant: { id: participantId },
+          room: { id: roomId },
+        }
+      });
+      return chatParticipant;
+    } catch (error) {
+      throw new NotFoundException('Chat participant id not found');
+    }
+  }
+
   async listChats(id: number): Promise<ChatParticipantModel[]> {
     const chats = await this.chatParticipantsRepository.find({
       where: {
@@ -62,8 +76,8 @@ export class ChatParticipantsService {
   }
 
 
-  async update_role(id: number, updateRoleDto: UpdateRoleDto): Promise<ChatParticipantModel> {
-    const destUser = await this.findOneById(id);
+  async update_role(updateRoleDto: UpdateRoleDto): Promise<ChatParticipantModel> {
+    const destUser = await this.findParticipant(updateRoleDto.participantId, updateRoleDto.roomId); 
 
     destUser.role = new ChatRoleModel(updateRoleDto.new_role);
 

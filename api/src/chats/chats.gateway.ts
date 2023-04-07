@@ -78,7 +78,8 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	async createMessage(client: Socket, body: { room_id: number, message: string }) {
 
 
-		console.log('message arrived');
+		console.log(`message arrived :\n${body.message}`);
+		// console.log('message arrived');
 
 		if (body == undefined || body.room_id == undefined || body.message == undefined) {
 			throw new WsException('Not identified');
