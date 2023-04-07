@@ -70,7 +70,7 @@ export default function App() {
               />
               <Route
                 path="/players"
-                element={<UserListPage loginer={loginer} />}
+                element={<UserListPage loginer={loginer} chats={chats} />}
               />
               <Route
                 path="/settings"
