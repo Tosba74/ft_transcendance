@@ -223,18 +223,38 @@ export class ChatsService {
   }
 
 
-  async checkPermission(command: string, senderId: number, targetUserId: number, room:ChatModel, roleId=-1): Promise<string | undefined> {
+  async checkPermission(room:ChatModel, command: string, senderId: number, targetUserId: number, targetRole=0): Promise<string | undefined> {
+
+    // not to yourself
     if (targetUserId == senderId)
       return `${command} : Cannot ${command} yourself`;
 
-    // for promote and demote
-    if (roleId != -1) {
+    // already the targeted role (no need this for kick)
+    if (targetRole) {
       try {
         const role = await this.chatParticipantsService.get_role(targetUserId, room.id);
-        if (role === roleId)
-          return `${command} : user is already ${command}ed`;
+        if (role === targetRole) {
+
+          let message = '';
+          switch (command) {
+            case "/promote":
+              message = 'promote: no effect, user is already admin';
+              break;
+            case "/demote":
+              message = 'demote: no effect, user has no special permission';
+              break;
+            case "/ban":
+              message = 'ban: no effect, user already banned';
+              break;
+            case "/unban":
+              message = 'unban: no effect, user already in the channel';
+              break;
+          }
+
+          return message;
+        }
       } catch (error) {
-        return `${command} : user not found or not in this channel`;
+        return `${command} : user not found or no relation with this channel`;
       }
     }
 
@@ -242,8 +262,7 @@ export class ChatsService {
     if (room.participants.find(value => (value.participant.id == targetUserId && value.role.id == ChatRoleModel.OWNER_ROLE)))
       return `${command} : Not enough permissions`;
 
-      return '';
-    // return undefined;
+    return undefined;
   }
 
 
@@ -253,16 +272,7 @@ export class ChatsService {
 
       let userToPromote = parseInt(command[1]);
 
-      // // check if target already is admin
-      // try {
-      //   const role = await this.chatParticipantsService.get_role(userToPromote, room.id);
-      //   if (role === ChatRoleModel.ADMIN_ROLE)
-      //     return "Promote : user is already Admin";
-      // } catch (error) {
-      //   return "Promote : user not found or not in this channel";
-      // }
-
-      const permission = this.checkPermission(command[0], user.id, userToPromote, room, ChatRoleModel.ADMIN_ROLE);
+      const permission = await this.checkPermission(room, command[0], user.id, userToPromote, ChatRoleModel.ADMIN_ROLE);
       if (permission !== undefined)
         return permission
 
@@ -313,16 +323,7 @@ export class ChatsService {
 
       let userToDemote = parseInt(command[1]);
       
-      // // check if target already has user permission
-      // try {
-      //   const role = await this.chatParticipantsService.get_role(userToDemote, room.id);
-      //   if (role === ChatRoleModel.USER_ROLE)
-      //     return "Demote : user is not admin";
-      // } catch (error) {
-      //   return "Demote : user not found or not in this channel";
-      // }
-      
-      const permission = this.checkPermission(command[0], user.id, userToDemote, room, ChatRoleModel.USER_ROLE);
+      const permission = await this.checkPermission(room, command[0], user.id, userToDemote, ChatRoleModel.USER_ROLE);
       if (permission !== undefined)
         return permission
       
@@ -374,7 +375,7 @@ export class ChatsService {
 
       let userToKick = parseInt(command[1]);
 
-      const permission = this.checkPermission(command[0], user.id, userToKick, room);
+      const permission = await this.checkPermission(room, command[0], user.id, userToKick);
       if (permission !== undefined)
         return permission
 
@@ -423,7 +424,7 @@ export class ChatsService {
 
       let userToBan = parseInt(command[1]);
 
-      const permission = this.checkPermission(command[0], user.id, userToBan, room);
+      const permission = await this.checkPermission(room, command[0], user.id, userToBan, ChatRoleModel.BAN_ROLE);
       if (permission !== undefined)
         return permission
 
@@ -483,7 +484,7 @@ export class ChatsService {
 
       let userToUnban = parseInt(command[1]);
 
-      const permission = this.checkPermission(command[0], user.id, userToUnban, room);
+      const permission = await this.checkPermission(room, command[0], user.id, userToUnban, ChatRoleModel.USER_ROLE);
       if (permission !== undefined)
         return permission
 
