@@ -1,4 +1,8 @@
+import React from "react";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
+import HistoryGames from "./HistoryGames";
+import JoinGame from "./JoinGame";
+import QuickPlay from "./QuickPlay";
 
 interface StartGamePageProps {
   loginer: UseLoginDto;
@@ -6,20 +10,15 @@ interface StartGamePageProps {
 
 export default function StartGamePage({ loginer }: StartGamePageProps) {
   return (
-    <>
-      <h1 className="text-2xl">Game</h1>
-      <button>Quick play</button>
-      <label>ID Game</label>
-      <input type="text" value={"id: number"} />
-      <button>Join</button>
-      <h2>Last games</h2>
-      <ul>
-        <li>7 Tiago vs Jerome 3</li>
-        <li>7 Tiago vs Jerome 3</li>
-        <li>7 Tiago vs Jerome 3</li>
-        <li>7 Tiago vs Jerome 3</li>
-        <li>7 Tiago vs Jerome 3</li>
-      </ul>
-    </>
+    <div className="mx-auto flex h-max max-w-md flex-col bg-white p-6 text-center shadow-md dark:border-gray-700 dark:bg-gray-800 dark:text-white">
+      <h1 id="startPage" className="text-2xl">
+        Game
+      </h1>
+      <QuickPlay loginer={loginer} />
+      <div className="w-sm mx-auto flex flex-col">
+        <JoinGame loginer={loginer} />
+        <HistoryGames />
+      </div>
+    </div>
   );
 }
