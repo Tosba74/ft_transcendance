@@ -77,21 +77,6 @@ export class ChatParticipantsService {
 
 
   async update_role(updateRoleDto: UpdateRoleDto): Promise<ChatParticipantModel | null> {
-    // try {
-    //   const destUser = await this.findParticipant(updateRoleDto.participantId, updateRoleDto.roomId); 
-    //   console.log('TEST1');
-    //   destUser.role = new ChatRoleModel(updateRoleDto.new_role);
-  
-    //   const created = await this.chatParticipantsRepository.save(destUser).catch((err: any) => {
-    //     throw new BadRequestException('Chat participant role update error');
-    //   });
-  
-    //   return created;
-    // } catch (error) {
-    //   console.log('TEST2');
-    //   // throw new NotFoundException();
-    //   return null;
-    // }
     const destUser = await this.findParticipant(updateRoleDto.participantId, updateRoleDto.roomId); 
     destUser.role = new ChatRoleModel(updateRoleDto.new_role);
 

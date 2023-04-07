@@ -223,13 +223,67 @@ export class ChatsService {
   }
 
   checkPermission(command: string, senderId: number, targetUserId: number, participants: ChatParticipantModel[]) {
-    if (participants.find(value => { value.id == targetUserId })?.role.id == ChatRoleModel.OWNER_ROLE) {
-      return `${command} : Not enough permissions`;
-    }
-    if (targetUserId == senderId) {
+    if (targetUserId == senderId)
       return `${command} : Cannot ${command} yourself`;
-    }
+
+    if (participants.find(value => (value.participant.id == targetUserId && value.role.id == ChatRoleModel.OWNER_ROLE)))
+      return `${command} : Not enough permissions`;
+      
     return undefined;
+  }
+
+  async promoteCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
+
+    if (command.length == 2) {
+
+      let userToPromote = parseInt(command[1]);
+
+      const permission = this.checkPermission(command[0], user.id, userToPromote, room.participants);
+      if (permission !== undefined)
+        return permission
+
+      let newRole = new UpdateRoleDto();
+      newRole.new_role = ChatRoleModel.ADMIN_ROLE;
+      newRole.participantId = userToPromote;
+      newRole.roomId = room.id;
+      try {
+        await this.chatParticipantsService.update_role(newRole);
+      } catch (error) {
+        return "Promote : user not found or not in this channel";
+      }
+      return "Promote : done";
+
+    }
+    else {
+      return "Promote : Argument error";
+    }
+  }
+
+  async demoteCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
+
+    if (command.length == 2) {
+
+      let userToDemote = parseInt(command[1]);
+
+      const permission = this.checkPermission(command[0], user.id, userToDemote, room.participants);
+      if (permission !== undefined)
+        return permission
+
+      let newRole = new UpdateRoleDto();
+      newRole.new_role = ChatRoleModel.USER_ROLE;
+      newRole.participantId = userToDemote;
+      newRole.roomId = room.id;
+      try {
+        await this.chatParticipantsService.update_role(newRole);
+      } catch (error) {
+        return "Demote : user not found or not in this channel";
+      }
+      return "Demote : done";
+
+    }
+    else {
+      return "Demote : Argument error";
+    }
   }
 
   async kickCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
@@ -371,7 +425,6 @@ export class ChatsService {
 
   /* 
   Invite
-  Unban
   Promote
   Unmote
   Change password (confirmation ?)
@@ -401,6 +454,9 @@ export class ChatsService {
       console.log('Command args', command);
       switch (command[0]) {
 
+        case "/promote":
+          responseMessage.content = await this.promoteCommand(room, user, command);
+          break;
         case "/kick":
           responseMessage.content = await this.kickCommand(room, user, command);
           break;
