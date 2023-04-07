@@ -2,6 +2,11 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { UserDto } from "src/_shared_dto/user.dto";
 
+import { MdKey } from "react-icons/md";
+import { MdOutlineEmail } from "react-icons/md";
+import { MdPublic } from "react-icons/md";
+import { FiLock } from "react-icons/fi";
+
 import { ChatRoomDto } from "src/_shared_dto/chat-room.dto";
 
 interface ChannelChannelListProps {
@@ -19,6 +24,9 @@ export default function ChannelChannelList({
 }: ChannelChannelListProps) {
   //
 
+  const handleShow = (chan: ChatRoomDto) => {
+    setChannel(chan.id);
+  };
   const handleChange = (chan: ChatRoomDto) => {
     setChannel(chan.id);
     setModeChannel();
@@ -32,17 +40,43 @@ export default function ChannelChannelList({
           Object.keys(lstChannel).map((key) => {
             return (
               <div
-                className="flex w-full flex-row gap-4"
+                className="flex w-full flex-row items-center gap-4"
                 key={lstChannel[key].id}
               >
                 <div className="justify-center justify-items-center text-start dark:text-white">
                   Logo
                 </div>
+                <div className="flex basis-5/6">
+                  <li className="w-14 basis-5/6 truncate">
+                    {lstChannel[key].name}
+                  </li>
+                  {lstChannel[key].password && (
+                    <MdKey
+                      className="basis-1/6 self-center "
+                      title="Protected"
+                    />
+                  )}
+                  {!lstChannel[key].password && lstChannel[key].type == 1 && (
+                    <MdOutlineEmail
+                      className="basis-1/6 self-center"
+                      title="Chat"
+                    />
+                  )}
+                  {!lstChannel[key].password && lstChannel[key].type == 2 && (
+                    <MdPublic
+                      className="basis-1/6 self-center"
+                      title="Public"
+                    />
+                  )}
+                  {!lstChannel[key].password && lstChannel[key].type == 3 && (
+                    <FiLock className="basis-1/6 self-center" title="Private" />
+                  )}
+                </div>
                 <button
                   className="w-5/6 justify-center text-start dark:text-white"
                   type="button"
                   onClick={() => {
-                    handleChange(lstChannel[key]);
+                    handleShow(lstChannel[key]);
                   }}
                 >
                   <strong>{lstChannel[key].name}</strong>
@@ -50,9 +84,9 @@ export default function ChannelChannelList({
                 <button
                   type="button"
                   onClick={() => handleChange(lstChannel[key])}
-                  className="h-8 w-8 justify-center p-2 text-white"
+                  className="h-8 w-8 justify-center bg-cyan-500 p-2 text-white"
                 >
-                  +
+                  JOIN
                 </button>
               </div>
             );
