@@ -111,6 +111,30 @@ export class ChatsService {
     }
   }
 
+  async updatePassword(id: number, password: string): Promise<void> {
+    try {
+      var chat = await this.chatsRepository.findOneOrFail({
+        where: { id: id }
+      });
+    } catch (error) {
+      throw new NotFoundException('Chat id not found');
+    }
+
+    if (password !== "" && password !== undefined) {
+      const bcrypt = require('bcrypt');
+      const saltRounds: number = 10;
+      const hash: string = await bcrypt.hash(password, saltRounds);
+      chat.password = hash;
+    }
+    else {
+      chat.password = "";
+    }
+
+    await this.chatsRepository.save(chat).catch(() => {
+      throw new BadRequestException('Chat password update error');
+    });
+  }
+
 
   async identify(user: LoggedUserDto, client: Socket): Promise<ChatResponseDto<undefined>> {
 
@@ -311,6 +335,8 @@ export class ChatsService {
       responseMessage.sender.id = -1;
       this.serverMsgId++;
 
+      console.log('command splitted:', command);
+
       switch (command[0]) {
 
         // Owner permission required
@@ -370,12 +396,52 @@ export class ChatsService {
   }
 
 
+  // PAS COMPLETEMENT ABOUTI
   async changepwCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
+    if (room.type.name != 'public') {
+      return `changepw: this is a ${room.type.name} channel. Only public channel can have password.`;
+    }
+  
+    // changepw currentpw newpw
+    if (command.length != 3)
+      return `${command[0]}: argument error`;
+
+    const currentpw = command[1];
+    const newpw = command[2];
+
+    // check currentpw ?
+
+    // update
+    if (newpw !== '') {
+      try {
+        await this.updatePassword(room.id, newpw);
+      } catch (error) { 
+        return 'Changepw: error1';
+      }
+    }
+    else {
+      return 'Changepw: empty password';
+    }
+    // /changepw a test
+
     return 'Changepw: done';
   }
-
-
+  
+  
+  // PAS COMPLETEMENT ABOUTI
   async removepwCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
+    if (room.type.name != 'public') {
+      return `changepw: this is a ${room.type.name} channel. Only public channel can have password.`;
+    }
+
+    // removepw currentpw
+    if (command.length != 2)
+      return `${command[0]}: argument error`;
+
+    // check currentpw ?
+
+
+
     return 'Removepw: done';
   }
 

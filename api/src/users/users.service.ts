@@ -179,7 +179,7 @@ export class UsersService {
     try {
       const user: UserModel = await this.findOneById(id) as UserModel;
       // await this.usersRepository.delete(user);
-      await this.usersRepository.delete(id).catch((err: any) => {
+      await this.usersRepository.delete(id).catch(() => {
         throw new BadRequestException('Delete user error');
       });
     }
@@ -208,56 +208,103 @@ export class UsersService {
 
   async updatePseudo(id: number, pseudo: string): Promise<boolean> {
     try {
-      let user: UserModel = await this.findOneById(id) as UserModel;
+      var user: UserModel = await this.findOneById(id) as UserModel;
+    } catch (error) {
+      throw new NotFoundException('User id not found');
+    }
       
-      const user_exist = await this.usersRepository.findOne({
-        where: { pseudo: pseudo }
-      });
-      if (user_exist)
-        throw new UnauthorizedException()
+    const pseudo_exist = await this.usersRepository.findOne({
+      where: { pseudo: pseudo }
+    })
+    if (pseudo_exist)
+      throw new UnauthorizedException('Pseudo already used')
 
       user.pseudo = pseudo;
-      await this.usersRepository.save(user).catch((err: any) => {
+      await this.usersRepository.save(user).catch(() => {
         throw new BadRequestException('User pseudo update error');
       });
       return true;
-    }
-    catch (error) {
-      if (error instanceof UnauthorizedException)
-        throw new UnauthorizedException('Pseudo already used')
-      throw new NotFoundException('User id not found');
-    }
   }
+  // async updatePseudo(id: number, pseudo: string): Promise<boolean> {
+  //   try {
+  //     let user: UserModel = await this.findOneById(id) as UserModel;
+      
+  //     const user_exist = await this.usersRepository.findOne({
+  //       where: { pseudo: pseudo }
+  //     });
+  //     if (user_exist)
+  //       throw new UnauthorizedException()
+
+  //     user.pseudo = pseudo;
+  //     await this.usersRepository.save(user).catch((err: any) => {
+  //       throw new BadRequestException('User pseudo update error');
+  //     });
+  //     return true;
+  //   }
+  //   catch (error) {
+  //     if (error instanceof UnauthorizedException)
+  //       throw new UnauthorizedException('Pseudo already used')
+  //     throw new NotFoundException('User id not found');
+  //   }
+  // }
 
   async updateAvatar(id: number, filename: string): Promise<string> {
     try {
-      let user: UserModel = await this.findOneById(id) as UserModel;
-
-      // remove l'ancienne image de la memoire du volume
-      const prevAvatarUrl: string = user.avatar_url;
-      if (prevAvatarUrl.indexOf('https://cdn.intra.42.fr') === -1 &&
-        prevAvatarUrl.indexOf('default-avatar') === -1) {
-        const i: number = prevAvatarUrl.lastIndexOf('/');
-        const prevFilename: string = prevAvatarUrl.substring(i + 1);
-        const prevFile: string = `../app-datas/avatars/${prevFilename}`;
-        fs.unlink(prevFile, (err) => {
-          // garder console.log, si on throw une erreur ca terminera pas la fonction et on a besoin du return
-          if (err)
-            console.log(`Could not remove the old file ${prevFile} from user ${user.id}`);
-          // file removed!
-        })
-      }
-
-      user.avatar_url = `/avatars/${filename}`;
-      await this.usersRepository.save(user).catch((err: any) => {
-        throw new BadRequestException('User avatar update error');
-      });
-      return user.avatar_url;
-    }
-    catch (error) {
+      var user: UserModel = await this.findOneById(id) as UserModel;
+    } catch (error) {
       throw new NotFoundException('User id not found');
     }
+
+    // remove l'ancienne image de la memoire du volume
+    const prevAvatarUrl: string = user.avatar_url;
+    if (prevAvatarUrl.indexOf('https://cdn.intra.42.fr') === -1 &&
+      prevAvatarUrl.indexOf('default-avatar') === -1) {
+      const i: number = prevAvatarUrl.lastIndexOf('/');
+      const prevFilename: string = prevAvatarUrl.substring(i + 1);
+      const prevFile: string = `../app-datas/avatars/${prevFilename}`;
+      fs.unlink(prevFile, (err) => {
+        // garder console.log, si on throw une erreur ca terminera pas la fonction et on a besoin du return
+        if (err)
+          console.log(`Could not remove the old file ${prevFile} from user ${user.id}`);
+        // file removed!
+      })
+    }
+
+    user.avatar_url = `/avatars/${filename}`;
+    await this.usersRepository.save(user).catch((err: any) => {
+      throw new BadRequestException('User avatar update error');
+    });
+    return user.avatar_url;
   }
+  // async updateAvatar(id: number, filename: string): Promise<string> {
+  //   try {
+  //     let user: UserModel = await this.findOneById(id) as UserModel;
+
+  //     // remove l'ancienne image de la memoire du volume
+  //     const prevAvatarUrl: string = user.avatar_url;
+  //     if (prevAvatarUrl.indexOf('https://cdn.intra.42.fr') === -1 &&
+  //       prevAvatarUrl.indexOf('default-avatar') === -1) {
+  //       const i: number = prevAvatarUrl.lastIndexOf('/');
+  //       const prevFilename: string = prevAvatarUrl.substring(i + 1);
+  //       const prevFile: string = `../app-datas/avatars/${prevFilename}`;
+  //       fs.unlink(prevFile, (err) => {
+  //         // garder console.log, si on throw une erreur ca terminera pas la fonction et on a besoin du return
+  //         if (err)
+  //           console.log(`Could not remove the old file ${prevFile} from user ${user.id}`);
+  //         // file removed!
+  //       })
+  //     }
+
+  //     user.avatar_url = `/avatars/${filename}`;
+  //     await this.usersRepository.save(user).catch((err: any) => {
+  //       throw new BadRequestException('User avatar update error');
+  //     });
+  //     return user.avatar_url;
+  //   }
+  //   catch (error) {
+  //     throw new NotFoundException('User id not found');
+  //   }
+  // }
 
 
 
