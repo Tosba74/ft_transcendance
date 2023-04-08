@@ -7,11 +7,16 @@ import { UpdateRoleDto } from './dto/update-role';
 import { MuteParticipantDto } from './dto/mute-participant';
 import { ChatRoleModel } from 'src/chat_roles/models/chat_role.model';
 
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class ChatParticipantsService {
 
-  constructor(@InjectRepository(ChatParticipantModel) private chatParticipantsRepository: Repository<ChatParticipantModel>) { }
+  constructor(
+    @InjectRepository(ChatParticipantModel) private chatParticipantsRepository: Repository<ChatParticipantModel>,
+    private usersService: UsersService,
+  ) 
+  { }
 
   findAll(): Promise<ChatParticipantModel[]> {
     return this.chatParticipantsRepository.find();
@@ -59,6 +64,12 @@ export class ChatParticipantsService {
 
   async create(user_id: number, chat_id: number, role_id: number): Promise<ChatParticipantModel> {
 
+    try {
+      await this.usersService.findOneById(user_id);
+    } catch (error) {
+      throw new NotFoundException();
+    }
+
     const res = this.chatParticipantsRepository.create({
 
       participant: { id: user_id },
@@ -66,7 +77,6 @@ export class ChatParticipantsService {
       role: new ChatRoleModel(role_id),
       muted_until: new Date(),
     });
-
 
     const created = await this.chatParticipantsRepository.save(res).catch((err: any) => {
       throw new BadRequestException('Chat message creation error');

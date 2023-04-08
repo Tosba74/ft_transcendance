@@ -34,8 +34,7 @@ export class ChatsService {
 
   constructor(
     @InjectRepository(ChatModel) private chatsRepository: Repository<ChatModel>,
-    @Inject(forwardRef(() => MeService))
-    private meService: MeService,
+    @Inject(forwardRef(() => MeService)) private meService: MeService,
     private chatMessagesService: ChatMessagesService,
     private chatParticipantsService: ChatParticipantsService,
     private usersService: UsersService,
@@ -44,6 +43,11 @@ export class ChatsService {
   // clients = new Pair<Socket, LoggedUserDto>();
   clients: WebsocketUser[] = [];
   serverMsgId = 1;
+
+
+/* 
+  --------- USUAL CHAT ACTIONS  ---------
+*/
 
   findAll(): Promise<ChatModel[]> {
     return this.chatsRepository.find();
@@ -220,52 +224,241 @@ export class ChatsService {
   }
 
 
-  async commandPermission(room:ChatModel, command: string[], senderId: number, targetUserId: number, roleToAssign=-1): Promise<string | undefined> {
+  async createMessage(user: UserDto, client: Socket, room_id: number, message: string): Promise<ChatMessageDto | undefined> {
+
+    let responseMessage = new ChatMessageDto();
+
+    const room = await this.findOneById(room_id);
+
+    // Search if user is in the room and not banned
+    let participant = room.participants.find(element => {
+      return (
+        element.participant.id === user.id &&
+        element.role.id != ChatRoleModel.BAN_ROLE
+      )
+    });
+
+    // Check if user in room has been found
+    if (participant != undefined) {
+
+      // Check if user is muted
+      if (participant.muted_until < new Date()) {
+
+        const msg = await this.chatMessagesService.create(message, user.id, room_id)
+
+        responseMessage.id = msg.id;
+        responseMessage.sender = { ...user, status: '' };
+        responseMessage.content = message;
+
+        return responseMessage;
+      }
+      else {
+        responseMessage.id = -this.serverMsgId;
+        responseMessage.sender = new UserDto();
+        responseMessage.sender.id = -1;
+        responseMessage.content = `You are muted until ${participant.muted_until.toUTCString()}`;
+        this.serverMsgId++;
+
+        client.emit('broadcastMessage', { room_id: room_id.toString(), message: responseMessage });
+        return (undefined);
+      }
+
+    }
+    else {
+      responseMessage.id = -this.serverMsgId;;
+      responseMessage.sender = new UserDto();
+      responseMessage.sender.id = -1;
+      responseMessage.content = 'Unauthorized';
+      this.serverMsgId++;
+
+
+      client.emit('broadcastMessage', { room_id: room_id.toString(), message: responseMessage });
+      return (undefined);
+    }
+
+    // To be broadcasted in everyone in the room
+    return (undefined);
+  }
+
+
+
+/* 
+  --------- ADMIN COMMANDS  ---------
+*/
+
+  /* 
+  Role
+  Quit (not admin)
+  Change password (confirmation ?)
+  Remove password method
+  */
+  async adminCommand(user: UserDto, client: Socket, room_id: number, message: string): Promise<ChatMessageDto | undefined> {
+
+    let responseMessage = new ChatMessageDto();
+
+
+    const room = await this.findOneById(room_id);
+
+    // Search if user is in the room and is owner or admin
+    if (room.participants.some(element => {
+      return element.participant.id === user.id &&
+        (element.role.id == ChatRoleModel.OWNER_ROLE || element.role.id == ChatRoleModel.ADMIN_ROLE)
+    })) {
+
+      let command = message.split(" ");
+      command[0] = command[0].toLocaleLowerCase()
+
+      responseMessage.id = -this.serverMsgId;
+      responseMessage.sender = new UserDto();
+      responseMessage.sender.id = -1;
+      this.serverMsgId++;
+
+      // console.log('Command args', command);
+      switch (command[0]) {
+
+        // Owner permission required
+        case "/changepw":
+          responseMessage.content = await this.changepwCommand(room, user, command);
+          break;
+        case "/removepw":
+          responseMessage.content = await this.removepwCommand(room, user, command);
+          break;
+
+        // minimum Admin permission required
+        case "/invite":
+          responseMessage.content = await this.inviteCommand(room, user, command);
+          break;
+        case "/promote":
+          responseMessage.content = await this.promoteCommand(room, user, command);
+          break;
+        case "/demote":
+          responseMessage.content = await this.demoteCommand(room, user, command);
+          break;
+        case "/kick":
+          responseMessage.content = await this.kickCommand(room, user, command);
+          break;
+        case "/ban":
+          responseMessage.content = await this.banCommand(room, user, command);
+          break;
+        case "/unban":
+          responseMessage.content = await this.unbanCommand(room, user, command);
+          break;
+
+        case "/role":
+          responseMessage.content = await this.roleCommand(room, user, command);
+          break;
+
+        default:
+          responseMessage.content = 'Unknown command';
+
+      }
+
+
+      client.emit('broadcastMessage', { room_id: room_id, message: responseMessage });
+      return (undefined);
+
+    }
+    else {
+      responseMessage.id = -this.serverMsgId;
+      responseMessage.sender = new UserDto();
+      responseMessage.sender.id = -1;
+      responseMessage.content = 'Unauthorized, you are not an admin';
+      this.serverMsgId++;
+
+      client.emit('broadcastMessage', { room_id: room_id, message: responseMessage });
+      return (undefined);
+    }
+
+    // To be broadcasted in everyone in the room
+    return (responseMessage);
+  }
+
+
+  async changepwCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
+    return 'Changepw done';
+  }
+
+
+  async removepwCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
+    return 'Removepw done';
+  }
+
+
+  async inviteCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
+    if (command.length != 2)
+      return `${command[0]}: argument error`;
+
+    if (room.type.name != 'private') {
+      return `invite: this is a ${room.type.name} channel. Only private channel accept invitations.`;
+    }
+
+    let userToInvite = parseInt(command[1]);
+
+    const found = room.participants.find(value => (value.participant.id == userToInvite))
+    if (found) {
+      if (found.role.id == ChatRoleModel.BAN_ROLE)
+        return `invite: ${userToInvite} is banned of this channel`;
+      if (userToInvite == user.id)
+        return `invite: you're already in this channel`;
+      return `invite: ${userToInvite} is already in this channel`;
+    }
+
+    try {
+      await this.chatParticipantsService.create(userToInvite, room.id, ChatRoleModel.USER_ROLE);
+    } catch (error) {
+      return `invite: user not found`;
+    }
+
+    return 'Invite done';
+  }
+
+  // sender is the admin who typed the cmd, receiver is the user targeted by the cmd
+  async commandPermission(room:ChatModel, command: string[], senderId: number, receiverId: number, roleToAssign=-1): Promise<string | undefined> {
 
     if (command.length != 2)
       return `${command[0]}: argument error`;
 
     // not to yourself
-    if (targetUserId == senderId)
+    if (receiverId == senderId)
       return `${command} : Cannot ${command} yourself`;
 
     try {
-      const targetCurrentRole = await this.chatParticipantsService.get_role(targetUserId, room.id);
+      const receiverRole = await this.chatParticipantsService.get_role(receiverId, room.id);
 
-      // already the targeted role (no need this step for kick)
-      if (roleToAssign != -1 && targetCurrentRole === roleToAssign) {
+      // already the targeted role (kick has no role to assign so does not enter this condition)
+      if (roleToAssign != -1 && receiverRole === roleToAssign) {
 
         let message = '';
         switch (command[0]) {
           case "/promote":
-            message = `promote: no effect, ${targetUserId} is already admin`;
+            message = `promote: no effect, ${receiverId} is already admin`;
             break;
           case "/demote":
-            message = `demote: no effect, ${targetUserId} has no special permission`;
+            message = `demote: no effect, ${receiverId} has no special permission`;
             break;
           case "/ban":
-            message = `ban: no effect, ${targetUserId} already banned`;
+            message = `ban: no effect, ${receiverId} already banned`;
             break;
           case "/unban":
-            message = `unban: no effect, ${targetUserId} already in the channel`;
+            message = `unban: no effect, ${receiverId} already in the channel`;
             break;
         }
 
         return message;
       }
       // admin cant touch admin
-      else if (targetCurrentRole === ChatRoleModel.ADMIN_ROLE) {
+      else if (receiverRole === ChatRoleModel.ADMIN_ROLE) {
         const senderRole = await this.chatParticipantsService.get_role(senderId, room.id);
         if (senderRole !== ChatRoleModel.OWNER_ROLE)
-          return `${command}: lack of permission: ${targetUserId} is also Admin. Refer to the Owner.`;
+          return `${command}: lack of permission: ${receiverId} is also Admin. Refer to the Owner.`;
       }
     } catch (error) {
-      return `${command}: ${targetUserId} not found or no relation with this channel`;
+      return `${command}: ${receiverId} not found or no relation with this channel`;
     }
 
     // nobody can touch the owner
-    if (room.participants.find(value => (value.participant.id == targetUserId && value.role.id == ChatRoleModel.OWNER_ROLE)))
-      return `${command}: lack of permission: ${targetUserId} is the owner of this channel`;
+    if (room.participants.find(value => (value.participant.id == receiverId && value.role.id == ChatRoleModel.OWNER_ROLE)))
+      return `${command}: lack of permission: ${receiverId} is the owner of this channel`;
 
     return undefined;
   }
@@ -482,139 +675,53 @@ export class ChatsService {
     }
   }
 
-  /* 
-  Invite
-  Change password (confirmation ?)
-  Remove password method
-  */
-  async adminCommand(user: UserDto, client: Socket, room_id: number, message: string): Promise<ChatMessageDto | undefined> {
-
-    let responseMessage = new ChatMessageDto();
-
-
-    const room = await this.findOneById(room_id);
-
-    // Search if user is in the room and is owner or admin
-    if (room.participants.some(element => {
-      return element.participant.id === user.id &&
-        (element.role.id == ChatRoleModel.OWNER_ROLE || element.role.id == ChatRoleModel.ADMIN_ROLE)
-    })) {
-
-      let command = message.split(" ");
-      command[0] = command[0].toLocaleLowerCase()
-
-      responseMessage.id = -this.serverMsgId;
-      responseMessage.sender = new UserDto();
-      responseMessage.sender.id = -1;
-      this.serverMsgId++;
-
-      // console.log('Command args', command);
-      switch (command[0]) {
-
-        // case "/invite":
-        //   responseMessage.content = await this.promoteCommand(room, user, command);
-        //   break;
-        // case "/changepw":
-        //   responseMessage.content = await this.promoteCommand(room, user, command);
-        //   break;
-        // case "/removepw":
-        //   responseMessage.content = await this.promoteCommand(room, user, command);
-        //   break;
-        case "/promote":
-          responseMessage.content = await this.promoteCommand(room, user, command);
-          break;
-        case "/demote":
-          responseMessage.content = await this.demoteCommand(room, user, command);
-          break;
-        case "/kick":
-          responseMessage.content = await this.kickCommand(room, user, command);
-          break;
-        case "/ban":
-          responseMessage.content = await this.banCommand(room, user, command);
-          break;
-        case "/unban":
-          responseMessage.content = await this.unbanCommand(room, user, command);
-          break;
-
-        default:
-          responseMessage.content = 'Unknown command';
-
+  async roleCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
+    let targetUser = parseInt(command[1]);
+    try {
+      let role: number | string = await this.chatParticipantsService.get_role(targetUser, room.id);
+      switch(role) {
+        case 1:
+          role = 'user';
+          break
+        case 2:
+          role = 'admin';
+          break
+        case 3:
+          role = 'owner';
+          break
+        case 4:
+          role = 'banned';
+          break
       }
-
-
-      client.emit('broadcastMessage', { room_id: room_id, message: responseMessage });
-      return (undefined);
-
+      return `role: ${role}`
+    } catch (error) {
+      return "Role:  user not found or not in this channel";
     }
-    else {
-      responseMessage.id = -this.serverMsgId;
-      responseMessage.sender = new UserDto();
-      responseMessage.sender.id = -1;
-      responseMessage.content = 'Unauthorized, you are not an admin';
-      this.serverMsgId++;
-
-      client.emit('broadcastMessage', { room_id: room_id, message: responseMessage });
-      return (undefined);
-    }
-
-    // To be broadcasted in everyone in the room
-    return (responseMessage);
   }
 
-
-  async createMessage(user: UserDto, client: Socket, room_id: number, message: string): Promise<ChatMessageDto | undefined> {
-
-    let responseMessage = new ChatMessageDto();
-
-    const room = await this.findOneById(room_id);
-
-    // Search if user is in the room and not banned
-    let participant = room.participants.find(element => {
-      return (
-        element.participant.id === user.id &&
-        element.role.id != ChatRoleModel.BAN_ROLE
-      )
-    });
-
-    // Check if user in room has been found
-    if (participant != undefined) {
-
-      // Check if user is muted
-      if (participant.muted_until < new Date()) {
-
-        const msg = await this.chatMessagesService.create(message, user.id, room_id)
-
-        responseMessage.id = msg.id;
-        responseMessage.sender = { ...user, status: '' };
-        responseMessage.content = message;
-
-        return responseMessage;
-      }
-      else {
-        responseMessage.id = -this.serverMsgId;
-        responseMessage.sender = new UserDto();
-        responseMessage.sender.id = -1;
-        responseMessage.content = `You are muted until ${participant.muted_until.toUTCString()}`;
-        this.serverMsgId++;
-
-        client.emit('broadcastMessage', { room_id: room_id.toString(), message: responseMessage });
-        return (undefined);
-      }
-
-    }
-    else {
-      responseMessage.id = -this.serverMsgId;;
-      responseMessage.sender = new UserDto();
-      responseMessage.sender.id = -1;
-      responseMessage.content = 'Unauthorized';
-      this.serverMsgId++;
+  // async roleCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
+  //   try {
+  //     const role = await this.chatParticipantsService.get_role(user.id, room.id);
+  //     let roleString = ''
+  //     switch(role) {
+  //       case 1:
+  //         roleString = 'user';
+  //         break
+  //       case 2:
+  //         roleString = 'admin';
+  //         break
+  //       case 3:
+  //         roleString = 'owner';
+  //         break
+  //       case 4:
+  //         roleString = 'banned';
+  //         break
+  //     }
+  //     return `role: ${roleString}`
+  //   } catch (error) {
+  //     return "Role:  user not found or not in this channel";
+  //   }
+  // }
 
 
-      client.emit('broadcastMessage', { room_id: room_id.toString(), message: responseMessage });
-      return (undefined);
-    }
-
-    // To be broadcasted in everyone in the room
-    return (undefined);
-  }
 }
