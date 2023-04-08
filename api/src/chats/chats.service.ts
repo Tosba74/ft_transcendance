@@ -23,6 +23,7 @@ import { ChatRoomDto } from 'src/_shared_dto/chat-room.dto';
 import { ChatMessageDto } from 'src/_shared_dto/chat-message.dto';
 import { UsersService } from 'src/users/users.service';
 
+import * as bcrypt from 'bcrypt';
 
 interface WebsocketUser {
   socket: Socket;
@@ -127,6 +128,7 @@ export class ChatsService {
       chat.password = hash;
     }
     else {
+      // for /removepw
       chat.password = "";
     }
 
@@ -395,52 +397,77 @@ export class ChatsService {
     return (responseMessage);
   }
 
+  async checkPassword(password:string, roomId: number): Promise<boolean> {
+    console.log(roomId);
+    try {
+      var chat = await this.chatsRepository.findOneOrFail({
+        select: ['password'], 
+        where: { id: roomId }
+      });
+      console.log(chat);
+    } catch (error) {
+      throw new NotFoundException('Chat id not found');
+    }
+
+    // if (await bcrypt.compare(password, user.password))
+    //   return true
+    return false;
+  }
 
   // PAS COMPLETEMENT ABOUTI
+  // '/changepw newpw' or '/changepw oldpw newpw'
   async changepwCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
     if (room.type.name != 'public') {
       return `changepw: this is a ${room.type.name} channel. Only public channel can have password.`;
     }
   
-    // changepw currentpw newpw
-    if (command.length != 3)
+    if (command.length != 2 && command.length != 3)
       return `${command[0]}: argument error`;
 
-    const currentpw = command[1];
-    const newpw = command[2];
-
-    // check currentpw ?
-
-    // update
-    if (newpw !== '') {
-      try {
-        await this.updatePassword(room.id, newpw);
-      } catch (error) { 
-        return 'Changepw: error1';
-      }
+    if (command.length === 2) {
+      var newpw = command[1];
     }
     else {
-      return 'Changepw: empty password';
+      var currentpw = command[1];
+      if (await this.checkPassword(currentpw, room.id) === false)
+        return 'Changepw: wrong password';
+      // ? check currentpw if pw is defined
+      // code ...
+      // if (user && user.password && await bcrypt.compare(password, user.password)) {
+      var newpw = command[2];
     }
-    // /changepw a test
+      
+    // update
+    try {
+      await this.updatePassword(room.id, newpw);
+    } catch (error) { 
+      return 'Changepw: error';
+    }
 
     return 'Changepw: done';
   }
   
   
   // PAS COMPLETEMENT ABOUTI
+  // '/removepw oldpw'
   async removepwCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
     if (room.type.name != 'public') {
       return `changepw: this is a ${room.type.name} channel. Only public channel can have password.`;
     }
 
-    // removepw currentpw
     if (command.length != 2)
       return `${command[0]}: argument error`;
 
-    // check currentpw ?
+    const currentpw = command[1];
+    // ? check currentpw if pw is defined
+    // code ...
 
-
+    // update
+    try {
+      await this.updatePassword(room.id, '');
+    } catch (error) { 
+      return 'Removepw: error';
+    }
 
     return 'Removepw: done';
   }
