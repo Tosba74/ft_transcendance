@@ -309,14 +309,9 @@ export class ChatsService {
 
 
 /* 
-  --------- ADMIN COMMANDS  ---------
+  --------- ADMIN/OWNER COMMANDS  ---------
 */
 
-  /* 
-  Quit (not admin)
-  Change password (confirmation ?)
-  Remove password method
-  */
   async adminCommand(user: UserDto, client: Socket, room_id: number, message: string): Promise<ChatMessageDto | undefined> {
 
     let responseMessage = new ChatMessageDto();
@@ -330,6 +325,11 @@ export class ChatsService {
     })) {
 
       let command = message.split(" ");
+      function isNotBlank(elem: string) {
+        return (elem !== '');
+      }
+      command = command.filter(isNotBlank);
+
       command[0] = command[0].toLocaleLowerCase()
 
       responseMessage.id = -this.serverMsgId;
@@ -337,11 +337,14 @@ export class ChatsService {
       responseMessage.sender.id = -1;
       this.serverMsgId++;
 
-      console.log('command splitted:', command);
+      console.log('admin command splitted:', command);
 
       switch (command[0]) {
 
         // Owner permission required
+        case "/addpw":
+          responseMessage.content = await this.addpwCommand(room, user, command);
+          break;
         case "/changepw":
           responseMessage.content = await this.changepwCommand(room, user, command);
           break;
@@ -377,7 +380,6 @@ export class ChatsService {
 
       }
 
-
       client.emit('broadcastMessage', { room_id: room_id, message: responseMessage });
       return (undefined);
 
@@ -397,43 +399,118 @@ export class ChatsService {
     return (responseMessage);
   }
 
-  async checkPassword(password:string, roomId: number): Promise<boolean> {
-    console.log(roomId);
+
+  /* 
+    OWNER PERMISSION COMMANDS:
+  */
+
+  async pwCommandsPermissions(room: ChatModel, userId: number, command: string): Promise<any> {
+    if (room.type.name != 'public') {
+      return `${command}: this is a private channel. Only public channel can have password.`;
+    }
+
     try {
-      var chat = await this.chatsRepository.findOneOrFail({
+      const senderRole = await this.chatParticipantsService.get_role(userId, room.id);
+      if (senderRole !== ChatRoleModel.OWNER_ROLE)
+        return `${command}: only the Owner can update the channel password`;
+    
+    } catch (error) {
+      return `${command}: error retrieving user role`;
+    }
+
+    return true;
+  }
+
+
+  async isPasswordProtected(roomId:number): Promise<boolean> {
+    const chat = await this.chatsRepository.findOneOrFail({
+      select: ['password'], 
+      where: { id: roomId }
+    });
+    if (chat.password === '' || chat.password === undefined)
+      return false
+    return true;
+  }
+
+
+  async checkPassword(password:string, roomId: number, command: string): Promise<any> {
+    try {
+      const chat = await this.chatsRepository.findOneOrFail({
         select: ['password'], 
         where: { id: roomId }
       });
-      console.log(chat);
-    } catch (error) {
-      throw new NotFoundException('Chat id not found');
-    }
 
-    // if (await bcrypt.compare(password, user.password))
-    //   return true
-    return false;
+      if (chat.password === '' || chat.password === undefined)
+        return true;
+
+      if (await bcrypt.compare(password, chat.password) === false)
+        return `${command}: wrong password`;
+
+      return true;
+    } catch (error) {
+      return `${command}: chat not found`;
+    }
   }
 
-  // PAS COMPLETEMENT ABOUTI
-  // '/changepw newpw' or '/changepw oldpw newpw'
-  async changepwCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
-    if (room.type.name != 'public') {
-      return `changepw: this is a ${room.type.name} channel. Only public channel can have password.`;
+
+  // '/addpw newpw'
+  async addpwCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
+    const errorMsg = await this.pwCommandsPermissions(room, user.id, command[0]);
+    if (errorMsg !== true)
+      return errorMsg;
+  
+    if (command.length != 2)
+      return 'addpw: argument error';
+
+    // check if protected
+    try {
+      if (await this.isPasswordProtected(room.id) === true)
+        return 'addpw: this channel does have a password. In order to modify the actual password use: \'changepw pw newpw\'';
+    } catch (error) {
+      return 'addpw: chat not found';
     }
+
+    // update
+    const newpw = command[1];
+    try {
+      await this.updatePassword(room.id, newpw);
+    } catch (error) {
+      return 'addpw: error';
+    }
+
+    return 'addpw: done';
+  }
+
+
+  // '/changepw newpw' or '/changepw pw newpw'
+  async changepwCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
+    const errorMsg = await this.pwCommandsPermissions(room, user.id, command[0]);
+    if (errorMsg !== true)
+      return errorMsg;
   
     if (command.length != 2 && command.length != 3)
-      return `${command[0]}: argument error`;
+      return 'changepw: argument error';
 
+    // check arguments length compare to the password state
+    try {
+      if (await this.isPasswordProtected(room.id) === false && command.length == 3)
+        return 'changepw: this channel doesn\'t have any password. In order to add one use: \'addpw pw\' or \'changepw pw\'';
+      else if (await this.isPasswordProtected(room.id) === true && command.length == 2)
+        return 'changepw: this channel does have a password. In order to modify the actual password use: \'changepw pw newpw\'';
+    } catch (error) {
+      return 'changepw: chat not found';
+    }
+    
+    // parse + (checkpassword)
     if (command.length === 2) {
       var newpw = command[1];
     }
     else {
-      var currentpw = command[1];
-      if (await this.checkPassword(currentpw, room.id) === false)
-        return 'Changepw: wrong password';
-      // ? check currentpw if pw is defined
-      // code ...
-      // if (user && user.password && await bcrypt.compare(password, user.password)) {
+      const currentpw = command[1];
+      const check = await this.checkPassword(currentpw, room.id, command[0]);
+      if (check !== true)
+        return check;
+
       var newpw = command[2];
     }
       
@@ -441,75 +518,60 @@ export class ChatsService {
     try {
       await this.updatePassword(room.id, newpw);
     } catch (error) { 
-      return 'Changepw: error';
+      return 'changepw: error';
     }
 
-    return 'Changepw: done';
+    return 'changepw: done';
   }
   
-  
-  // PAS COMPLETEMENT ABOUTI
-  // '/removepw oldpw'
+
+  // '/removepw pw'
   async removepwCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
-    if (room.type.name != 'public') {
-      return `changepw: this is a ${room.type.name} channel. Only public channel can have password.`;
-    }
+    const errorMsg = await this.pwCommandsPermissions(room, user.id, command[0]);
+    if (errorMsg !== true)
+      return errorMsg;
 
     if (command.length != 2)
-      return `${command[0]}: argument error`;
+      return 'removepw: argument error';
 
+    try {
+      if (await this.isPasswordProtected(room.id) === false)
+        return 'removepw: this channel doesn\'t have any password.';
+    } catch (error) {
+      return 'removepw: chat not found';
+    }
+    
+    // checkpassword
     const currentpw = command[1];
-    // ? check currentpw if pw is defined
-    // code ...
+    const check = await this.checkPassword(currentpw, room.id, command[0]);
+    if (check !== true)
+      return check;
 
     // update
     try {
       await this.updatePassword(room.id, '');
     } catch (error) { 
-      return 'Removepw: error';
+      return 'removepw: error';
     }
 
-    return 'Removepw: done';
+    return 'removepw: done';
   }
 
-  // users need a quit command 
-  async inviteCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
-    if (command.length != 2)
-      return `${command[0]}: argument error`;
 
-    if (room.type.name != 'private') {
-      return `invite: this is a ${room.type.name} channel. Only private channel accept invitations.`;
-    }
-
-    let userToInvite = parseInt(command[1]);
-
-    const found = room.participants.find(value => (value.participant.id == userToInvite))
-    if (found) {
-      if (found.role.id == ChatRoleModel.BAN_ROLE)
-        return `invite: ${userToInvite} is banned of this channel`;
-      if (userToInvite == user.id)
-        return `invite: you're already in this channel`;
-      return `invite: ${userToInvite} is already in this channel`;
-    }
-
-    try {
-      await this.chatParticipantsService.create(userToInvite, room.id, ChatRoleModel.USER_ROLE);
-    } catch (error) {
-      return `invite: user not found`;
-    }
-
-    return 'Invite:  done';
-  }
+  /* 
+    ADMIN PERMISSION COMMANDS:
+  */
 
   // sender is the admin who typed the cmd, receiver is the user targeted by the cmd
-  async commandPermission(room:ChatModel, command: string[], senderId: number, receiverId: number, roleToAssign=-1): Promise<string | undefined> {
-
+  async roleCommandsPermission(room:ChatModel, command: string[], senderId: number, receiverId: number, roleToAssign=-1): Promise<string | undefined> {
+    const cmdName = command[0].substring(1);
+    
     if (command.length != 2)
-      return `${command[0]}: argument error`;
+      return `${cmdName}: argument error`;
 
     // not to yourself
     if (receiverId == senderId)
-      return `${command} : Cannot ${command} yourself`;
+      return `${cmdName}: cannot ${cmdName} yourself`;
 
     try {
       const receiverRole = await this.chatParticipantsService.get_role(receiverId, room.id);
@@ -518,17 +580,17 @@ export class ChatsService {
       if (roleToAssign != -1 && receiverRole === roleToAssign) {
 
         let message = '';
-        switch (command[0]) {
-          case "/promote":
+        switch (cmdName) {
+          case "promote":
             message = `promote: no effect, ${receiverId} is already admin`;
             break;
-          case "/demote":
+          case "demote":
             message = `demote: no effect, ${receiverId} has no special permission`;
             break;
-          case "/ban":
+          case "ban":
             message = `ban: no effect, ${receiverId} already banned`;
             break;
-          case "/unban":
+          case "unban":
             message = `unban: no effect, ${receiverId} already in the channel`;
             break;
         }
@@ -539,17 +601,47 @@ export class ChatsService {
       else if (receiverRole === ChatRoleModel.ADMIN_ROLE) {
         const senderRole = await this.chatParticipantsService.get_role(senderId, room.id);
         if (senderRole !== ChatRoleModel.OWNER_ROLE)
-          return `${command}: lack of permission: ${receiverId} is also Admin. Refer to the Owner.`;
+          return `${cmdName}: impossible, ${receiverId} is also Admin, refer to the Owner`;
       }
     } catch (error) {
-      return `${command}: ${receiverId} not found or no relation with this channel`;
+      return `${cmdName}: ${receiverId} not found or no relation with this channel`;
     }
 
     // nobody can touch the owner
     if (room.participants.find(value => (value.participant.id == receiverId && value.role.id == ChatRoleModel.OWNER_ROLE)))
-      return `${command}: lack of permission: ${receiverId} is the owner of this channel`;
+      return `${cmdName}: impossible, ${receiverId} is the owner of this channel`;
 
     return undefined;
+  }
+
+
+  // users need a quit command 
+  async inviteCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
+    if (command.length != 2)
+      return 'invite: argument error';
+
+    if (room.type.name != 'private') {
+      return 'invite: this is a public channel, only private channel accept invitations';
+    }
+
+    let userToInvite = parseInt(command[1]);
+
+    const found = room.participants.find(value => (value.participant.id == userToInvite))
+    if (found) {
+      if (found.role.id == ChatRoleModel.BAN_ROLE)
+        return `invite: ${userToInvite} is banned of this channel`;
+      if (userToInvite == user.id)
+        return 'invite: you\'re already in this channel';
+      return `invite: ${userToInvite} is already in this channel`;
+    }
+
+    try {
+      await this.chatParticipantsService.create(userToInvite, room.id, ChatRoleModel.USER_ROLE);
+    } catch (error) {
+      return 'invite: user not found';
+    }
+
+    return 'invite: done';
   }
 
 
@@ -557,7 +649,7 @@ export class ChatsService {
 
     let userToPromote = parseInt(command[1]);
 
-    const permission = await this.commandPermission(room, command, user.id, userToPromote, ChatRoleModel.ADMIN_ROLE);
+    const permission = await this.roleCommandsPermission(room, command, user.id, userToPromote, ChatRoleModel.ADMIN_ROLE);
     if (permission !== undefined)
       return permission
 
@@ -569,7 +661,7 @@ export class ChatsService {
     try {
       await this.chatParticipantsService.update_role(newRole);
     } catch (error) {
-      return "Promote : user not found or not in this channel";
+      return "promote: user not found or not in this channel";
     }
 
     // Notify the sender (and the promoted user if ((multi)connected)
@@ -593,7 +685,7 @@ export class ChatsService {
       });
     }
 
-    return "Promote : done";
+    return "promote: done";
   }
 
 
@@ -601,7 +693,7 @@ export class ChatsService {
 
     let userToDemote = parseInt(command[1]);
     
-    const permission = await this.commandPermission(room, command, user.id, userToDemote, ChatRoleModel.USER_ROLE);
+    const permission = await this.roleCommandsPermission(room, command, user.id, userToDemote, ChatRoleModel.USER_ROLE);
     if (permission !== undefined)
       return permission
     
@@ -613,7 +705,7 @@ export class ChatsService {
     try {
       await this.chatParticipantsService.update_role(newRole);
     } catch (error) {
-      return "Demote : user not found or not in this channel";
+      return "demote: user not found or not in this channel";
     }
     
     // Notify the sender (and the demoted user if ((multi)connected)
@@ -637,7 +729,7 @@ export class ChatsService {
       });
     }
     
-    return "Demote : done";
+    return "demote: done";
   }
 
 
@@ -645,7 +737,7 @@ export class ChatsService {
 
     let userToKick = parseInt(command[1]);
 
-    const permission = await this.commandPermission(room, command, user.id, userToKick);
+    const permission = await this.roleCommandsPermission(room, command, user.id, userToKick);
     if (permission !== undefined)
       return permission
 
@@ -674,11 +766,11 @@ export class ChatsService {
         }
       });
 
-      return "Kick : done";
+      return "kick: done";
 
     }
     else {
-      return "Kick : user not found or connected";
+      return "kick: user not found or connected";
     }
   }
   
@@ -687,7 +779,7 @@ export class ChatsService {
 
     let userToBan = parseInt(command[1]);
 
-    const permission = await this.commandPermission(room, command, user.id, userToBan, ChatRoleModel.BAN_ROLE);
+    const permission = await this.roleCommandsPermission(room, command, user.id, userToBan, ChatRoleModel.BAN_ROLE);
     if (permission !== undefined)
       return permission
 
@@ -731,42 +823,41 @@ export class ChatsService {
     try {
       await this.chatParticipantsService.update_role(newRole);
     } catch (error) {
-      return "Ban : user not found or not in this channel";
+      return "ban: user not found or not in this channel";
     }
-    return "Ban : done";
+    return "ban: done";
   }
 
 
   async unbanCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
 
-    if (command.length == 2) {
+    let userToUnban = parseInt(command[1]);
 
-      let userToUnban = parseInt(command[1]);
+    const permission = await this.roleCommandsPermission(room, command, user.id, userToUnban, ChatRoleModel.USER_ROLE);
+    if (permission !== undefined)
+      return permission
 
-      const permission = await this.commandPermission(room, command, user.id, userToUnban, ChatRoleModel.USER_ROLE);
-      if (permission !== undefined)
-        return permission
-
-      let newRole = new UpdateRoleDto();
-      newRole.new_role = ChatRoleModel.USER_ROLE;
-      newRole.participantId = userToUnban;
-      newRole.roomId = room.id;
-      try {
-        await this.chatParticipantsService.update_role(newRole);
-      } catch (error) {
-        return "Unban : user not found or not in this channel";
-      }
-      return "Unban : done";
-
+    let newRole = new UpdateRoleDto();
+    newRole.new_role = ChatRoleModel.USER_ROLE;
+    newRole.participantId = userToUnban;
+    newRole.roomId = room.id;
+    try {
+      await this.chatParticipantsService.update_role(newRole);
+    } catch (error) {
+      return "uban: user not found or not in this channel";
     }
-    else {
-      return "Unban : Argument error";
-    }
+    return "uban: done";
   }
 
 
   async roleCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
-    let targetUser = parseInt(command[1]);
+    if (command.length == 1)
+      var targetUser = user.id;
+    else if (command.length == 2)
+      var targetUser = parseInt(command[1]);
+    else
+      return 'role: argument error';
+    
     try {
       let role: number | string = await this.chatParticipantsService.get_role(targetUser, room.id);
       switch(role) {
@@ -785,7 +876,7 @@ export class ChatsService {
       }
       return `role: ${role}`
     } catch (error) {
-      return "Role:  user not found or not in this channel";
+      return "role: user not found or not in this channel";
     }
   }
 
