@@ -287,7 +287,6 @@ export class ChatsService {
 */
 
   /* 
-  Role
   Quit (not admin)
   Change password (confirmation ?)
   Remove password method
@@ -295,7 +294,6 @@ export class ChatsService {
   async adminCommand(user: UserDto, client: Socket, room_id: number, message: string): Promise<ChatMessageDto | undefined> {
 
     let responseMessage = new ChatMessageDto();
-
 
     const room = await this.findOneById(room_id);
 
@@ -313,7 +311,6 @@ export class ChatsService {
       responseMessage.sender.id = -1;
       this.serverMsgId++;
 
-      // console.log('Command args', command);
       switch (command[0]) {
 
         // Owner permission required
@@ -343,7 +340,6 @@ export class ChatsService {
         case "/unban":
           responseMessage.content = await this.unbanCommand(room, user, command);
           break;
-
         case "/role":
           responseMessage.content = await this.roleCommand(room, user, command);
           break;
@@ -375,15 +371,15 @@ export class ChatsService {
 
 
   async changepwCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
-    return 'Changepw done';
+    return 'Changepw: done';
   }
 
 
   async removepwCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
-    return 'Removepw done';
+    return 'Removepw: done';
   }
 
-
+  // users need a quit command 
   async inviteCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
     if (command.length != 2)
       return `${command[0]}: argument error`;
@@ -409,7 +405,7 @@ export class ChatsService {
       return `invite: user not found`;
     }
 
-    return 'Invite done';
+    return 'Invite:  done';
   }
 
   // sender is the admin who typed the cmd, receiver is the user targeted by the cmd
@@ -483,7 +479,7 @@ export class ChatsService {
       return "Promote : user not found or not in this channel";
     }
 
-    // Notify the sender (and the promoted user if (multi)connected)
+    // Notify the sender (and the promoted user if ((multi)connected)
     let clientsToPromote = this.clients.filter(value => {
       return value.user.id == userToPromote
     });
@@ -507,7 +503,7 @@ export class ChatsService {
     return "Promote : done";
   }
 
-  // special permission: only Owner can demote and Admin, Admin cannot demote another Admin cause equal status
+
   async demoteCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
 
     let userToDemote = parseInt(command[1]);
@@ -527,7 +523,7 @@ export class ChatsService {
       return "Demote : user not found or not in this channel";
     }
     
-    // Notify the sender (and the demoted user if (multi)connected)
+    // Notify the sender (and the demoted user if ((multi)connected)
     let clientsToDemote = this.clients.filter(value => {
       return value.user.id == userToDemote
     });
@@ -551,8 +547,7 @@ export class ChatsService {
     return "Demote : done";
   }
 
-  // Example {"/kick", "1"}
-  // Second argument is userid
+
   async kickCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
 
     let userToKick = parseInt(command[1]);
@@ -594,7 +589,7 @@ export class ChatsService {
     }
   }
   
-  // special permission: only Owner can ban and Admin, Admin cannot ban another Admin cause equal status
+
   async banCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
 
     let userToBan = parseInt(command[1]);
@@ -648,6 +643,7 @@ export class ChatsService {
     return "Ban : done";
   }
 
+
   async unbanCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
 
     if (command.length == 2) {
@@ -675,6 +671,7 @@ export class ChatsService {
     }
   }
 
+
   async roleCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
     let targetUser = parseInt(command[1]);
     try {
@@ -698,30 +695,5 @@ export class ChatsService {
       return "Role:  user not found or not in this channel";
     }
   }
-
-  // async roleCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
-  //   try {
-  //     const role = await this.chatParticipantsService.get_role(user.id, room.id);
-  //     let roleString = ''
-  //     switch(role) {
-  //       case 1:
-  //         roleString = 'user';
-  //         break
-  //       case 2:
-  //         roleString = 'admin';
-  //         break
-  //       case 3:
-  //         roleString = 'owner';
-  //         break
-  //       case 4:
-  //         roleString = 'banned';
-  //         break
-  //     }
-  //     return `role: ${roleString}`
-  //   } catch (error) {
-  //     return "Role:  user not found or not in this channel";
-  //   }
-  // }
-
 
 }
