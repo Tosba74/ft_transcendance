@@ -8,6 +8,7 @@ import { WebsocketExceptionsFilter } from 'src/_common/filters/ws-exception.filt
 import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
 import { GamesService } from './games.service';
 import { Interval } from '@nestjs/schedule';
+import { CreateGameDto } from './dto/creategame.dto';
 
 
 
@@ -73,20 +74,35 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 
-	@SubscribeMessage('inviteGame')
-	async inviteGame(client: Socket, body: { invited_id: number }): Promise<void> {
+	@SubscribeMessage('createGame')
+	async createGame(client: Socket, body: CreateGameDto): Promise<void> {
 
 		if (client.data.loggedId === undefined) {
 			throw new WsException('Not identified');
 		}
 
-		const newGame = await this.gamesService.createEmpty(client.data.loggedId, body.invited_id);
+		// Check body is okay
+
+
+		if (body.invited_id === -1) {
+
+			const foundMatchmakingGame = await this.gamesService.searchGame(client.data.loggedId, body.fun_mode, body.force_fun, body.points_objective, body.force_points);
+
+			if (foundMatchmakingGame !== undefined) {
+				
+				this.gamesService.joinGame(client, client.data.loggedId, foundMatchmakingGame);
+	
+				return ;
+			}
+		}
+		
+		const newGame = await this.gamesService.createEmpty(client.data.loggedId, body.invited_id, body.fun_mode, body.points_objective);
 
 		let game_function = () => {
 			this.gamesService.gameLife(this.server, newGame.id);
 		}
 
-		this.gamesService.createGame(client, client.data.loggedId, body.invited_id, newGame.id, game_function);
+		this.gamesService.createGame(client, client.data.loggedId, body.invited_id, newGame.id, game_function, body.fun_mode, body.points_objective);
 	}
 
 

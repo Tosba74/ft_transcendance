@@ -13,6 +13,7 @@ export class GameArea {
   // public interval: any;
   // public pause = false;
   public started = false;
+  public ended = false;
 
   public playerOne: Paddle;
   public playerTwo: Paddle;
@@ -49,6 +50,7 @@ export class GameArea {
 
   import(game: GameDataDto) {
     this.started = game.started;
+    this.ended = game.ended;
 
     this.playerOne.import(game.player1);
     this.playerTwo.import(game.player2);
@@ -82,11 +84,9 @@ export class GameArea {
 
     if (
       this.started &&
-      this.playerOne.score < 10 &&
-      this.playerTwo.score < 10
+      this.ended === false
     ) {
       this.balls.forEach((value) => {
-        if (this.playerOne.score < 10 && this.playerTwo.score < 10)
           value.render(ctx);
       });
     }

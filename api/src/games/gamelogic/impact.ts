@@ -32,7 +32,7 @@ export function ext_check_for_collisions(this: GameArea, ball: Ball) //if ball h
 			ball.y = ball.radius + 1;
 	}
 
-	if (!this.pause) {
+	if (!this.ended) {
 		let xdest, ydest;
 
 		ball.radians = ball.angle / (180 * Math.PI) * 10;

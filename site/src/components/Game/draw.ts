@@ -38,7 +38,7 @@ export function draw_scores(
   context.fillText(player1.score.toString(), txt_W_Pone, txt_H);
   context.fillText(player2.score.toString(), txt_W_Ptwo, txt_H);
 
-  if (player1.score >= 10) {
+  if (player1.score > player2.score ) {
     context.font = module_const.canvas_width / 10 + "px pixel";
     context.fillStyle = player1.color;
     context.textAlign = "center";
@@ -49,7 +49,7 @@ export function draw_scores(
     );
   }
 
-  if (player2.score >= 10) {
+  if (player2.score > player1.score ) {
     context.font = module_const.canvas_width / 10 + "px pixel";
     context.fillStyle = player2.color;
     context.textAlign = "center";

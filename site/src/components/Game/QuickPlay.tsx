@@ -2,16 +2,19 @@ import React, { useEffect } from "react";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
+import { UseGameDto } from "./dto/useGame.dto";
 
 const startEL = document.getElementById("root");
 
-export default function QuickPlay({ loginer }: { loginer: UseLoginDto }) {
+export default function QuickPlay({ loginer, gamer }: { loginer: UseLoginDto, gamer: UseGameDto }) {
   const [portal, setPortal] = React.useState(false);
   const ref = React.useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
 
   const handleClickStart = () => {
     console.log("create game");
+
+    gamer.createGame(true, true, 3, true, -1); 
     // navigate("/game");
   };
 

@@ -58,7 +58,7 @@ export default function App() {
             <>
               <Route
                 path="/start"
-                element={<StartGamePage loginer={loginer} />}
+                element={<StartGamePage loginer={loginer} gamer={gamer} />}
               />
               <Route
                 path="/players/:id"
