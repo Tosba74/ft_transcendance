@@ -49,19 +49,26 @@ export default function QuickPlay({
   };
 
   const handleFun = (e: any) => {
-    setMode(old => { return { ...old, isFun: e.target.checked } });
+    setMode((old) => {
+      return { ...old, isFun: e.target.checked };
+    });
   };
 
   const handleForce = (e: any) => {
-    setMode(old => { return { ...old, force: e.target.checked } });
+    setMode((old) => {
+      return { ...old, force: e.target.checked };
+    });
   };
-  
+
   const handlePoints = (e: any) => {
     if (!e.target.valueAsNumber) {
-      setMode(old => { return { ...old, points: 10 } });
-    }
-    else {
-      setMode(old => { return { ...old, points: e.target.valueAsNumber } });
+      setMode((old) => {
+        return { ...old, points: 10 };
+      });
+    } else {
+      setMode((old) => {
+        return { ...old, points: e.target.valueAsNumber };
+      });
     }
   };
 
@@ -96,7 +103,7 @@ export default function QuickPlay({
             style={css}
             ref={ref}
             className={classNames(
-              "absolute left-1/2 grid w-auto max-w-md min-w-[250px] -translate-x-1/2 grid-cols-2 items-center gap-2 rounded-lg bg-gray-100 p-4 px-16 shadow-lg dark:bg-gray-700 dark:text-white",
+              "absolute left-1/2 grid w-auto min-w-[250px] max-w-md -translate-x-1/2 grid-cols-2 items-center gap-2 rounded-lg bg-gray-100 p-4 px-16 shadow-lg dark:bg-gray-700 dark:text-white",
               effect ? "opacity-1 animate-fadeIn" : "animate-fadeOut opacity-0"
             )}
             onAnimationEnd={() => {
@@ -106,7 +113,7 @@ export default function QuickPlay({
           >
             <h3 className="col-span-2 text-center text-xl">Option</h3>
 
-            <label className="relative ml-auto cursor-pointer right-2">
+            <label className="relative right-2 ml-auto cursor-pointer">
               <input
                 onChange={handleFun}
                 type="checkbox"
@@ -115,11 +122,11 @@ export default function QuickPlay({
               />
               <div className="peer h-6 w-11 place-self-center rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-800 dark:peer-focus:ring-blue-800"></div>
             </label>
-            <span className="text-sm font-medium text-gray-900 dark:text-white whitespace-nowrap">
+            <span className="whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
               Fun mode
             </span>
 
-            <label className="relative ml-auto cursor-pointer right-2">
+            <label className="relative right-2 ml-auto cursor-pointer">
               <input
                 onChange={handleForce}
                 type="checkbox"
@@ -129,7 +136,7 @@ export default function QuickPlay({
               <div className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-800 dark:peer-focus:ring-blue-800"></div>
             </label>
 
-            <span className="text-sm font-medium text-gray-900 dark:text-white whitespace-nowrap">
+            <span className="whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
               Force points
             </span>
 
@@ -137,7 +144,7 @@ export default function QuickPlay({
               min="3"
               max="10"
               defaultValue={mode.points}
-              className="max-w-[55px] rounded-lg ml-auto mr-2 right-0 border border-gray-300 bg-gray-50 p-1.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              className="right-0 ml-auto mr-2 max-w-[55px] rounded-lg border border-gray-300 bg-gray-50 p-1.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 dark:focus:border-blue-500 dark:focus:ring-blue-500"
               type="number"
               onChange={handlePoints}
             />
@@ -147,7 +154,7 @@ export default function QuickPlay({
 
             <button
               onClick={handleClickSearch}
-              className="col-span-2 mx-auto mt-3 rounded-lg whitespace-nowrap bg-cyan-500 px-4 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              className="col-span-2 mx-auto mt-3 whitespace-nowrap rounded-lg bg-cyan-500 px-4 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
               Search Game
             </button>
