@@ -9,12 +9,14 @@ import { ChatRoleModel } from 'src/chat_roles/models/chat_role.model';
 import { ChatsService } from 'src/chats/chats.service';
 import { ChannelDto } from 'src/_shared_dto/channel.dto';
 
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class ChatParticipantsService {
 
   constructor(
     @InjectRepository(ChatParticipantModel) private chatParticipantsRepository: Repository<ChatParticipantModel>,
+    private usersService: UsersService,
     @Inject(forwardRef(() => ChatsService))
     private chatsService: ChatsService
   ) { }
@@ -36,6 +38,20 @@ export class ChatParticipantsService {
   }
 
 
+  async findParticipant(participantId: number, roomId: number): Promise<ChatParticipantModel> {
+    try {
+      const chatParticipant = await this.chatParticipantsRepository.findOneOrFail({
+        where: {
+          participant: { id: participantId },
+          room: { id: roomId },
+        }
+      });
+      return chatParticipant;
+    } catch (error) {
+      throw new NotFoundException('Chat participant id not found');
+    }
+  }
+
 
   async listAvailableUserChats(id: number): Promise<ChannelDto[]> {
 
@@ -47,7 +63,7 @@ export class ChatParticipantsService {
     });
 
     const myChatsId = myParticipations.map(participation => participation.room.id);
-    
+
     let publicChats = await this.chatsService.findPublicChats();
     publicChats = publicChats.filter(chat => myChatsId.indexOf(chat.id) == -1);
 
@@ -59,7 +75,6 @@ export class ChatParticipantsService {
       }
     });
   }
-
 
 
   async listUserChats(id: number): Promise<ChannelDto[]> {
@@ -82,6 +97,7 @@ export class ChatParticipantsService {
       }
     });
   }
+
 
   async listBannedUserChats(id: number): Promise<ChannelDto[]> {
     const chats = await this.chatParticipantsRepository.find({
@@ -115,7 +131,6 @@ export class ChatParticipantsService {
       muted_until: new Date(),
     });
 
-
     const created = await this.chatParticipantsRepository.save(res).catch((err: any) => {
       throw new BadRequestException('Chat message creation error');
     });
@@ -124,9 +139,22 @@ export class ChatParticipantsService {
   }
 
 
-  async update_role(id: number, updateRoleDto: UpdateRoleDto): Promise<ChatParticipantModel> {
-    const destUser = await this.findOneById(id);
+  async get_role(participantId: number, roomId: number): Promise<number> {
+    const chatParticipant = await this.chatParticipantsRepository.findOneOrFail({
+      where: {
+        participant: { id: participantId },
+        room: { id: roomId },
+      },
+      relations: {
+        role: true
+      },
+    });
+    return chatParticipant.role.id;
+  }
 
+
+  async update_role(updateRoleDto: UpdateRoleDto): Promise<ChatParticipantModel> {
+    const destUser = await this.findParticipant(updateRoleDto.participantId, updateRoleDto.roomId);
     destUser.role = new ChatRoleModel(updateRoleDto.new_role);
 
     const created = await this.chatParticipantsRepository.save(destUser).catch((err: any) => {
