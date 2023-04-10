@@ -13,7 +13,7 @@ import { ChatRoleModel } from 'src/chat_roles/models/chat_role.model';
 
 import { UserDto } from 'src/_shared_dto/user.dto';
 import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
-import { ChatResponseDto } from 'src/_shared_dto/chat-response.dto';
+import { WsResponseDto } from 'src/_shared_dto/ws-response.dto';
 import { ChatRoomDto } from 'src/_shared_dto/chat-room.dto';
 import { ChatMessageDto } from 'src/_shared_dto/chat-message.dto';
 
@@ -121,7 +121,7 @@ export class ChatsService {
 
 
 
-  async identify(user: LoggedUserDto, client: Socket): Promise<ChatResponseDto<undefined>> {
+  async identify(user: LoggedUserDto, client: Socket): Promise<WsResponseDto<undefined>> {
 
     if (!user || user.id == undefined) {
       return { error: 'Not logged', value: undefined };
@@ -175,9 +175,9 @@ export class ChatsService {
   }
 
 
-  async connectRoom(user: UserDto, client: Socket, room_id: number): Promise<ChatResponseDto<ChatRoomDto>> {
+  async connectRoom(user: UserDto, client: Socket, room_id: number): Promise<WsResponseDto<ChatRoomDto>> {
 
-    let res = new ChatResponseDto<ChatRoomDto>();
+    let res = new WsResponseDto<ChatRoomDto>();
 
     const room = await this.findOneById(room_id);
 
