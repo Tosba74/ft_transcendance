@@ -7,9 +7,11 @@ import { UseLoginDto } from "../Log/dto/useLogin.dto";
 
 export default function FriendsList({
   loginer,
+  reload,
   doReload,
 }: {
   loginer: UseLoginDto;
+  reload: boolean;
   doReload: Function;
 }) {
   const [users, setUsers] = React.useState<UserDto[]>([]);
@@ -29,7 +31,7 @@ export default function FriendsList({
         }
       })
       .catch((error) => {});
-  }, [doReload]);
+  }, [reload]);
 
   const content: JSX.Element[] = users.map((user) => (
     <li key={user.id} className="flex items-center">
