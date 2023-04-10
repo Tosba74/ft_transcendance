@@ -46,10 +46,6 @@ export class ChatsService {
   serverMsgId = 1;
 
 
-/* 
-  --------- USUAL CHAT ACTIONS  ---------
-*/
-
   findAll(): Promise<ChatModel[]> {
     return this.chatsRepository.find();
   }
@@ -282,11 +278,6 @@ export class ChatsService {
   }
 
 
-
-/* 
-  --------- ADMIN/OWNER COMMANDS  ---------
-*/
-
   async adminCommand(user: UserDto, client: Socket, room_id: number, message: string): Promise<ChatMessageDto | undefined> {
 
     let responseMessage = new ChatMessageDto();
@@ -369,10 +360,6 @@ export class ChatsService {
   }
 
 
-  /* 
-    OWNER PERMISSION COMMANDS:
-  */
-
   async pwPermissions(room: ChatModel, userId: number): Promise<any> {
     if (room.type.name != 'public') {
       return 'pw: this is a private channel. Only public channel can have password.';
@@ -422,7 +409,7 @@ export class ChatsService {
   }
 
 
-  async updatePw(roomId: number, currentPw: string | undefined = undefined, newPw: string | undefined = undefined): Promise<string> {
+  async updatePassword(roomId: number, currentPw: string | undefined = undefined, newPw: string | undefined = undefined): Promise<string> {
     try {
       var chat = await this.chatsRepository.findOneOrFail({
         where: { id: roomId }
@@ -460,7 +447,7 @@ export class ChatsService {
       return 'pw: password added';
     else if (currentPw !== undefined && newPw !== undefined)
       return 'pw: password updated';
-    return 'pw: beug in password update process'
+    return 'pw: unexpected error in password update process'
   }
 
 
@@ -492,28 +479,24 @@ export class ChatsService {
 
       // si l'arg 2 correspond au current password, dans ce cas intention = remove
       if (check === true)
-        return await this.updatePw(room.id, undefined, '');
+        return await this.updatePassword(room.id, undefined, '');
 
       // sinon, si l'arg 2 correspond pas au current password, intention = add
       else if (check !== true && isProtected === false)
-        return await this.updatePw(room.id, undefined, command[1]);
+        return await this.updatePassword(room.id, undefined, command[1]);
       else if (check !== true && isProtected === true)
         return check;
-      return 'pw: beug in password update process'
+      return 'pw: unexpected error in password update process'
     }
     // "/pw currentpw newpw": 3 args = update pw
     else {
       if (isProtected === false)
         return 'pw: this channel doesn\'t have any password, use: "/pw <password>" to add one';
       else
-        return this.updatePw(room.id, command[1], command[2]); // update
+        return this.updatePassword(room.id, command[1], command[2]); // update
     }
   }
 
-
-  /* 
-    ADMIN PERMISSION COMMANDS:
-  */
 
   // sender is the admin who typed the cmd, receiver is the user targeted by the cmd
   async roleCommandsPermission(room:ChatModel, command: string[], senderId: number, receiverId: number, roleToAssign=-1): Promise<string | undefined> {
@@ -522,14 +505,12 @@ export class ChatsService {
     if (command.length != 2)
       return `${cmdName}: argument error`;
 
-    // not to yourself
     if (receiverId == senderId)
       return `${cmdName}: cannot ${cmdName} yourself`;
 
     try {
       const receiverRole = await this.chatParticipantsService.get_role(receiverId, room.id);
 
-      // already the targeted role (kick has no role to assign so does not enter this condition)
       if (roleToAssign != -1 && receiverRole === roleToAssign) {
 
         let message = '';
@@ -547,10 +528,9 @@ export class ChatsService {
             message = `unban: no effect, ${receiverId} already in the channel`;
             break;
         }
-
         return message;
       }
-      // admin cant touch admin
+      // admin can't touch admin
       else if (receiverRole === ChatRoleModel.ADMIN_ROLE) {
         const senderRole = await this.chatParticipantsService.get_role(senderId, room.id);
         if (senderRole !== ChatRoleModel.OWNER_ROLE)
@@ -568,7 +548,6 @@ export class ChatsService {
   }
 
 
-  // users need a quit command 
   async inviteCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
     if (command.length != 2)
       return 'invite: argument error';
@@ -593,7 +572,6 @@ export class ChatsService {
     } catch (error) {
       return 'invite: user not found';
     }
-
     return 'invite: done';
   }
 
@@ -606,7 +584,6 @@ export class ChatsService {
     if (permission !== undefined)
       return permission
 
-    // update role in db
     let newRole = new UpdateRoleDto();
     newRole.new_role = ChatRoleModel.ADMIN_ROLE;
     newRole.participantId = userToPromote;
@@ -617,7 +594,6 @@ export class ChatsService {
       return "promote: user not found or not in this channel";
     }
 
-    // Notify the sender (and the promoted user if ((multi)connected)
     let clientsToPromote = this.clients.filter(value => {
       return value.user.id == userToPromote
     });
@@ -636,7 +612,6 @@ export class ChatsService {
         }
       });
     }
-
     return "promote: done";
   }
 
@@ -649,7 +624,6 @@ export class ChatsService {
     if (permission !== undefined)
       return permission
     
-    // update role in db
     let newRole = new UpdateRoleDto();
     newRole.new_role = ChatRoleModel.USER_ROLE;
     newRole.participantId = userToDemote;
@@ -660,7 +634,6 @@ export class ChatsService {
       return "demote: user not found or not in this channel";
     }
     
-    // Notify the sender (and the demoted user if ((multi)connected)
     let clientsToDemote = this.clients.filter(value => {
       return value.user.id == userToDemote
     });
@@ -678,8 +651,7 @@ export class ChatsService {
           value.socket.emit('broadcastMessage', { room_id: room.id, message: demoteMessage });
         }
       });
-    }
-    
+    }    
     return "demote: done";
   }
 
@@ -698,8 +670,6 @@ export class ChatsService {
     });
 
     if (clientsToKick.length > 0) {
-
-      // Create kick message
       let kickMessage = new ChatMessageDto();
       kickMessage.id = -this.serverMsgId;
       kickMessage.sender = new UserDto();
@@ -707,7 +677,6 @@ export class ChatsService {
       kickMessage.content = 'You have been kicked';
       this.serverMsgId++;
 
-      // Send kick message to all clients connected to the room and disconnect them
       clientsToKick.forEach(value => {
         if (value.socket.rooms.has(room.id.toString())) {
 
@@ -717,7 +686,6 @@ export class ChatsService {
       });
 
       return "kick: done";
-
     }
     else {
       return "kick: user not found or connected";
@@ -733,16 +701,11 @@ export class ChatsService {
     if (permission !== undefined)
       return permission
 
-    // User could have multiple clients connected, get'em all
     let clientsToBan = this.clients.filter(value => {
       return value.user.id == userToBan
     });
 
-    // 1. (KICK) + NOTIFY
-    if (clientsToBan.length > 0) {// if active connexions
-      // kick him from channel with message
-
-      // Create kick message
+    if (clientsToBan.length > 0) {
       let banMessage = new ChatMessageDto();
       banMessage.id = -this.serverMsgId;
       banMessage.sender = new UserDto();
@@ -750,7 +713,6 @@ export class ChatsService {
       banMessage.content = 'You have been banned';
       this.serverMsgId++;
 
-      // Send kick message to all clients connected to the room and disconnect them
       clientsToBan.forEach(value => {
         if (value.socket.rooms.has(room.id.toString())) {
 
@@ -759,12 +721,7 @@ export class ChatsService {
         }
       });
     }
-    else {// no active connexions
-      // mettre une notif cote front ???
-      console.log('banned without active connection');
-    }
 
-    // 2. CHAT_PARTICIPANTS: USER-ROOM SET ROLE TO BAN
     let newRole = new UpdateRoleDto();
     newRole.new_role = ChatRoleModel.BAN_ROLE;
     newRole.participantId = userToBan;
