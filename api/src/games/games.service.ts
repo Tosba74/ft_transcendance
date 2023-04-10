@@ -57,9 +57,35 @@ export class GamesService {
     return this.gamesRepository.find();
   }
 
-  async findOneById(id: number): Promise<GameModel> {
+
+  findFinished(): Promise<GameModel[]> {
+    const games = this.gamesRepository.find({
+      where: { status: { id: GameStatusModel.FINISHED_STATUS } },
+      relations: { user1: true, user2: true },
+    });
+    return games;
+  }
+
+  findFinishedFor(id: number): Promise<GameModel[]> {
+    const games = this.gamesRepository.find({
+      where: [
+        {
+          status: { id: GameStatusModel.FINISHED_STATUS },
+          user1: { id: id },
+        },
+        {
+          status: { id: GameStatusModel.FINISHED_STATUS },
+          user2: { id: id },
+        },
+      ],
+      relations: { user1: true, user2: true },
+    });
+    return games;
+  }
+
+  findOneById(id: number): Promise<GameModel> {
     try {
-      const games = await this.gamesRepository.findOneOrFail({
+      const games = this.gamesRepository.findOneOrFail({
         where: { id }
       });
       return games;
@@ -303,20 +329,20 @@ export class GamesService {
     gameRoom.game.update();
 
     server.to(game_id.toString()).emit("gameInfos", { game: gameRoom.game.export() });
-    
-    
+
+
     if ((new Set(this.activeGame.values()).has(game_id)) && (this.connecteds.has(gameRoom.host_id) || this.connecteds.has(gameRoom.guest_id || -1))) {
       gameRoom.inactivity_count = 0;
     }
     else {
       gameRoom.inactivity_count++;
     }
-    
+
     if (gameRoom.game.playerOne.score >= gameRoom.score_objective || gameRoom.game.playerTwo.score >= gameRoom.score_objective) {
 
       gameRoom.game.ended = true;
       server.to(game_id.toString()).emit("gameInfos", { game: gameRoom.game.export() });
-      
+
       try {
         const gameToSave = await this.findOneById(game_id);
 
