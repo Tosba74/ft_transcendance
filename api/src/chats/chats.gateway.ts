@@ -8,7 +8,7 @@ import { WebsocketExceptionsFilter } from 'src/_common/filters/ws-exception.filt
 import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
 import { ChatsService } from './chats.service';
 
-import { ChatResponseDto } from 'src/_shared_dto/chat-response.dto';
+import { WsResponseDto } from 'src/_shared_dto/ws-response.dto';
 import { ChatRoomDto } from 'src/_shared_dto/chat-room.dto';
 
 
@@ -39,7 +39,7 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	@SubscribeMessage('identify')
 	@UseGuards(WsAuthGuard)
-	async identify(@ConnectedSocket() client: Socket): Promise<ChatResponseDto<undefined>> {
+	async identify(@ConnectedSocket() client: Socket): Promise<WsResponseDto<undefined>> {
 
 		const user = (client.handshake as any).user as LoggedUserDto;
 
@@ -50,7 +50,7 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 
 	@SubscribeMessage('connectRoom')
-	async connectRoom(client: Socket, body: { room: number }): Promise<ChatResponseDto<ChatRoomDto>> {
+	async connectRoom(client: Socket, body: { room: number }): Promise<WsResponseDto<ChatRoomDto>> {
 
 
 		const loggedUser = this.chatsService.isIdentifed(client);

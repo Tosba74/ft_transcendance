@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import classNames from "classnames";
 
@@ -24,21 +23,6 @@ export default function BurgerButton({
       setOpenedMenu("burger");
     }
   };
-
-  // const styles = {
-  // 	myProgress: {
-  // 		width: "100%",
-  // 		backgroundColor: "#ddd"
-  // 	},
-
-  // 	myBar: {
-  // 		width: "0%",
-  // 		height: "30px",
-  // 		backgroundColor: "#4CBB17"
-  // 	},
-  // };
-
-  //  style={styles.myProgress}>
 
   return (
     <div>
@@ -68,10 +52,17 @@ export default function BurgerButton({
       <div
         className={classNames(
           "absolute right-0 w-full items-center justify-end shadow-lg sm:justify-center md:visible md:relative md:order-1 md:flex md:w-auto md:justify-between",
-          openedMenu == "burger" ? "visible" : "invisible"
+          openedMenu === "burger" ? "visible" : "invisible"
         )}
       >
         <ul className="mt-4 flex flex-col bg-gray-50 p-4 dark:border-cyan-500 dark:bg-gray-800 md:visible md:mt-0 md:flex-row md:space-x-8 md:rounded-lg md:border-0 md:bg-white md:text-sm md:font-medium md:dark:bg-gray-900">
+          <Link
+            to="/start"
+            className="block rounded bg-cyan-500 py-2 pl-3 pr-4 text-white dark:text-white md:bg-transparent md:p-0 md:text-cyan-500"
+            aria-current="page"
+          >
+            Start
+          </Link>
           <Link
             to="/game"
             className="block rounded bg-cyan-500 py-2 pl-3 pr-4 text-white dark:text-white md:bg-transparent md:p-0 md:text-cyan-500"
@@ -90,6 +81,12 @@ export default function BurgerButton({
             className="block rounded py-2 pl-3 pr-4 text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white"
           >
             Friends
+          </Link>
+          <Link
+            to="/channels"
+            className="block rounded py-2 pl-3 pr-4 text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white"
+          >
+            Channels
           </Link>
           <Link
             to="/players"

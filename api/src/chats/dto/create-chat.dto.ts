@@ -14,7 +14,4 @@ export class CreateChatDto {
     
     @ApiPropertyOptional({ type: String })
     password?: string;
-
-    @ApiPropertyOptional({ type: [Number] })
-    users?: number[];
 }

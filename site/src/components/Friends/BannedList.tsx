@@ -7,9 +7,11 @@ import { UseLoginDto } from "../Log/dto/useLogin.dto";
 
 export default function BannedList({
   loginer,
+  reload,
   doReload,
 }: {
   loginer: UseLoginDto;
+  reload: boolean;
   doReload: Function;
 }) {
   const [users, setUsers] = React.useState<UserDto[]>([]);
@@ -47,7 +49,7 @@ export default function BannedList({
         }
       })
       .catch((error) => {});
-  }, [doReload]);
+  }, [reload]);
 
   const content: JSX.Element[] = users.map((user) => (
     <li className="flex items-center text-slate-500" key={user.id}>

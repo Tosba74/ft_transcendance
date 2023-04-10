@@ -1,4 +1,4 @@
-export class ChatResponseDto<T> {
+export class WsResponseDto<T> {
 	error?: string;
 
     value: T | undefined;
