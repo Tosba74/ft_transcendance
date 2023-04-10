@@ -1,12 +1,36 @@
-import logoInconnu from "../assets/img/inconnu.jpeg";
+import axios from "axios";
 import { Link } from "react-router-dom";
+
 import { UserDto } from "src/_shared_dto/user.dto";
+import { UseLoginDto } from "../Log/dto/useLogin.dto";
+import { UseChatDto } from "../Chat/dto/useChat.dto";
+import { ChannelDto } from "src/_shared_dto/channel.dto";
 
 interface UserCardProps {
+  loginer: UseLoginDto;
+  chats: UseChatDto;
   user: UserDto;
 }
 
-export default function UserCard({ user }: UserCardProps) {
+export default function UserCard({ loginer, chats, user }: UserCardProps) {
+
+  const handleMessage = () => {
+    axios
+      .get(`/api/me/chats/conversation/${user.id}`, loginer.get_headers())
+      .then((res) => {
+        if (res.status === 200) {
+
+          const chat = res.data as ChannelDto;
+
+          chats.connectRoom(chat.id);
+
+          return;
+        }
+      })
+      .catch((error) => { });
+  }
+
+
   return (
     // <div className="w-full h-screen">
 
@@ -31,12 +55,12 @@ export default function UserCard({ user }: UserCardProps) {
             >
               Add friend
             </Link>
-            <Link
-              to="#"
+            <div
               className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-center text-sm font-medium text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:border-gray-700 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
+              onClick={handleMessage}
             >
               Message
-            </Link>
+            </div>
           </div>
         </div>
       </div>

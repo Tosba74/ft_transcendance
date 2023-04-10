@@ -26,28 +26,52 @@ export default function ChannelsPage({ loginer, chats }: ChannelsPageProps) {
     setReload((old) => !old);
   }
 
-  const inactiveStyle = "bg-white dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700";
+  const inactiveStyle =
+    "bg-white dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700";
   const activeStyle = "active bg-gray-100 text-gray-900";
 
   //
   return (
     <>
-      <div className="mx-auto max-w-md h-5/6 flex flex-col px-4">
-        <ul className="mt-2 hidden text-sm font-medium text-center text-gray-500 divide-x divide-gray-200 rounded-lg shadow sm:flex dark:divide-gray-700 dark:text-gray-400">
+      <div className="mx-auto flex h-5/6 max-w-md flex-col px-4">
+        <ul className="mt-2 hidden divide-x divide-gray-200 rounded-lg text-center text-sm font-medium text-gray-500 shadow dark:divide-gray-700 dark:text-gray-400 sm:flex">
           <li className="w-full">
-            <div onClick={() => setSelectedMenu('public')} className={classNames("inline-block w-full p-4 rounded-l-lg dark:bg-gray-700 dark:text-white", selectedMenu === "public" ? activeStyle : inactiveStyle)}>Public</div>
+            <div
+              onClick={() => setSelectedMenu("public")}
+              className={classNames(
+                "inline-block w-full rounded-l-lg p-4 dark:bg-gray-700 dark:text-white",
+                selectedMenu === "public" ? activeStyle : inactiveStyle
+              )}
+            >
+              Public
+            </div>
           </li>
           <li className="w-full">
-            <div onClick={() => setSelectedMenu('banned')} className={classNames("inline-block w-full p-4  hover:text-gray-700 hover:bg-gray-50 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700", selectedMenu === "banned" ? activeStyle : inactiveStyle)}>Banned</div>
+            <div
+              onClick={() => setSelectedMenu("banned")}
+              className={classNames(
+                "inline-block w-full p-4  hover:bg-gray-50 hover:text-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:text-white",
+                selectedMenu === "banned" ? activeStyle : inactiveStyle
+              )}
+            >
+              Banned
+            </div>
           </li>
           <li className="w-full">
-            <div onClick={() => setSelectedMenu('current')} className={classNames("inline-block w-full p-4 rounded-r-lg hover:text-gray-700  hover:bg-gray-50", selectedMenu === "current" ? activeStyle : inactiveStyle)}>Current</div>
+            <div
+              onClick={() => setSelectedMenu("current")}
+              className={classNames(
+                "inline-block w-full rounded-r-lg p-4 hover:bg-gray-50  hover:text-gray-700",
+                selectedMenu === "current" ? activeStyle : inactiveStyle
+              )}
+            >
+              Current
+            </div>
           </li>
         </ul>
 
         {selectedMenu === "public" && (
-          <div className="h-full flex flex-col">
-
+          <div className="flex h-full flex-col">
             <PublicList
               loginer={loginer}
               setErrorMessage={setErrorMessage}
