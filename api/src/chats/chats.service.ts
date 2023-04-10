@@ -112,31 +112,6 @@ export class ChatsService {
     }
   }
 
-  async updatePassword(id: number, password: string): Promise<void> {
-    try {
-      var chat = await this.chatsRepository.findOneOrFail({
-        where: { id: id }
-      });
-    } catch (error) {
-      throw new NotFoundException('Chat id not found');
-    }
-
-    if (password !== "" && password !== undefined) {
-      const bcrypt = require('bcrypt');
-      const saltRounds: number = 10;
-      const hash: string = await bcrypt.hash(password, saltRounds);
-      chat.password = hash;
-    }
-    else {
-      // for /removepw
-      chat.password = "";
-    }
-
-    await this.chatsRepository.save(chat).catch(() => {
-      throw new BadRequestException('Chat password update error');
-    });
-  }
-
 
   async identify(user: LoggedUserDto, client: Socket): Promise<ChatResponseDto<undefined>> {
 
@@ -342,14 +317,8 @@ export class ChatsService {
       switch (command[0]) {
 
         // Owner permission required
-        case "/addpw":
-          responseMessage.content = await this.addpwCommand(room, user, command);
-          break;
-        case "/changepw":
-          responseMessage.content = await this.changepwCommand(room, user, command);
-          break;
-        case "/removepw":
-          responseMessage.content = await this.removepwCommand(room, user, command);
+        case "/pw":
+          responseMessage.content = await this.pwCommand(room, user, command);
           break;
 
         // minimum Admin permission required
@@ -404,18 +373,18 @@ export class ChatsService {
     OWNER PERMISSION COMMANDS:
   */
 
-  async pwCommandsPermissions(room: ChatModel, userId: number, command: string): Promise<any> {
+  async pwCommandsPermissions(room: ChatModel, userId: number): Promise<any> {
     if (room.type.name != 'public') {
-      return `${command}: this is a private channel. Only public channel can have password.`;
+      return 'pw: this is a private channel. Only public channel can have password.';
     }
 
     try {
       const senderRole = await this.chatParticipantsService.get_role(userId, room.id);
       if (senderRole !== ChatRoleModel.OWNER_ROLE)
-        return `${command}: only the Owner can update the channel password`;
+        return 'pw: only the Owner can update the channel password';
     
     } catch (error) {
-      return `${command}: error retrieving user role`;
+      return 'pw: error retrieving user role';
     }
 
     return true;
@@ -433,128 +402,112 @@ export class ChatsService {
   }
 
 
-  async checkPassword(password:string, roomId: number, command: string): Promise<any> {
+  async checkPassword(password:string, roomId: number): Promise<any> {
     try {
       const chat = await this.chatsRepository.findOneOrFail({
         select: ['password'], 
         where: { id: roomId }
       });
 
-      if (chat.password === '' || chat.password === undefined)
-        return true;
-
+      // if (chat.password === '' || chat.password === undefined) 
+      //   return true;
+      
       if (await bcrypt.compare(password, chat.password) === false)
-        return `${command}: wrong password`;
-
+        return 'pw: wrong password';      
       return true;
+
     } catch (error) {
-      return `${command}: chat not found`;
+      return 'pw: chat not found';
     }
   }
 
 
-  // '/addpw newpw'
-  async addpwCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
-    const errorMsg = await this.pwCommandsPermissions(room, user.id, command[0]);
-    if (errorMsg !== true)
-      return errorMsg;
-  
-    if (command.length != 2)
-      return 'addpw: argument error';
-
-    // check if protected
+  async updatePw(roomId: number, currentPw: string | undefined = undefined, newPw: string | undefined = undefined): Promise<string> {
     try {
-      if (await this.isPasswordProtected(room.id) === true)
-        return 'addpw: this channel does have a password. In order to modify the actual password use: \'changepw pw newpw\'';
+      var chat = await this.chatsRepository.findOneOrFail({
+        where: { id: roomId }
+      });
     } catch (error) {
-      return 'addpw: chat not found';
+      throw new NotFoundException('Chat id not found');
     }
 
-    // update
-    const newpw = command[1];
-    try {
-      await this.updatePassword(room.id, newpw);
-    } catch (error) {
-      return 'addpw: error';
-    }
-
-    return 'addpw: done';
-  }
-
-
-  // '/changepw newpw' or '/changepw pw newpw'
-  async changepwCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
-    const errorMsg = await this.pwCommandsPermissions(room, user.id, command[0]);
-    if (errorMsg !== true)
-      return errorMsg;
-  
-    if (command.length != 2 && command.length != 3)
-      return 'changepw: argument error';
-
-    // check arguments length compare to the password state
-    try {
-      if (await this.isPasswordProtected(room.id) === false && command.length == 3)
-        return 'changepw: this channel doesn\'t have any password. In order to add one use: \'addpw pw\' or \'changepw pw\'';
-      else if (await this.isPasswordProtected(room.id) === true && command.length == 2)
-        return 'changepw: this channel does have a password. In order to modify the actual password use: \'changepw pw newpw\'';
-    } catch (error) {
-      return 'changepw: chat not found';
-    }
-    
-    // parse + (checkpassword)
-    if (command.length === 2) {
-      var newpw = command[1];
-    }
-    else {
-      const currentpw = command[1];
-      const check = await this.checkPassword(currentpw, room.id, command[0]);
+    // check current password
+    if (currentPw) {
+      const check = await this.checkPassword(currentPw, roomId);
       if (check !== true)
         return check;
-
-      var newpw = command[2];
-    }
-      
-    // update
-    try {
-      await this.updatePassword(room.id, newpw);
-    } catch (error) { 
-      return 'changepw: error';
     }
 
-    return 'changepw: done';
+    // update new password
+    if (newPw !== undefined && newPw !== '') {
+      const bcrypt = require('bcrypt');
+      const saltRounds: number = 10;
+      const hash: string = await bcrypt.hash(newPw, saltRounds);
+      chat.password = hash;
+    }
+    // remove current password
+    else if (newPw === '') {
+      chat.password = '';
+    }
+
+    await this.chatsRepository.save(chat).catch(() => {
+      throw new BadRequestException('Chat password update error');
+    });
+
+    if (currentPw === undefined && newPw === '')
+      return 'pw: password removed';
+    else if (currentPw === undefined && newPw !== undefined)
+      return 'pw: password added';
+    else if (currentPw !== undefined && newPw !== undefined)
+      return 'pw: password updated';
+    return 'pw: beug in password update process'
   }
-  
 
-  // '/removepw pw'
-  async removepwCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
-    const errorMsg = await this.pwCommandsPermissions(room, user.id, command[0]);
+
+  async pwCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {    
+    const errorMsg = await this.pwCommandsPermissions(room, user.id);
+    
     if (errorMsg !== true)
       return errorMsg;
-
-    if (command.length != 2)
-      return 'removepw: argument error';
+  
+    if (command.length < 1 || command.length > 3)
+      return 'changepw: argument error';
 
     try {
-      if (await this.isPasswordProtected(room.id) === false)
-        return 'removepw: this channel doesn\'t have any password.';
+      var isProtected: boolean = await this.isPasswordProtected(room.id);
     } catch (error) {
-      return 'removepw: chat not found';
-    }
-    
-    // checkpassword
-    const currentpw = command[1];
-    const check = await this.checkPassword(currentpw, room.id, command[0]);
-    if (check !== true)
-      return check;
-
-    // update
-    try {
-      await this.updatePassword(room.id, '');
-    } catch (error) { 
-      return 'removepw: error';
+      return 'pw: chat not found';
     }
 
-    return 'removepw: done';
+    // "/pw": 1 arg = remove pw
+    if (command.length === 1) {
+      if (isProtected === false)
+        return 'pw: no effect, this channel doesn\'t have any password.';
+      else
+        return 'pw: this channel does have a password, use: "/pw <password>" to remove it.';
+    }
+    // "/pw currentpw": 2 args = add pw OR "/pw newpw": 2 args = add pw 
+    else if (command.length === 2) {
+      const check = await this.checkPassword(command[1], room.id);
+
+      // si l'arg 2 correspond au current password, dans ce cas intention = remove
+      if (check === true)
+        return await this.updatePw(room.id, undefined, '');
+
+      // sinon, si l'arg 2 correspond pas au current password, intention = add
+      else if (check !== true && isProtected === false)
+        return await this.updatePw(room.id, undefined, command[1]);
+      else if (check !== true && isProtected === true)
+        return check;
+      return 'pw: beug in password update process'
+    }
+    // "/pw currentpw newpw": 3 args = update pw
+    else {
+      if (isProtected === false)
+        return 'pw: this channel doesn\'t have any password, use: "/pw <password>" to add one';
+      else
+        return this.updatePw(room.id, command[1], command[2]); // update
+    }
   }
 
 
@@ -672,8 +625,7 @@ export class ChatsService {
 
       let promoteMessage = new ChatMessageDto();
       promoteMessage.id = -this.serverMsgId;
-      promoteMessage.sender = { ...user, status: '' };
-      // promoteMessage.sender = new UserDto();
+      promoteMessage.sender = new UserDto();
       promoteMessage.sender.id = -1;
       promoteMessage.content = promoteMessage.sender.pseudo + ' named you Admin of this channel';
       this.serverMsgId++;
@@ -716,8 +668,7 @@ export class ChatsService {
 
       let demoteMessage = new ChatMessageDto();
       demoteMessage.id = -this.serverMsgId;
-      demoteMessage.sender = { ...user, status: '' };
-      // demoteMessage.sender = new UserDto();
+      demoteMessage.sender = new UserDto();
       demoteMessage.sender.id = -1;
       demoteMessage.content = demoteMessage.sender.pseudo + ' removed your Admin status';
       this.serverMsgId++;
@@ -751,8 +702,7 @@ export class ChatsService {
       // Create kick message
       let kickMessage = new ChatMessageDto();
       kickMessage.id = -this.serverMsgId;
-      kickMessage.sender = { ...user, status: '' };      // NEST ERROR: sender was undefined here so cant set his id
-      // kickMessage.sender = new UserDto();             // either the admin user either -1 ?
+      kickMessage.sender = new UserDto();
       kickMessage.sender.id = -1;
       kickMessage.content = 'You have been kicked';
       this.serverMsgId++;
@@ -795,8 +745,7 @@ export class ChatsService {
       // Create kick message
       let banMessage = new ChatMessageDto();
       banMessage.id = -this.serverMsgId;
-      banMessage.sender = { ...user, status: '' };
-      // banMessage.sender = new UserDto();
+      banMessage.sender = new UserDto();
       banMessage.sender.id = -1;
       banMessage.content = 'You have been banned';
       this.serverMsgId++;
@@ -853,8 +802,10 @@ export class ChatsService {
   async roleCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
     if (command.length == 1)
       var targetUser = user.id;
-    else if (command.length == 2)
+    else if (command.length == 2) {
+      console.log(parseInt(command[1]));
       var targetUser = parseInt(command[1]);
+    }
     else
       return 'role: argument error';
     
@@ -876,7 +827,7 @@ export class ChatsService {
       }
       return `role: ${role}`
     } catch (error) {
-      return "role: user not found or not in this channel";
+      return `role: ${targetUser} not found or no relation with this channel`;
     }
   }
 

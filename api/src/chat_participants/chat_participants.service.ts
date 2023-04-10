@@ -64,12 +64,6 @@ export class ChatParticipantsService {
 
   async create(user_id: number, chat_id: number, role_id: number): Promise<ChatParticipantModel> {
 
-    try {
-      await this.usersService.findOneById(user_id);
-    } catch (error) {
-      throw new NotFoundException();
-    }
-
     const res = this.chatParticipantsRepository.create({
 
       participant: { id: user_id },
