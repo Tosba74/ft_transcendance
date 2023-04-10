@@ -12,4 +12,4 @@ import { UsersModule } from 'src/users/users.module';
   controllers: [ChatParticipantsController],
   exports: [ChatParticipantsService],
 })
-export class ChatParticipantsModule {}
+export class ChatParticipantsModule { }

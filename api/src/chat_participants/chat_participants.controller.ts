@@ -14,9 +14,9 @@ import { ChatParticipantModel } from "./models/chat_participant.model";
 @UseFilters(HttpExceptionFilter)
 export class ChatParticipantsController {
   constructor(private readonly chatParticipantsService: ChatParticipantsService) { }
-  
+
   @Get()
-  @ApiOkResponse({ description: 'Chat participants retrieved successfully', type: ChatParticipantModel, isArray: true})
+  @ApiOkResponse({ description: 'Chat participants retrieved successfully', type: ChatParticipantModel, isArray: true })
   public findAll(): Promise<ChatParticipantModel[]> {
     return this.chatParticipantsService.findAll();
   }
@@ -59,9 +59,9 @@ export class ChatParticipantsController {
 
   @Delete(':id')
   @HttpCode(204)
-	@ApiNoContentResponse({ description: 'Chat participant deleted successfully.'})
-	@ApiNotFoundResponse({ description: 'Chat participant not found.' })
-	public delete(@Param('id', ParseIntPipe) id: number): Promise<void> {  
-		return this.chatParticipantsService.delete(id);
-	}
+  @ApiNoContentResponse({ description: 'Chat participant deleted successfully.' })
+  @ApiNotFoundResponse({ description: 'Chat participant not found.' })
+  public delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    return this.chatParticipantsService.delete(id);
+  }
 }
