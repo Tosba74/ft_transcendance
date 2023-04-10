@@ -1,5 +1,5 @@
 import React from "react";
-import { UseLoginDto } from "../Log/dto/useLogin.dto";
+import { UseLoginDto } from "../../Log/dto/useLogin.dto";
 import HistoryGames from "./HistoryGames";
 import JoinGame from "./JoinGame";
 import QuickPlay from "./QuickPlay";

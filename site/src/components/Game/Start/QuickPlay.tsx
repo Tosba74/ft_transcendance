@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { UseLoginDto } from "../Log/dto/useLogin.dto";
+import { UseLoginDto } from "../../Log/dto/useLogin.dto";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import classNames from "classnames";
@@ -75,9 +75,7 @@ export default function QuickPlay({ loginer }: { loginer: UseLoginDto }) {
             )}
             onAnimationEnd={() => {
               if (!effect) setPortal(false);
-              if (isSearch && !effect) {
-                navigate("/game");
-              }
+              if (isSearch && !effect) navigate("/game");
             }}
           >
             <h3 className="pb-2 text-xl">Option</h3>

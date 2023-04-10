@@ -1,5 +1,5 @@
 import React from "react";
-import { UseLoginDto } from "../Log/dto/useLogin.dto";
+import { UseLoginDto } from "../../Log/dto/useLogin.dto";
 import axios from "axios";
 
 export default function HistoryGames({ loginer }: { loginer: UseLoginDto }) {

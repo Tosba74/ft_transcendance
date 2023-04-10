@@ -28,7 +28,7 @@ import { UseChatDto } from "./components/Chat/dto/useChat.dto";
 import { UseGameDto } from "./components/Game/dto/useGame.dto";
 import useChat from "./components/Chat/useChat";
 import useGame from "./components/Game/useGame";
-import StartGamePage from "./components/Game/StartGamePage";
+import StartGamePage from "./components/Game/Start/StartGamePage";
 
 export default function App() {
   const loginer: UseLoginDto = useLogin();
