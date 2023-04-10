@@ -15,8 +15,7 @@ export class ChatParticipantsService {
   constructor(
     @InjectRepository(ChatParticipantModel) private chatParticipantsRepository: Repository<ChatParticipantModel>,
     private usersService: UsersService,
-  ) 
-  { }
+  ) { }
 
   findAll(): Promise<ChatParticipantModel[]> {
     return this.chatParticipantsRepository.find();
@@ -54,7 +53,7 @@ export class ChatParticipantsService {
         participant: { id: id },
         role: { id: Not(ChatRoleModel.BAN_ROLE) },
       },
-      relations: { 
+      relations: {
         room: { messages: { sender: true } }
       },
     });
@@ -80,13 +79,13 @@ export class ChatParticipantsService {
   }
 
 
-  async get_role(participantId:number, roomId:number): Promise<number> {
+  async get_role(participantId: number, roomId: number): Promise<number> {
     const chatParticipant = await this.chatParticipantsRepository.findOneOrFail({
       where: {
         participant: { id: participantId },
         room: { id: roomId },
       },
-      relations: { 
+      relations: {
         role: true
       },
     });
@@ -95,7 +94,7 @@ export class ChatParticipantsService {
 
 
   async update_role(updateRoleDto: UpdateRoleDto): Promise<ChatParticipantModel> {
-    const destUser = await this.findParticipant(updateRoleDto.participantId, updateRoleDto.roomId); 
+    const destUser = await this.findParticipant(updateRoleDto.participantId, updateRoleDto.roomId);
     destUser.role = new ChatRoleModel(updateRoleDto.new_role);
 
     const created = await this.chatParticipantsRepository.save(destUser).catch((err: any) => {
