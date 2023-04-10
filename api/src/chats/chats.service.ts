@@ -373,7 +373,7 @@ export class ChatsService {
     OWNER PERMISSION COMMANDS:
   */
 
-  async pwCommandsPermissions(room: ChatModel, userId: number): Promise<any> {
+  async pwPermissions(room: ChatModel, userId: number): Promise<any> {
     if (room.type.name != 'public') {
       return 'pw: this is a private channel. Only public channel can have password.';
     }
@@ -465,7 +465,7 @@ export class ChatsService {
 
 
   async pwCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {    
-    const errorMsg = await this.pwCommandsPermissions(room, user.id);
+    const errorMsg = await this.pwPermissions(room, user.id);
     
     if (errorMsg !== true)
       return errorMsg;
