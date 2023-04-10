@@ -83,8 +83,7 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		}
 
 		body.force_fun = true;
-		body.force_points = true;
-		body.points_objective = 3;
+		body.points_objective = Math.max(Math.min(body.points_objective, 10), 3);
 
 
 		if (body.invited_id === -1) {

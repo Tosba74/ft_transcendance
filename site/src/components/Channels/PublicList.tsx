@@ -37,7 +37,7 @@ export default function PublicList({
           return;
         }
       })
-      .catch((error) => { });
+      .catch((error) => {});
 
     setTimeout(() => {
       setEffect(false);
@@ -71,10 +71,9 @@ export default function PublicList({
   }, [reload]);
 
   return (
-    <div className="border-blueGray-200 h-full mt-2 shadow border-b pt-1 flex flex-row flex-wrap">
-      <div className="w-full flex flex-col">
-        <div className="shadow-b mx-20 h-9 mb-4 items-center justify-center border-b border-gray-900">
-
+    <div className="border-blueGray-200 mt-2 flex h-full flex-row flex-wrap border-b pt-1 shadow">
+      <div className="flex w-full flex-col">
+        <div className="shadow-b mx-20 mb-4 h-9 items-center justify-center border-b border-gray-900">
           <h3 className="text-blueGray-700 mb-5 flex items-center justify-center text-center text-2xl font-semibold leading-normal">
             <MdPublic className="mr-1 inline-block" />
             Public Channels

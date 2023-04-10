@@ -33,7 +33,6 @@ import StartGamePage from "./components/Game/Start/StartGamePage";
 
 import Colorer from "./assets/Colorer";
 
-
 declare global {
   var colorTheme: string;
 }
@@ -50,7 +49,7 @@ export default function App() {
     loginer: loginer,
   });
 
-  globalThis.colorTheme = Colorer(loginer.userInfos?.login_name)
+  globalThis.colorTheme = Colorer(loginer.userInfos?.login_name);
 
   return (
     <Router>
