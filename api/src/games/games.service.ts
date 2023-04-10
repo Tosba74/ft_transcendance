@@ -191,7 +191,6 @@ export class GamesService {
 
   async searchGame(user_id: number, fun_mode: boolean, force_fun: boolean, points_objective: number, force_points: boolean): Promise<number | undefined> {
 
-
     let game = Object.keys(this.currentGames).find((key) => {
       return (
         this.currentGames[key.toString()].host_id !== user_id && this.currentGames[key.toString()].guest_id === -1 &&
@@ -206,8 +205,8 @@ export class GamesService {
         return (
           this.currentGames[key.toString()].host_id !== user_id && this.currentGames[key.toString()].guest_id === -1 &&
           this.currentGames[key.toString()].game.ended === false && this.currentGames[key.toString()].game.start === false &&
-          (force_fun && this.currentGames[key.toString()].fun_mode === fun_mode) &&
-          (force_points && this.currentGames[key.toString()].score_objective === points_objective)
+          (!force_fun || this.currentGames[key.toString()].fun_mode === fun_mode) &&
+          (!force_points || this.currentGames[key.toString()].score_objective === points_objective)
         );
       });
     }
@@ -303,20 +302,20 @@ export class GamesService {
     gameRoom.game.update();
 
     server.to(game_id.toString()).emit("gameInfos", { game: gameRoom.game.export() });
-    
-    
+
+
     if ((new Set(this.activeGame.values()).has(game_id)) && (this.connecteds.has(gameRoom.host_id) || this.connecteds.has(gameRoom.guest_id || -1))) {
       gameRoom.inactivity_count = 0;
     }
     else {
       gameRoom.inactivity_count++;
     }
-    
+
     if (gameRoom.game.playerOne.score >= gameRoom.score_objective || gameRoom.game.playerTwo.score >= gameRoom.score_objective) {
 
       gameRoom.game.ended = true;
       server.to(game_id.toString()).emit("gameInfos", { game: gameRoom.game.export() });
-      
+
       try {
         const gameToSave = await this.findOneById(game_id);
 

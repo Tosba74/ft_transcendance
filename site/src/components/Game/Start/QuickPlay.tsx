@@ -37,11 +37,6 @@ export default function QuickPlay({
 
   const handleClickSearch = () => {
     setEffect(false);
-    if (mode) {
-      console.log("so much fun");
-    } else {
-      console.log("Boomer");
-    }
 
     gamer.createGame(mode.isFun, true, mode.points, mode.force, -1, () => {
       setIsSearch(true);
@@ -54,19 +49,20 @@ export default function QuickPlay({
   };
 
   const handleFun = (e: any) => {
-    mode.isFun = e.target.checked;
-    setMode(mode);
+    setMode(old => { return { ...old, isFun: e.target.checked } });
   };
 
   const handleForce = (e: any) => {
-    mode.force = e.target.checked;
-    setMode(mode);
+    setMode(old => { return { ...old, force: e.target.checked } });
   };
-
+  
   const handlePoints = (e: any) => {
-    mode.points = e.target.valueAsNumber;
-    if (!e.target.valueAsNumber) mode.points = 10;
-    setMode(mode);
+    if (!e.target.valueAsNumber) {
+      setMode(old => { return { ...old, points: 10 } });
+    }
+    else {
+      setMode(old => { return { ...old, points: e.target.valueAsNumber } });
+    }
   };
 
   useEffect(() => {
@@ -100,7 +96,7 @@ export default function QuickPlay({
             style={css}
             ref={ref}
             className={classNames(
-              "absolute left-1/2 grid w-3/4 max-w-md -translate-x-1/2 grid-cols-2 items-center gap-2 rounded-lg bg-gray-100 p-4 pb-4 shadow-lg dark:bg-gray-700 dark:text-white sm:w-auto",
+              "absolute left-1/2 grid w-auto max-w-md min-w-[250px] -translate-x-1/2 grid-cols-2 items-center gap-2 rounded-lg bg-gray-100 p-4 px-16 shadow-lg dark:bg-gray-700 dark:text-white",
               effect ? "opacity-1 animate-fadeIn" : "animate-fadeOut opacity-0"
             )}
             onAnimationEnd={() => {
@@ -110,35 +106,38 @@ export default function QuickPlay({
           >
             <h3 className="col-span-2 text-center text-xl">Option</h3>
 
-            <label className="relative mx-auto cursor-pointer">
+            <label className="relative ml-auto cursor-pointer right-2">
               <input
                 onChange={handleFun}
                 type="checkbox"
                 className="peer sr-only place-self-center"
+                defaultChecked={mode.isFun}
               />
               <div className="peer h-6 w-11 place-self-center rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-800 dark:peer-focus:ring-blue-800"></div>
             </label>
-            <span className="text-sm font-medium text-gray-900 dark:text-white">
+            <span className="text-sm font-medium text-gray-900 dark:text-white whitespace-nowrap">
               Fun mode
             </span>
 
-            <label className="relative mx-auto cursor-pointer">
+            <label className="relative ml-auto cursor-pointer right-2">
               <input
                 onChange={handleForce}
                 type="checkbox"
                 className="peer sr-only"
+                defaultChecked={mode.force}
               />
               <div className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-800 dark:peer-focus:ring-blue-800"></div>
             </label>
 
-            <span className="text-sm font-medium text-gray-900 dark:text-white">
-              Force
+            <span className="text-sm font-medium text-gray-900 dark:text-white whitespace-nowrap">
+              Force points
             </span>
 
             <input
-              min="1"
-              max="99"
-              className="w-[55px] rounded-lg border border-gray-300 bg-gray-50 p-1.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              min="3"
+              max="10"
+              defaultValue={mode.points}
+              className="max-w-[55px] rounded-lg ml-auto mr-2 right-0 border border-gray-300 bg-gray-50 p-1.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 dark:focus:border-blue-500 dark:focus:ring-blue-500"
               type="number"
               onChange={handlePoints}
             />
@@ -148,7 +147,7 @@ export default function QuickPlay({
 
             <button
               onClick={handleClickSearch}
-              className="col-span-2 mx-auto mt-3 rounded-lg bg-cyan-500 px-4 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              className="col-span-2 mx-auto mt-3 rounded-lg whitespace-nowrap bg-cyan-500 px-4 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
               Search Game
             </button>
