@@ -5,19 +5,19 @@ import { UseLoginDto } from "src/components/Log/dto/useLogin.dto";
 
 interface PseudoProps {
   loginer: UseLoginDto;
+  setSettingsError: Function;
 }
 
-export default function Pseudo({ loginer }: PseudoProps) {
+export default function Pseudo({ loginer, setSettingsError }: PseudoProps) {
   const [pseudoInput, setPseudoInput] = React.useState(
     loginer.userInfos?.pseudo
   );
-  const [pseudoInputMessage, setPseudoInputMessage] = React.useState("");
 
   function pseudoValidation(): boolean {
     // ICI AJOUTER VALIDATION SUR FORMAT MINIMUM DE PSEUDO
 
     if (pseudoInput === "") {
-      setPseudoInputMessage("You must specify a pseudo");
+      setSettingsError("You must specify a pseudo");
       return false;
     }
 
@@ -43,11 +43,11 @@ export default function Pseudo({ loginer }: PseudoProps) {
         .then((res) => {
           // return true if pseudo successfully changed
           if (res.data === true) {
-            setPseudoInputMessage("New pseudo saved");
+            setSettingsError("New pseudo saved");
             loginer.getUserData();
             // refreshUserInfos();
             setTimeout(() => {
-              setPseudoInputMessage("");
+              setSettingsError("");
             }, 3000);
           }
         })
@@ -55,8 +55,9 @@ export default function Pseudo({ loginer }: PseudoProps) {
           if (error.response.status === 401)
             var message: string = error.response.data.message;
           else
-            var message: string = "Error while contacting the API. Retry after reloging.";
-          setPseudoInputMessage(message);
+            var message: string =
+              "Error while contacting the API. Retry after reloging.";
+          setSettingsError(message);
         });
     }
   }
@@ -80,7 +81,6 @@ export default function Pseudo({ loginer }: PseudoProps) {
         >
           Save
         </button>
-        <div>{pseudoInputMessage}</div>
       </div>
     </form>
   );

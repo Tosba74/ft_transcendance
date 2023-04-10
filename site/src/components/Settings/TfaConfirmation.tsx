@@ -6,11 +6,11 @@ interface TfaConfirmationProps {
   loginer: UseLoginDto;
   qrCode: string;
   switchTfaOn: Function;
-  setTfaMessage: Function;
+  setSettingsError: Function;
 }
 
 export default function TfaConfirmation(props: TfaConfirmationProps) {
-  const { loginer, qrCode, setTfaMessage, switchTfaOn } = props;
+  const { loginer, qrCode, setSettingsError, switchTfaOn } = props;
 
   const [codeInput, setCodeInput] = React.useState("");
 
@@ -37,9 +37,9 @@ export default function TfaConfirmation(props: TfaConfirmationProps) {
           if (res.data === true) switchTfaOn();
         })
         .catch(() => {
-          setTfaMessage("Code invalid");
+          setSettingsError("Code invalid");
           setTimeout(() => {
-            setTfaMessage("");
+            setSettingsError("");
           }, 3000);
         });
     }
