@@ -17,7 +17,7 @@ export default function StartGamePage({ loginer }: StartGamePageProps) {
       <QuickPlay loginer={loginer} />
       <div className="w-sm mx-auto flex flex-col">
         <JoinGame loginer={loginer} />
-        <HistoryGames />
+        <HistoryGames loginer={loginer} />
       </div>
     </div>
   );
