@@ -1,6 +1,5 @@
 import { GameArea } from './pong';
 
-import { Ball } from './ball'
 import { Paddle } from './paddle';
 import * as module_const from './constant';
 import * as module_ultimate from './ultimate';
@@ -8,7 +7,7 @@ import { GameDataDto } from 'src/_shared_dto/gamedata.dto';
 
 
 
-export function import_actions(player: Paddle, actions: string[], other: Paddle, balls: Ball[]) {
+export function import_actions(player: Paddle, actions: string[], other: Paddle, gameArea: GameArea) {
 
 	let move_actions = ["w", "ArrowUp", "s", "ArrowDown"];
 
@@ -26,17 +25,17 @@ export function import_actions(player: Paddle, actions: string[], other: Paddle,
 			player.last_input = true;
 		}
 
-		else if (action == "1" && player.ultimate >= 100 && player.score < 10 && other.score < 10) {
+		else if (action == "1" && player.ultimate >= 100 && gameArea.ended === false) {
 
 			player.addABALL = true;
 			player.ultimate = 0;
 		}
-		else if (action == "2" && player.ultimate >= 100 && player.score < 10 && other.score < 10) {
+		else if (action == "2" && player.ultimate >= 100 && gameArea.ended === false) {
 
-			module_ultimate.paddle_dash(player, balls);
+			module_ultimate.paddle_dash(player, gameArea.balls);
 			player.ultimate = 0;
 		}
-		else if (action == "3" && player.ultimate >= 100 && player.score < 10 && other.score < 10) {
+		else if (action == "3" && player.ultimate >= 100 && gameArea.ended === false) {
 
 			module_ultimate.paddle_reduce(other);
 			player.ultimate = 0;
@@ -64,6 +63,7 @@ export function ext_export(this: GameArea): GameDataDto {
 
 	const res: GameDataDto = {
 		started: this.start,
+		ended: this.ended,
 
 		player1: this.playerOne.export(),
 		player2: this.playerTwo.export(),

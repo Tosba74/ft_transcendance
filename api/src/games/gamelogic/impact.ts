@@ -32,7 +32,7 @@ export function ext_check_for_collisions(this: GameArea, ball: Ball) //if ball h
 			ball.y = ball.radius + 1;
 	}
 
-	if (!this.pause) {
+	if (!this.ended) {
 		let xdest, ydest;
 
 		ball.radians = ball.angle / (180 * Math.PI) * 10;
@@ -119,7 +119,7 @@ export function ext_calculate_impact(this: GameArea, x1: number, x2: number, x3:
 
 			if (ball.first_bounce == true)
 				ball.first_bounce = false;
-			else
+			else if (this.fun_mode === true)
 				this.playerOne.ultimate = Math.min(100, this.playerOne.ultimate + Math.abs(map_angle));
 
 			ball.changeAngle(map_angle);
@@ -131,7 +131,7 @@ export function ext_calculate_impact(this: GameArea, x1: number, x2: number, x3:
 
 			if (ball.first_bounce == true)
 				ball.first_bounce = false;
-			else
+			else if (this.fun_mode === true)
 				this.playerTwo.ultimate = Math.min(100, this.playerTwo.ultimate + Math.abs(map_angle));
 				
 			ball.changeAngle(180 + map_angle);

@@ -15,14 +15,17 @@ import { UsersService } from 'src/users/users.service';
 import { GameStatusModel } from 'src/game_status/models/game_status.model';
 import { UserModel } from 'src/users/models/user.model';
 
-class GameRoom {
+export class GameRoom {
   // host: WebsocketUser | undefined;
   // guest: WebsocketUser | undefined;
 
   inactivity_count: number;
 
+  fun_mode: boolean;
+  score_objective: number;
+
   host_id: number;
-  guest_id: number | undefined;
+  guest_id: number;
 
   timer: NodeJS.Timer | undefined;
 
@@ -40,13 +43,13 @@ export class GamesService {
     @Inject(forwardRef(() => UsersService))
     private usersService: UsersService,
   ) { }
- 
+
 
   connecteds: Set<number> = new Set<number>();
 
   activeGame: Map<number, number> = new Map<number, number>();
 
-  currentGames: { [key: number]: GameRoom } = {};
+  currentGames: { [key: string]: GameRoom } = {};
 
 
 
@@ -68,15 +71,22 @@ export class GamesService {
 
 
 
-  async createEmpty(user1_id: number, user2_id: number): Promise<GameModel> {
+  async createEmpty(user1_id: number, user2_id: number, fun_mode: boolean, points_objective: number): Promise<GameModel> {
 
     const res = new GameModel();
 
+    res.fun_mode = fun_mode;
+    res.score_objective = points_objective;
     res.user1_score = -1;
     res.user2_score = -1;
 
     res.user1 = { id: user1_id } as UserModel;
-    res.user2 = { id: user2_id } as UserModel;
+    if (user2_id !== -1) {
+      res.user2 = { id: user2_id } as UserModel;
+    }
+    else {
+      res.user2 = null;
+    }
 
     res.started_at = new Date();
     res.ended_at = new Date();
@@ -92,7 +102,7 @@ export class GamesService {
   }
 
 
-  clientOnlyRoom(client: Socket, user_id: number, game_id: number) {
+  async clientOnlyRoom(client: Socket, user_id: number, game_id: number) {
     const game_room = game_id.toString();
 
     this.activeGame.set(user_id, game_id);
@@ -106,69 +116,152 @@ export class GamesService {
   }
 
 
-  async connectGameRoom(client: Socket, user_id: number, game_id: number) {
+  async connectGameRoom(server: Server, client: Socket, user_id: number, game_id: number) {
 
-    if (this.currentGames[game_id] !== undefined) {
+    if (this.currentGames[game_id.toString()] !== undefined) {
       this.clientOnlyRoom(client, user_id, game_id);
-      client.emit("setGame", {
-        gameSetter: {
-          userInfos1: await this.usersService.findOneById(this.currentGames[game_id].host_id),
-          userInfos2: await this.usersService.findOneById(this.currentGames[game_id].guest_id || -1),
-  
-          game_id: game_id,
-        } as GameSetterDto
-      });
-    }
 
+      const gameContent = {
+        userInfos1: await this.usersService.findOneById(this.currentGames[game_id.toString()].host_id),
+        userInfos2: (this.currentGames[game_id.toString()].guest_id !== -1 ?
+          await this.usersService.findOneById(this.currentGames[game_id.toString()].guest_id) :
+          undefined),
+
+        game_id: game_id,
+      } as GameSetterDto
+
+
+      if (user_id === this.currentGames[game_id.toString()].host_id || user_id === this.currentGames[game_id.toString()].guest_id) {
+        //
+        server.to(game_id.toString()).emit("setGame", {
+          gameSetter: gameContent,
+        });
+      }
+      else {
+        client.emit("setGame", {
+          gameSetter: gameContent,
+        });
+      }
+    }
   }
 
-  async searchConnect(client: Socket, user_id: number) {
+  async searchConnect(server: Server, client: Socket, user_id: number) {
 
     const game_id = this.activeGame.get(user_id);
 
 
     if (game_id !== undefined) {
-      this.connectGameRoom(client, user_id, game_id);
+      this.connectGameRoom(server, client, user_id, game_id);
     }
   }
 
 
 
 
-  async createGame(client: Socket, user_id: number, invite_id: number, game_id: number, game_function: Function) {
+  async createGame(server: Server, client: Socket, user_id: number, invite_id: number, game_id: number, game_function: Function, fun_mode: boolean, points_objective: number) {
 
-    if (this.currentGames[game_id] !== undefined) {
+    if (this.currentGames[game_id.toString()] !== undefined) {
       console.log('game already created');
       return;
     }
 
-    this.currentGames[game_id] = new GameRoom();
-
-    this.currentGames[game_id].timer = setInterval(() => { game_function() }, 1000 / module_const.fps);
-
-
-
-    this.currentGames[game_id].host_id = user_id;
-    this.currentGames[game_id].guest_id = invite_id;
-    this.currentGames[game_id].inactivity_count = 0;
+    this.currentGames[game_id.toString()] = new GameRoom();
+    this.currentGames[game_id.toString()].game.fun_mode = fun_mode;
+    // this.currentGames[game_id.toString()].game.points_objective = points_objective;
 
 
-    this.connectGameRoom(client, user_id, game_id);
+    this.currentGames[game_id.toString()].host_id = user_id;
+    this.currentGames[game_id.toString()].guest_id = invite_id;
+    this.currentGames[game_id.toString()].fun_mode = fun_mode;
+    this.currentGames[game_id.toString()].score_objective = points_objective;
+    this.currentGames[game_id.toString()].inactivity_count = 0;
+
+    // this.currentGames[game_id].game. inactivity_count = 0;
+
+
+
+    this.currentGames[game_id.toString()].timer = setInterval(() => { game_function() }, 1000 / module_const.fps);
+
+    this.connectGameRoom(server, client, user_id, game_id);
 
 
     console.log('create');
   }
 
 
-  async joinGame(client: Socket, user_id: number, game_id: number) {
+  async searchGame(user_id: number, fun_mode: boolean, force_fun: boolean, points_objective: number, force_points: boolean): Promise<number | undefined> {
 
 
-    if (this.currentGames[game_id] == undefined) {
+    let game = Object.keys(this.currentGames).find((key) => {
+      return (
+        this.currentGames[key.toString()].host_id !== user_id && this.currentGames[key.toString()].guest_id === -1 &&
+        this.currentGames[key.toString()].game.ended === false && this.currentGames[key.toString()].game.start === false &&
+        (this.currentGames[key.toString()].fun_mode === fun_mode) &&
+        (this.currentGames[key.toString()].score_objective === points_objective)
+      );
+    });
+
+    if (game === undefined) {
+      game = Object.keys(this.currentGames).find((key) => {
+        return (
+          this.currentGames[key.toString()].host_id !== user_id && this.currentGames[key.toString()].guest_id === -1 &&
+          this.currentGames[key.toString()].game.ended === false && this.currentGames[key.toString()].game.start === false &&
+          (force_fun && this.currentGames[key.toString()].fun_mode === fun_mode) &&
+          (force_points && this.currentGames[key.toString()].score_objective === points_objective)
+        );
+      });
+    }
+
+    if (game !== undefined) {
+      const game_id = parseInt(game);
+
+      if (!Number.isNaN(game_id)) {
+
+        this.currentGames[game_id.toString()].guest_id = user_id;
+
+        return (game_id)
+      }
+      return (undefined);
+    }
+    return (undefined);
+
+
+    // if (this.currentGames[game_id.toString()] !== undefined) {
+    //   console.log('game already created');
+    //   return;
+    // }
+
+    // this.currentGames[game_id] = new GameRoom();
+
+
+    // this.currentGames[game_id].host_id = user_id;
+    // this.currentGames[game_id].guest_id = invite_id;
+    // this.currentGames[game_id].fun_mode = fun_mode;
+    // this.currentGames[game_id].score_objective = points_objective;
+    // this.currentGames[game_id].inactivity_count = 0;
+
+    // // this.currentGames[game_id].game. inactivity_count = 0;
+
+
+
+    // this.currentGames[game_id].timer = setInterval(() => { game_function() }, 1000 / module_const.fps);
+
+    // this.connectGameRoom(client, user_id, game_id);
+
+
+    console.log('create');
+  }
+
+
+  async joinGame(server: Server, client: Socket, user_id: number, game_id: number) {
+
+
+    if (this.currentGames[game_id.toString()] == undefined) {
       console.log('joined game not exists');
       return;
     }
 
-    this.connectGameRoom(client, user_id, game_id);
+    this.connectGameRoom(server, client, user_id, game_id);
 
     console.log('join');
 
@@ -179,20 +272,20 @@ export class GamesService {
 
   playGame(user_id: number, game_id: number, actions: string[]) {
 
-    if (this.currentGames[game_id] == undefined) {
+    if (this.currentGames[game_id.toString()] == undefined) {
       console.log('played game not exists', game_id);
       return;
     }
 
 
-    if (this.currentGames[game_id].host_id !== undefined && this.currentGames[game_id].host_id == user_id) {
+    if (this.currentGames[game_id.toString()].host_id !== undefined && this.currentGames[game_id.toString()].host_id == user_id) {
 
-      import_actions(this.currentGames[game_id].game.playerOne, actions, this.currentGames[game_id].game.playerTwo, this.currentGames[game_id].game.balls);
+      import_actions(this.currentGames[game_id.toString()].game.playerOne, actions, this.currentGames[game_id.toString()].game.playerTwo, this.currentGames[game_id.toString()].game);
     }
 
-    else if (this.currentGames[game_id].guest_id !== undefined && this.currentGames[game_id].guest_id == user_id) {
+    else if (this.currentGames[game_id.toString()].guest_id !== undefined && this.currentGames[game_id.toString()].guest_id == user_id) {
 
-      import_actions(this.currentGames[game_id].game.playerTwo, actions, this.currentGames[game_id].game.playerOne, this.currentGames[game_id].game.balls);
+      import_actions(this.currentGames[game_id.toString()].game.playerTwo, actions, this.currentGames[game_id.toString()].game.playerOne, this.currentGames[game_id.toString()].game);
     }
   }
 
@@ -200,27 +293,30 @@ export class GamesService {
 
   async gameLife(server: Server, game_id: number) {
 
-    if (this.currentGames[game_id] == undefined) {
+    if (this.currentGames[game_id.toString()] == undefined) {
       console.log('life not existing')
       return;
     }
 
-    const gameRoom: GameRoom = this.currentGames[game_id];
+    const gameRoom: GameRoom = this.currentGames[game_id.toString()];
 
     gameRoom.game.update();
 
     server.to(game_id.toString()).emit("gameInfos", { game: gameRoom.game.export() });
-
-
+    
+    
     if ((new Set(this.activeGame.values()).has(game_id)) && (this.connecteds.has(gameRoom.host_id) || this.connecteds.has(gameRoom.guest_id || -1))) {
       gameRoom.inactivity_count = 0;
     }
     else {
       gameRoom.inactivity_count++;
     }
+    
+    if (gameRoom.game.playerOne.score >= gameRoom.score_objective || gameRoom.game.playerTwo.score >= gameRoom.score_objective) {
 
-    if (gameRoom.game.playerOne.score >= 10 || gameRoom.game.playerTwo.score >= 10) {
-
+      gameRoom.game.ended = true;
+      server.to(game_id.toString()).emit("gameInfos", { game: gameRoom.game.export() });
+      
       try {
         const gameToSave = await this.findOneById(game_id);
 
@@ -263,7 +359,7 @@ export class GamesService {
 
       clearInterval(gameRoom.timer);
 
-      delete this.currentGames[game_id];
+      delete this.currentGames[game_id.toString()];
     }
   }
 
@@ -275,8 +371,8 @@ export class GamesService {
       const connectedGame = this.activeGame.get(id) || -1;
 
       if (connectedGame !== -1) {
-        const connectedGameRoom = this.currentGames[connectedGame];
-        
+        const connectedGameRoom = this.currentGames[connectedGame.toString()];
+
         if (connectedGameRoom.host_id === id || connectedGameRoom.guest_id === id) {
           //
           if (connectedGameRoom.game.start === true) {

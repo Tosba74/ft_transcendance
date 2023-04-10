@@ -12,7 +12,7 @@ export interface UseGameDto {
   user2: UserDto | undefined;
 
   identify: Function;
-  inviteGame: Function;
+  createGame: Function;
   joinGame: Function;
   playGame: Function;
 }

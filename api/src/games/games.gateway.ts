@@ -8,6 +8,8 @@ import { WebsocketExceptionsFilter } from 'src/_common/filters/ws-exception.filt
 import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
 import { GamesService } from './games.service';
 import { Interval } from '@nestjs/schedule';
+import { CreateGameDto } from './dto/creategame.dto';
+import { WsResponseDto } from 'src/_shared_dto/ws-response.dto';
 
 
 
@@ -54,12 +56,12 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	@SubscribeMessage('identify')
 	@UseGuards(WsAuthGuard)
-	async identify(@ConnectedSocket() client: Socket): Promise<{ error: string | undefined }> {
+	async identify(@ConnectedSocket() client: Socket): Promise<WsResponseDto<undefined>> {
 
 		const user = (client.handshake as any).user as LoggedUserDto;
 
 		if (!user || user.id == undefined) {
-			return { error: 'Not logged' };
+			return { error: 'Not logged', value: undefined };
 		}
 
 		client.data = { ...client.data, loggedId: user.id };
@@ -67,26 +69,46 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		if (client.data.loggedId !== undefined)
 			this.gamesService.connecteds.add(client.data.loggedId)
 
-		this.gamesService.searchConnect(client, user.id);
+		this.gamesService.searchConnect(this.server, client, user.id);
 
-		return { error: undefined };
+		return { error: undefined, value: undefined };
 	}
 
 
-	@SubscribeMessage('inviteGame')
-	async inviteGame(client: Socket, body: { invited_id: number }): Promise<void> {
+	@SubscribeMessage('createGame')
+	async createGame(client: Socket, body: CreateGameDto): Promise<WsResponseDto<undefined>> {
 
 		if (client.data.loggedId === undefined) {
 			throw new WsException('Not identified');
 		}
 
-		const newGame = await this.gamesService.createEmpty(client.data.loggedId, body.invited_id);
+		body.force_fun = true;
+		body.force_points = true;
+		body.points_objective = 3;
+
+
+		if (body.invited_id === -1) {
+
+			const foundMatchmakingGame = await this.gamesService.searchGame(client.data.loggedId, body.fun_mode, body.force_fun, body.points_objective, body.force_points);
+
+			console.log('found ', foundMatchmakingGame);
+
+			if (foundMatchmakingGame !== undefined) {
+				
+				this.gamesService.joinGame(this.server, client, client.data.loggedId, foundMatchmakingGame);
+
+				return { error: undefined, value: undefined };
+			}
+		}
+		
+		const newGame = await this.gamesService.createEmpty(client.data.loggedId, body.invited_id, body.fun_mode, body.points_objective);
 
 		let game_function = () => {
 			this.gamesService.gameLife(this.server, newGame.id);
 		}
-
-		this.gamesService.createGame(client, client.data.loggedId, body.invited_id, newGame.id, game_function);
+		
+		this.gamesService.createGame(this.server, client, client.data.loggedId, body.invited_id, newGame.id, game_function, body.fun_mode, body.points_objective);
+		return { error: undefined, value: undefined };
 	}
 
 
@@ -97,7 +119,7 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			throw new WsException('Not identified');
 		}
 
-		this.gamesService.joinGame(client, client.data.loggedId, body.game_id);
+		this.gamesService.joinGame(this.server, client, client.data.loggedId, body.game_id);
 	}
 
 

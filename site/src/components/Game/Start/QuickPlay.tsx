@@ -2,9 +2,12 @@ import React, { useEffect } from "react";
 import { UseLoginDto } from "../../Log/dto/useLogin.dto";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
+import { UseGameDto } from "../dto/useGame.dto";
 import classNames from "classnames";
 
 const startEL = document.getElementById("root");
+
+
 
 interface modeGame {
   isFun: boolean;
@@ -12,7 +15,13 @@ interface modeGame {
   force: boolean;
 }
 
-export default function QuickPlay({ loginer }: { loginer: UseLoginDto }) {
+export default function QuickPlay({
+  loginer,
+  gamer,
+}: {
+  loginer: UseLoginDto;
+  gamer: UseGameDto;
+}) {
   const [portal, setPortal] = React.useState(false);
   const [effect, setEffect] = React.useState(false);
   const [isSearch, setIsSearch] = React.useState(false);
@@ -35,7 +44,10 @@ export default function QuickPlay({ loginer }: { loginer: UseLoginDto }) {
     } else {
       console.log("Boomer");
     }
-    setIsSearch(true);
+
+    gamer.createGame(mode.isFun, true, mode.points, mode.force, -1, () => {
+      setIsSearch(true);
+    });
   };
 
   const handleClickPortal = () => {
