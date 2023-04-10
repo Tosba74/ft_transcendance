@@ -26,9 +26,6 @@ export default function ChatMenu({
   chats,
 }: ChatMenuProps) {
   //
-  const handleClick = () => {
-    chats.setModeChannel(!chats.modeChannel);
-  };
 
   const sendMessage = (text: string) => {
     chats.sendMessage(text, chats.currChannel);
@@ -40,7 +37,7 @@ export default function ChatMenu({
         <div className="absolute top-16 bottom-10 z-50 flex w-full flex-col rounded-lg bg-gray-300 p-2 shadow-lg dark:bg-gray-800 md:top-20 md:right-2 md:w-1/2 lg:top-20 lg:w-1/3">
           <div className="flex flex-row items-center justify-between rounded bg-gray-200 p-2 text-center shadow-lg dark:bg-gray-700 dark:text-white">
             <ChatMode
-              handleClick={handleClick}
+              chats={chats}
               setOpenedMenu={setOpenedMenu}
               modeChannel={chats.modeChannel}
             />
