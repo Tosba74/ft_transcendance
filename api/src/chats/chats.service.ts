@@ -164,11 +164,11 @@ export class ChatsService {
 
 
   async connectRoom(user: UserDto, client: Socket, room_id: number): Promise<ChatResponseDto<ChatRoomDto>> {
-    
+
     let res = new ChatResponseDto<ChatRoomDto>();
-    
+
     const room = await this.findOneById(room_id);
-    
+
     // console.log('try to connect to room', room_id);
     // console.log(room);
     // console.log(room.participants);
@@ -369,7 +369,7 @@ export class ChatsService {
       const senderRole = await this.chatParticipantsService.get_role(userId, room.id);
       if (senderRole !== ChatRoleModel.OWNER_ROLE)
         return 'pw: only the Owner can update the channel password';
-    
+
     } catch (error) {
       return 'pw: error retrieving user role';
     }
@@ -378,9 +378,9 @@ export class ChatsService {
   }
 
 
-  async isPasswordProtected(roomId:number): Promise<boolean> {
+  async isPasswordProtected(roomId: number): Promise<boolean> {
     const chat = await this.chatsRepository.findOneOrFail({
-      select: ['password'], 
+      select: ['password'],
       where: { id: roomId }
     });
     if (chat.password === '' || chat.password === undefined)
@@ -389,18 +389,18 @@ export class ChatsService {
   }
 
 
-  async checkPassword(password:string, roomId: number): Promise<any> {
+  async checkPassword(password: string, roomId: number): Promise<any> {
     try {
       const chat = await this.chatsRepository.findOneOrFail({
-        select: ['password'], 
+        select: ['password'],
         where: { id: roomId }
       });
 
       // if (chat.password === '' || chat.password === undefined) 
       //   return true;
-      
+
       if (await bcrypt.compare(password, chat.password) === false)
-        return 'pw: wrong password';      
+        return 'pw: wrong password';
       return true;
 
     } catch (error) {
@@ -451,12 +451,12 @@ export class ChatsService {
   }
 
 
-  async pwCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {    
+  async pwCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
     const errorMsg = await this.pwPermissions(room, user.id);
-    
+
     if (errorMsg !== true)
       return errorMsg;
-  
+
     if (command.length < 1 || command.length > 3)
       return 'changepw: argument error';
 
@@ -499,9 +499,9 @@ export class ChatsService {
 
 
   // sender is the admin who typed the cmd, receiver is the user targeted by the cmd
-  async roleCommandsPermission(room:ChatModel, command: string[], senderId: number, receiverId: number, roleToAssign=-1): Promise<string | undefined> {
+  async roleCommandsPermission(room: ChatModel, command: string[], senderId: number, receiverId: number, roleToAssign = -1): Promise<string | undefined> {
     const cmdName = command[0].substring(1);
-    
+
     if (command.length != 2)
       return `${cmdName}: argument error`;
 
@@ -619,11 +619,11 @@ export class ChatsService {
   async demoteCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
 
     let userToDemote = parseInt(command[1]);
-    
+
     const permission = await this.roleCommandsPermission(room, command, user.id, userToDemote, ChatRoleModel.USER_ROLE);
     if (permission !== undefined)
       return permission
-    
+
     let newRole = new UpdateRoleDto();
     newRole.new_role = ChatRoleModel.USER_ROLE;
     newRole.participantId = userToDemote;
@@ -633,7 +633,7 @@ export class ChatsService {
     } catch (error) {
       return "demote: user not found or not in this channel";
     }
-    
+
     let clientsToDemote = this.clients.filter(value => {
       return value.user.id == userToDemote
     });
@@ -651,7 +651,7 @@ export class ChatsService {
           value.socket.emit('broadcastMessage', { room_id: room.id, message: demoteMessage });
         }
       });
-    }    
+    }
     return "demote: done";
   }
 
@@ -691,7 +691,7 @@ export class ChatsService {
       return "kick: user not found or connected";
     }
   }
-  
+
 
   async banCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
 
@@ -765,10 +765,10 @@ export class ChatsService {
     }
     else
       return 'role: argument error';
-    
+
     try {
       let role: number | string = await this.chatParticipantsService.get_role(targetUser, room.id);
-      switch(role) {
+      switch (role) {
         case 1:
           role = 'user';
           break
