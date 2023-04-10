@@ -11,6 +11,7 @@ import ChatMode from "./ChatMode";
 import MessagePanel from "./MessagePanel";
 import { UseChatDto } from "./dto/useChat.dto";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
+import classNames from "classnames";
 
 interface ChatMenuProps {
   openedMenu: string;
@@ -26,8 +27,8 @@ export default function ChatMenu({
   chats,
 }: ChatMenuProps) {
   const [currChannel, setCurrChannel] = useState(0);
-
   const [modeChannel, setModeChannel] = useState(false);
+  const [animation, setAnimation] = useState(true);
 
   const handleClick = () => {
     setModeChannel(!modeChannel);
@@ -37,19 +38,48 @@ export default function ChatMenu({
     chats.sendMessage(text, currChannel);
   };
 
+  const handleAnimation = () => {
+    setAnimation(!animation);
+  };
+
+  const css: React.CSSProperties = {
+    resize: "horizontal",
+    overflow: "auto",
+    direction: "rtl",
+  };
+
   return (
     <>
-      {openedMenu == "chat" && (
-        <div className="absolute top-16 bottom-10 z-50 flex w-full flex-col rounded-lg bg-gray-300 p-2 shadow-lg dark:bg-gray-800 md:top-20 md:right-2 md:w-1/2 lg:top-20 lg:w-1/3">
-          <div className="flex flex-row items-center justify-between rounded bg-gray-200 p-2 text-center shadow-lg dark:bg-gray-700 dark:text-white">
+      {openedMenu === "chat" && (
+        <div
+          style={css}
+          className={classNames(
+            animation ? "animate-slideInChat" : "animate-slideOutChat",
+            "absolute top-16 bottom-10 z-50 flex w-full flex-col rounded-lg bg-gray-300 p-2 shadow-lg dark:bg-gray-800 sm:min-w-[325px] md:top-20 md:right-2 md:w-1/2 lg:top-20 lg:w-1/3"
+          )}
+          onAnimationEnd={() => {
+            console.log(animation);
+            if (!animation) {
+              setOpenedMenu();
+              setAnimation(true);
+            }
+          }}
+        >
+          <div
+            dir="ltr"
+            className="flex flex-row items-center justify-between rounded bg-gray-200 p-2 text-center shadow-lg dark:bg-gray-700 dark:text-white"
+          >
             <ChatMode
               handleClick={handleClick}
-              setOpenedMenu={setOpenedMenu}
+              handleAnimation={handleAnimation}
               modeChannel={modeChannel}
             />
           </div>
 
-          <div className="right-2 left-2 flex h-0 w-full flex-grow flex-col rounded">
+          <div
+            dir="ltr"
+            className="right-2 left-2 flex h-0 w-full flex-grow flex-col rounded"
+          >
             {!modeChannel && (
               <MessagePanel
                 selfId={loginer.userInfos?.id || -1}

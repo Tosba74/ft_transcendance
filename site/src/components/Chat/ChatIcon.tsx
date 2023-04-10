@@ -10,7 +10,7 @@ interface ChatIconProps {
 
 export default function ChatIcon({ openedMenu, setOpenedMenu }: ChatIconProps) {
   const handleClick = () => {
-    if (openedMenu == "chat") {
+    if (openedMenu === "chat") {
       setOpenedMenu("");
     } else {
       setOpenedMenu("chat");
@@ -19,7 +19,7 @@ export default function ChatIcon({ openedMenu, setOpenedMenu }: ChatIconProps) {
 
   return (
     <>
-      {openedMenu != "chat" && (
+      {openedMenu !== "chat" && (
         <div className="absolute right-2 bottom-10 z-50 ">
           <div className="justify-content-end right-2 flex justify-end rounded-full lg:pr-2">
             <div>

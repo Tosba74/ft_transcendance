@@ -1,12 +1,12 @@
 interface ChatModeProps {
   handleClick: Function;
-  setOpenedMenu: Function;
+  handleAnimation: Function;
   modeChannel: boolean;
 }
 
 export default function ChatMode({
   handleClick,
-  setOpenedMenu,
+  handleAnimation,
   modeChannel,
 }: ChatModeProps) {
   return (
@@ -19,7 +19,7 @@ export default function ChatMode({
         {modeChannel && <div className="ml-6 px-4">Channel List</div>}
         {!modeChannel && <div className="ml-6 px-4">Chat Mode</div>}
       </button>
-      <button className="w-10" type="button" onClick={() => setOpenedMenu("")}>
+      <button className="w-10" type="button" onClick={() => handleAnimation()}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
