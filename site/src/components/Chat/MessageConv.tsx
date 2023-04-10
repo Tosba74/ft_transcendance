@@ -13,7 +13,10 @@ export default function MessageConv({ selfId, messages }: MessageConvProps) {
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+    });
   };
 
   React.useEffect(() => {
@@ -23,10 +26,8 @@ export default function MessageConv({ selfId, messages }: MessageConvProps) {
   return (
     <>
       {messages.map((message) => {
-        return (message.sender.id == -1 ? (
-          <MessageServer
-            text={message.content}
-          />
+        return message.sender.id == -1 ? (
+          <MessageServer text={message.content} />
         ) : message.sender.id == selfId ? (
           <MessageBulleSend
             key={message.id}
@@ -39,9 +40,9 @@ export default function MessageConv({ selfId, messages }: MessageConvProps) {
             user={message.sender}
             text={message.content}
           />
-        )
-        )
+        );
       })}
+      <div ref={messagesEndRef}></div>
     </>
   );
 }
