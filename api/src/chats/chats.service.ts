@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Socket } from 'socket.io';
 
+import { UsersService } from 'src/users/users.service';
 import { MeService } from 'src/me/me.service';
 import { ChatMessagesService } from 'src/chat_messages/chat_messages.service';
 
@@ -10,13 +11,11 @@ import { ChatModel } from "./models/chat.model";
 import { ChatTypeModel } from 'src/chat_types/models/chat_type.model';
 import { ChatRoleModel } from 'src/chat_roles/models/chat_role.model';
 
-import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
-
 import { UserDto } from 'src/_shared_dto/user.dto';
+import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
 import { WsResponseDto } from 'src/_shared_dto/ws-response.dto';
 import { ChatRoomDto } from 'src/_shared_dto/chat-room.dto';
 import { ChatMessageDto } from 'src/_shared_dto/chat-message.dto';
-import { UsersService } from 'src/users/users.service';
 
 
 interface WebsocketUser {
@@ -59,6 +58,24 @@ export class ChatsService {
       throw new NotFoundException('Chat id not found');
     }
   }
+
+
+  async findPublicChats(): Promise<ChatModel[]> {
+
+    const publicChats = this.chatsRepository.find({
+      select: { id: true, name: true, password: true, messages: true, participants: true, created_at: true, updated_at: true },
+      where: {
+        type: { id: ChatTypeModel.PUBLIC_TYPE },
+      },
+      relations: {
+        type: true,
+      }
+    });
+
+    return publicChats;
+  }
+
+
 
 
   async create(name: string | undefined, type_id: number, password?: string): Promise<ChatModel> {
