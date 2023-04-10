@@ -61,9 +61,9 @@ export default function FriendsPage({ loginer }: UserListPageProps) {
         />
       </div>
       <div className="flex flex-col px-4">
-        <FriendsList loginer={loginer} doReload={doReload} />
-        <PendingList loginer={loginer} doReload={doReload} />
-        <BannedList loginer={loginer} doReload={doReload} />
+        <FriendsList loginer={loginer} reload={reload} doReload={doReload} />
+        <PendingList loginer={loginer} reload={reload} doReload={doReload} />
+        <BannedList loginer={loginer} reload={reload} doReload={doReload} />
         <AddFriend loginer={loginer} doReload={doReload} />
       </div>
     </div>

@@ -51,11 +51,13 @@ export default function Pseudo({ loginer }: PseudoProps) {
             }, 3000);
           }
         })
-        .catch(() =>
-          setPseudoInputMessage(
-            "Error while contacting the API. Retry after reloging."
-          )
-        );
+        .catch((error) => {
+          if (error.response.status === 401)
+            var message: string = error.response.data.message;
+          else
+            var message: string = "Error while contacting the API. Retry after reloging.";
+          setPseudoInputMessage(message);
+        });
     }
   }
 

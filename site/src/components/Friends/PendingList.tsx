@@ -7,9 +7,11 @@ import { FiUserPlus, FiClock } from "react-icons/fi";
 
 export default function PendingList({
   loginer,
+  reload,
   doReload,
 }: {
   loginer: UseLoginDto;
+  reload: boolean;
   doReload: Function;
 }) {
   const [usersRecv, setUsersRecv] = React.useState<UserDto[]>([]);
@@ -56,7 +58,7 @@ export default function PendingList({
         }
       })
       .catch((error) => {});
-  }, [doReload]);
+  }, [reload]);
 
   let content: JSX.Element[] = usersRecv.map((user) => (
     <li className="flex items-center" key={user.id}>

@@ -1,5 +1,7 @@
 import { ApiResponseProperty } from "@nestjs/swagger";
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm"
+import { GameStatusModel } from "src/game_status/models/game_status.model";
+import { UserModel } from "src/users/models/user.model";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from "typeorm"
 
 @Entity("games")
 export class GameModel {
@@ -8,9 +10,33 @@ export class GameModel {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ApiResponseProperty({ type: String })
+    @ApiResponseProperty({ type: Number })
+    @Column({ nullable: true })
+    user1_score: number;
+
+    @ApiResponseProperty({ type: Number })
     @Column()
-    name: string;
+    user2_score: number;
+
+    @ApiResponseProperty({ type: Date })
+    started_at: Date;
+
+    @ApiResponseProperty({ type: Date })
+    ended_at: Date;
+
+    //--------------------------------------------
+
+    @ApiResponseProperty({ type: () => UserModel })
+    @ManyToOne(() => UserModel, { nullable: true })
+    user1: UserModel | null;
+
+    @ApiResponseProperty({ type: () => UserModel })
+    @ManyToOne(() => UserModel, { nullable: true })
+    user2: UserModel | null;
+
+    @ApiResponseProperty({ type: () => GameStatusModel })
+    @ManyToOne(() => GameStatusModel)
+    status: GameStatusModel;
 
     //--------------------------------------------
 
@@ -22,10 +48,4 @@ export class GameModel {
     @UpdateDateColumn()
     updated_at: Date;
 
-
-    // constructor(status_id: number) {
-    //     this.id = status_id;
-    // }
-
-    // static readonly ONLINE_STATUS = 1;
 }
