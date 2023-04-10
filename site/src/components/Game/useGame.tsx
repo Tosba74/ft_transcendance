@@ -4,6 +4,7 @@ import { io, Socket } from "socket.io-client";
 import { GameDataDto } from "src/_shared_dto/gamedata.dto";
 import { GameSetterDto } from "src/_shared_dto/gamesetter.dto";
 import { UserDto } from "src/_shared_dto/user.dto";
+import { WsResponseDto } from "src/_shared_dto/ws-response.dto";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
 
 import { GameArea } from "./pong";
@@ -29,7 +30,7 @@ const useGame = ({ loginer }: useGameProps) => {
       gameSocketRef.current.emit(
         "identify",
         {},
-        (response: { error: string }) => {
+        (response: WsResponseDto<undefined>) => {
           if (response.error !== undefined) {
             console.log("identify error", response.error);
           }
@@ -42,7 +43,8 @@ const useGame = ({ loginer }: useGameProps) => {
     force_fun: boolean,
     points_objective: number,
     force_points: boolean,
-    invited_id: number = -1
+    invited_id: number = -1,
+    callbackFct: Function | undefined = undefined
   ) => {
     gameSocketRef.current &&
       gameSocketRef.current.emit(
@@ -54,7 +56,11 @@ const useGame = ({ loginer }: useGameProps) => {
           force_points: force_points,
           invited_id: invited_id,
         },
-        (response: void) => {}
+        (response: WsResponseDto<undefined>) => {
+          if (response.error === undefined && callbackFct !== undefined) {
+            callbackFct();
+          }
+        }
       );
   };
 

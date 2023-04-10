@@ -9,6 +9,7 @@ import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
 import { GamesService } from './games.service';
 import { Interval } from '@nestjs/schedule';
 import { CreateGameDto } from './dto/creategame.dto';
+import { WsResponseDto } from 'src/_shared_dto/ws-response.dto';
 
 
 
@@ -55,12 +56,12 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	@SubscribeMessage('identify')
 	@UseGuards(WsAuthGuard)
-	async identify(@ConnectedSocket() client: Socket): Promise<{ error: string | undefined }> {
+	async identify(@ConnectedSocket() client: Socket): Promise<WsResponseDto<undefined>> {
 
 		const user = (client.handshake as any).user as LoggedUserDto;
 
 		if (!user || user.id == undefined) {
-			return { error: 'Not logged' };
+			return { error: 'Not logged', value: undefined };
 		}
 
 		client.data = { ...client.data, loggedId: user.id };
@@ -70,12 +71,12 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 		this.gamesService.searchConnect(this.server, client, user.id);
 
-		return { error: undefined };
+		return { error: undefined, value: undefined };
 	}
 
 
 	@SubscribeMessage('createGame')
-	async createGame(client: Socket, body: CreateGameDto): Promise<void> {
+	async createGame(client: Socket, body: CreateGameDto): Promise<WsResponseDto<undefined>> {
 
 		if (client.data.loggedId === undefined) {
 			throw new WsException('Not identified');
@@ -95,8 +96,8 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			if (foundMatchmakingGame !== undefined) {
 				
 				this.gamesService.joinGame(this.server, client, client.data.loggedId, foundMatchmakingGame);
-	
-				return ;
+
+				return { error: undefined, value: undefined };
 			}
 		}
 		
@@ -105,8 +106,9 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		let game_function = () => {
 			this.gamesService.gameLife(this.server, newGame.id);
 		}
-
+		
 		this.gamesService.createGame(this.server, client, client.data.loggedId, body.invited_id, newGame.id, game_function, body.fun_mode, body.points_objective);
+		return { error: undefined, value: undefined };
 	}
 
 

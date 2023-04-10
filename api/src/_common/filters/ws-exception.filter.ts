@@ -1,6 +1,6 @@
 import { Catch, ArgumentsHost, HttpException, Logger } from '@nestjs/common';
 import { BaseWsExceptionFilter, WsException } from '@nestjs/websockets';
-import { ChatResponseDto } from 'src/_shared_dto/chat-response.dto';
+import { WsResponseDto } from 'src/_shared_dto/ws-response.dto';
 
 
 @Catch(WsException, HttpException)
@@ -19,7 +19,7 @@ export class WebsocketExceptionsFilter extends BaseWsExceptionFilter {
 		this.logger.warn(`${status} ${message}`);
 
 		
-		let res: ChatResponseDto<undefined> = {error: `${status} ${message}`, value: undefined} 
+		let res: WsResponseDto<undefined> = {error: `${status} ${message}`, value: undefined} 
 
 		client.send(JSON.stringify({
 			event: "error",

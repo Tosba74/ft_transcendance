@@ -33,8 +33,9 @@ export default function QuickPlay({
       console.log("Boomer");
     }
 
-    gamer.createGame(mode, true, 3, true, -1);
-    setIsSearch(true);
+    gamer.createGame(mode, true, 3, true, -1, () => {
+      setIsSearch(true);
+    });
   };
 
   const handleClickPortal = () => {

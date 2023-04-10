@@ -1,4 +1,4 @@
-export interface ChatResponseDto<T> {
+export interface WsResponseDto<T> {
   error?: string;
 
   value: T | undefined;
