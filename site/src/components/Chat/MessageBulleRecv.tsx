@@ -10,22 +10,16 @@ export default function MessageBulleRecv({
   text,
 }: MessageBulleRecvProps) {
   return (
-    <div className="mx-1 ml-1 mb-1">
-      <div className="flex items-end">
-        <div className="order-2 mx-2 my-1 flex max-w-xs flex-col items-start space-y-2 text-xs">
-          <div>
-            <span className="inline-block rounded-lg rounded-bl-none bg-gray-300 px-4 py-2 text-gray-600">
-              {text}
-            </span>
+    <div className="pl-2 my-1 w-full flex flex-row-reverse items-end justify-end">
+          <div className="mx-2 text-xs break-all rounded-lg bg-cyan-500 px-4 p-2 text-white ">
+                {text}
           </div>
-        </div>
-        <img
-          src={user.avatar_url}
-          alt={user.pseudo}
-          title={user.pseudo}
-          className="order-1 h-6 w-6 rounded-full object-cover"
-        />
-      </div>
+          <img
+            src={user.avatar_url}
+            alt={user.pseudo}
+            title={user.pseudo}
+            className="h-6 w-6 rounded-full object-cover"
+          />
     </div>
   );
 }
