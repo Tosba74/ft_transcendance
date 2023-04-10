@@ -21,6 +21,10 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
   const socketRef = React.useRef<Socket>();
   const [rooms, setRooms] = React.useState<{ [key: string]: ChatRoomDto }>();
 
+  const [chatOpen, setChatOpen] = React.useState(false);
+  const [modeChannel, setModeChannel] = React.useState(false);
+  const [currChannel, setCurrChannel] = React.useState(0);
+
   const identify = () => {
     console.log("sent iden chat");
 
@@ -34,13 +38,16 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
             console.log("identify error", response.error);
           }
 
-          connectRoom(1);
-          connectRoom(2);
+          // connectRoom(1);
+          // connectRoom(2);
         }
       );
   };
 
-  const connectRoom = (room_id: number) => {
+  const connectRoom = (
+    room_id: number,
+    setError: Function | undefined = undefined
+  ) => {
     console.log("try connect", room_id);
 
     // Try to connect to a room, receive room name and messages on success
@@ -58,6 +65,14 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
               ...oldRooms,
               [room.id]: room,
             }));
+
+            setCurrChannel(room.id);
+            setChatOpen(true);
+
+            return true;
+          } //
+          else if (response.error !== undefined && setError !== undefined) {
+            setError(response.error);
           }
         }
       );
@@ -114,7 +129,18 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
     }
   }, [logged]);
 
-  return { rooms, identify, connectRoom, sendMessage };
+  return {
+    rooms,
+    chatOpen,
+    setChatOpen,
+    modeChannel,
+    setModeChannel,
+    currChannel,
+    setCurrChannel,
+    identify,
+    connectRoom,
+    sendMessage,
+  };
 };
 
 export default useChat;
