@@ -27,7 +27,7 @@ export default function ChannelPanel({
         currChannel={currChannel}
         setChannel={setChannel}
         setModeChannel={setModeChannel}
-        />
+      />
       <ChannelUserList
         users={
           (chats.rooms &&
