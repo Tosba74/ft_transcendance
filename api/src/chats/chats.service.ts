@@ -8,7 +8,6 @@ import { MeService } from 'src/me/me.service';
 import { ChatMessagesService } from 'src/chat_messages/chat_messages.service';
 import { ChatParticipantsService } from 'src/chat_participants/chat_participants.service';
 
-import { ChatParticipantsService } from 'src/chat_participants/chat_participants.service';
 import { UpdateRoleDto } from 'src/chat_participants/dto/update-role'
 
 import { ChatParticipantModel } from 'src/chat_participants/models/chat_participant.model';
@@ -36,11 +35,9 @@ export class ChatsService {
   constructor(
     @InjectRepository(ChatModel) private chatsRepository: Repository<ChatModel>,
     @Inject(forwardRef(() => MeService)) private meService: MeService,
+    @Inject(forwardRef(() => ChatParticipantsService)) private chatParticipantsService: ChatParticipantsService,
     private chatMessagesService: ChatMessagesService,
-    private chatParticipantsService: ChatParticipantsService,
     private usersService: UsersService,
-    @Inject(forwardRef(() => ChatParticipantsService))
-    private chatParticipantsService: ChatParticipantsService,
   ) { }
 
   // clients = new Pair<Socket, LoggedUserDto>();
@@ -161,7 +158,7 @@ export class ChatsService {
     const user2 = await this.usersService.findOneById(user2_id);
 
     const createdDiscussion = await this.create(`${user1.pseudo} - ${user2.pseudo}`, ChatTypeModel.DISCUSSION_TYPE);
-  
+
 
     this.chatParticipantsService.create(user1.id, createdDiscussion.id, ChatRoleModel.USER_ROLE);
     this.chatParticipantsService.create(user2.id, createdDiscussion.id, ChatRoleModel.USER_ROLE);
@@ -178,7 +175,7 @@ export class ChatsService {
       throw new NotFoundException('Chat id not found');
     }
   }
-  
+
 
   async identify(user: LoggedUserDto, client: Socket): Promise<WsResponseDto<undefined>> {
 
