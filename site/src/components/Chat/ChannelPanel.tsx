@@ -13,7 +13,7 @@ export default function ChannelPanel({ chats }: ChannelPanelProps) {
   console.log(chats.rooms && chats.rooms[chats.currChannel.toString()]);
 
   return (
-    <div className="mt-2 h-full w-full rounded bg-gray-200 p-2 shadow dark:bg-gray-700 ">
+    <>
       <ChannelChannelList
         lstChannel={chats.rooms}
         currChannel={chats.currChannel}
@@ -28,7 +28,6 @@ export default function ChannelPanel({ chats }: ChannelPanelProps) {
           []
         }
       />
-    </div>
+    </>
   );
 }
-// <ChatChannels />

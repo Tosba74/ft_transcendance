@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import BurgerButton from "./BurgerButton";
@@ -16,9 +17,15 @@ export default function NavBar({
   openedMenu,
   setOpenedMenu,
 }: NavBarProps) {
+  //
   return (
     <header className="top-0 z-50 w-full">
-      <nav className="bg-cyan-500 px-2 py-2.5 shadow-lg dark:bg-gray-700 sm:px-4">
+      <nav
+        className={classNames(
+          "px-2 py-2.5 shadow-lg sm:px-4",
+          globalThis.colorTheme
+        )}
+      >
         <div className="mx-auto flex flex-wrap items-center justify-between">
           <Link to="/" className="justify-start">
             <img

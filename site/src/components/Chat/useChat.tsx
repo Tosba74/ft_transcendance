@@ -2,7 +2,7 @@ import React from "react";
 import { io, Socket } from "socket.io-client";
 
 import { ChatMessageDto } from "src/_shared_dto/chat-message.dto";
-import { ChatResponseDto } from "src/_shared_dto/chat-response.dto";
+import { WsResponseDto } from "src/_shared_dto/ws-response.dto";
 import { ChatRoomDto } from "src/_shared_dto/chat-room.dto";
 
 import { UseChatDto } from "./dto/useChat.dto";
@@ -33,7 +33,7 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
       socketRef.current.emit(
         "identify",
         {},
-        (response: ChatResponseDto<undefined>) => {
+        (response: WsResponseDto<undefined>) => {
           if (response.error != undefined) {
             console.log("identify error", response.error);
           }
@@ -55,8 +55,8 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
       socketRef.current.emit(
         "connectRoom",
         { room: room_id },
-        (response: ChatResponseDto<ChatRoomDto>) => {
-          if (response.error === undefined && response.value) {
+        (response: WsResponseDto<ChatRoomDto>) => {
+          if (response.error == undefined && response.value) {
             let room: ChatRoomDto = response.value;
 
             console.log("connected", room.id);
