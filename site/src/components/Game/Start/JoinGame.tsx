@@ -1,5 +1,5 @@
 import React from "react";
-import { UseLoginDto } from "../Log/dto/useLogin.dto";
+import { UseLoginDto } from "../../Log/dto/useLogin.dto";
 
 export default function JoinGame({ loginer }: { loginer: UseLoginDto }) {
   const [idGame, setIdGame] = React.useState("");

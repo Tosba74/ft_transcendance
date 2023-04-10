@@ -1,6 +1,6 @@
 import React from "react";
-import { UseLoginDto } from "../Log/dto/useLogin.dto";
-import { UseGameDto } from "./dto/useGame.dto";
+import { UseLoginDto } from "../../Log/dto/useLogin.dto";
+import { UseGameDto } from "../dto/useGame.dto";
 import HistoryGames from "./HistoryGames";
 import JoinGame from "./JoinGame";
 import QuickPlay from "./QuickPlay";
@@ -19,7 +19,7 @@ export default function StartGamePage({ loginer, gamer }: StartGamePageProps) {
       <QuickPlay loginer={loginer} gamer={gamer} />
       <div className="w-sm mx-auto flex flex-col">
         <JoinGame loginer={loginer} />
-        <HistoryGames />
+        <HistoryGames loginer={loginer} />
       </div>
     </div>
   );
