@@ -18,10 +18,11 @@ import SettingsPage from "./components/Settings/SettingsPage";
 import { UseLoginDto } from "./components/Log/dto/useLogin.dto";
 import useLogin from "./components/Log/useLogin";
 import UserListPage from "./components/UserList/UserListPage";
-import ChatPage from "./components/Chat/ChatMenu";
+import ChatMenu from "./components/Chat/ChatMenu";
 import GamePage from "./components/Game/GamePage";
 import TfaCodePage from "./components/Log/TfaCodePage";
 import CreateAccountPage from "./components/Log/CreateAccountPage";
+import ChannelsPage from "./components/Channels/ChannelsPage";
 import FriendsPage from "./components/Friends/FriendsPage";
 import PublicProfilePage from "./components/PublicProfile/PublicProfilePage";
 import { UseChatDto } from "./components/Chat/dto/useChat.dto";
@@ -38,8 +39,7 @@ export default function App() {
     token: loginer.token,
   });
   let gamer: UseGameDto = useGame({
-    logged: loginer.logged,
-    token: loginer.token,
+    loginer: loginer,
   });
 
   return (
@@ -60,7 +60,14 @@ export default function App() {
                 path="/players/:id"
                 element={<PublicProfilePage loginer={loginer} />}
               />
-              <Route path="/friends" element={<FriendsPage />} />
+              <Route
+                path="/friends"
+                element={<FriendsPage loginer={loginer} />}
+              />
+              <Route
+                path="/channels"
+                element={<ChannelsPage loginer={loginer} chats={chats} />}
+              />
               <Route
                 path="/players"
                 element={<UserListPage loginer={loginer} />}
@@ -81,7 +88,7 @@ export default function App() {
           />
           <Route path="/logout" element={<Logout loginer={loginer} />} />
 
-          {process.env.BUILD_TYPE != "Production" && (
+          {process.env.BUILD_TYPE !== "Production" && (
             <>
               <Route path="/createaccount" element={<CreateAccountPage />} />
             </>
@@ -89,9 +96,18 @@ export default function App() {
         </Routes>
       </div>
 
-      <ChatIcon openedMenu={openedMenu} setOpenedMenu={setOpenedMenu} />
+      <ChatIcon
+        openedMenu={openedMenu}
+        setOpenedMenu={setOpenedMenu}
+        chats={chats}
+      />
 
-      <ChatPage openedMenu={openedMenu} setOpenedMenu={setOpenedMenu} />
+      <ChatMenu
+        openedMenu={openedMenu}
+        setOpenedMenu={setOpenedMenu}
+        loginer={loginer}
+        chats={chats}
+      />
     </Router>
   );
 }

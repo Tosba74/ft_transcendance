@@ -20,6 +20,12 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { UpdatePseudoDto } from './dto/update-pseudo.dto';
 import { imageFileFilter } from './validation/file-upload.utils';
+import { ChatModel } from 'src/chats/models/chat.model';
+import { CreateChatDto } from 'src/chats/dto/create-chat.dto';
+import { ChannelDto } from 'src/_shared_dto/channel.dto';
+import { UserDto } from 'src/_shared_dto/user.dto';
+
+
 
 
 @Controller('api/me')
@@ -41,11 +47,26 @@ export class MeController {
     //     return this.friendsService.findAll();
     // }
 
+
     @Get('friends')
-    @ApiOkResponse({ description: 'Friends retrieved successfully', type: [FriendModel] })
-    public listFriendships(@Request() req: any): Promise<UserModel[]> {
+    @ApiOkResponse({ description: 'Friends retrieved successfully', type: [UserDto] })
+    public listFriendships(@Request() req: any): Promise<UserDto[]> {
 
         return this.meService.listFriends(req.user as LoggedUserDto);
+    }
+
+    @Get('friends/received')
+    @ApiOkResponse({ description: 'Friends retrieved successfully', type: [UserDto] })
+    public listReceivedFriendships(@Request() req: any): Promise<UserDto[]> {
+
+        return this.meService.listReceivedFriends(req.user as LoggedUserDto);
+    }
+
+    @Get('friends/sent')
+    @ApiOkResponse({ description: 'Friends retrieved successfully', type: [UserDto] })
+    public listSentFriendships(@Request() req: any): Promise<UserDto[]> {
+
+        return this.meService.listSentFriends(req.user as LoggedUserDto);
     }
 
     @Post('friends/:id')
@@ -56,7 +77,16 @@ export class MeController {
         return this.meService.addFriend(req.user as LoggedUserDto, id);
     }
 
+    @Post('friends/slug/:slug')
+    @ApiCreatedResponse({ description: 'Friend created successfully', type: FriendModel })
+    @ApiBadRequestResponse({ description: 'Friend validation error' })
+    public createFriendshipBySlug(@Request() req: any, @Param('slug') slug: string): Promise<FriendModel> {
+
+        return this.meService.addFriendBySlug(req.user as LoggedUserDto, slug);
+    }
+
     @Delete('friends/:id')
+    @HttpCode(204)
     @ApiNoContentResponse({ description: 'Friend deleted successfully' })
     @ApiBadRequestResponse({ description: 'Friend validation error' })
     public deleteFriendship(@Request() req: any, @Param('id', ParseIntPipe) id: number): Promise<void> {
@@ -64,21 +94,22 @@ export class MeController {
         return this.meService.removeFriend(req.user as LoggedUserDto, id);
     }
 
+
     @Get('blockeds')
-    @ApiOkResponse({ description: 'Blockeds retrieved successfully', type: [FriendModel] })
-    public listBlockeds(@Request() req: any): Promise<BlockedModel[]> {
+    @ApiOkResponse({ description: 'Blockeds retrieved successfully', type: [UserDto] })
+    public listBlockeds(@Request() req: any): Promise<UserDto[]> {
 
         return this.meService.listBlockeds(req.user as LoggedUserDto);
     }
 
     @Get('blockedby')
-    @ApiOkResponse({ description: 'Blockeds by retrieved successfully', type: [FriendModel] })
-    public listBlockedBy(@Request() req: any): Promise<BlockedModel[]> {
+    @ApiOkResponse({ description: 'Blockeds by retrieved successfully', type: [UserDto] })
+    public listBlockedBy(@Request() req: any): Promise<UserDto[]> {
 
         return this.meService.listBlockedBy(req.user as LoggedUserDto);
     }
 
-    @Post('frienblockedds/:id')
+    @Post('blockeds/:id')
     @ApiCreatedResponse({ description: 'Blocked created successfully', type: BlockedModel })
     @ApiBadRequestResponse({ description: 'Blocked validation error' })
     public createBlocked(@Request() req: any, @Param('id', ParseIntPipe) id: number): Promise<BlockedModel> {
@@ -86,7 +117,8 @@ export class MeController {
         return this.meService.addBlocked(req.user as LoggedUserDto, id);
     }
 
-    @Delete('blocked/:id')
+    @Delete('blockeds/:id')
+    @HttpCode(204)
     @ApiNoContentResponse({ description: 'Blocked deleted successfully' })
     @ApiBadRequestResponse({ description: 'Blocked validation error' })
     public deleteBlocked(@Request() req: any, @Param('id', ParseIntPipe) id: number): Promise<void> {
@@ -95,11 +127,32 @@ export class MeController {
     }
 
 
-    @Get('chats')
-    @ApiOkResponse({ description: 'Blockeds retrieved successfully', type: [ChatParticipantModel] })
-    public chats(@Request() req: any): Promise<ChatParticipantModel[]> {
+    @Get('chats/available')
+    @ApiOkResponse({ description: 'Chats retrieved successfully', type: [ChannelDto], isArray: true })
+    public availableChannels(@Request() req: any): Promise<ChannelDto[]> {
 
-        return this.meService.listChats(req.user as LoggedUserDto);
+        return this.meService.listAvailableUserChats(req.user as LoggedUserDto);
+    }
+
+    @Get('chats/joined')
+    @ApiOkResponse({ description: 'Chats retrieved successfully', type: [ChannelDto], isArray: true })
+    public myChannels(@Request() req: any): Promise<ChannelDto[]> {
+
+        return this.meService.listUserChats(req.user as LoggedUserDto);
+    }
+
+    @Get('chats/banned')
+    @ApiOkResponse({ description: 'Chats retrieved successfully', type: [ChannelDto], isArray: true })
+    public bannedChannels(@Request() req: any): Promise<ChannelDto[]> {
+
+        return this.meService.listBannedUserChats(req.user as LoggedUserDto);
+    }
+
+    @Post('chats/create')
+    @ApiOkResponse({ description: 'Chat created successfully', type: ChatModel })
+    public createChat(@Request() req: any, @Body() createInfos: CreateChatDto): Promise<ChatModel> {
+
+        return this.meService.createChat(req.user as LoggedUserDto, createInfos);
     }
 
     @Post('chats/join/:id')

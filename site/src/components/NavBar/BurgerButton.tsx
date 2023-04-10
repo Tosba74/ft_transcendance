@@ -91,7 +91,16 @@ export default function BurgerButton({
           >
             Friends
           </Link>
-          <Link to="/players" className="">
+          <Link
+            to="/channels"
+            className="block rounded py-2 pl-3 pr-4 text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white"
+          >
+            Channels
+          </Link>
+          <Link
+            to="/players"
+            className="block rounded py-2 pl-3 pr-4 text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white"
+          >
             Players
           </Link>
           {loginer.logged && (

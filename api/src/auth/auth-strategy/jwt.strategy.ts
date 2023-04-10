@@ -24,7 +24,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     // lorsque un user modifie ses infos, pour refresh le token avec les nouvelles datas
-    const user: LoggedUserDto = await this.usersService.findOneById(payload.id);
+    const user: LoggedUserDto = await this.usersService.findOneById(payload.id, true) as LoggedUserDto;
 
     // const loggedUser: LoggedUserDto = {
     //     id: payload.id,

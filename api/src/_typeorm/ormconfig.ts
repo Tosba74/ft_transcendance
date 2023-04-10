@@ -1,7 +1,6 @@
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
 import { UserModel } from 'src/users/models/user.model';
-import { UserStatusModel } from 'src/user_status/models/user_status.model';
 import { FriendTypeModel } from 'src/friend_types/models/friend_type.model';
 import { FriendModel } from 'src/friends/models/friend.model';
 import { BlockedModel } from 'src/blockeds/models/blocked.model';
@@ -11,6 +10,9 @@ import { ChatRoleModel } from 'src/chat_roles/models/chat_role.model';
 import { ChatModel } from 'src/chats/models/chat.model';
 import { ChatMessageModel } from 'src/chat_messages/models/chat_message.model';
 import { ChatParticipantModel } from 'src/chat_participants/models/chat_participant.model';
+
+import { GameStatusModel } from 'src/game_status/models/game_status.model';
+import { GameModel } from 'src/games/models/game.model';
 
 const config: PostgresConnectionOptions = {
 	type: "postgres",
@@ -23,7 +25,7 @@ const config: PostgresConnectionOptions = {
 	synchronize: false,
 	logging: false,
 
-	entities: [ UserStatusModel, UserModel, FriendTypeModel, FriendModel, BlockedModel,
+	entities: [ UserModel, FriendTypeModel, FriendModel, BlockedModel, GameStatusModel, GameModel,
 		ChatTypeModel, ChatRoleModel, ChatModel, ChatMessageModel, ChatParticipantModel,
 	],
 	migrations: ['dist/_typeorm/migrations/*.js'],

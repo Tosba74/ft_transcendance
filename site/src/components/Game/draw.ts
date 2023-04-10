@@ -74,6 +74,5 @@ export function draw_progress_bar(
   } else {
     elem.classList.remove("super-charged");
     elem.classList.remove(style);
-    elem.style.backgroundColor = "#4CBB17";
   }
 }

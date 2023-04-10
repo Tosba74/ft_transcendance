@@ -24,6 +24,9 @@ import { ChatRoleModel } from 'src/chat_roles/models/chat_role.model';
 import { ChatTypeModel } from 'src/chat_types/models/chat_type.model';
 
 import { JoinChatDto } from './dto/join_chat';
+import { CreateChatDto } from 'src/chats/dto/create-chat.dto';
+import { ChannelDto } from 'src/_shared_dto/channel.dto';
+import { UserDto } from 'src/_shared_dto/user.dto';
 
 @Injectable()
 export class MeService {
@@ -36,14 +39,33 @@ export class MeService {
     private chatParticipantService: ChatParticipantsService,
   ) { }
 
-  async listFriends(user: LoggedUserDto): Promise<UserModel[]> {
+  async listFriends(user: LoggedUserDto): Promise<UserDto[]> {
 
     return this.friendsService.findFriends(user.id);
   }
 
+  async listReceivedFriends(user: LoggedUserDto): Promise<UserDto[]> {
+
+    return this.friendsService.listReceivedFriends(user.id);
+  }
+
+  async listSentFriends(user: LoggedUserDto): Promise<UserDto[]> {
+
+    return this.friendsService.listSentFriends(user.id);
+  }
+
+
+
   async addFriend(user: LoggedUserDto, friend_id: number): Promise<FriendModel> {
 
     return this.friendsService.createFriendship(user.id, friend_id);
+  }
+
+  async addFriendBySlug(user: LoggedUserDto, slug: string): Promise<FriendModel> {
+
+    const foundUser = await this.usersService.findOneByPseudo(slug);
+
+    return this.friendsService.createFriendship(user.id, foundUser.id);
   }
 
   async removeFriend(user: LoggedUserDto, friend_id: number): Promise<void> {
@@ -64,12 +86,12 @@ export class MeService {
 
 
 
-  async listBlockedBy(user: LoggedUserDto): Promise<BlockedModel[]> {
+  async listBlockedBy(user: LoggedUserDto): Promise<UserDto[]> {
 
     return this.blockedsService.blockedBy(user.id);
   }
 
-  async listBlockeds(user: LoggedUserDto): Promise<BlockedModel[]> {
+  async listBlockeds(user: LoggedUserDto): Promise<UserDto[]> {
 
     return this.blockedsService.blockedUsers(user.id);
   }
@@ -85,9 +107,54 @@ export class MeService {
   }
 
 
-  async listChats(user: LoggedUserDto): Promise<ChatParticipantModel[]> {
 
-    return this.chatParticipantService.listChats(user.id);
+  async listAvailableUserChats(user: LoggedUserDto): Promise<ChannelDto[]> {
+
+    return this.chatParticipantService.listAvailableUserChats(user.id);
+  }
+
+  async listUserChats(user: LoggedUserDto): Promise<ChannelDto[]> {
+
+    return this.chatParticipantService.listUserChats(user.id);
+  }
+
+  async listBannedUserChats(user: LoggedUserDto): Promise<ChannelDto[]> {
+
+    return this.chatParticipantService.listBannedUserChats(user.id);
+  }
+
+
+  async createChat(user: LoggedUserDto, joinInfos: CreateChatDto): Promise<ChatModel> {
+
+    // const chat = await this.chatsService.findOneById(chat_id);
+
+    // if (chat.type.id != ChatTypeModel.PUBLIC_TYPE) {
+
+    //   throw new UnauthorizedException('Room not public type');
+    // }
+
+
+    // if (chat.participants.some(element => { 
+    //   return element.participant.id === user.id && element.role.id === ChatRoleModel.BAN_ROLE
+    // })) {
+
+    //   throw new PreconditionFailedException('Banned from this room');
+    // }
+
+    // else if (chat.participants.some(element => { 
+    //   return element.participant.id === user.id 
+    // })) {
+
+    //   throw new PreconditionFailedException('Already member of the room');
+    // }
+
+
+    // if (chat.password != undefined && joinInfos.password != undefined && await bcrypt.compare(joinInfos.password, chat.password)) {
+
+    //   throw new UnauthorizedException('Missing password or password wrong');
+    // }
+
+    return this.chatsService.create('test', 1, 'password');
   }
 
 
