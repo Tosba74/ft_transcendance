@@ -2,6 +2,7 @@ import React from "react";
 import { ChatMessageDto } from "src/_shared_dto/chat-message.dto";
 import MessageBulleRecv from "./MessageBulleRecv";
 import MessageBulleSend from "./MessageBulleSend";
+import MessageServer from "./MessageServer";
 
 interface MessageConvProps {
   selfId: number;
@@ -12,7 +13,10 @@ export default function MessageConv({ selfId, messages }: MessageConvProps) {
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+    });
   };
 
   React.useEffect(() => {
@@ -22,7 +26,9 @@ export default function MessageConv({ selfId, messages }: MessageConvProps) {
   return (
     <>
       {messages.map((message) => {
-        return message.sender.id == selfId ? (
+        return message.sender.id == -1 ? (
+          <MessageServer text={message.content} />
+        ) : message.sender.id == selfId ? (
           <MessageBulleSend
             key={message.id}
             user={message.sender}
@@ -36,7 +42,7 @@ export default function MessageConv({ selfId, messages }: MessageConvProps) {
           />
         );
       })}
-      <div id="scrollbottom" ref={messagesEndRef}></div>
+      <div ref={messagesEndRef}></div>
     </>
   );
 }
