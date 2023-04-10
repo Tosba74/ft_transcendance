@@ -42,11 +42,11 @@ export default function ChatMenu({
             <ChatMode
               handleClick={handleClick}
               setOpenedMenu={setOpenedMenu}
-              modeChannel={modeChannel}
+              modeChannel={chats.modeChannel}
             />
           </div>
           <div className="right-2 left-2 flex h-0 w-full flex-grow flex-col rounded">
-            {!modeChannel && (
+            {!chats.modeChannel && (
               <MessagePanel
                 selfId={loginer.userInfos?.id || -1}
                 sendMessage={sendMessage}
