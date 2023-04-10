@@ -148,6 +148,14 @@ export class MeController {
         return this.meService.listBannedUserChats(req.user as LoggedUserDto);
     }
 
+
+    @Get('chats/conversation/:id')
+    @ApiOkResponse({ description: 'Chat found successfully', type: ChatModel })
+    public getOrCreateConversation(@Request() req: any, @Param('id', ParseIntPipe) id: number): Promise<ChannelDto> {
+
+        return this.meService.getOrCreateConversation(req.user as LoggedUserDto, id);
+    }
+
     @Post('chats/create')
     @ApiOkResponse({ description: 'Chat created successfully', type: ChatModel })
     public createChat(@Request() req: any, @Body() createInfos: CreateChatDto): Promise<ChatModel> {
