@@ -16,12 +16,18 @@ export default function ChatMode({
       <button
         className="w-full text-center"
         type="button"
-        onClick={() => {chats.setModeChannel(!chats.modeChannel)}}
+        onClick={() => {
+          chats.setModeChannel(!chats.modeChannel);
+        }}
       >
         {modeChannel && <div className="ml-6 px-4">Channel List</div>}
         {!modeChannel && <div className="ml-6 px-4">Chat Mode</div>}
       </button>
-      <button className="w-10" type="button" onClick={() => chats.setChatOpen(false)}>
+      <button
+        className="w-10"
+        type="button"
+        onClick={() => chats.setChatOpen(false)}
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
