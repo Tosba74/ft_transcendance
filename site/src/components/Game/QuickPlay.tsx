@@ -9,26 +9,23 @@ const startEL = document.getElementById("root");
 export default function QuickPlay({ loginer }: { loginer: UseLoginDto }) {
   const [portal, setPortal] = React.useState(false);
   const [effect, setEffect] = React.useState(false);
+  const [isSearch, setIsSearch] = React.useState(false);
   const [mode, setMode] = React.useState("");
   const ref = React.useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
 
   const css = {
-    top: `${document.getElementById("startPage")?.offsetTop}px`
-  }
+    top: `${document.getElementById("startPage")?.offsetTop}px`,
+  };
 
   const handleClickSearch = () => {
     setEffect(false);
-    // find game
-    if (mode)
-    {
+    if (mode) {
       console.log("so much fun");
-    }
-    else
-    {
+    } else {
       console.log("Boomer");
     }
-    // navigate("/game");
+    setIsSearch(true);
   };
 
   const handleClickPortal = () => {
@@ -36,8 +33,8 @@ export default function QuickPlay({ loginer }: { loginer: UseLoginDto }) {
     setPortal(true);
   };
 
-  const handleOnChange = (e:any) => {
-    setMode(e.target.checked)
+  const handleOnChange = (e: any) => {
+    setMode(e.target.checked);
   };
 
   useEffect(() => {
@@ -68,22 +65,30 @@ export default function QuickPlay({ loginer }: { loginer: UseLoginDto }) {
         startEL !== null &&
         createPortal(
           <div
-          style={css}
+            style={css}
             ref={ref}
             className={classNames(
-              "flex flex-col max-w-md absolute left-1/2 w-3/4 -translate-x-1/2 rounded-lg bg-gray-100 p-4 text-center shadow-lg dark:bg-gray-700 dark:text-white sm:w-auto",
-              effect === false ? "animate-fadeOut opacity-0" : "opacity-1 animate-fadeIn"
+              "absolute left-1/2 flex w-3/4 max-w-md -translate-x-1/2 flex-col rounded-lg bg-gray-100 p-4 text-center shadow-lg dark:bg-gray-700 dark:text-white sm:w-auto",
+              effect === false
+                ? "animate-fadeOut opacity-0"
+                : "opacity-1 animate-fadeIn"
             )}
             onAnimationEnd={() => {
-              if (!effect)
-                setPortal(false);
+              if (!effect) setPortal(false);
+              if (isSearch && !effect) {
+                navigate("/game");
+              }
             }}
           >
-            <h3 className="text-xl pb-2">Option</h3>
+            <h3 className="pb-2 text-xl">Option</h3>
 
-            <label className="mx-auto relative inline-flex cursor-pointer items-center pb-2">
-              <input onChange={handleOnChange} type="checkbox" className="peer sr-only" />
-              <div className="peer h-6 w-11 rounded-full dark:bg-gray-800 bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:peer-focus:ring-blue-800"></div>
+            <label className="relative mx-auto inline-flex cursor-pointer items-center pb-2">
+              <input
+                onChange={handleOnChange}
+                type="checkbox"
+                className="peer sr-only"
+              />
+              <div className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-800 dark:peer-focus:ring-blue-800"></div>
               <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
                 Fun mode
               </span>
