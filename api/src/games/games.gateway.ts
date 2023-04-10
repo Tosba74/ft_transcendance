@@ -68,7 +68,7 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		if (client.data.loggedId !== undefined)
 			this.gamesService.connecteds.add(client.data.loggedId)
 
-		this.gamesService.searchConnect(client, user.id);
+		this.gamesService.searchConnect(this.server, client, user.id);
 
 		return { error: undefined };
 	}
@@ -81,16 +81,20 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			throw new WsException('Not identified');
 		}
 
-		// Check body is okay
+		body.force_fun = true;
+		body.force_points = true;
+		body.points_objective = 3;
 
 
 		if (body.invited_id === -1) {
 
 			const foundMatchmakingGame = await this.gamesService.searchGame(client.data.loggedId, body.fun_mode, body.force_fun, body.points_objective, body.force_points);
 
+			console.log('found ', foundMatchmakingGame);
+
 			if (foundMatchmakingGame !== undefined) {
 				
-				this.gamesService.joinGame(client, client.data.loggedId, foundMatchmakingGame);
+				this.gamesService.joinGame(this.server, client, client.data.loggedId, foundMatchmakingGame);
 	
 				return ;
 			}
@@ -102,7 +106,7 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			this.gamesService.gameLife(this.server, newGame.id);
 		}
 
-		this.gamesService.createGame(client, client.data.loggedId, body.invited_id, newGame.id, game_function, body.fun_mode, body.points_objective);
+		this.gamesService.createGame(this.server, client, client.data.loggedId, body.invited_id, newGame.id, game_function, body.fun_mode, body.points_objective);
 	}
 
 
@@ -113,7 +117,7 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			throw new WsException('Not identified');
 		}
 
-		this.gamesService.joinGame(client, client.data.loggedId, body.game_id);
+		this.gamesService.joinGame(this.server, client, client.data.loggedId, body.game_id);
 	}
 
 

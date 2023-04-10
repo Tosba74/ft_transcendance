@@ -25,7 +25,7 @@ export class GameRoom {
   score_objective: number;
 
   host_id: number;
-  guest_id: number | undefined;
+  guest_id: number;
 
   timer: NodeJS.Timer | undefined;
 
@@ -43,7 +43,7 @@ export class GamesService {
     @Inject(forwardRef(() => UsersService))
     private usersService: UsersService,
   ) { }
- 
+
 
   connecteds: Set<number> = new Set<number>();
 
@@ -83,7 +83,7 @@ export class GamesService {
     res.user1 = { id: user1_id } as UserModel;
     if (user2_id !== -1) {
       res.user2 = { id: user2_id } as UserModel;
-    } 
+    }
     else {
       res.user2 = null;
     }
@@ -116,36 +116,49 @@ export class GamesService {
   }
 
 
-  async connectGameRoom(client: Socket, user_id: number, game_id: number) {
+  async connectGameRoom(server: Server, client: Socket, user_id: number, game_id: number) {
 
     if (this.currentGames[game_id.toString()] !== undefined) {
       this.clientOnlyRoom(client, user_id, game_id);
-      client.emit("setGame", {
-        gameSetter: {
-          userInfos1: await this.usersService.findOneById(this.currentGames[game_id.toString()].host_id),
-          userInfos2: await this.usersService.findOneById(this.currentGames[game_id.toString()].guest_id || -1),
-  
-          game_id: game_id,
-        } as GameSetterDto
-      });
-    }
 
+      const gameContent = {
+        userInfos1: await this.usersService.findOneById(this.currentGames[game_id.toString()].host_id),
+        userInfos2: (this.currentGames[game_id.toString()].guest_id !== -1 ?
+          await this.usersService.findOneById(this.currentGames[game_id.toString()].guest_id) :
+          undefined),
+
+        game_id: game_id,
+      } as GameSetterDto
+
+
+      if (user_id === this.currentGames[game_id.toString()].host_id || user_id === this.currentGames[game_id.toString()].guest_id) {
+        //
+        server.to(game_id.toString()).emit("setGame", {
+          gameSetter: gameContent,
+        });
+      }
+      else {
+        client.emit("setGame", {
+          gameSetter: gameContent,
+        });
+      }
+    }
   }
 
-  async searchConnect(client: Socket, user_id: number) {
+  async searchConnect(server: Server, client: Socket, user_id: number) {
 
     const game_id = this.activeGame.get(user_id);
 
 
     if (game_id !== undefined) {
-      this.connectGameRoom(client, user_id, game_id);
+      this.connectGameRoom(server, client, user_id, game_id);
     }
   }
 
 
 
 
-  async createGame(client: Socket, user_id: number, invite_id: number, game_id: number, game_function: Function, fun_mode: boolean, points_objective: number) {
+  async createGame(server: Server, client: Socket, user_id: number, invite_id: number, game_id: number, game_function: Function, fun_mode: boolean, points_objective: number) {
 
     if (this.currentGames[game_id.toString()] !== undefined) {
       console.log('game already created');
@@ -153,21 +166,23 @@ export class GamesService {
     }
 
     this.currentGames[game_id.toString()] = new GameRoom();
+    this.currentGames[game_id.toString()].game.fun_mode = fun_mode;
+    // this.currentGames[game_id.toString()].game.points_objective = points_objective;
 
-    
+
     this.currentGames[game_id.toString()].host_id = user_id;
     this.currentGames[game_id.toString()].guest_id = invite_id;
     this.currentGames[game_id.toString()].fun_mode = fun_mode;
     this.currentGames[game_id.toString()].score_objective = points_objective;
     this.currentGames[game_id.toString()].inactivity_count = 0;
-    
+
     // this.currentGames[game_id].game. inactivity_count = 0;
-    
+
 
 
     this.currentGames[game_id.toString()].timer = setInterval(() => { game_function() }, 1000 / module_const.fps);
 
-    this.connectGameRoom(client, user_id, game_id);
+    this.connectGameRoom(server, client, user_id, game_id);
 
 
     console.log('create');
@@ -190,6 +205,9 @@ export class GamesService {
       const game_id = parseInt(game);
 
       if (!Number.isNaN(game_id)) {
+
+        this.currentGames[game_id.toString()].guest_id = user_id;
+
         return (game_id)
       }
       return (undefined);
@@ -204,15 +222,15 @@ export class GamesService {
 
     // this.currentGames[game_id] = new GameRoom();
 
-    
+
     // this.currentGames[game_id].host_id = user_id;
     // this.currentGames[game_id].guest_id = invite_id;
     // this.currentGames[game_id].fun_mode = fun_mode;
     // this.currentGames[game_id].score_objective = points_objective;
     // this.currentGames[game_id].inactivity_count = 0;
-    
+
     // // this.currentGames[game_id].game. inactivity_count = 0;
-    
+
 
 
     // this.currentGames[game_id].timer = setInterval(() => { game_function() }, 1000 / module_const.fps);
@@ -224,7 +242,7 @@ export class GamesService {
   }
 
 
-  async joinGame(client: Socket, user_id: number, game_id: number) {
+  async joinGame(server: Server, client: Socket, user_id: number, game_id: number) {
 
 
     if (this.currentGames[game_id.toString()] == undefined) {
@@ -232,7 +250,7 @@ export class GamesService {
       return;
     }
 
-    this.connectGameRoom(client, user_id, game_id);
+    this.connectGameRoom(server, client, user_id, game_id);
 
     console.log('join');
 
@@ -274,19 +292,20 @@ export class GamesService {
     gameRoom.game.update();
 
     server.to(game_id.toString()).emit("gameInfos", { game: gameRoom.game.export() });
-
-
+    
+    
     if ((new Set(this.activeGame.values()).has(game_id)) && (this.connecteds.has(gameRoom.host_id) || this.connecteds.has(gameRoom.guest_id || -1))) {
       gameRoom.inactivity_count = 0;
     }
     else {
       gameRoom.inactivity_count++;
     }
-
+    
     if (gameRoom.game.playerOne.score >= gameRoom.score_objective || gameRoom.game.playerTwo.score >= gameRoom.score_objective) {
 
       gameRoom.game.ended = true;
-
+      server.to(game_id.toString()).emit("gameInfos", { game: gameRoom.game.export() });
+      
       try {
         const gameToSave = await this.findOneById(game_id);
 
@@ -342,7 +361,7 @@ export class GamesService {
 
       if (connectedGame !== -1) {
         const connectedGameRoom = this.currentGames[connectedGame.toString()];
-        
+
         if (connectedGameRoom.host_id === id || connectedGameRoom.guest_id === id) {
           //
           if (connectedGameRoom.game.start === true) {

@@ -82,17 +82,14 @@ export class GameArea {
     this.playerOne.render(ctx);
     this.playerTwo.render(ctx);
 
-    if (
-      this.started &&
-      this.ended === false
-    ) {
+    if (this.started && this.ended === false) {
       this.balls.forEach((value) => {
-          value.render(ctx);
+        value.render(ctx);
       });
     }
 
     module_draw.draw_center_line(ctx);
-    module_draw.draw_scores(ctx, this.playerOne, this.playerTwo);
+    module_draw.draw_scores(ctx, this.ended, this.playerOne, this.playerTwo);
 
     if (this.playerOne.progress_bar != null)
       module_draw.draw_progress_bar(

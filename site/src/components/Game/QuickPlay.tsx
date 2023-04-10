@@ -6,7 +6,13 @@ import { UseGameDto } from "./dto/useGame.dto";
 
 const startEL = document.getElementById("root");
 
-export default function QuickPlay({ loginer, gamer }: { loginer: UseLoginDto, gamer: UseGameDto }) {
+export default function QuickPlay({
+  loginer,
+  gamer,
+}: {
+  loginer: UseLoginDto;
+  gamer: UseGameDto;
+}) {
   const [portal, setPortal] = React.useState(false);
   const ref = React.useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
@@ -14,7 +20,7 @@ export default function QuickPlay({ loginer, gamer }: { loginer: UseLoginDto, ga
   const handleClickStart = () => {
     console.log("create game");
 
-    gamer.createGame(true, true, 3, true, -1); 
+    gamer.createGame(true, true, 3, true, -1);
     // navigate("/game");
   };
 

@@ -37,7 +37,13 @@ const useGame = ({ loginer }: useGameProps) => {
       );
   };
 
-  const createGame = (fun_mode: boolean, force_fun: boolean, points_objective: number, force_points: boolean, invited_id: number = -1) => {
+  const createGame = (
+    fun_mode: boolean,
+    force_fun: boolean,
+    points_objective: number,
+    force_points: boolean,
+    invited_id: number = -1
+  ) => {
     gameSocketRef.current &&
       gameSocketRef.current.emit(
         "createGame",
@@ -48,7 +54,7 @@ const useGame = ({ loginer }: useGameProps) => {
           force_points: force_points,
           invited_id: invited_id,
         },
-        (response: void) => { }
+        (response: void) => {}
       );
   };
 
@@ -57,7 +63,7 @@ const useGame = ({ loginer }: useGameProps) => {
       gameSocketRef.current.emit(
         "joinGame",
         { game_id: game_id },
-        (response: void) => { }
+        (response: void) => {}
       );
   };
 
@@ -78,7 +84,7 @@ const useGame = ({ loginer }: useGameProps) => {
       gameSocketRef.current.emit(
         "sendAction",
         { game_id: gameId, actions: actions },
-        (response: void) => { }
+        (response: void) => {}
       );
   };
 
@@ -141,7 +147,7 @@ const useGame = ({ loginer }: useGameProps) => {
                 (loginer.userInfos &&
                   (gameSetter.userInfos1.id === loginer.userInfos.id ||
                     gameSetter.userInfos2.id === loginer.userInfos.id)) ||
-                false
+                  false
               );
             }
           );
@@ -160,7 +166,7 @@ const useGame = ({ loginer }: useGameProps) => {
           (user2 &&
             user2.id === loginer.userInfos.id &&
             gameArea.current?.playerTwo.ready))) ||
-      false
+        false
     );
   }, [user1, user2]);
 

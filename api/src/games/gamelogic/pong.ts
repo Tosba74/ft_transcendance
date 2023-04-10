@@ -19,6 +19,8 @@ export class GameArea {
 	public playerOne: Paddle;
 	public playerTwo: Paddle;
 
+	public fun_mode: boolean;
+
 	public balls: Ball[] = [];
 
 	constructor() {

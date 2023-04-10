@@ -24,6 +24,7 @@ export function draw_center_line(context: CanvasRenderingContext2D) {
 
 export function draw_scores(
   context: CanvasRenderingContext2D,
+  ended: boolean,
   player1: Paddle,
   player2: Paddle
 ) {
@@ -38,7 +39,7 @@ export function draw_scores(
   context.fillText(player1.score.toString(), txt_W_Pone, txt_H);
   context.fillText(player2.score.toString(), txt_W_Ptwo, txt_H);
 
-  if (player1.score > player2.score ) {
+  if (ended === true && player1.score > player2.score) {
     context.font = module_const.canvas_width / 10 + "px pixel";
     context.fillStyle = player1.color;
     context.textAlign = "center";
@@ -49,7 +50,7 @@ export function draw_scores(
     );
   }
 
-  if (player2.score > player1.score ) {
+  if (ended === true && player2.score > player1.score) {
     context.font = module_const.canvas_width / 10 + "px pixel";
     context.fillStyle = player2.color;
     context.textAlign = "center";
