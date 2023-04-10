@@ -7,8 +7,6 @@ import classNames from "classnames";
 
 const startEL = document.getElementById("root");
 
-
-
 interface modeGame {
   isFun: boolean;
   points: number;
