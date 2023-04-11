@@ -22,9 +22,9 @@ import { UpdatePseudoDto } from './dto/update-pseudo.dto';
 import { imageFileFilter } from './validation/file-upload.utils';
 import { ChatModel } from 'src/chats/models/chat.model';
 import { CreateChatDto } from 'src/chats/dto/create-chat.dto';
+
 import { ChannelDto } from 'src/_shared_dto/channel.dto';
 import { UserDto } from 'src/_shared_dto/user.dto';
-
 
 
 
@@ -38,7 +38,7 @@ export class MeController {
     @Get()
     @ApiOkResponse({ description: 'User infos retrieved successfully', type: LoggedUserDto })
     getMe(@Request() req: any): LoggedUserDto {
-        
+
         return req.user as LoggedUserDto;
     }
 
