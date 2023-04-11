@@ -263,7 +263,6 @@ export class ChatsService {
       newroom.participants = [];
 
       room.participants.forEach(value => {
-        // let usr: UserDto = value.participant.toUserDto();
         let usr: UserParticipantDto = {
           ...value.participant.toUserDto(),
           roleId: value.role.id, roleName: value.role.name

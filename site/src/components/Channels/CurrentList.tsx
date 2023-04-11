@@ -68,7 +68,6 @@ export default function CurrentList({
 
         <ul className="grow overflow-y-scroll px-1">
           {channels.map((channel) => {
-            // console.log(channel);
             let role = '';
             if (channel.role === 2)
               role = ` (Admin)`

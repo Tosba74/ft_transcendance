@@ -19,9 +19,9 @@ export default function MessagePanel({
 
   function getRoleName(roleId: number): string {
     if (roleId === 2)
-      return ' - Admin'
+      return ' (Admin)'
     if (roleId === 3)
-      return ' - Owner'
+      return ' (Owner)'
     return '';
   }
 
