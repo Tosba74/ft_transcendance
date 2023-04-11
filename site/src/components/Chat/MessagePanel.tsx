@@ -15,29 +15,31 @@ export default function MessagePanel({
   sendMessage,
   room,
 }: MessagePanelProps) {
-
-  const [role, setRole] = React.useState('test');
+  const [role, setRole] = React.useState("test");
   const [token, setToken] = React.useState(localStorage.getItem("token") || "");
 
   React.useEffect(() => {
     axios
-    .post('/api/chat_participant/role', {
-      roomId: `${room?.id}`,
-      participantId: `${selfId}`
-    }, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      }
-    })
-    .then((res) => {
-      if (res.status === 201) {
-        if (res.data === 2)
-          setRole(' - Admin');
-        else if (res.data === 3)
-            setRole(' - Owner');
-      }
-    })
-    .catch((error) => {});
+      .post(
+        "/api/chat_participant/role",
+        {
+          roomId: `${room?.id}`,
+          participantId: `${selfId}`,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      .then((res) => {
+        if (res.status === 201) {
+          if (res.data === 2) setRole(" - Admin");
+          else if (res.data === 3) setRole(" - Owner");
+          else setRole("");
+        }
+      })
+      .catch((error) => { });
   }, [room]);
 
   return (

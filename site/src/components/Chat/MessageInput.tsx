@@ -11,7 +11,7 @@ export default function MessageInput({ sendMessage }: MessageInputProps) {
     event.preventDefault();
 
     const messageTrimmed = message.trim();
-    if (messageTrimmed !== '') {
+    if (messageTrimmed !== "") {
       console.log(messageTrimmed);
       sendMessage(messageTrimmed);
       setMessage("");

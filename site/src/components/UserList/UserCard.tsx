@@ -13,13 +13,11 @@ interface UserCardProps {
 }
 
 export default function UserCard({ loginer, chats, user }: UserCardProps) {
-
   const handleMessage = () => {
     axios
       .get(`/api/me/chats/conversation/${user.id}`, loginer.get_headers())
       .then((res) => {
         if (res.status === 200) {
-
           const chat = res.data as ChannelDto;
 
           chats.connectRoom(chat.id);
@@ -27,9 +25,8 @@ export default function UserCard({ loginer, chats, user }: UserCardProps) {
           return;
         }
       })
-      .catch((error) => { });
-  }
-
+      .catch((error) => {});
+  };
 
   return (
     // <div className="w-full h-screen">
