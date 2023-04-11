@@ -10,7 +10,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 
 import { AllowLogged } from '../auth/auth.decorators';
 import { UserDto } from 'src/_shared_dto/user.dto';
-import { UserStatsDto } from './dto/user-stats.dto';
+import { UserStatsDto } from '../_shared_dto/user-stats.dto';
 
 // import { extname } from 'path';
 // import { createReadStream } from 'fs';

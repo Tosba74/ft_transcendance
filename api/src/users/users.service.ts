@@ -9,7 +9,7 @@ import * as fs from 'fs';
 
 import { GamesService } from 'src/games/games.service';
 import { UserDto } from 'src/_shared_dto/user.dto';
-import { UserStatsDto } from './dto/user-stats.dto';
+import { UserStatsDto } from '../_shared_dto/user-stats.dto';
 import { FriendsService } from 'src/friends/friends.service';
 
 @Injectable()
@@ -343,9 +343,19 @@ export class UsersService {
     const ranking = await this.getRanking();
     const userRank = ranking.indexOf(id);
 
-    stats.rank = `${userRank !== -1 && userRank || 'unranked'} / ${ranking.length}`;
+    stats.rank = userRank !== -1 && `${userRank} / ${ranking.length}` || 'unranked';
 
     stats.last_games = games;
+
+    if (games.length > 0) {
+      stats.win_rate = Math.round(games.filter(game => {
+        return game.user1?.id === id && game.user1_score > game.user2_score ||
+          game.user2?.id === id && game.user1_score > game.user2_score;
+      }).length / games.length * 100);
+    }
+    else {
+      stats.win_rate = 100;
+    }
 
     return stats;
   }
