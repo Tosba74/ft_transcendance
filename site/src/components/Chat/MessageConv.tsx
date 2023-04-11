@@ -3,13 +3,19 @@ import { ChatMessageDto } from "src/_shared_dto/chat-message.dto";
 import MessageBulleRecv from "./MessageBulleRecv";
 import MessageBulleSend from "./MessageBulleSend";
 import MessageServer from "./MessageServer";
+import { UseLoginDto } from "../Log/dto/useLogin.dto";
 
 interface MessageConvProps {
   selfId: number;
   messages: ChatMessageDto[];
+  loginer: UseLoginDto;
 }
 
-export default function MessageConv({ selfId, messages }: MessageConvProps) {
+export default function MessageConv({
+  selfId,
+  messages,
+  loginer,
+}: MessageConvProps) {
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
   const [first, setFirst] = React.useState(true);
 
@@ -47,6 +53,7 @@ export default function MessageConv({ selfId, messages }: MessageConvProps) {
             key={message.id}
             user={message.sender}
             text={message.content}
+            loginer={loginer}
           />
         );
       })}

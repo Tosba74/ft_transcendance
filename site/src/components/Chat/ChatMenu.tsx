@@ -75,6 +75,7 @@ export default function ChatMenu({
                 selfId={loginer.userInfos?.id || -1}
                 sendMessage={sendMessage}
                 room={chats.rooms && chats.rooms[chats.currChannel.toString()]}
+                loginer={loginer}
               />
             )}
             {chats.modeChannel && <ChannelPanel chats={chats} />}

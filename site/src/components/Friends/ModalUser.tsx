@@ -6,7 +6,7 @@ import { NavigateFunction, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 
 interface ModalProps {
-  type: string;
+  type: string | null;
   loginer: UseLoginDto;
   user: UserDto;
   modalRef: React.MutableRefObject<HTMLDivElement | null>;
@@ -247,7 +247,7 @@ export default function ModalUser({
     <div
       ref={modalRef}
       style={{ left: posX + "px", top: posY + "px" }}
-      className="absolute flex flex-col bg-white text-center text-black drop-shadow-md dark:bg-gray-700 dark:text-white"
+      className="absolute z-[100] flex flex-col bg-white text-center text-black drop-shadow-md dark:bg-gray-700 dark:text-white"
     >
       {content}
     </div>
