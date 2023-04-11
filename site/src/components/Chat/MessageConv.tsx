@@ -23,9 +23,9 @@ export default function MessageConv({ selfId, messages }: MessageConvProps) {
   return (
     <>
       {messages.map((message) => {
-        return message.sender.id == -1 ? (
+        return message.sender.id === -1 ? (
           <MessageServer text={message.content} />
-        ) : message.sender.id == selfId ? (
+        ) : message.sender.id === selfId ? (
           <MessageBulleSend
             key={message.id}
             user={message.sender}

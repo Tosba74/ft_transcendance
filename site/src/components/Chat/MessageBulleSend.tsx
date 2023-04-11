@@ -18,7 +18,7 @@ export default function MessageBulleSend({
         src={user.avatar_url}
         alt={user.pseudo}
         title={user.pseudo}
-        className="order-2 h-6 w-6 rounded-full object-cover"
+        className="order-2 h-6 w-6 min-w-[24px] rounded-full object-cover"
       />
     </div>
   );
