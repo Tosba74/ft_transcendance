@@ -13,7 +13,10 @@ export default function MessageConv({ selfId, messages }: MessageConvProps) {
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+    });
   };
 
   React.useEffect(() => {
@@ -39,6 +42,7 @@ export default function MessageConv({ selfId, messages }: MessageConvProps) {
           />
         );
       })}
+      <div ref={messagesEndRef}></div>
     </>
   );
 }

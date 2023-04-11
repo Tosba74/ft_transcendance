@@ -1,20 +1,26 @@
-import classNames from "classnames";
-import React, { useState, useContext } from "react";
-import ChatPage from "./ChatMenu";
+import { UseChatDto } from "./dto/useChat.dto";
 // import Icon from '../../assets/svg/balloon-heart.svg'
 
 interface ChatIconProps {
   openedMenu: string;
   setOpenedMenu: Function;
+  chats: UseChatDto;
 }
 
-export default function ChatIcon({ openedMenu, setOpenedMenu }: ChatIconProps) {
+export default function ChatIcon({
+  openedMenu,
+  setOpenedMenu,
+  chats,
+}: ChatIconProps) {
   const handleClick = () => {
-    if (openedMenu === "chat") {
-      setOpenedMenu("");
-    } else {
-      setOpenedMenu("chat");
-    }
+    chats.setChatOpen(!chats.chatOpen);
+    setOpenedMenu("");
+
+    // if (openedMenu == "chat") {
+    //   setOpenedMenu("");
+    // } else {
+    //   setOpenedMenu("chat");
+    // }
   };
 
   return (

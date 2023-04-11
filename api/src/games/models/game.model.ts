@@ -10,8 +10,16 @@ export class GameModel {
     @PrimaryGeneratedColumn()
     id: number;
 
+    @ApiResponseProperty({ type: Boolean })
+    @Column()
+    fun_mode: boolean;
+
     @ApiResponseProperty({ type: Number })
-    @Column({ nullable: true })
+    @Column()
+    score_objective: number;
+
+    @ApiResponseProperty({ type: Number })
+    @Column()
     user1_score: number;
 
     @ApiResponseProperty({ type: Number })

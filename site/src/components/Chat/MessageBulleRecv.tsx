@@ -11,7 +11,7 @@ export default function MessageBulleRecv({
 }: MessageBulleRecvProps) {
   return (
     <div className="my-1 flex w-full flex-row-reverse items-end justify-end pl-2">
-      <div className="mx-2 break-all rounded-lg bg-cyan-500 p-2 px-4 text-xs text-white ">
+      <div className="mx-2 break-all rounded-lg bg-gray-300 p-2 px-4 text-xs text-gray-600">
         {text}
       </div>
       <img

@@ -110,11 +110,10 @@ export default function GamePage({ gamer }: GamePageProps) {
           </div>,
           rootEl
         )}
-
       <div
         style={css}
         id="playersCard"
-        className="mx-auto flex flex-col py-3 sm:flex-row landscape:min-w-[400px] landscape:flex-col landscape:lg:flex-row"
+        className="mx-auto grid max-w-[1200px] grid-cols-1 flex-col py-3 md:grid-cols-2"
       >
         <PlayerCard
           user={gamer.user1}
@@ -129,38 +128,28 @@ export default function GamePage({ gamer }: GamePageProps) {
       </div>
 
       <canvas
-        className="mx-auto flex rounded-lg bg-black object-contain"
+        className="mx-auto flex max-h-screen rounded-lg bg-black object-contain"
         id="canvas"
       ></canvas>
-      <button
-        type="button"
-        className="mx-auto mt-3 flex rounded-lg bg-cyan-500 px-4 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        onClick={() => {
-          setEffect(false);
-          gamer.playGame(["unready"]);
-        }}
-      >
-        Show rules
-      </button>
 
-      <button
-        type="button"
-        className="mx-auto mt-3 flex rounded-lg bg-cyan-500 px-4 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        onClick={() => {
-          gamer.inviteGame(2);
-        }}
-      >
-        Invite
-      </button>
-      <button
-        type="button"
-        className="mx-auto mt-3 flex rounded-lg bg-cyan-500 px-4 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        onClick={() => {
-          gamer.joinGame(1);
-        }}
-      >
-        Join
-      </button>
+      {gamer.gameId !== -1 && (
+        <div className="mx-auto mt-3 px-4 py-2 text-center text-sm font-medium text-black">
+          Game id : {gamer.gameId}
+        </div>
+      )}
+      
+      {gamer.myGame === true && gamer.amReady === true && gamer.gameArea.current?.started !== true && (
+        <button
+          type="button"
+          className="mx-auto mt-3 flex rounded-lg bg-cyan-500 px-4 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          onClick={() => {
+            setEffect(false);
+            gamer.playGame(["unready"]);
+          }}
+        >
+          Show rules
+        </button>
+      )}
     </div>
   );
 }

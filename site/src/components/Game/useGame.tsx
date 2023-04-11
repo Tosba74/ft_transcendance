@@ -4,6 +4,7 @@ import { io, Socket } from "socket.io-client";
 import { GameDataDto } from "src/_shared_dto/gamedata.dto";
 import { GameSetterDto } from "src/_shared_dto/gamesetter.dto";
 import { UserDto } from "src/_shared_dto/user.dto";
+import { WsResponseDto } from "src/_shared_dto/ws-response.dto";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
 
 import { GameArea } from "./pong";
@@ -29,7 +30,7 @@ const useGame = ({ loginer }: useGameProps) => {
       gameSocketRef.current.emit(
         "identify",
         {},
-        (response: { error: string }) => {
+        (response: WsResponseDto<undefined>) => {
           if (response.error !== undefined) {
             console.log("identify error", response.error);
           }
@@ -37,12 +38,29 @@ const useGame = ({ loginer }: useGameProps) => {
       );
   };
 
-  const inviteGame = (invited_id: number) => {
+  const createGame = (
+    fun_mode: boolean,
+    force_fun: boolean,
+    points_objective: number,
+    force_points: boolean,
+    invited_id: number = -1,
+    callbackFct: Function | undefined = undefined
+  ) => {
     gameSocketRef.current &&
       gameSocketRef.current.emit(
-        "inviteGame",
-        { invited_id: invited_id },
-        (response: void) => {}
+        "createGame",
+        {
+          fun_mode: fun_mode,
+          force_fun: force_fun,
+          points_objective: points_objective,
+          force_points: force_points,
+          invited_id: invited_id,
+        },
+        (response: WsResponseDto<undefined>) => {
+          if (response.error === undefined && callbackFct !== undefined) {
+            callbackFct();
+          }
+        }
       );
   };
 
@@ -166,7 +184,7 @@ const useGame = ({ loginer }: useGameProps) => {
     user1,
     user2,
     identify,
-    inviteGame,
+    createGame,
     joinGame,
     playGame,
   };

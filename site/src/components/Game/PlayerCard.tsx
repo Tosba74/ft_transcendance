@@ -17,21 +17,28 @@ export default function PlayerCard(props: playerCardProps) {
 
   return (
     <>
-      <div className="flex flex-auto items-center pb-2">
+      <div className="flex items-center pb-2">
         <img
-          className={classNames("h-12 w-12 rounded-full object-cover", {
-            "order-last": props.isRight,
-          })}
+          className={classNames(
+            "h-[48px] w-[48px] min-w-[48px] rounded-full object-cover",
+            {
+              "order-last": props.isRight,
+            }
+          )}
           src={props.user?.avatar_url || LogoInconnu}
           alt={`Player-${props.user?.pseudo}`}
         />
-        <div className="flex-auto px-3">
+        <div className="basis-full truncate px-3">
           <div
-            className={classNames("flex truncate", {
+            className={classNames("flex", {
               "justify-end": props.isRight,
             })}
           >
-            <span className={classNames({ "order-last": props.isRight })}>
+            <span
+              className={classNames("truncate", {
+                "order-last": props.isRight,
+              })}
+            >
               {props.user?.pseudo || `Waiting player`}
             </span>
             <span className="px-3">{props.status}</span>
