@@ -42,20 +42,17 @@ export default function ChatMenu({
     setAnimation(!animation);
   };
 
-  const css: React.CSSProperties = {
-    resize: "horizontal",
-    overflow: "auto",
-    direction: "rtl",
-  };
-
   return (
     <>
       {openedMenu === "chat" && (
         <div
-          style={css}
+          dir="rtl"
           className={classNames(
-            animation ? "animate-slideInChat" : "animate-slideOutChat",
-            "absolute top-16 bottom-10 z-50 flex w-full flex-col rounded-lg bg-gray-300 p-2 shadow-lg dark:bg-gray-800 sm:min-w-[325px] md:top-20 md:right-2 md:w-1/2 lg:top-20 lg:w-1/3"
+            "sm:resize-x sm:overflow-auto",
+            animation
+              ? "animate-slideInChat"
+              : "animate-slideOutChat opacity-0",
+            "absolute top-16 bottom-10 z-50 flex w-full max-w-[99%] flex-col rounded-lg bg-gray-300 p-2 shadow-lg dark:bg-gray-800 sm:min-w-[325px] md:top-20 md:right-2 md:w-1/2 lg:top-20 lg:w-1/3"
           )}
           onAnimationEnd={() => {
             console.log(animation);
