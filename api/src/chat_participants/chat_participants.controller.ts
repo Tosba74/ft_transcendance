@@ -62,6 +62,6 @@ export class ChatParticipantsController {
   @ApiNoContentResponse({ description: 'Chat participant deleted successfully.' })
   @ApiNotFoundResponse({ description: 'Chat participant not found.' })
   public delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.chatParticipantsService.delete(id);
+    return this.chatParticipantsService.deleteOne(id);
   }
 }

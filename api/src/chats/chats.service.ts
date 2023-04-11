@@ -366,6 +366,9 @@ export class ChatsService {
       switch (command[0]) {
 
         // Owner permission required
+        case "/quit":
+          responseMessage.content = await this.quitCommand(room, user, command);
+          break;
         case "/pw":
           responseMessage.content = await this.pwCommand(room, user, command);
           break;
@@ -415,6 +418,77 @@ export class ChatsService {
 
     // To be broadcasted in everyone in the room
     return (responseMessage);
+  }
+
+
+  async quitCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
+    if (command.length != 1)
+      return 'quit: argument error';
+
+    try {
+      const senderRole = await this.chatParticipantsService.get_role(user.id, room.id);
+      if (senderRole !== ChatRoleModel.OWNER_ROLE)
+        return 'quit: only the Owner can leave the channel';
+    } catch (error) {
+      return 'quit: error retrieving user role';
+    }
+
+    let userToKick = user.id;
+    let clientsToKick = this.clients.filter(value => {
+      return value.user.id == userToKick;
+    });
+
+    if (clientsToKick.length > 0) {
+      let kickMessage = new ChatMessageDto();
+      kickMessage.id = -this.serverMsgId;
+      kickMessage.sender = new UserDto();
+      kickMessage.sender.id = -1;
+      kickMessage.content = 'quit: channel left';
+      this.serverMsgId++;
+
+      clientsToKick.forEach(value => {
+        if (value.socket.rooms.has(room.id.toString())) {
+          value.socket.emit('broadcastMessage', { room_id: room.id, message: kickMessage });
+          value.socket.leave(room.id.toString());
+        }
+      });
+    }
+    else {
+      return "quit: user not found or not connected";
+    }
+
+    const newOwner: UpdateRoleDto = new UpdateRoleDto();
+    newOwner.new_role = ChatRoleModel.OWNER_ROLE;
+    newOwner.roomId = room.id;
+    newOwner.participantId = await this.chatParticipantsService.getAnotherOwner(room.id);
+
+    await this.chatParticipantsService.delete(user.id, room.id).catch(() => {
+      return "quit: quit channel error";
+    });
+
+    // check if still user on this channel
+    if (newOwner.participantId !== -1) {
+      await this.chatParticipantsService.update_role(newOwner).catch(() => {
+        return "quit: new Owner error";
+      });
+    }
+    else {
+      // delete all messages
+      await this.chatMessagesService.deleteMessages(room.id).catch(() => {
+        return "quit: delete chat messages error";
+      });
+
+      // delete all participants
+      await this.chatParticipantsService.deleteParticipants(room.id).catch(() => {
+        return "quit: delete chat participants error";
+      });
+
+      // delete channel
+      await this.delete(room.id).catch(() => {
+        return "quit: delete channel error";
+      });
+    }
+    return "";
   }
 
 

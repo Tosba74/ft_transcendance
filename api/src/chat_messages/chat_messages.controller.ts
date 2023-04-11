@@ -12,9 +12,9 @@ import { CreateMessageDto } from './dto/create-message';
 @UseFilters(HttpExceptionFilter)
 export class ChatMessagesController {
   constructor(private readonly chatMessagesService: ChatMessagesService) { }
-  
+
   @Get()
-  @ApiOkResponse({ description: 'Chat messages retrieved successfully', type: ChatMessageModel, isArray: true})
+  @ApiOkResponse({ description: 'Chat messages retrieved successfully', type: ChatMessageModel, isArray: true })
   public findAll(): Promise<ChatMessageModel[]> {
     return this.chatMessagesService.findAll();
   }
@@ -36,10 +36,10 @@ export class ChatMessagesController {
 
   @Delete(':id')
   @HttpCode(204)
-	@ApiNoContentResponse({ description: 'Chat message deleted successfully.'})
-	@ApiNotFoundResponse({ description: 'Chat message not found.' })
-	public delete(@Param('id', ParseIntPipe) id: number): Promise<void> {  
-		return this.chatMessagesService.delete(id);
-	}
+  @ApiNoContentResponse({ description: 'Chat message deleted successfully.' })
+  @ApiNotFoundResponse({ description: 'Chat message not found.' })
+  public delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    return this.chatMessagesService.deleteOne(id);
+  }
 
 }
