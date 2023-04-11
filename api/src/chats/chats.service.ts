@@ -17,6 +17,7 @@ import { ChatTypeModel } from 'src/chat_types/models/chat_type.model';
 import { ChatRoleModel } from 'src/chat_roles/models/chat_role.model';
 
 import { UserDto } from 'src/_shared_dto/user.dto';
+import { UserParticipantDto } from './dto/user-participant.dto';
 import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
 import { WsResponseDto } from 'src/_shared_dto/ws-response.dto';
 import { ChatRoomDto } from 'src/_shared_dto/chat-room.dto';
@@ -262,12 +263,17 @@ export class ChatsService {
       newroom.participants = [];
 
       room.participants.forEach(value => {
-        let usr: UserDto = value.participant.toUserDto();
+        // let usr: UserDto = value.participant.toUserDto();
+        let usr: UserParticipantDto = {
+          ...value.participant.toUserDto(),
+          roleId: value.role.id, roleName: value.role.name
+        }
 
         newroom.participants.push(usr);
 
       });
 
+      // console.log(newroom);
       res.value = newroom;
     }
     else {

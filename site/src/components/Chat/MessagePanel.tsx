@@ -2,7 +2,7 @@ import { ChatRoomDto } from "src/_shared_dto/chat-room.dto";
 import MessageConv from "./MessageConv";
 import MessageInput from "./MessageInput";
 import React from "react";
-import axios from "axios";
+import { ParticipantDto } from "src/_shared_dto/participant.dto";
 
 interface MessagePanelProps {
   selfId: number;
@@ -15,31 +15,14 @@ export default function MessagePanel({
   sendMessage,
   room,
 }: MessagePanelProps) {
-  const [role, setRole] = React.useState("test");
-  const [token, setToken] = React.useState(localStorage.getItem("token") || "");
-
+  const [role, setRole] = React.useState('');
+  
   React.useEffect(() => {
-    axios
-      .post(
-        "/api/chat_participant/role",
-        {
-          roomId: `${room?.id}`,
-          participantId: `${selfId}`,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
-      .then((res) => {
-        if (res.status === 201) {
-          if (res.data === 2) setRole(" - Admin");
-          else if (res.data === 3) setRole(" - Owner");
-          else setRole("");
-        }
-      })
-      .catch((error) => { });
+    const me = room?.participants.find(participant => participant.id === selfId);
+    if (me !== undefined) {
+      // console.log(me);
+      setRole(' - ' + me.roleName)
+    }
   }, [room]);
 
   return (
