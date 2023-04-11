@@ -37,7 +37,7 @@ export default function CurrentList({
           return;
         }
       })
-      .catch((error) => {});
+      .catch((error) => { });
 
     setTimeout(() => {
       setEffect(false);
@@ -70,9 +70,9 @@ export default function CurrentList({
           {channels.map((channel) => {
             // console.log(channel);
             let role = '';
-            if (channel.role === 2) 
+            if (channel.role === 2)
               role = ` (Admin)`
-            if (channel.role === 3) 
+            if (channel.role === 3)
               role = ` (Owner)`
             return (
               <div

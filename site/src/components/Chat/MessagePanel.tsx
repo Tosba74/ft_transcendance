@@ -16,7 +16,7 @@ export default function MessagePanel({
   room,
 }: MessagePanelProps) {
   const [role, setRole] = React.useState('');
-  
+
   function getRoleName(roleId: number): string {
     if (roleId === 2)
       return ' - Admin'
