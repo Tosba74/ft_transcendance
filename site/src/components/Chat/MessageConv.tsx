@@ -11,6 +11,7 @@ interface MessageConvProps {
 
 export default function MessageConv({ selfId, messages }: MessageConvProps) {
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
+  const [first, setFirst] = React.useState(true);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({
@@ -20,7 +21,14 @@ export default function MessageConv({ selfId, messages }: MessageConvProps) {
   };
 
   React.useEffect(() => {
-    scrollToBottom();
+    if (first) {
+      setTimeout(() => {
+        scrollToBottom();
+      }, 500);
+      setFirst(false);
+    } else {
+      scrollToBottom();
+    }
   }, [messages]);
 
   return (

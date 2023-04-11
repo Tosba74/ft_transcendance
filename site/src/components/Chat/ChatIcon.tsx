@@ -15,12 +15,6 @@ export default function ChatIcon({
   const handleClick = () => {
     chats.setChatOpen(!chats.chatOpen);
     setOpenedMenu("");
-
-    // if (openedMenu == "chat") {
-    //   setOpenedMenu("");
-    // } else {
-    //   setOpenedMenu("chat");
-    // }
   };
 
   return (

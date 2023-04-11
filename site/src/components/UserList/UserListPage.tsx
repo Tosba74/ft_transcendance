@@ -15,7 +15,6 @@ interface UserListPageProps {
 export default function UserListPage({ loginer, chats }: UserListPageProps) {
   let [users, setUsers] = React.useState<UserDto[]>([]);
 
-
   React.useEffect(() => {
     axios
       .get("/api/users", loginer.get_headers())

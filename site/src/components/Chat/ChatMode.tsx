@@ -1,30 +1,23 @@
-// <<<<<<< HEAD
-// interface ChatModeProps {
-//   handleClick: Function;
-//   handleAnimation: Function;
 import { UseChatDto } from "./dto/useChat.dto";
 
 interface ChatModeProps {
   chats: UseChatDto;
   setOpenedMenu: Function;
   modeChannel: boolean;
+  handleAnimation: Function;
 }
 
 export default function ChatMode({
-  // <<<<<<< HEAD
-  // handleClick,
-  // handleAnimation,
   chats,
   setOpenedMenu,
   modeChannel,
+  handleAnimation,
 }: ChatModeProps) {
   return (
     <>
       <button
         className="w-full text-center"
         type="button"
-        // <<<<<<< HEAD
-        // onClick={() => handleClick()}
         onClick={() => {
           chats.setModeChannel(!chats.modeChannel);
         }}
@@ -32,12 +25,13 @@ export default function ChatMode({
         {modeChannel && <div className="ml-6 px-4">Channel List</div>}
         {!modeChannel && <div className="ml-6 px-4">Chat Mode</div>}
       </button>
-      {/* <<<<<<< HEAD */}
-      {/* // <button className="w-10" type="button" onClick={() => handleAnimation()}> */}
       <button
         className="w-10"
         type="button"
-        onClick={() => chats.setChatOpen(false)}
+        onClick={() => {
+          // chats.setChatOpen("");
+          handleAnimation();
+        }}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

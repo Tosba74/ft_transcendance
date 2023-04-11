@@ -50,15 +50,15 @@ export default function ChannelChannelList({
                   //   {lstChannel[key].password && (
                   <MdKey className="" title="Protected" />
                 )}
-                {!lstChannel[key] && lstChannel[key].type == 1 && (
+                {!lstChannel[key] && lstChannel[key].type === 1 && (
                   //   {!lstChannel[key].password && lstChannel[key].type == 1 && (
                   <MdOutlineEmail className="" title="Chat" />
                 )}
-                {!lstChannel[key] && lstChannel[key].type == 2 && (
+                {!lstChannel[key] && lstChannel[key].type === 2 && (
                   //   {!lstChannel[key].password && lstChannel[key].type == 2 && (
                   <MdPublic className="" title="Public" />
                 )}
-                {!lstChannel[key] && lstChannel[key].type == 3 && (
+                {!lstChannel[key] && lstChannel[key].type === 3 && (
                   //   {!lstChannel[key].password && lstChannel[key].type == 3 && (
                   <FiLock className="" title="Private" />
                 )}
