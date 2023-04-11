@@ -33,10 +33,16 @@ export default function CreateChannelPage({ loginer }: CreateChannelPageProps) {
             password: password,
             type_id: typePP ? 1 : 2,
           },
-          loginer.get_headers()
+          loginer.get_headers(),
         )
         .then((res) => {
           if (res.status == 201) {
+			  axios.post(`/api/me/chats/join/${res.data.id}`,
+			  {
+				password: password,
+			  },
+			  loginer.get_headers(),
+			)
             setPageMessage("Channel created, redirecting...");
             setTimeout(() => {
               navigate("/channels");
@@ -99,7 +105,7 @@ export default function CreateChannelPage({ loginer }: CreateChannelPageProps) {
           Create
         </button>
         <div className="mt-3 h-6 text-center text-sm">
-          {typePP ? "true" : null}
+          {pageMessage}
         </div>
       </form>
     </div>

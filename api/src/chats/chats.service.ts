@@ -75,6 +75,8 @@ export class ChatsService {
 
       res.password = hash;
     }
+	else
+		res.password = ''
 
     const created = await this.chatsRepository.save(res).catch((err: any) => {
       throw new BadRequestException('Chat creation error');
@@ -170,7 +172,7 @@ export class ChatsService {
 
       newroom.id = room_id;
       newroom.name = room.name.toString();
-      
+
       //Get all messages from the db
       newroom.messages = [];
 

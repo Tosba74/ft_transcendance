@@ -119,13 +119,7 @@ export class MeService {
     //   throw new PreconditionFailedException('Already member of the room');
     // }
 
-
-    // if (chat.password != undefined && joinInfos.password != undefined && await bcrypt.compare(joinInfos.password, chat.password)) {
-
-    //   throw new UnauthorizedException('Missing password or password wrong');
-    // }
-
-    return this.chatsService.create('test', 1, 'password');
+    return this.chatsService.create(joinInfos.name, joinInfos.type_id, joinInfos.password);
   }
 
 
