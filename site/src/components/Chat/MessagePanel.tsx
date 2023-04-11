@@ -17,11 +17,19 @@ export default function MessagePanel({
 }: MessagePanelProps) {
   const [role, setRole] = React.useState('');
   
+  function getRoleName(roleId: number): string {
+    if (roleId === 2)
+      return ' - Admin'
+    if (roleId === 3)
+      return ' - Owner'
+    return '';
+  }
+
   React.useEffect(() => {
     const me = room?.participants.find(participant => participant.id === selfId);
     if (me !== undefined) {
-      // console.log(me);
-      setRole(' - ' + me.roleName)
+      if (me.roleId > 1)
+        setRole(getRoleName(me.roleId))
     }
   }, [room]);
 

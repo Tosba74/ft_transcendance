@@ -68,14 +68,19 @@ export default function CurrentList({
 
         <ul className="grow overflow-y-scroll px-1">
           {channels.map((channel) => {
-            console.log(channel);
+            // console.log(channel);
+            let role = '';
+            if (channel.role === 2) 
+              role = ` (Admin)`
+            if (channel.role === 3) 
+              role = ` (Owner)`
             return (
               <div
                 key={channel.id}
                 className="text-blueGray-700 mb-2 flex text-lg"
               >
                 <div className="flex basis-5/6">
-                  <li className="w-14 basis-5/6 truncate">{channel.name}</li>
+                  <li className="w-14 basis-5/6 truncate">{channel.name} {role}</li>
                   <IconSwitch channel={channel} />
                 </div>
                 <button
