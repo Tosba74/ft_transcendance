@@ -1,16 +1,17 @@
 import { Injectable, Inject, InternalServerErrorException, UnauthorizedException, forwardRef, RequestTimeoutException } from '@nestjs/common';
+import { Interval } from '@nestjs/schedule';
+import { Attempts, LIMIT_ATTEMPT, NO_ATTEMPT_REMAINING, LIMIT_ATTEMPTS_ERROR, LIMIT_TIME_ERROR, TIME_LIMIT_IN_MIN, TIME_LIMIT_IN_MS} from './attempts';
+
+import { authenticator } from 'otplib';
+import { toFileStream } from 'qrcode';
+import { Response } from 'express';
 
 import { LoggedUserDto } from '../auth/dto/logged_user.dto';
 import { UsersService } from '../users/users.service';
 
 import { AuthService } from 'src/auth/auth.service';
 
-import { authenticator } from 'otplib';
-import { toFileStream } from 'qrcode';
-import { Response } from 'express';
-
-import { Interval } from '@nestjs/schedule';
-import { Attempts, LIMIT_ATTEMPT, NO_ATTEMPT_REMAINING, LIMIT_ATTEMPTS_ERROR, LIMIT_TIME_ERROR, TIME_LIMIT_IN_MIN, TIME_LIMIT_IN_MS} from './attempts';
+import { UserDto } from 'src/_shared_dto/user.dto';
 
 @Injectable()
 export class TfaService {
@@ -25,8 +26,10 @@ export class TfaService {
 
 	async generateTfaSecret(id: number): Promise<string> {
         const secret: string = authenticator.generateSecret();
-        const user: LoggedUserDto = await this.usersService.findOneById(id);
+
+        const user: UserDto = await this.usersService.findOneById(id, true) as UserDto;
         this.usersService.setTfaSecret(secret, user.id);
+
         return secret;
     }
 
@@ -35,7 +38,8 @@ export class TfaService {
         if (!appname || appname === '')
             appname = 'Pong';
 
-        const user: LoggedUserDto = await this.usersService.findOneById(id);
+        const user: UserDto = await this.usersService.findOneById(id, true) as UserDto;
+
         const otpauthUrl: string = authenticator.keyuri(user.login_name, appname, secret);
 
         return toFileStream(stream, otpauthUrl);
@@ -74,7 +78,7 @@ export class TfaService {
             throw new UnauthorizedException(message);
         this.attempts.delete(id);
 
-        const user = await this.usersService.findOneById(id);
+        const user = await this.usersService.findOneById(id) as LoggedUserDto;
         return this.authService.login(user);
     }
 

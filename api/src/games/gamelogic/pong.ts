@@ -13,11 +13,13 @@ import { ext_export } from './export';
 
 export class GameArea {
 
-	public pause = false;
-	public start = true;
+	public ended = false;
+	public start = false;
 
 	public playerOne: Paddle;
 	public playerTwo: Paddle;
+
+	public fun_mode: boolean;
 
 	public balls: Ball[] = [];
 
@@ -45,7 +47,7 @@ export class GameArea {
 		this.playerOne.update();
 		this.playerTwo.update();
 
-		if (this.start == true) {
+		if (this.start == true && this.ended == false) {
 
 			this.balls.forEach((value) => {
 				this.check_for_collisions(value);
@@ -58,8 +60,8 @@ export class GameArea {
 		}
 
 
-		if (this.playerOne.score >= 10 || this.playerTwo.score >= 10)
-			this.pause = true;
+		// if (this.playerOne.score >= 10 || this.playerTwo.score >= 10)
+		// 	this.pause = true;
 	}
 	
 
@@ -77,11 +79,6 @@ export class GameArea {
 	}
 
 
-
-	do_pause() //when button pause pressed
-	{
-		this.pause = !this.pause;
-	}
 
 	reset(y: number) {
 		this.balls[0].x = module_const.canvas_width / 2;
@@ -105,8 +102,8 @@ export class GameArea {
 
 	restart() //when button restart pressed
 	{
-		document.getElementById('btn_pause')!.style.visibility = 'visible';
-		this.pause = false;
+		// document.getElementById('btn_pause')!.style.visibility = 'visible';
+		this.ended = false;
 		this.start = true;
 
 		this.reset(module_const.canvas_height / 2);

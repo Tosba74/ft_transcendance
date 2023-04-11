@@ -1,26 +1,32 @@
-import classNames from "classnames";
-import React, { useState, useContext } from "react";
-import ChatPage from "./ChatMenu";
+import { UseChatDto } from "./dto/useChat.dto";
 // import Icon from '../../assets/svg/balloon-heart.svg'
 
 interface ChatIconProps {
   openedMenu: string;
   setOpenedMenu: Function;
+  chats: UseChatDto;
 }
 
-export default function ChatIcon({ openedMenu, setOpenedMenu }: ChatIconProps) {
+export default function ChatIcon({
+  openedMenu,
+  setOpenedMenu,
+  chats,
+}: ChatIconProps) {
   const handleClick = () => {
-    if (openedMenu == "chat") {
-      setOpenedMenu("");
-    } else {
-      setOpenedMenu("chat");
-    }
+    chats.setChatOpen(!chats.chatOpen);
+    setOpenedMenu("");
+
+    // if (openedMenu == "chat") {
+    //   setOpenedMenu("");
+    // } else {
+    //   setOpenedMenu("chat");
+    // }
   };
 
   return (
     <>
       {openedMenu != "chat" && (
-        <div className="absolute right-5 bottom-10 z-50 ">
+        <div className="absolute right-2 bottom-10 z-50 ">
           <div className="justify-content-end right-2 flex justify-end rounded-full lg:pr-2">
             <div>
               <button

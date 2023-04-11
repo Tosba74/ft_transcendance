@@ -1,8 +1,8 @@
 import { ApiResponseProperty } from "@nestjs/swagger";
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm"
 
-@Entity("user_status")
-export class UserStatusModel {
+@Entity("game_status")
+export class GameStatusModel {
 
     @ApiResponseProperty({ type: Number })
     @PrimaryGeneratedColumn()
@@ -27,7 +27,7 @@ export class UserStatusModel {
         this.id = status_id;
     }
 
-    static readonly ONLINE_STATUS = 1;
-    static readonly OFFLINE_STATUS = 2;
-    static readonly INGAME_STATUS = 3;
+    static readonly CREATED_STATUS = 1;
+    static readonly FINISHED_STATUS = 2;
+    static readonly CLOSED_STATUS = 3;
 }

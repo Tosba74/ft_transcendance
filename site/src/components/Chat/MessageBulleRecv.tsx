@@ -1,21 +1,25 @@
-export default function MessageBulleRecv() {
+import { UserDto } from "src/_shared_dto/user.dto";
+
+interface MessageBulleRecvProps {
+  user: UserDto;
+  text: string;
+}
+
+export default function MessageBulleRecv({
+  user,
+  text,
+}: MessageBulleRecvProps) {
   return (
-    <div className="mx-1 ml-1 mb-1">
-      <div className="flex items-end">
-        <div className="order-2 mx-2 my-1 flex max-w-xs flex-col items-start space-y-2 text-xs">
-          <div>
-            <span className="inline-block rounded-lg rounded-bl-none bg-gray-300 px-4 py-2 text-gray-600">
-              Thanks for your message David. I thought I'm alone with this
-              issue. Please, ? the issue to support it :)
-            </span>
-          </div>
-        </div>
-        <img
-          src="https://images.unsplash.com/photo-1549078642-b2ba4bda0cdb?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=3&amp;w=144&amp;h=144"
-          alt="My profile"
-          className="order-1 h-6 w-6 rounded-full"
-        />
+    <div className="my-1 flex w-full flex-row-reverse items-end justify-end pl-2">
+      <div className="mx-2 break-all rounded-lg bg-gray-300 p-2 px-4 text-xs text-gray-600">
+        {text}
       </div>
+      <img
+        src={user.avatar_url}
+        alt={user.pseudo}
+        title={user.pseudo}
+        className="h-6 w-6 rounded-full object-cover"
+      />
     </div>
   );
 }

@@ -8,8 +8,8 @@ import { WebsocketExceptionsFilter } from 'src/_common/filters/ws-exception.filt
 import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
 import { ChatsService } from './chats.service';
 
-import { ChatResponse } from './dto/chat-response.dto';
-import { ChatRoom } from './dto/chat-room.dto';
+import { WsResponseDto } from 'src/_shared_dto/ws-response.dto';
+import { ChatRoomDto } from 'src/_shared_dto/chat-room.dto';
 
 
 
@@ -31,7 +31,7 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage('createGame')
-	async createGame(client: Socket, body: { }): Promise<void> {
+	async createGame(client: Socket, body: {}): Promise<void> {
 
 		console.log('wring')
 	}
@@ -39,21 +39,22 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	@SubscribeMessage('identify')
 	@UseGuards(WsAuthGuard)
-	async identify(@ConnectedSocket() client: Socket): Promise<ChatResponse<undefined>> {
+	async identify(@ConnectedSocket() client: Socket): Promise<WsResponseDto<undefined>> {
 
 		const user = (client.handshake as any).user as LoggedUserDto;
 
-		console.log(user);
+		console.log('chat', user);
 
 		return this.chatsService.identify(user, client);
 	}
 
 
 	@SubscribeMessage('connectRoom')
-	async connectRoom(client: Socket, body: { room: number }): Promise<ChatResponse<ChatRoom>> {
+	async connectRoom(client: Socket, body: { room: number }): Promise<WsResponseDto<ChatRoomDto>> {
+
 
 		const loggedUser = this.chatsService.isIdentifed(client);
-		
+
 		if (loggedUser == undefined) {
 			throw new WsException('Not identified');
 		}
@@ -76,6 +77,9 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@SubscribeMessage('createMessage')
 	async createMessage(client: Socket, body: { room_id: number, message: string }) {
 
+
+		console.log(`message arrived :\n${body.message}`);
+		// console.log('message arrived');
 
 		if (body == undefined || body.room_id == undefined || body.message == undefined) {
 			throw new WsException('Not identified');

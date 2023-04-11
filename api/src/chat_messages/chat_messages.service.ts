@@ -50,7 +50,7 @@ export class ChatMessagesService {
   async delete(id: number): Promise<void> {
     try {
       const message = await this.findOneById(id);
-      this.chatMessagesRepository.delete({ id: id });
+      this.chatMessagesRepository.delete(id);
     }
     catch (error) {
       throw new NotFoundException('Chat message id not found');

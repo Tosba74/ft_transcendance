@@ -1,9 +1,9 @@
 import React from "react";
 import { io, Socket } from "socket.io-client";
 
-import { ChatMessage } from "./dto/chat-message.dto";
-import { ChatResponse } from "./dto/chat-response.dto";
-import { ChatRoom } from "./dto/chat-room.dto";
+import { ChatMessageDto } from "src/_shared_dto/chat-message.dto";
+import { WsResponseDto } from "src/_shared_dto/ws-response.dto";
+import { ChatRoomDto } from "src/_shared_dto/chat-room.dto";
 
 import { UseChatDto } from "./dto/useChat.dto";
 
@@ -14,30 +14,40 @@ interface useChatProps {
 
 interface broadcastMessageProps {
   room_id: string;
-  message: ChatMessage;
+  message: ChatMessageDto;
 }
 
 const useChat = ({ logged, token }: useChatProps): UseChatDto => {
   const socketRef = React.useRef<Socket>();
-  const [rooms, setRooms] = React.useState<{ [key: string]: ChatRoom }>();
+  const [rooms, setRooms] = React.useState<{ [key: string]: ChatRoomDto }>();
+
+  const [chatOpen, setChatOpen] = React.useState(false);
+  const [modeChannel, setModeChannel] = React.useState(false);
+  const [currChannel, setCurrChannel] = React.useState(0);
 
   const identify = () => {
-    console.log("sent iden");
+    console.log("sent iden chat");
 
     // Send identify to register websocket user
     socketRef.current &&
       socketRef.current.emit(
         "identify",
         {},
-        (response: ChatResponse<ChatRoom[]>) => {
+        (response: WsResponseDto<undefined>) => {
           if (response.error != undefined) {
             console.log("identify error", response.error);
           }
+
+          // connectRoom(1);
+          // connectRoom(2);
         }
       );
   };
 
-  const connectRoom = (room_id: number) => {
+  const connectRoom = (
+    room_id: number,
+    setError: Function | undefined = undefined
+  ) => {
     console.log("try connect", room_id);
 
     // Try to connect to a room, receive room name and messages on success
@@ -45,9 +55,9 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
       socketRef.current.emit(
         "connectRoom",
         { room: room_id },
-        (response: ChatResponse<ChatRoom>) => {
+        (response: WsResponseDto<ChatRoomDto>) => {
           if (response.error == undefined && response.value) {
-            let room: ChatRoom = response.value;
+            let room: ChatRoomDto = response.value;
 
             console.log("connected", room.id);
 
@@ -55,6 +65,14 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
               ...oldRooms,
               [room.id]: room,
             }));
+
+            setCurrChannel(room.id);
+            setChatOpen(true);
+
+            return true;
+          } //
+          else if (response.error !== undefined && setError !== undefined) {
+            setError(response.error);
           }
         }
       );
@@ -111,7 +129,18 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
     }
   }, [logged]);
 
-  return { rooms, identify, connectRoom, sendMessage };
+  return {
+    rooms,
+    chatOpen,
+    setChatOpen,
+    modeChannel,
+    setModeChannel,
+    currChannel,
+    setCurrChannel,
+    identify,
+    connectRoom,
+    sendMessage,
+  };
 };
 
 export default useChat;

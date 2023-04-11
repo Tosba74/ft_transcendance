@@ -4,15 +4,16 @@ import * as module_draw from "./draw";
 import { Paddle } from "./paddle";
 import { Ball } from "./ball";
 
-import { GameDataDto } from "./dto/gamedata.dto";
+import { GameDataDto } from "src/_shared_dto/gamedata.dto";
 
 export class GameArea {
   public canvas: HTMLCanvasElement | null;
   public context: CanvasRenderingContext2D | null;
 
   // public interval: any;
-  public pause = false;
-  public start = false;
+  // public pause = false;
+  public started = false;
+  public ended = false;
 
   public playerOne: Paddle;
   public playerTwo: Paddle;
@@ -48,6 +49,9 @@ export class GameArea {
   }
 
   import(game: GameDataDto) {
+    this.started = game.started;
+    this.ended = game.ended;
+
     this.playerOne.import(game.player1);
     this.playerTwo.import(game.player2);
 
@@ -78,15 +82,14 @@ export class GameArea {
     this.playerOne.render(ctx);
     this.playerTwo.render(ctx);
 
-    if (this.playerOne.score < 10 && this.playerTwo.score < 10) {
+    if (this.started && this.ended === false) {
       this.balls.forEach((value) => {
-        if (this.playerOne.score < 10 && this.playerTwo.score < 10)
-          value.render(ctx);
+        value.render(ctx);
       });
     }
 
     module_draw.draw_center_line(ctx);
-    module_draw.draw_scores(ctx, this.playerOne, this.playerTwo);
+    module_draw.draw_scores(ctx, this.ended, this.playerOne, this.playerTwo);
 
     if (this.playerOne.progress_bar != null)
       module_draw.draw_progress_bar(
