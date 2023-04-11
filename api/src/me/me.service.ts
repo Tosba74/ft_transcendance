@@ -119,7 +119,9 @@ export class MeService {
     //   throw new PreconditionFailedException('Already member of the room');
     // }
 
-    return this.chatsService.create(joinInfos.name, joinInfos.type_id, joinInfos.password);
+    const newChat = await this.chatsService.create(joinInfos.name, joinInfos.type_id, joinInfos.password);
+	this.chatParticipantService.create(user.id, newChat.id, ChatRoleModel.USER_ROLE);
+	return (newChat);
   }
 
 
