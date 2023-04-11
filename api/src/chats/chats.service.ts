@@ -109,8 +109,6 @@ export class ChatsService {
     else {
       res.password = '';
     }
-	else
-		res.password = ''
 
     const created = await this.chatsRepository.save(res).catch((err: any) => {
       throw new BadRequestException('Chat creation error');
@@ -456,7 +454,7 @@ export class ChatsService {
         where: { id: roomId }
       });
 
-      // if (chat.password === '' || chat.password === undefined) 
+      // if (chat.password === '' || chat.password === undefined)
       //   return true;
 
       if (await bcrypt.compare(password, chat.password) === false)
@@ -533,7 +531,7 @@ export class ChatsService {
       else
         return 'pw: this channel does have a password, use: "/pw <password>" to remove it.';
     }
-    // "/pw currentpw": 2 args = add pw OR "/pw newpw": 2 args = add pw 
+    // "/pw currentpw": 2 args = add pw OR "/pw newpw": 2 args = add pw
     else if (command.length === 2) {
       const check = await this.checkPassword(command[1], room.id);
 

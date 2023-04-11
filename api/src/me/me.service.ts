@@ -134,40 +134,6 @@ export class MeService {
 
   async createChat(user: LoggedUserDto, joinInfos: CreateChatDto): Promise<ChatModel> {
 
-    // const chat = await this.chatsService.findOneById(chat_id);
-
-    // if (chat.type.id != ChatTypeModel.PUBLIC_TYPE) {
-
-    //   throw new UnauthorizedException('Room not public type');
-    // }
-
-
-    // if (chat.participants.some(element => { 
-    //   return element.participant.id === user.id && element.role.id === ChatRoleModel.BAN_ROLE
-    // })) {
-
-    //   throw new PreconditionFailedException('Banned from this room');
-    // }
-
-    // else if (chat.participants.some(element => { 
-    //   return element.participant.id === user.id 
-    // })) {
-
-    //   throw new PreconditionFailedException('Already member of the room');
-    // }
-
-
-    // if (chat.password != undefined && joinInfos.password != undefined && await bcrypt.compare(joinInfos.password, chat.password)) {
-
-    //   throw new UnauthorizedException('Missing password or password wrong');
-    // }
-
-    return this.chatsService.create('test', 1, 'password');
-  }
-
-
-  async createChat(user: LoggedUserDto, joinInfos: CreateChatDto): Promise<ChatModel> {
-
 	console.log(joinInfos.name)
 	console.log(joinInfos.password)
 	console.log(joinInfos.type_id)

@@ -38,7 +38,7 @@ export class MeController {
     @Get()
     @ApiOkResponse({ description: 'User infos retrieved successfully', type: LoggedUserDto })
     getMe(@Request() req: any): LoggedUserDto {
-        
+
         return req.user as LoggedUserDto;
     }
 
@@ -154,13 +154,6 @@ export class MeController {
     public getOrCreateConversation(@Request() req: any, @Param('id', ParseIntPipe) id: number): Promise<ChannelDto> {
 
         return this.meService.getOrCreateConversation(req.user as LoggedUserDto, id);
-    }
-
-    @Post('chats/create')
-    @ApiOkResponse({ description: 'Chat created successfully', type: ChatModel })
-    public createChat(@Request() req: any, @Body() createInfos: CreateChatDto): Promise<ChatModel> {
-
-        return this.meService.createChat(req.user as LoggedUserDto, createInfos);
     }
 
     @Post('chats/create')
