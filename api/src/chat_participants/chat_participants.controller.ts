@@ -8,6 +8,8 @@ import { MuteParticipantDto } from './dto/mute-participant';
 import { UpdateRoleDto } from './dto/update-role';
 import { ChatParticipantModel } from "./models/chat_participant.model";
 
+import { AskRoleDto } from './dto/ask-role';
+import { AllowLogged } from 'src/auth/auth.decorators';
 
 @Controller('api/chat_participant')
 @ApiTags('api/chat_participant')
@@ -34,6 +36,12 @@ export class ChatParticipantsController {
   @ApiBadRequestResponse({ description: 'Chat participant validation error' })
   public create(@Body() createMessageDto: CreateParticipantDto): Promise<ChatParticipantModel> {
     return this.chatParticipantsService.create(createMessageDto.user_id, createMessageDto.chat_id, createMessageDto.role_id);
+  }
+
+  @Post('role/')
+  @AllowLogged()
+  public async askRole(@Body() askRoleDto: AskRoleDto): Promise<number> {
+    return await this.chatParticipantsService.get_role(askRoleDto.participantId, askRoleDto.roomId);
   }
 
   // @Patch(':id/change_role')
