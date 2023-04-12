@@ -115,7 +115,10 @@ export default function App() {
             path="/login_tfa"
             element={<TfaCodePage loginer={loginer} />}
           />
-          <Route path="/logout" element={<Logout loginer={loginer} />} />
+          <Route
+            path="/logout"
+            element={<Logout loginer={loginer} chats={chats} gamer={gamer} />}
+          />
 
           {process.env.BUILD_TYPE !== "Production" && (
             <>

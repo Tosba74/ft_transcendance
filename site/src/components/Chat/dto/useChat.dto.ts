@@ -13,4 +13,5 @@ export interface UseChatDto {
   identify: Function;
   connectRoom: Function;
   sendMessage: Function;
+  deco: Function;
 }

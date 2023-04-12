@@ -86,6 +86,12 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
       });
   };
 
+  const deco = () => {
+    socketRef.current && socketRef.current.disconnect();
+
+    socketRef.current = undefined;
+  };
+
   React.useEffect(() => {
     if (logged && socketRef.current === undefined) {
       socketRef.current = io("", {
@@ -141,6 +147,7 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
     identify,
     connectRoom,
     sendMessage,
+    deco,
   };
 };
 

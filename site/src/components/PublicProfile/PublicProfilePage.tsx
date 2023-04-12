@@ -9,6 +9,8 @@ import { UserStatsDto } from "src/_shared_dto/user-stats.dto";
 import UserStatus from "../Friends/UserStatus";
 import { ChannelDto } from "src/_shared_dto/channel.dto";
 import { UseChatDto } from "../Chat/dto/useChat.dto";
+import Colorer from "src/assets/Colorer";
+import classNames from "classnames";
 
 interface UserListPageProps {
   loginer: UseLoginDto;
@@ -131,11 +133,18 @@ export default function ProfilePublic({ loginer, chats }: UserListPageProps) {
             <div className="flex flex-wrap justify-center">
               <div className="flex w-full justify-center px-4">
                 <div className="relative mt-8">
-                  <img
-                    className="h-36 w-36 rounded-full object-cover shadow-lg"
-                    src={user.avatar_url}
-                    alt={user.login_name}
-                  />
+                  <div
+                    className={classNames(
+                      "object-contains rounded-full p-2",
+                      Colorer(user.login_name)
+                    )}
+                  >
+                    <img
+                      className="h-36 w-36 rounded-full object-cover shadow-lg"
+                      src={user.avatar_url}
+                      alt={user.login_name}
+                    />
+                  </div>
 
                   <UserStatus
                     status={user.status}

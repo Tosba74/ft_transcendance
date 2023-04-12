@@ -65,7 +65,7 @@ export default function PlayerCard({ loginer, chats, user }: PlayerCardProps) {
               alt={user.login_name}
             />
           </div>
-          <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">
+          <h5 className="mb-1 text-center text-xl font-medium text-gray-900 dark:text-white">
             {user.pseudo}
           </h5>
 
