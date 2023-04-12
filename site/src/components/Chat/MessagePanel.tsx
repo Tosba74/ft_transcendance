@@ -2,12 +2,14 @@ import { ChatRoomDto } from "src/_shared_dto/chat-room.dto";
 import MessageConv from "./MessageConv";
 import MessageInput from "./MessageInput";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
+import { UseChatDto } from "./dto/useChat.dto";
 
 interface MessagePanelProps {
   selfId: number;
   sendMessage: Function;
   room: ChatRoomDto | undefined;
   loginer: UseLoginDto;
+  chats: UseChatDto;
 }
 
 export default function MessagePanel({
@@ -15,13 +17,15 @@ export default function MessagePanel({
   sendMessage,
   room,
   loginer,
+  chats,
 }: MessagePanelProps) {
   return (
     <>
-      <div className="mt-2 flex h-10 w-full items-center justify-center rounded-t bg-gray-200 text-center dark:bg-gray-700 dark:text-white">
-        <div className="shadow-b mr-2 h-8 items-center justify-center overflow-x-hidden whitespace-nowrap border-b border-gray-900 px-20">
+      <div className="mt-2 grid h-10 w-full grid-cols-1 items-center justify-center rounded-t bg-gray-200 text-center dark:bg-gray-700 dark:text-white">
+        <div className="mr-2 items-center justify-center overflow-x-hidden whitespace-nowrap">
           {room?.name || "No room selected"}
         </div>
+        <div className="content=[' '] mx-auto w-[80%] border-t border-black dark:border-gray-100"></div>
       </div>
       <div
         id="chat"
@@ -29,6 +33,7 @@ export default function MessagePanel({
       >
         <MessageConv
           loginer={loginer}
+          chats={chats}
           selfId={selfId}
           messages={room?.messages || []}
         />

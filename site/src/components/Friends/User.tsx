@@ -3,11 +3,13 @@ import { useState, useEffect, useRef } from "react";
 import ModalUser from "./ModalUser";
 import { UserDto } from "src/_shared_dto/user.dto";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
+import { UseChatDto } from "../Chat/dto/useChat.dto";
 
 interface UserProps {
   user: UserDto;
   children?: React.ReactNode;
   loginer: UseLoginDto;
+  chats: UseChatDto;
   type: string;
   doReload: Function;
 }
@@ -51,6 +53,7 @@ export default function User(props: UserProps) {
         <ModalUser
           type={props.type}
           loginer={props.loginer}
+          chats={props.chats}
           user={props.user}
           modalRef={modalRef}
           posX={posX}

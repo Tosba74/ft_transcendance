@@ -4,15 +4,18 @@ import axios from "axios";
 import { FiUserX } from "react-icons/fi";
 import { UserDto } from "src/_shared_dto/user.dto";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
+import { UseChatDto } from "../Chat/dto/useChat.dto";
 
 export default function BannedList({
   loginer,
   reload,
   doReload,
+  chats,
 }: {
   loginer: UseLoginDto;
   reload: boolean;
   doReload: Function;
+  chats: UseChatDto;
 }) {
   const [users, setUsers] = React.useState<UserDto[]>([]);
 
@@ -53,7 +56,13 @@ export default function BannedList({
 
   const content: JSX.Element[] = users.map((user) => (
     <li className="flex items-center text-slate-500" key={user.id}>
-      <User type={"ban"} loginer={loginer} user={user} doReload={doReload}>
+      <User
+        chats={chats}
+        type={"ban"}
+        loginer={loginer}
+        user={user}
+        doReload={doReload}
+      >
         <FiUserX
           onClick={() => handleUnblock(user)}
           className="mr-1 inline-block cursor-pointer text-black dark:text-white"

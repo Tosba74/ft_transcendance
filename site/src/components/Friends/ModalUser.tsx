@@ -3,11 +3,13 @@ import { UserDto } from "src/_shared_dto/user.dto";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
 import axios from "axios";
 import { NavigateFunction, useNavigate } from "react-router-dom";
-import { useContext } from "react";
+import { ChannelDto } from "src/_shared_dto/channel.dto";
+import { UseChatDto } from "../Chat/dto/useChat.dto";
 
 interface ModalProps {
   type: string | null;
   loginer: UseLoginDto;
+  chats: UseChatDto;
   user: UserDto;
   modalRef: React.MutableRefObject<HTMLDivElement | null>;
   posX: number;
@@ -19,7 +21,19 @@ function handleView(navigate: NavigateFunction, user: UserDto) {
   navigate("/players/" + user.id);
 }
 
-function handleMP(loginer: UseLoginDto, user: UserDto) {
+function handleMP(loginer: UseLoginDto, user: UserDto, chats: UseChatDto) {
+  axios
+    .get(`/api/me/chats/conversation/${user.id}`, loginer.get_headers())
+    .then((res) => {
+      if (res.status === 200) {
+        const chat = res.data as ChannelDto;
+
+        chats.connectRoom(chat.id);
+
+        return;
+      }
+    })
+    .catch((error) => {});
   console.log("should mp " + user.login_name + "(" + user.id + ")");
 }
 
@@ -103,6 +117,7 @@ function handleUnblock(
 export default function ModalUser({
   type,
   loginer,
+  chats,
   user,
   modalRef,
   posX,
@@ -123,7 +138,7 @@ export default function ModalUser({
     content.push(
       <ModalLink
         key={`modalUserMP-${user.id}`}
-        onClick={() => handleMP(loginer, user)}
+        onClick={() => handleMP(loginer, user, chats)}
       >
         MP
       </ModalLink>,
@@ -150,7 +165,7 @@ export default function ModalUser({
     content.push(
       <ModalLink
         key={`modalUserMP-${user.id}`}
-        onClick={() => handleMP(loginer, user)}
+        onClick={() => handleMP(loginer, user, chats)}
       >
         MP
       </ModalLink>,
@@ -183,7 +198,7 @@ export default function ModalUser({
     content.push(
       <ModalLink
         key={`modalUserMP-${user.id}`}
-        onClick={() => handleMP(loginer, user)}
+        onClick={() => handleMP(loginer, user, chats)}
       >
         MP
       </ModalLink>,
@@ -219,7 +234,7 @@ export default function ModalUser({
     content.push(
       <ModalLink
         key={`modalUserMP-${user.id}`}
-        onClick={() => handleMP(loginer, user)}
+        onClick={() => handleMP(loginer, user, chats)}
       >
         MP
       </ModalLink>,

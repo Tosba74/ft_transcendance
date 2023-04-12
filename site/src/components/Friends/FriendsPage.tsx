@@ -5,13 +5,14 @@ import { UseLoginDto } from "../Log/dto/useLogin.dto";
 import PendingList from "./PendingList";
 import React from "react";
 import { FiRefreshCw } from "react-icons/fi";
+import { UseChatDto } from "../Chat/dto/useChat.dto";
 
 interface UserListPageProps {
   loginer: UseLoginDto;
-  //   refreshUserInfos: Function;
+  chats: UseChatDto;
 }
 
-export default function FriendsPage({ loginer }: UserListPageProps) {
+export default function FriendsPage({ loginer, chats }: UserListPageProps) {
   const [reload, setReload] = React.useState(false);
   const [effect, setEffect] = React.useState(false);
   const [effect2, setEffect2] = React.useState(false);
@@ -61,9 +62,24 @@ export default function FriendsPage({ loginer }: UserListPageProps) {
         />
       </div>
       <div className="flex flex-col px-4">
-        <FriendsList loginer={loginer} reload={reload} doReload={doReload} />
-        <PendingList loginer={loginer} reload={reload} doReload={doReload} />
-        <BannedList loginer={loginer} reload={reload} doReload={doReload} />
+        <FriendsList
+          chats={chats}
+          loginer={loginer}
+          reload={reload}
+          doReload={doReload}
+        />
+        <PendingList
+          chats={chats}
+          loginer={loginer}
+          reload={reload}
+          doReload={doReload}
+        />
+        <BannedList
+          chats={chats}
+          loginer={loginer}
+          reload={reload}
+          doReload={doReload}
+        />
         <AddFriend loginer={loginer} doReload={doReload} />
       </div>
     </div>

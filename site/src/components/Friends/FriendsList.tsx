@@ -4,15 +4,18 @@ import axios from "axios";
 import React from "react";
 import { UserDto } from "src/_shared_dto/user.dto";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
+import { UseChatDto } from "../Chat/dto/useChat.dto";
 
 export default function FriendsList({
   loginer,
   reload,
   doReload,
+  chats,
 }: {
   loginer: UseLoginDto;
   reload: boolean;
   doReload: Function;
+  chats: UseChatDto;
 }) {
   const [users, setUsers] = React.useState<UserDto[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -35,7 +38,13 @@ export default function FriendsList({
 
   const content: JSX.Element[] = users.map((user) => (
     <li key={user.id} className="flex items-center">
-      <User type={"friend"} loginer={loginer} user={user} doReload={doReload}>
+      <User
+        chats={chats}
+        type={"friend"}
+        loginer={loginer}
+        user={user}
+        doReload={doReload}
+      >
         <UserStatus status={user.status} />
       </User>
     </li>

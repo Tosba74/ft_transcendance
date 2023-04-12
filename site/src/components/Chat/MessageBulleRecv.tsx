@@ -2,17 +2,20 @@ import { UserDto } from "src/_shared_dto/user.dto";
 import ModalUser from "../Friends/ModalUser";
 import React from "react";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
+import { UseChatDto } from "./dto/useChat.dto";
 
 interface MessageBulleRecvProps {
   user: UserDto;
   text: string;
   loginer: UseLoginDto;
+  chats: UseChatDto;
 }
 
 export default function MessageBulleRecv({
   user,
   text,
   loginer,
+  chats,
 }: MessageBulleRecvProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [target, setTarget] = React.useState<any>(undefined);
@@ -82,6 +85,7 @@ export default function MessageBulleRecv({
           posY={posY}
           type={null}
           loginer={loginer}
+          chats={chats}
           doReload={handleClick}
         />
       )}

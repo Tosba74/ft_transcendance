@@ -75,7 +75,7 @@ export default function App() {
               />
               <Route
                 path="/friends"
-                element={<FriendsPage loginer={loginer} />}
+                element={<FriendsPage loginer={loginer} chats={chats} />}
               />
               <Route
                 path="/channels"
