@@ -134,9 +134,6 @@ export class MeService {
 
   async createChat(user: LoggedUserDto, joinInfos: CreateChatDto): Promise<ChatModel> {
 
-	console.log(joinInfos.name)
-	console.log(joinInfos.password)
-	console.log(joinInfos.type_id)
     // const chat = await this.chatsService.findOneById(chat_id);
 
     // if (chat.type.id != ChatTypeModel.PUBLIC_TYPE) {
@@ -189,11 +186,16 @@ export class MeService {
       throw new PreconditionFailedException('Already member of the room');
     }
 
-
-    if (chat.password != undefined && joinInfos.password != undefined && await bcrypt.compare(joinInfos.password, chat.password)) {
-
-      throw new UnauthorizedException('Missing password or password wrong');
-    }
+    if (await this.chatsService.isPasswordProtected(chat.id) === true)
+	{
+		if (joinInfos.password != undefined)
+		{
+			if (await this.chatsService.checkPassword(joinInfos.password, chat.id) !== true)
+			{
+				throw new UnauthorizedException('Missing password or password wrong');
+			}
+		}
+	}
 
 
     return this.chatParticipantService.create(user.id, chat_id, ChatRoleModel.USER_ROLE);
