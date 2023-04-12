@@ -21,9 +21,15 @@ export default function ChannelUserList({ users }: UserListProps) {
             alt="Img"
             className="h-6 w-6 rounded-full object-cover"
           />
-          <h2 className={classNames("dark:text-white", user.roleName === "ban" && "text-red-500 font-bold")}>
+          <h2
+            className={classNames(
+              "dark:text-white",
+              user.roleName === "ban" && "font-bold text-red-500"
+            )}
+          >
             <Link to="#">
-              {user.login_name} <small>{user.roleName !== "user" && user.roleName}</small>
+              {user.login_name}{" "}
+              <small>{user.roleName !== "user" && user.roleName}</small>
             </Link>
           </h2>
         </div>

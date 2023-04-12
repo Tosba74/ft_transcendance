@@ -15,21 +15,14 @@ export default function MessagePanel({
   sendMessage,
   room,
 }: MessagePanelProps) {
-  const [role, setRole] = React.useState('');
-
-  function getRoleName(roleId: number): string {
-    if (roleId === 2)
-      return ' (Admin)'
-    if (roleId === 3)
-      return ' (Owner)'
-    return '';
-  }
+  const [role, setRole] = React.useState("");
 
   React.useEffect(() => {
-    const me = room?.participants.find(participant => participant.id === selfId);
+    const me = room?.participants.find(
+      (participant) => participant.id === selfId
+    );
     if (me !== undefined) {
-      if (me.roleId > 1)
-        setRole(getRoleName(me.roleId))
+      if (me.roleId > 1) setRole(` ${me.roleName}`);
     }
   }, [room]);
 
@@ -37,7 +30,7 @@ export default function MessagePanel({
     <>
       <div className="mt-2 flex h-10 w-full items-center justify-center rounded-t bg-gray-200 text-center dark:bg-gray-700 dark:text-white">
         <div className="shadow-b mr-2 h-8 items-center justify-center overflow-x-hidden border-b border-gray-900 px-20">
-          {room?.name || "No room selected"} {role}
+          {room?.name || "No room selected"} <small>{role}</small>
         </div>
       </div>
       <div className="scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch mb-2 h-0 flex-grow overflow-y-scroll rounded-b bg-gray-200 shadow-lg dark:bg-gray-700 dark:text-white">

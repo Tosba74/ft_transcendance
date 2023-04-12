@@ -108,7 +108,6 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
           socketRef.current.on(
             "broadcastMessage",
             ({ room_id, message }: broadcastMessageProps) => {
-
               setRooms(
                 (oldRooms) =>
                   (oldRooms &&
@@ -124,13 +123,17 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
             }
           );
 
-
         socketRef.current &&
           socketRef.current.on(
             "updateParticipants",
-            ({ room_id, participants }: { room_id: number, participants: ParticipantDto[] }) => {
-
-              console.log('recv udate')
+            ({
+              room_id,
+              participants,
+            }: {
+              room_id: number;
+              participants: ParticipantDto[];
+            }) => {
+              console.log("recv udate");
 
               setRooms(
                 (oldRooms) =>

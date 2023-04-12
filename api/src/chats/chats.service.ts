@@ -690,7 +690,7 @@ export class ChatsService {
       promoteMessage.id = -this.serverMsgId;
       promoteMessage.sender = new UserDto();
       promoteMessage.sender.id = -1;
-      promoteMessage.content = promoteMessage.sender.pseudo + ' named you Admin of this channel';
+      promoteMessage.content = user.pseudo + ' named you admin of this channel';
       this.serverMsgId++;
 
       clientsToPromote.forEach(value => {
@@ -730,7 +730,7 @@ export class ChatsService {
       demoteMessage.id = -this.serverMsgId;
       demoteMessage.sender = new UserDto();
       demoteMessage.sender.id = -1;
-      demoteMessage.content = demoteMessage.sender.pseudo + ' removed your Admin status';
+      demoteMessage.content = user.pseudo + ' removed your Admin status';
       this.serverMsgId++;
 
       clientsToDemote.forEach(value => {
