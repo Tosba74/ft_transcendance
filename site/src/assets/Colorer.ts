@@ -10,9 +10,10 @@ export default function Colorer(login: string | undefined): string {
   switch (login) {
     case "jjaqueme":
       return "bg-orange-400 dark:bg-orange-900";
-    case "amuhleth"
-      return "bg-emerald-600 dark:bg-emerald-900;
-
+    case "amuhleth":
+      return "bg-emerald-600 dark:bg-emerald-900";
+    case "ktrosset":
+      return "bg-red-700 dark:bg-red-900";
     default:
       return "bg-cyan-500 dark:bg-gray-700";
   }
