@@ -21,6 +21,12 @@ interface ModalProps {
   doReload: Function;
 }
 
+interface modeGame {
+  isFun: boolean;
+  points: number;
+  force: boolean;
+}
+
 function handleView(navigate: NavigateFunction, user: UserDto) {
   navigate("/players/" + user.id);
 }
@@ -241,15 +247,54 @@ export default function ModalUser({
     );
   }
 
+  const startEL = document.getElementById("root");
+
   const [effect, setEffect] = React.useState(false);
   const [portalStrat, setPortalStrat] = React.useState(false);
-  const startEL = document.getElementById("root");
+  const [isSearch, setIsSearch] = React.useState(false);
+  const [mode, setMode] = React.useState<modeGame>({
+    isFun: false,
+    points: 10,
+    force: true,
+  });
 
   const handlePlay = (loginer: UseLoginDto, user: UserDto) => {
     setPortalStrat(true);
     console.log(
       "should invite to play " + user.login_name + "(" + user.id + ")"
     );
+  };
+
+  const handleFun = (e: any) => {
+    setMode((old) => {
+      return { ...old, isFun: e.target.checked };
+    });
+  };
+
+  const handleForce = (e: any) => {
+    setMode((old) => {
+      return { ...old, force: e.target.checked };
+    });
+  };
+
+  const handlePoints = (e: any) => {
+    if (!e.target.valueAsNumber) {
+      setMode((old) => {
+        return { ...old, points: 10 };
+      });
+    } else {
+      setMode((old) => {
+        return { ...old, points: e.target.valueAsNumber };
+      });
+    }
+  };
+
+  const handleClickSearch = () => {
+    setEffect(false);
+
+    gamer.createGame(mode.isFun, true, mode.points, mode.force, -1, () => {
+      setIsSearch(true);
+    });
   };
 
   return (
@@ -267,7 +312,13 @@ export default function ModalUser({
         startEL !== null &&
         createPortal(
           <div className="absolute left-1/2 top-1/2 z-[100] grid w-auto min-w-[250px] max-w-md -translate-x-1/2 -translate-y-1/2 grid-cols-2 items-center gap-2 rounded-lg bg-gray-100 p-4 px-16 shadow-lg dark:bg-gray-700 dark:text-white">
-            test
+            <button
+              onClick={() => {
+                console.log("should print msg");
+              }}
+            >
+              test
+            </button>
           </div>,
           startEL
         )}
