@@ -6,6 +6,8 @@ import { NavigateFunction, useNavigate } from "react-router-dom";
 import { ChannelDto } from "src/_shared_dto/channel.dto";
 import { UseChatDto } from "../Chat/dto/useChat.dto";
 import { UseGameDto } from "../Game/dto/useGame.dto";
+import React from "react";
+import { createPortal } from "react-dom";
 
 interface ModalProps {
   type: string | null;
@@ -34,10 +36,6 @@ function handleMP(loginer: UseLoginDto, user: UserDto, chats: UseChatDto) {
       }
     })
     .catch((error) => {});
-}
-
-function handlePlay(loginer: UseLoginDto, user: UserDto) {
-  console.log("should invite to play " + user.login_name + "(" + user.id + ")");
 }
 
 function handleRemove(loginer: UseLoginDto, user: UserDto, doReload: Function) {
@@ -242,13 +240,37 @@ export default function ModalUser({
       </ModalLink>
     );
   }
+
+  const [effect, setEffect] = React.useState(false);
+  const [portalStrat, setPortalStrat] = React.useState(false);
+  const startEL = document.getElementById("root");
+
+  const handlePlay = (loginer: UseLoginDto, user: UserDto) => {
+    setPortalStrat(true);
+    console.log(
+      "should invite to play " + user.login_name + "(" + user.id + ")"
+    );
+  };
+
   return (
-    <div
-      ref={modalRef}
-      style={{ left: posX + "px", top: posY + "px" }}
-      className="absolute z-[100] flex flex-col bg-white text-center text-black drop-shadow-md dark:bg-gray-700 dark:text-white"
-    >
-      {content}
-    </div>
+    <>
+      {!portalStrat && (
+        <div
+          ref={modalRef}
+          style={{ left: posX + "px", top: posY + "px" }}
+          className="absolute z-[100] flex flex-col bg-white text-center text-black drop-shadow-md dark:bg-gray-700 dark:text-white"
+        >
+          {content}
+        </div>
+      )}
+      {portalStrat &&
+        startEL !== null &&
+        createPortal(
+          <div className="absolute left-1/2 top-1/2 z-[100] grid w-auto min-w-[250px] max-w-md -translate-x-1/2 -translate-y-1/2 grid-cols-2 items-center gap-2 rounded-lg bg-gray-100 p-4 px-16 shadow-lg dark:bg-gray-700 dark:text-white">
+            test
+          </div>,
+          startEL
+        )}
+    </>
   );
 }

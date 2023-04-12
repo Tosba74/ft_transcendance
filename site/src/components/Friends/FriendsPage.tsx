@@ -6,13 +6,19 @@ import PendingList from "./PendingList";
 import React from "react";
 import { FiRefreshCw } from "react-icons/fi";
 import { UseChatDto } from "../Chat/dto/useChat.dto";
+import { UseGameDto } from "../Game/dto/useGame.dto";
 
 interface UserListPageProps {
   loginer: UseLoginDto;
   chats: UseChatDto;
+  gamer: UseGameDto;
 }
 
-export default function FriendsPage({ loginer, chats }: UserListPageProps) {
+export default function FriendsPage({
+  loginer,
+  chats,
+  gamer,
+}: UserListPageProps) {
   const [reload, setReload] = React.useState(false);
   const [effect, setEffect] = React.useState(false);
   const [effect2, setEffect2] = React.useState(false);
@@ -65,12 +71,14 @@ export default function FriendsPage({ loginer, chats }: UserListPageProps) {
         <FriendsList
           chats={chats}
           loginer={loginer}
+          gamer={gamer}
           reload={reload}
           doReload={doReload}
         />
         <PendingList
           chats={chats}
           loginer={loginer}
+          gamer={gamer}
           reload={reload}
           doReload={doReload}
         />

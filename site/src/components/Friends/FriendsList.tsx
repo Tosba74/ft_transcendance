@@ -5,17 +5,20 @@ import React from "react";
 import { UserDto } from "src/_shared_dto/user.dto";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
 import { UseChatDto } from "../Chat/dto/useChat.dto";
+import { UseGameDto } from "../Game/dto/useGame.dto";
 
 export default function FriendsList({
   loginer,
+  chats,
+  gamer,
   reload,
   doReload,
-  chats,
 }: {
   loginer: UseLoginDto;
+  chats: UseChatDto;
+  gamer: UseGameDto;
   reload: boolean;
   doReload: Function;
-  chats: UseChatDto;
 }) {
   const [users, setUsers] = React.useState<UserDto[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -42,6 +45,7 @@ export default function FriendsList({
         chats={chats}
         type={"friend"}
         loginer={loginer}
+        gamer={gamer}
         user={user}
         doReload={doReload}
       >
