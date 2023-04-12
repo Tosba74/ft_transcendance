@@ -12,7 +12,11 @@ interface MessageConvProps {
   messages: ChatMessageDto[];
 }
 
-export default function MessageConv({ loginer, selfId, messages }: MessageConvProps) {
+export default function MessageConv({
+  loginer,
+  selfId,
+  messages,
+}: MessageConvProps) {
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {

@@ -24,7 +24,11 @@ export default function MessagePanel({
         </div>
       </div>
       <div className="scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch mb-2 h-0 flex-grow overflow-y-scroll rounded-b bg-gray-200 shadow-lg dark:bg-gray-700 dark:text-white">
-        <MessageConv loginer={loginer} selfId={selfId} messages={room?.messages || []} />
+        <MessageConv
+          loginer={loginer}
+          selfId={selfId}
+          messages={room?.messages || []}
+        />
       </div>
       <MessageInput sendMessage={sendMessage} />
     </>

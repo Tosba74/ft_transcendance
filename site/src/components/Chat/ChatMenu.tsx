@@ -1,4 +1,3 @@
-
 import ChannelPanel from "./ChannelPanel";
 import ChatMode from "./ChatMode";
 import MessagePanel from "./MessagePanel";
