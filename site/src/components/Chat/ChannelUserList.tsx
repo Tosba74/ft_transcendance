@@ -20,7 +20,7 @@ export default function ChannelUserList({ users }: UserListProps) {
             className="h-6 w-6 rounded-full object-cover"
           />
           <h2 className="dark:text-white">
-            {user.login_name} <small>{user.pseudo}</small>
+            {user.pseudo}
           </h2>
         </div>
       ))}
