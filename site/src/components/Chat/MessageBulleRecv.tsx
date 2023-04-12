@@ -15,32 +15,31 @@ export default function MessageBulleRecv({
   loginer,
 }: MessageBulleRecvProps) {
   const [isOpen, setIsOpen] = React.useState(false);
-  const [target, setTarget] = React.useState();
+  const [target, setTarget] = React.useState<any>(undefined);
   const [posX, setPosX] = React.useState(0);
   const [posY, setPosY] = React.useState(0);
+  const [clientH, setClientH] = React.useState(0);
   const modalRef = React.useRef<HTMLImageElement | null>(null);
+  let innerChat = document.getElementById("innerChat");
 
   const handleClick = (event: any) => {
-    setIsOpen(true);
-    setPosX(25);
-    setPosY(event.target.getBoundingClientRect().top - 60);
     setTarget(event.target);
-    // console.log(event.target.getBoundingClientRect().top);
-    // console.log(window);
-    // console.log(event.target.style.top);
-    // console.log(user);
-    // console.log(modalRef.current?.style.top);
+    if (innerChat !== null) setClientH(innerChat.clientHeight);
+    setIsOpen(true);
+    setPosX(35);
+    setPosY(event.target.y - 80);
   };
 
   React.useEffect(() => {
     const handleScroll = (event: any) => {
       if (isOpen) {
-        // setIsOpen(false);
-        // target
         if (target === undefined) {
           setIsOpen(false);
         } else {
-          setPosY(target.getBoundingClientRect().top - 60);
+          setPosY(target.y - 80);
+          if (target.y + 90 > clientH || target.y < 175) {
+            setIsOpen(false);
+          }
         }
       }
     };
@@ -87,7 +86,6 @@ export default function MessageBulleRecv({
         />
       )}
       <img
-        // ref={modalRef}
         src={user.avatar_url}
         alt={user.pseudo}
         title={user.pseudo}
