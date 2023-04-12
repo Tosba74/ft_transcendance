@@ -36,7 +36,32 @@ export default function ProfilePublic({ loginer, chats }: UserListPageProps) {
             return;
           }
         })
-        .catch((error) => {});
+        .catch((error) => { });
+    }
+  };
+
+  const manageBlock = (user_id: number, is_blocked: boolean) => {
+    if (is_blocked) {
+      axios
+        .delete(`/api/me/blockeds/${user_id}`, loginer.get_headers())
+        .then((res) => {
+          if (res.status === 204) {
+            loginer.getUserData();
+            return;
+          }
+        })
+        .catch((error) => { });
+    } //
+    else {
+      axios
+        .post(`/api/me/blockeds/${user_id}`, {}, loginer.get_headers())
+        .then((res) => {
+          if (res.status === 201) {
+            loginer.getUserData();
+            return;
+          }
+        })
+        .catch((error) => { });
     }
   };
 
@@ -52,7 +77,7 @@ export default function ProfilePublic({ loginer, chats }: UserListPageProps) {
           return;
         }
       })
-      .catch((error) => {});
+      .catch((error) => { });
   };
 
   React.useEffect(() => {
@@ -198,6 +223,23 @@ export default function ProfilePublic({ loginer, chats }: UserListPageProps) {
                   >
                     Message
                   </button>
+
+                  <button
+                    type="button"
+                    onClick={(e: any) => {
+                      manageBlock(user.id, loginer.userInfos?.blockeds.indexOf(user.id) !== -1);
+                    }}
+                    className="mx-1 inline-flex items-center rounded-lg bg-red-500 px-4 py-2 text-center text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+                  >
+                    {(loginer.userInfos &&
+                      loginer.userInfos?.blockeds.indexOf(user.id) !== -1 && (
+                        <>Unblock</>
+                      )) ||
+                      (loginer.userInfos &&
+                        loginer.userInfos?.blockeds.indexOf(user.id) === -1 && (
+                          <>Block</>
+                        ))}
+                  </button>
                 </div>
               )}
             </div>
@@ -247,8 +289,8 @@ export default function ProfilePublic({ loginer, chats }: UserListPageProps) {
                           </React.Fragment>
                         );
                       })) || (
-                      <span className="col-span-3">No games played</span>
-                    )}
+                        <span className="col-span-3">No games played</span>
+                      )}
                   </div>
                 </div>
               </div>
