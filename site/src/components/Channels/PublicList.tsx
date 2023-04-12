@@ -33,31 +33,32 @@ export default function PublicList({
   const navigate = useNavigate();
   const [pageMessage, setPageMessage] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [channelID, setChannelID] = React.useState(0);
   const [channels, setChannels] = React.useState<ChannelDto[]>([]);
   const [effect, setEffect] = React.useState(false);
   const [portal, setPortal] = React.useState(false);
 
   const handleSubmit = async (id: number) => {
-      axios
-        .post(
-          `/api/me/chats/join/${id}`,
-          {
-            password: password,
-          },
-          loginer.get_headers()
-        )
-        .then((res) => {
-          console.log(res.status);
-          if (res.status == 201) {
-			setPageMessage("");
-            doReload();
-            setPortal(false);
-            setPassword("");
-          } //
-        })
-        .catch(() => setPageMessage("Join Channel error"));
-      // }
-
+    axios
+      .post(
+        `/api/me/chats/join/${id}`,
+        {
+          password: password,
+        },
+        loginer.get_headers()
+      )
+      .then((res) => {
+        console.log(res.status);
+        if (res.status == 201) {
+          setPageMessage("");
+          doReload();
+          setPortal(false);
+          setPassword("");
+		  setChannelID(0);
+        } //
+      })
+      .catch(() => setPageMessage("Join Channel error"));
+    // }
   };
 
   function refreshData() {
@@ -142,10 +143,12 @@ export default function PublicList({
                     if (channel.password) {
                       setPortal(true);
                       setEffect(true);
-                    } else
-					{
-						handleSubmit(channel.id);
-					}
+					  setChannelID(channel.id);
+					  setPageMessage("");
+					  setPassword("");
+                    } else {
+                      handleSubmit(channel.id);
+                    }
                   }}
                 >
                   join
@@ -164,9 +167,9 @@ export default function PublicList({
                       )}
                       onAnimationEnd={() => {
                         if (!effect) {
-                          setPortal(false);
                           setPageMessage("");
                           setPassword("");
+						  setChannelID(0);
                         }
                       }}
                     >
@@ -187,7 +190,9 @@ export default function PublicList({
                       />
 
                       <button
-                        onClick={() => {handleSubmit(channel.id)}}
+                        onClick={() => {
+                          handleSubmit(channelID);
+                        }}
                         className="col-span-2 mx-auto mt-3 whitespace-nowrap rounded-lg bg-cyan-500 px-4 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                       >
                         Join
