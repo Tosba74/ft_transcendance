@@ -29,14 +29,11 @@ function handleMP(loginer: UseLoginDto, user: UserDto, chats: UseChatDto) {
     .then((res) => {
       if (res.status === 200) {
         const chat = res.data as ChannelDto;
-
         chats.connectRoom(chat.id);
-
         return;
       }
     })
     .catch((error) => {});
-  console.log("should mp " + user.login_name + "(" + user.id + ")");
 }
 
 function handlePlay(loginer: UseLoginDto, user: UserDto) {
@@ -49,13 +46,10 @@ function handleRemove(loginer: UseLoginDto, user: UserDto, doReload: Function) {
     .then((res) => {
       if (res.status === 204) {
         doReload();
-        // console.log(res);
         return;
       }
     })
     .catch((error) => {});
-
-  // console.log("should rm " + user.login_name + "(" + user.id + ")");
 }
 
 function handleAdd(loginer: UseLoginDto, user: UserDto, doReload: Function) {
@@ -64,24 +58,14 @@ function handleAdd(loginer: UseLoginDto, user: UserDto, doReload: Function) {
     .then((res) => {
       if (res.status === 201) {
         doReload();
-        // console.log(res.data);
         return;
       }
     })
     .catch((error) => {});
-  // console.log("should add" + user.login_name + "(" + user.id + ")");
 }
 
 function handleAccept(loginer: UseLoginDto, user: UserDto, doReload: Function) {
   handleAdd(loginer, user, doReload);
-  // console.log(
-  //   "should accept " +
-  //     user.login_name +
-  //     "(" +
-  //     user.id +
-  //     ")" +
-  //     " from pending list"
-  // );
 }
 
 function handleBlock(loginer: UseLoginDto, user: UserDto, doReload: Function) {
@@ -89,8 +73,6 @@ function handleBlock(loginer: UseLoginDto, user: UserDto, doReload: Function) {
     .post(`/api/me/blockeds/${user.id}`, {}, loginer.get_headers())
     .then((res) => {
       if (res.status === 201) {
-        // console.log(res.data);
-        // doReload(); Not needed if handleRemove
         handleRemove(loginer, user, doReload);
         return;
       }
@@ -113,7 +95,6 @@ function handleUnblock(
       }
     })
     .catch((error) => {});
-  // console.log("should unblock" + user.login_name + "(" + user.id + ")");
 }
 
 export default function ModalUser({
