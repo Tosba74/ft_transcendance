@@ -8,6 +8,7 @@ import { UseLoginDto } from "../Log/dto/useLogin.dto";
 import { UseChatDto } from "../Chat/dto/useChat.dto";
 import PublicList from "./PublicList";
 import BannedList from "./BannedList";
+import { Link } from "react-router-dom";
 
 interface ChannelsPageProps {
   loginer: UseLoginDto;
@@ -78,7 +79,6 @@ export default function ChannelsPage({ loginer, chats }: ChannelsPageProps) {
               reload={reload}
               doReload={doReload}
             />
-            <BannedList loginer={loginer} reload={reload} />
           </div>
         )}
 
@@ -95,16 +95,12 @@ export default function ChannelsPage({ loginer, chats }: ChannelsPageProps) {
           />
         )}
 
-        <button
-          className="mt-10 h-16 rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700"
-          type="button"
-          id="btn_new"
-          onClick={() => {
-            console.log(`button open pressed`);
-          }}
+        <Link
+			to="/channels/new"
+          className="mt-10 h-16 rounded text-center bg-blue-500 py-4 px-4 font-bold text-white hover:bg-blue-700"
         >
           New channel
-        </button>
+        </Link>
       </div>
 
       {rootEl !== null &&
