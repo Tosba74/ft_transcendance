@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException, forwardRef, Inject, PreconditionFailedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 
 import { UsersService } from 'src/users/users.service';
 import { MeService } from 'src/me/me.service';
@@ -222,7 +222,7 @@ export class ChatsService {
   }
 
 
-  async connectRoom(user: UserDto, client: Socket, room_id: number): Promise<WsResponseDto<ChatRoomDto>> {
+  async connectRoom(server: Server, user: UserDto, client: Socket, room_id: number): Promise<WsResponseDto<ChatRoomDto>> {
 
     let res = new WsResponseDto<ChatRoomDto>();
 
@@ -341,7 +341,26 @@ export class ChatsService {
   }
 
 
-  async adminCommand(user: UserDto, client: Socket, room_id: number, message: string): Promise<ChatMessageDto | undefined> {
+  async updateParticipants(server: Server, room_id: number) {
+
+    const room = await this.findOneById(room_id);
+
+    let participants: UserParticipantDto[] = [];
+
+    room.participants.forEach(value => {
+      let usr: UserParticipantDto = {
+        ...value.participant.toUserDto(),
+        roleId: value.role.id, roleName: value.role.name
+      }
+
+      participants.push(usr);
+    });
+
+    server.to(room_id.toString()).emit("updateParticipants", { room_id: room_id, participants: participants })
+  }
+
+
+  async adminCommand(server: Server, user: UserDto, client: Socket, room_id: number, message: string): Promise<ChatMessageDto | undefined> {
 
     let responseMessage = new ChatMessageDto();
 
@@ -378,21 +397,26 @@ export class ChatsService {
         // minimum Admin permission required
         case "/invite":
           responseMessage.content = await this.inviteCommand(room, user, command);
+          this.updateParticipants(server, room.id);
           break;
         case "/promote":
           responseMessage.content = await this.promoteCommand(room, user, command);
+          this.updateParticipants(server, room.id);
           break;
         case "/demote":
           responseMessage.content = await this.demoteCommand(room, user, command);
+          this.updateParticipants(server, room.id);
           break;
         case "/kick":
           responseMessage.content = await this.kickCommand(room, user, command);
           break;
         case "/ban":
           responseMessage.content = await this.banCommand(room, user, command);
+          this.updateParticipants(server, room.id);
           break;
         case "/unban":
           responseMessage.content = await this.unbanCommand(room, user, command);
+          this.updateParticipants(server, room.id);
           break;
         case "/role":
           responseMessage.content = await this.roleCommand(room, user, command);

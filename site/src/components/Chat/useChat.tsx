@@ -6,6 +6,7 @@ import { WsResponseDto } from "src/_shared_dto/ws-response.dto";
 import { ChatRoomDto } from "src/_shared_dto/chat-room.dto";
 
 import { UseChatDto } from "./dto/useChat.dto";
+import { ParticipantDto } from "src/_shared_dto/participant.dto";
 
 interface useChatProps {
   logged: boolean;
@@ -107,7 +108,6 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
           socketRef.current.on(
             "broadcastMessage",
             ({ room_id, message }: broadcastMessageProps) => {
-              console.log("recv msg", room_id, message);
 
               setRooms(
                 (oldRooms) =>
@@ -117,6 +117,29 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
                     [room_id]: {
                       ...oldRooms[room_id],
                       messages: [...oldRooms[room_id].messages, message],
+                    },
+                  }) ||
+                  oldRooms
+              );
+            }
+          );
+
+
+        socketRef.current &&
+          socketRef.current.on(
+            "updateParticipants",
+            ({ room_id, participants }: { room_id: number, participants: ParticipantDto[] }) => {
+
+              console.log('recv udate')
+
+              setRooms(
+                (oldRooms) =>
+                  (oldRooms &&
+                    oldRooms[room_id] && {
+                    ...oldRooms,
+                    [room_id]: {
+                      ...oldRooms[room_id],
+                      participants: participants,
                     },
                   }) ||
                   oldRooms
