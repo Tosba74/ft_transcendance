@@ -3,6 +3,7 @@ import MessageConv from "./MessageConv";
 import MessageInput from "./MessageInput";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
 import { UseChatDto } from "./dto/useChat.dto";
+import { UseGameDto } from "../Game/dto/useGame.dto";
 
 interface MessagePanelProps {
   selfId: number;
@@ -10,6 +11,7 @@ interface MessagePanelProps {
   room: ChatRoomDto | undefined;
   loginer: UseLoginDto;
   chats: UseChatDto;
+  gamer: UseGameDto;
 }
 
 export default function MessagePanel({
@@ -18,6 +20,7 @@ export default function MessagePanel({
   room,
   loginer,
   chats,
+  gamer,
 }: MessagePanelProps) {
   return (
     <>
@@ -34,6 +37,7 @@ export default function MessagePanel({
         <MessageConv
           loginer={loginer}
           chats={chats}
+          gamer={gamer}
           selfId={selfId}
           messages={room?.messages || []}
         />

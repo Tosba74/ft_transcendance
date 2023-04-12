@@ -3,19 +3,22 @@ import ModalUser from "../Friends/ModalUser";
 import React from "react";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
 import { UseChatDto } from "./dto/useChat.dto";
+import { UseGameDto } from "../Game/dto/useGame.dto";
 
 interface MessageBulleRecvProps {
   user: UserDto;
+  chats: UseChatDto;
+  gamer: UseGameDto;
   text: string;
   loginer: UseLoginDto;
-  chats: UseChatDto;
 }
 
 export default function MessageBulleRecv({
   user,
+  chats,
+  gamer,
   text,
   loginer,
-  chats,
 }: MessageBulleRecvProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [target, setTarget] = React.useState<any>(undefined);
@@ -26,6 +29,7 @@ export default function MessageBulleRecv({
   let innerChat = document.getElementById("innerChat");
 
   const handleClick = (event: any) => {
+    event.preventDefault();
     setTarget(event.target);
     if (innerChat !== null) setClientH(innerChat.clientHeight);
     setIsOpen(true);
@@ -35,6 +39,7 @@ export default function MessageBulleRecv({
 
   React.useEffect(() => {
     const handleScroll = (event: any) => {
+      event.preventDefault();
       if (isOpen) {
         if (target === undefined) {
           setIsOpen(false);
@@ -80,12 +85,13 @@ export default function MessageBulleRecv({
       {isOpen && (
         <ModalUser
           user={user}
+          loginer={loginer}
+          chats={chats}
+          gamer={gamer}
           modalRef={modalRef}
           posX={posX}
           posY={posY}
           type={null}
-          loginer={loginer}
-          chats={chats}
           doReload={handleClick}
         />
       )}

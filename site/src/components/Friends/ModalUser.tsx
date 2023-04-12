@@ -5,11 +5,13 @@ import axios from "axios";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { ChannelDto } from "src/_shared_dto/channel.dto";
 import { UseChatDto } from "../Chat/dto/useChat.dto";
+import { UseGameDto } from "../Game/dto/useGame.dto";
 
 interface ModalProps {
   type: string | null;
   loginer: UseLoginDto;
   chats: UseChatDto;
+  gamer: UseGameDto;
   user: UserDto;
   modalRef: React.MutableRefObject<HTMLDivElement | null>;
   posX: number;
@@ -118,6 +120,7 @@ export default function ModalUser({
   type,
   loginer,
   chats,
+  gamer,
   user,
   modalRef,
   posX,

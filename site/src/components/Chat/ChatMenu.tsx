@@ -12,12 +12,14 @@ import MessagePanel from "./MessagePanel";
 import { UseChatDto } from "./dto/useChat.dto";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
 import classNames from "classnames";
+import { UseGameDto } from "../Game/dto/useGame.dto";
 
 interface ChatMenuProps {
   openedMenu: string;
   setOpenedMenu: Function;
   loginer: UseLoginDto;
   chats: UseChatDto;
+  gamer: UseGameDto;
 }
 
 export default function ChatMenu({
@@ -25,6 +27,7 @@ export default function ChatMenu({
   setOpenedMenu,
   loginer,
   chats,
+  gamer,
 }: ChatMenuProps) {
   const [animation, setAnimation] = useState(true);
 
@@ -78,6 +81,7 @@ export default function ChatMenu({
                 room={chats.rooms && chats.rooms[chats.currChannel.toString()]}
                 loginer={loginer}
                 chats={chats}
+                gamer={gamer}
               />
             )}
             {chats.modeChannel && <ChannelPanel chats={chats} />}

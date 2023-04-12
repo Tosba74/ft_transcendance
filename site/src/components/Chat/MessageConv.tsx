@@ -5,12 +5,14 @@ import MessageBulleSend from "./MessageBulleSend";
 import MessageServer from "./MessageServer";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
 import { UseChatDto } from "./dto/useChat.dto";
+import { UseGameDto } from "../Game/dto/useGame.dto";
 
 interface MessageConvProps {
   selfId: number;
   messages: ChatMessageDto[];
   loginer: UseLoginDto;
   chats: UseChatDto;
+  gamer: UseGameDto;
 }
 
 export default function MessageConv({
@@ -18,6 +20,7 @@ export default function MessageConv({
   messages,
   loginer,
   chats,
+  gamer,
 }: MessageConvProps) {
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
   const [first, setFirst] = React.useState(true);
@@ -58,6 +61,7 @@ export default function MessageConv({
             text={message.content}
             loginer={loginer}
             chats={chats}
+            gamer={gamer}
           />
         );
       })}
