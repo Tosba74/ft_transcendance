@@ -15,7 +15,7 @@ export default function ChannelUserList({ users }: UserListProps) {
   return (
     <div className="scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-1 scrolling-touch mt-2 h-2/3 w-full flex-grow overflow-y-auto py-1 px-4 dark:text-white">
       {users.map((user) => (
-        <div className="flex flex-wrap gap-3 p-1">
+        <div key={user.id} className="flex flex-wrap gap-3 p-1">
           <img
             src={user.avatar_url}
             alt="Img"

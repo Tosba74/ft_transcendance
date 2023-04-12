@@ -1,15 +1,22 @@
 import React from "react";
+
 import { ChatMessageDto } from "src/_shared_dto/chat-message.dto";
+import { UseLoginDto } from "../Log/dto/useLogin.dto";
 import MessageBulleRecv from "./MessageBulleRecv";
 import MessageBulleSend from "./MessageBulleSend";
 import MessageServer from "./MessageServer";
 
 interface MessageConvProps {
+  loginer: UseLoginDto;
   selfId: number;
   messages: ChatMessageDto[];
 }
 
-export default function MessageConv({ selfId, messages }: MessageConvProps) {
+export default function MessageConv({
+  loginer,
+  selfId,
+  messages,
+}: MessageConvProps) {
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -37,6 +44,7 @@ export default function MessageConv({ selfId, messages }: MessageConvProps) {
         ) : (
           <MessageBulleRecv
             key={message.id}
+            loginer={loginer}
             user={message.sender}
             text={message.content}
           />

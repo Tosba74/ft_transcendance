@@ -1,16 +1,19 @@
 import { ChatRoomDto } from "src/_shared_dto/chat-room.dto";
+import { UseLoginDto } from "../Log/dto/useLogin.dto";
 import MessageConv from "./MessageConv";
 import MessageInput from "./MessageInput";
 import React from "react";
 import { ParticipantDto } from "src/_shared_dto/participant.dto";
 
 interface MessagePanelProps {
+  loginer: UseLoginDto;
   selfId: number;
   sendMessage: Function;
   room: ChatRoomDto | undefined;
 }
 
 export default function MessagePanel({
+  loginer,
   selfId,
   sendMessage,
   room,
@@ -34,7 +37,11 @@ export default function MessagePanel({
         </div>
       </div>
       <div className="scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch mb-2 h-0 flex-grow overflow-y-scroll rounded-b bg-gray-200 shadow-lg dark:bg-gray-700 dark:text-white">
-        <MessageConv selfId={selfId} messages={room?.messages || []} />
+        <MessageConv
+          loginer={loginer}
+          selfId={selfId}
+          messages={room?.messages || []}
+        />
       </div>
       <MessageInput sendMessage={sendMessage} />
     </>
