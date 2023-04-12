@@ -134,9 +134,6 @@ export class MeService {
 
   async createChat(user: LoggedUserDto, joinInfos: CreateChatDto): Promise<ChatModel> {
 
-	console.log(joinInfos.name)
-	console.log(joinInfos.password)
-	console.log(joinInfos.type_id)
     // const chat = await this.chatsService.findOneById(chat_id);
 
     // if (chat.type.id != ChatTypeModel.PUBLIC_TYPE) {
