@@ -94,6 +94,13 @@ const useGame = ({ loginer }: useGameProps) => {
       );
   };
 
+  const deco = () => {
+    gameSocketRef.current &&
+      gameSocketRef.current.disconnect();
+
+    gameSocketRef.current = undefined;
+  }
+
   React.useEffect(() => {
     if (gameArea.current === undefined) gameArea.current = new GameArea();
 
@@ -188,6 +195,7 @@ const useGame = ({ loginer }: useGameProps) => {
     createGame,
     joinGame,
     playGame,
+    deco,
   };
 };
 
