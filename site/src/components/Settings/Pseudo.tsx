@@ -72,7 +72,7 @@ export default function Pseudo({ loginer }: PseudoProps) {
           className="h-8 w-4/6 bg-slate-300 dark:bg-gray-800 dark:text-white"
           type="text"
           name="pseudo"
-          value={`  ${pseudoInput}`}
+          value={`${pseudoInput}`}
           onChange={(event) => setPseudoInput(event.target.value)}
         />
         <button
@@ -81,8 +81,8 @@ export default function Pseudo({ loginer }: PseudoProps) {
         >
           Save
         </button>
-        <div>{pseudoInputMessage}</div>
       </div>
+      <div className="h-8 w-4/6 text-center dark:text-white">{pseudoInputMessage}</div>
     </form>
   );
 }
