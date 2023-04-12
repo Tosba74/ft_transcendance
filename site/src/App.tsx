@@ -86,8 +86,8 @@ export default function App() {
                 path="/players"
                 element={<PlayersPage loginer={loginer} chats={chats} />}
               />
-              <Route
-                path="/createChannel"
+			        <Route
+                path="/channels/new"
                 element={<CreateChannelPage loginer={loginer} />}
               />
               <Route

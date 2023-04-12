@@ -32,16 +32,14 @@ export default function CreateChannelPage({ loginer }: CreateChannelPageProps) {
           {
             name: channelName,
             password: password,
-            type_id: typePP ? 1 : 2,
+            type_id: typePP ? 3 : 2,
           },
           loginer.get_headers()
         )
         .then((res) => {
           if (res.status == 201) {
             setPageMessage("Channel created, redirecting...");
-            setTimeout(() => {
-              navigate("/channels");
-            }, 3000);
+            navigate("/channels");
           } //
         })
         .catch(() => setPageMessage("Create Channel error"));
