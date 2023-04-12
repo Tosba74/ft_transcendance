@@ -17,7 +17,7 @@ import Logout from "./components/Log/Logout";
 import SettingsPage from "./components/Settings/SettingsPage";
 import { UseLoginDto } from "./components/Log/dto/useLogin.dto";
 import useLogin from "./components/Log/useLogin";
-import UserListPage from "./components/UserList/UserListPage";
+import PlayersPage from "./components/Players/PlayersPage";
 import ChatMenu from "./components/Chat/ChatMenu";
 import GamePage from "./components/Game/GamePage";
 import TfaCodePage from "./components/Log/TfaCodePage";
@@ -72,7 +72,7 @@ export default function App() {
               />
               <Route
                 path="/players/:id"
-                element={<PublicProfilePage loginer={loginer} />}
+                element={<PublicProfilePage loginer={loginer} chats={chats} />}
               />
               <Route
                 path="/friends"
@@ -84,9 +84,9 @@ export default function App() {
               />
               <Route
                 path="/players"
-                element={<UserListPage loginer={loginer} chats={chats} />}
+                element={<PlayersPage loginer={loginer} chats={chats} />}
               />
-			  <Route
+			        <Route
                 path="/channels/new"
                 element={<CreateChannelPage loginer={loginer} />}
               />

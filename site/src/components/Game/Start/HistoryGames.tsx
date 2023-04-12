@@ -1,45 +1,42 @@
 import React from "react";
-import { UseLoginDto } from "../../Log/dto/useLogin.dto";
 import axios from "axios";
+import { UseLoginDto } from "../../Log/dto/useLogin.dto";
+import { UserGameDto } from "src/_shared_dto/user-game.dto";
 
 export default function HistoryGames({ loginer }: { loginer: UseLoginDto }) {
-  // const [history, setHistory] = React.useState([]);
+  const [history, setHistory] = React.useState<UserGameDto[]>([]);
 
-  // React.useEffect(() => {
-  //   axios
-  //     .get("/api/me/blockeds", loginer.get_headers())
-  //     .then((res) => {
-  //       if (res.status === 200) {
-  //         // console.log(res.data as UserDto[]);
-  //         setHistory(res.data);
-  //         setUsers(res.data as UserDto[]);
+  React.useEffect(() => {
+    axios
+      .get("/api/games/recent", loginer.get_headers())
+      .then((res) => {
+        if (res.status === 200) {
+          setHistory(res.data as UserGameDto[]);
 
-  //         return;
-  //       }
-  //     })
-  //     .catch((error) => {});
-  // }, []);
-
-  // const content: JSX.Element[] = users.map((user) => (
-  //   <li key={user.id} className="flex items-center">
-  //     <User type={"friend"} loginer={loginer} user={user} doReload={doReload}>
-  //       <UserStatus status={user.status} />
-  //     </User>
-  //   </li>
-  // ));
-
-  const content = (
-    <>
-      <li>7 Tiago vs Jerome 3</li>
-      <li>7 Tiago vs Jerome 3</li>
-      <li>7 Tiago vs Jerome 3</li>
-    </>
-  );
+          return;
+        }
+      })
+      .catch((error) => {});
+  }, []);
 
   return (
     <>
-      <h2 className="text-left">Last games</h2>
-      <ul>{content}</ul>
+      <h3 className="text-blueGray-700 mb-1 text-center text-2xl font-semibold leading-normal">
+        Last games
+      </h3>
+
+      <div className="text-blueGray-700 grid grid-cols-[minmax(0,_1fr)_50px_minmax(0,_1fr)] whitespace-nowrap border p-4 text-center text-lg leading-relaxed">
+        {(history.length > 0 &&
+          history.map((histo) => {
+            return (
+              <React.Fragment key={histo.id}>
+                <span className="justify-self-end">{`${histo.user1.pseudo} ${histo.user1_score}`}</span>
+                <span className="justify-self-center">{`vs`}</span>
+                <span className="justify-self-start">{`${histo.user2_score} ${histo.user2.pseudo}`}</span>
+              </React.Fragment>
+            );
+          })) || <span className="col-span-3">No history</span>}
+      </div>
     </>
   );
 }
