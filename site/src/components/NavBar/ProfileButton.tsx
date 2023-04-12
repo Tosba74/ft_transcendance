@@ -1,3 +1,4 @@
+import React from "react";
 import LogoInconnu from "../../assets/img/inconnu.jpeg";
 import { Link } from "react-router-dom";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
@@ -20,6 +21,21 @@ export default function ProfileButton({
       setOpenedMenu("profile");
     }
   };
+  const ref = React.useRef<HTMLDivElement | null>(null);
+  React.useEffect(() => {
+    const checkIfClickedOutside = (e: any) => {
+      if (ref) {
+        if (openedMenu && !ref.current?.contains(e.target)) {
+			setOpenedMenu("");
+        }
+      }
+    };
+    document.addEventListener("mousedown", checkIfClickedOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", checkIfClickedOutside);
+    };
+  }, [openedMenu]);
 
   return (
     <div className="flex items-center md:order-2">
@@ -48,6 +64,7 @@ export default function ProfileButton({
         <div
           className="absolute top-20 right-2 z-40 w-40 list-none divide-y divide-gray-100 rounded-lg bg-white text-base shadow-lg dark:divide-gray-600 dark:bg-gray-700"
           id="user-dropdown"
+		  ref={ref}
         >
           <div className="px-4 py-3">
             <span className="block text-sm text-gray-900 dark:text-white">
