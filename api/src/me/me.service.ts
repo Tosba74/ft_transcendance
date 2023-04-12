@@ -134,31 +134,9 @@ export class MeService {
 
   async createChat(user: LoggedUserDto, joinInfos: CreateChatDto): Promise<ChatModel> {
 
-    // const chat = await this.chatsService.findOneById(chat_id);
-
-    // if (chat.type.id != ChatTypeModel.PUBLIC_TYPE) {
-
-    //   throw new UnauthorizedException('Room not public type');
-    // }
-
-
-    // if (chat.participants.some(element => {
-    //   return element.participant.id === user.id && element.role.id === ChatRoleModel.BAN_ROLE
-    // })) {
-
-    //   throw new PreconditionFailedException('Banned from this room');
-    // }
-
-    // else if (chat.participants.some(element => {
-    //   return element.participant.id === user.id
-    // })) {
-
-    //   throw new PreconditionFailedException('Already member of the room');
-    // }
-
     const newChat = await this.chatsService.create(joinInfos.name, joinInfos.type_id, joinInfos.password);
-	this.chatParticipantService.create(user.id, newChat.id, ChatRoleModel.USER_ROLE);
-	return (newChat);
+    this.chatParticipantService.create(user.id, newChat.id, ChatRoleModel.OWNER_ROLE);
+    return (newChat);
   }
 
 
@@ -186,16 +164,13 @@ export class MeService {
       throw new PreconditionFailedException('Already member of the room');
     }
 
-    if (await this.chatsService.isPasswordProtected(chat.id) === true)
-	{
-		if (joinInfos.password != undefined)
-		{
-			if (await this.chatsService.checkPassword(joinInfos.password, chat.id) !== true)
-			{
-				throw new UnauthorizedException('Missing password or password wrong');
-			}
-		}
-	}
+    if (await this.chatsService.isPasswordProtected(chat.id) === true) {
+      if (joinInfos.password != undefined) {
+        if (await this.chatsService.checkPassword(joinInfos.password, chat.id) !== true) {
+          throw new UnauthorizedException('Missing password or password wrong');
+        }
+      }
+    }
 
 
     return this.chatParticipantService.create(user.id, chat_id, ChatRoleModel.USER_ROLE);
