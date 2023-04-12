@@ -34,7 +34,7 @@ export default function ChatMenu({
   return (
     <>
       {chats.chatOpen && (
-        <div className="absolute top-16 bottom-10 z-50 flex w-full flex-col rounded-lg bg-gray-300 p-2 shadow-lg dark:bg-gray-800 md:top-20 md:right-2 md:w-1/2 lg:top-20 lg:w-1/3">
+        <div className="absolute top-20 bottom-10 z-40 flex w-full flex-col rounded-lg bg-gray-300 p-2 shadow-lg dark:bg-gray-800 md:top-20 md:right-2 md:w-1/2 lg:top-20 lg:w-1/3">
           <div className="flex flex-row items-center justify-between rounded bg-gray-200 p-2 text-center shadow-lg dark:bg-gray-700 dark:text-white">
             <ChatMode
               chats={chats}
