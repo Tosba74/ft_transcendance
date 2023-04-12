@@ -64,12 +64,20 @@ const useGame = ({ loginer }: useGameProps) => {
       );
   };
 
-  const joinGame = (game_id: number) => {
+  const joinGame = (game_id: number, successFct: Function | undefined = undefined, errorFct: Function | undefined = undefined) => {
     gameSocketRef.current &&
       gameSocketRef.current.emit(
         "joinGame",
         { game_id: game_id },
-        (response: void) => {}
+        (response: WsResponseDto<undefined>) => {
+
+          if (errorFct && response.error !== undefined) {
+            errorFct(`Error: ${response.error}`)
+          } //
+          else if (successFct !== undefined) {
+            successFct();
+          }
+        }
       );
   };
 
@@ -90,16 +98,15 @@ const useGame = ({ loginer }: useGameProps) => {
       gameSocketRef.current.emit(
         "sendAction",
         { game_id: gameId, actions: actions },
-        (response: void) => {}
+        (response: void) => { }
       );
   };
 
   const deco = () => {
-    gameSocketRef.current &&
-      gameSocketRef.current.disconnect();
+    gameSocketRef.current && gameSocketRef.current.disconnect();
 
     gameSocketRef.current = undefined;
-  }
+  };
 
   React.useEffect(() => {
     if (gameArea.current === undefined) gameArea.current = new GameArea();
@@ -160,7 +167,7 @@ const useGame = ({ loginer }: useGameProps) => {
                 (loginer.userInfos &&
                   (gameSetter.userInfos1.id === loginer.userInfos.id ||
                     gameSetter.userInfos2.id === loginer.userInfos.id)) ||
-                  false
+                false
               );
             }
           );
@@ -180,7 +187,7 @@ const useGame = ({ loginer }: useGameProps) => {
           (user2 &&
             user2.id === loginer.userInfos.id &&
             gameArea.current?.playerTwo.ready))) ||
-        false
+      false
     );
   }, [user1, user2]);
 

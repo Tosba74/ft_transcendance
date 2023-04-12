@@ -14,6 +14,7 @@ import { GameSetterDto } from 'src/_shared_dto/gamesetter.dto';
 import { UsersService } from 'src/users/users.service';
 import { GameStatusModel } from 'src/game_status/models/game_status.model';
 import { UserModel } from 'src/users/models/user.model';
+import { WsResponseDto } from 'src/_shared_dto/ws-response.dto';
 
 export class GameRoom {
   // host: WebsocketUser | undefined;
@@ -289,18 +290,15 @@ export class GamesService {
   }
 
 
-  async joinGame(server: Server, client: Socket, user_id: number, game_id: number) {
+  async joinGame(server: Server, client: Socket, user_id: number, game_id: number): Promise<WsResponseDto<undefined>> {
 
 
     if (this.currentGames[game_id.toString()] == undefined) {
-      console.log('joined game not exists');
-      return;
+      return { error: "Game not running", value: undefined };
     }
-
+    
     this.connectGameRoom(server, client, user_id, game_id);
-
-    console.log('join');
-
+    return { error: undefined, value: undefined };
   }
 
 
@@ -309,7 +307,6 @@ export class GamesService {
   playGame(user_id: number, game_id: number, actions: string[]) {
 
     if (this.currentGames[game_id.toString()] == undefined) {
-      console.log('played game not exists', game_id);
       return;
     }
 
@@ -330,7 +327,6 @@ export class GamesService {
   async gameLife(server: Server, game_id: number) {
 
     if (this.currentGames[game_id.toString()] == undefined) {
-      console.log('life not existing')
       return;
     }
 
