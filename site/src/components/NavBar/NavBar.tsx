@@ -40,11 +40,13 @@ export default function NavBar({
             openedMenu={openedMenu}
             setOpenedMenu={setOpenedMenu}
           />
+		{loginer.logged && (
           <BurgerButton
             loginer={loginer}
             openedMenu={openedMenu}
             setOpenedMenu={setOpenedMenu}
           />
+		)}
         </div>
       </nav>
     </header>

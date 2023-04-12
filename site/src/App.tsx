@@ -66,14 +66,14 @@ export default function App() {
 
           {!loginer.logged && (
             <>
-              <Route path="/start" element={<p>not logged</p>} />
-              <Route path="/players/:id" element={<p>not logged</p>} />
-              <Route path="/friends" element={<p>not logged</p>} />
-              <Route path="/channels" element={<p>not logged</p>} />
-              <Route path="/players" element={<p>not logged</p>} />
-              <Route path="/channels/new" element={<p>not logged</p>} />
-              <Route path="/settings" element={<p>not logged</p>} />
-              <Route path="/game" element={<p>not logged</p>} />
+              <Route path="/start" element={<p></p>} />
+              <Route path="/players/:id" element={<p></p>} />
+              <Route path="/friends" element={<p></p>} />
+              <Route path="/channels" element={<p></p>} />
+              <Route path="/players" element={<p></p>} />
+              <Route path="/channels/new" element={<p></p>} />
+              <Route path="/settings" element={<p></p>} />
+              <Route path="/game" element={<p></p>} />
             </>
           )}
           {loginer.logged && (

@@ -16,7 +16,6 @@ interface UserListPageProps {
 }
 
 export default function ProfilePublic({ loginer, chats }: UserListPageProps) {
-  const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string>();
   const [user, setUser] = React.useState<UserDto>();
   const [stats, setStats] = React.useState<UserStatsDto>();
@@ -81,7 +80,6 @@ export default function ProfilePublic({ loginer, chats }: UserListPageProps) {
   };
 
   React.useEffect(() => {
-    setLoading(true);
     axios
       .get(`/api/users/${id}`, loginer.get_headers())
       .then((res: any) => {
@@ -91,11 +89,9 @@ export default function ProfilePublic({ loginer, chats }: UserListPageProps) {
         else {
           setError("non valide");
         }
-        setLoading(false);
       })
       .catch((e) => {
         setError(e.message);
-        setLoading(false);
       });
 
     axios
@@ -116,18 +112,6 @@ export default function ProfilePublic({ loginer, chats }: UserListPageProps) {
 
   return (
     <>
-      {loading && (
-        <div className="row">
-          <div className="card large error">
-            <div
-              className="text-blue-1000 mb-4 rounded-lg bg-blue-500 p-4 text-center dark:bg-gray-800 dark:text-red-400"
-              role="alert"
-            >
-              <h1 className="text-2xl font-medium">loading...</h1>
-            </div>
-          </div>
-        </div>
-      )}
       {error && (
         <div className="row">
           <div className="card large error">
