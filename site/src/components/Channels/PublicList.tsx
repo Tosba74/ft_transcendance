@@ -54,7 +54,7 @@ export default function PublicList({
           doReload();
           setPortal(false);
           setPassword("");
-		  setChannelID(0);
+          setChannelID(0);
         } //
       })
       .catch(() => setPageMessage("Join Channel error"));
@@ -143,9 +143,9 @@ export default function PublicList({
                     if (channel.password) {
                       setPortal(true);
                       setEffect(true);
-					  setChannelID(channel.id);
-					  setPageMessage("");
-					  setPassword("");
+                      setChannelID(channel.id);
+                      setPageMessage("");
+                      setPassword("");
                     } else {
                       handleSubmit(channel.id);
                     }
@@ -169,7 +169,7 @@ export default function PublicList({
                         if (!effect) {
                           setPageMessage("");
                           setPassword("");
-						  setChannelID(0);
+                          setChannelID(0);
                         }
                       }}
                     >

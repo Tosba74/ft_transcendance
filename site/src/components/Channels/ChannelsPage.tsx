@@ -35,7 +35,7 @@ export default function ChannelsPage({ loginer, chats }: ChannelsPageProps) {
   return (
     <>
       <div className="mx-auto flex h-5/6 max-w-[600px] flex-col px-4">
-        <ul className="mt-2 divide-x divide-gray-200 rounded-lg text-center text-sm font-medium text-gray-500 shadow dark:divide-gray-700 dark:text-gray-400 flex">
+        <ul className="mt-2 flex divide-x divide-gray-200 rounded-lg text-center text-sm font-medium text-gray-500 shadow dark:divide-gray-700 dark:text-gray-400">
           <li className="w-full">
             <div
               onClick={() => setSelectedMenu("public")}
@@ -96,8 +96,8 @@ export default function ChannelsPage({ loginer, chats }: ChannelsPageProps) {
         )}
 
         <Link
-			to="/channels/new"
-          className="mt-10 h-16 rounded text-center bg-blue-500 py-4 px-4 font-bold text-white hover:bg-blue-700"
+          to="/channels/new"
+          className="mt-10 h-16 rounded bg-blue-500 py-4 px-4 text-center font-bold text-white hover:bg-blue-700"
         >
           New channel
         </Link>
