@@ -87,12 +87,10 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
   };
 
   const deco = () => {
-    socketRef.current &&
-      socketRef.current.disconnect();
+    socketRef.current && socketRef.current.disconnect();
 
     socketRef.current = undefined;
-  }
-
+  };
 
   React.useEffect(() => {
     if (logged && socketRef.current === undefined) {
@@ -121,12 +119,12 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
                 (oldRooms) =>
                   (oldRooms &&
                     oldRooms[room_id] && {
-                    ...oldRooms,
-                    [room_id]: {
-                      ...oldRooms[room_id],
-                      messages: [...oldRooms[room_id].messages, message],
-                    },
-                  }) ||
+                      ...oldRooms,
+                      [room_id]: {
+                        ...oldRooms[room_id],
+                        messages: [...oldRooms[room_id].messages, message],
+                      },
+                    }) ||
                   oldRooms
               );
             }

@@ -86,7 +86,7 @@ export default function App() {
                 path="/players"
                 element={<PlayersPage loginer={loginer} chats={chats} />}
               />
-			        <Route
+              <Route
                 path="/channels/new"
                 element={<CreateChannelPage loginer={loginer} />}
               />
@@ -104,7 +104,10 @@ export default function App() {
             path="/login_tfa"
             element={<TfaCodePage loginer={loginer} />}
           />
-          <Route path="/logout" element={<Logout loginer={loginer} chats={chats} gamer={gamer} />} />
+          <Route
+            path="/logout"
+            element={<Logout loginer={loginer} chats={chats} gamer={gamer} />}
+          />
 
           {process.env.BUILD_TYPE !== "Production" && (
             <>
