@@ -4,17 +4,16 @@ import React from "react";
 import { UserDto } from "src/_shared_dto/user.dto";
 import { UseChatDto } from "../Chat/dto/useChat.dto";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
-import UserCard from "./UserCard";
+import UserCard from "./PlayerCard";
 
-interface UserListPageProps {
+interface PlayersPageProps {
   loginer: UseLoginDto;
   chats: UseChatDto;
   //   refreshUserInfos: Function;
 }
 
-export default function UserListPage({ loginer, chats }: UserListPageProps) {
+export default function PlayersPage({ loginer, chats }: PlayersPageProps) {
   let [users, setUsers] = React.useState<UserDto[]>([]);
-
 
   React.useEffect(() => {
     axios
@@ -46,7 +45,7 @@ export default function UserListPage({ loginer, chats }: UserListPageProps) {
   return (
     <>
       <div className="h-full w-full justify-center p-2">
-        <div className="flex flex-wrap gap-2">
+        <div className="mx-auto flex flex-wrap justify-center gap-2">
           {users.map((user) => (
             <div key={user.id}>
               <UserCard loginer={loginer} chats={chats} user={user} />

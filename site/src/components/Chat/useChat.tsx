@@ -124,7 +124,8 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
             }
           );
       });
-    } else {
+    } //
+    else if (logged === false) {
       console.log("socket not connected not logged");
     }
   }, [logged]);

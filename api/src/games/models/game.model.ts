@@ -26,12 +26,6 @@ export class GameModel {
     @Column()
     user2_score: number;
 
-    @ApiResponseProperty({ type: Date })
-    started_at: Date;
-
-    @ApiResponseProperty({ type: Date })
-    ended_at: Date;
-
     //--------------------------------------------
 
     @ApiResponseProperty({ type: () => UserModel })

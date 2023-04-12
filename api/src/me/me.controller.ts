@@ -37,9 +37,16 @@ export class MeController {
 
     @Get()
     @ApiOkResponse({ description: 'User infos retrieved successfully', type: LoggedUserDto })
-    getMe(@Request() req: any): LoggedUserDto {
+    async getMe(@Request() req: any): Promise<LoggedUserDto> {
 
-        return req.user as LoggedUserDto;
+        const user = req.user as LoggedUserDto;
+
+
+        user.asked = (await this.meService.listSentFriends(user)).map(value => value.id);
+        user.friends = (await this.meService.listFriends(user)).map(value => value.id);
+        user.blockeds = (await this.meService.listBlockeds(user)).map(value => value.id);
+
+        return user;
     }
 
     // @Get()

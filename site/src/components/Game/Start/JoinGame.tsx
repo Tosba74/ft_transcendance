@@ -19,7 +19,7 @@ export default function JoinGame({ loginer }: { loginer: UseLoginDto }) {
     <>
       <label
         htmlFor="inputIdGame"
-        className="w-sm text-sl pr-4 text-left font-medium text-gray-900 dark:text-white"
+        className="w-sm text-sl pr-4 text-center font-medium text-gray-900 dark:text-white"
       >
         ID Game
       </label>

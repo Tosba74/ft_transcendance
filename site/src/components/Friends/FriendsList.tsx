@@ -36,7 +36,10 @@ export default function FriendsList({
   const content: JSX.Element[] = users.map((user) => (
     <li key={user.id} className="flex items-center">
       <User type={"friend"} loginer={loginer} user={user} doReload={doReload}>
-        <UserStatus status={user.status} />
+        <UserStatus
+          status={user.status}
+          classes={"mr-1 inline-block h-3 w-3 rounded-full"}
+        />
       </User>
     </li>
   ));

@@ -22,4 +22,8 @@ export class LoggedUserDto {
 
     @ApiProperty({ type: Boolean })
     is_admin: boolean;
+
+    asked: number[];
+    friends: number[];
+    blockeds: number[];
 }

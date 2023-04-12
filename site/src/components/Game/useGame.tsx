@@ -158,7 +158,8 @@ const useGame = ({ loginer }: useGameProps) => {
             }
           );
       });
-    } else {
+    } //
+    else if (loginer.logged === false) {
       console.log("game socket not connected not logged");
     }
   }, [loginer.logged]);
