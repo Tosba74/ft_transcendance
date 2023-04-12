@@ -8,9 +8,13 @@ export default function HomePage() {
       <h1 id="startPage" className="text-2xl">
         Home page
       </h1>
-
       <p className="text-center text-gray-500 dark:text-gray-400">
-        This is our <a className="text-blue-600">ft_transcendance</a>, HF and GL for your games. Made by
+        This is our <a className="text-blue-600">ft_transcendance</a>, HF and GL for your games.</p>
+		<i className="text-center text-sm text-gray-500 dark:text-gray-400">
+			To start a game, you need to <a className="text-blue-600">log in</a> first!
+      	</i>
+	  <p className="text-center text-gray-500 dark:text-gray-400">
+        Made by
       </p>
       <div className="flex flex-row justify-center mt-4 text-center">
         <div className="flex-1 flex flex-col justify-center">
