@@ -37,7 +37,7 @@ export default function CurrentList({
           return;
         }
       })
-      .catch((error) => {});
+      .catch((error) => { });
 
     setTimeout(() => {
       setEffect(false);
@@ -68,13 +68,18 @@ export default function CurrentList({
 
         <ul className="grow overflow-y-scroll px-1">
           {channels.map((channel) => {
+            let role = "";
+            if (channel.role === 2) role = ` admin`;
+            if (channel.role === 3) role = ` owner`;
             return (
               <div
                 key={channel.id}
                 className="text-blueGray-700 mb-2 flex text-lg"
               >
                 <div className="flex basis-5/6">
-                  <li className="w-14 basis-5/6 truncate">{channel.name}</li>
+                  <li className="w-14 basis-5/6 truncate">
+                    {channel.name} <small>{role}</small>
+                  </li>
                   <IconSwitch channel={channel} />
                 </div>
                 <button

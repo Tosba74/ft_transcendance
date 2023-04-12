@@ -1,9 +1,11 @@
+import classNames from "classnames";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { ParticipantDto } from "src/_shared_dto/participant.dto";
 import { UserDto } from "src/_shared_dto/user.dto";
 
 interface UserListProps {
-  users: UserDto[];
+  users: ParticipantDto[];
 }
 
 export default function ChannelUserList({ users }: UserListProps) {
@@ -19,7 +21,17 @@ export default function ChannelUserList({ users }: UserListProps) {
             alt="Img"
             className="h-6 w-6 rounded-full object-cover"
           />
-          <h2 className="dark:text-white">{user.pseudo}</h2>
+          <h2
+            className={classNames(
+              "dark:text-white",
+              user.roleName === "ban" && "font-bold text-red-500"
+            )}
+          >
+            <Link to="#">
+              {user.login_name}{" "}
+              <small>{user.roleName !== "user" && user.roleName}</small>
+            </Link>
+          </h2>
         </div>
       ))}
     </div>
