@@ -247,7 +247,7 @@ export class ChatsService {
       newroom.name = room.name.toString();
       newroom.type = room.type.id;
       if (newroom.type === ChatTypeModel.PUBLIC_TYPE)
-        newroom.protected = await this.isPasswordProtected(newroom.id);
+        newroom.pw = await this.isPasswordProtected(newroom.id);
 
       //Get all messages from the db
       newroom.messages = [];
@@ -358,7 +358,9 @@ export class ChatsService {
       participants.push(usr);
     });
 
-    server.to(room_id.toString()).emit("updateParticipants", { room_id: room_id, participants: participants })
+    const pw: Boolean | undefined = await this.isPasswordProtected(room_id);
+
+    server.to(room_id.toString()).emit("updateParticipants", { room_id: room_id, participants: participants, pw: pw});
   }
 
 
@@ -394,6 +396,7 @@ export class ChatsService {
         // Owner permission required
         case "/pw":
           responseMessage.content = await this.pwCommand(room, user, command);
+          this.updateParticipants(server, room.id);
           break;
 
         // minimum Admin permission required

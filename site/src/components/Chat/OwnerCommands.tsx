@@ -39,12 +39,6 @@ export default function OwnerCommands({
 		setPortal(true);
 	};
 
-	const handleUpdatePw = () => {
-		console.log('REMOVE PORTAL');
-		setEffect(false);
-		setPortal(false);
-	};
-
 	React.useEffect(() => {
 		const checkIfClickedOutside = (e: any) => {
 			if (ref) {
@@ -96,7 +90,7 @@ export default function OwnerCommands({
 						{room?.type === 3 &&
 							<OwnerInvite loginer={loginer} sendMessage={sendMessage} participants={participants} />
 							|| room?.type === 2 &&
-							<OwnerPw loginer={loginer} sendMessage={sendMessage} room={room} portal={handleUpdatePw} />}
+							<OwnerPw sendMessage={sendMessage} room={room} />}
 
 					</div>,
 					startEL

@@ -135,9 +135,11 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
             ({
               room_id,
               participants,
+              pw,
             }: {
               room_id: number;
               participants: ParticipantDto[];
+              pw: Boolean | undefined;
             }) => {
               console.log("recv udate");
 
@@ -149,6 +151,7 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
                       [room_id]: {
                         ...oldRooms[room_id],
                         participants: participants,
+                        pw: pw,
                       },
                     }) ||
                   oldRooms

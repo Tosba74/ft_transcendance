@@ -3,17 +3,13 @@ import { UseLoginDto } from "../Log/dto/useLogin.dto";
 import { ChatRoomDto } from "src/_shared_dto/chat-room.dto";
 
 interface OwnerPwProps {
-	loginer: UseLoginDto;
 	sendMessage: Function;
 	room: ChatRoomDto | undefined;
-	portal: Function;
 }
 
 export default function OwnerPw({
-	loginer,
 	sendMessage,
 	room,
-	portal
 }: OwnerPwProps) {
 
 	const [addPassword, setAddPassword] = React.useState("");
@@ -22,15 +18,6 @@ export default function OwnerPw({
 		if (addPassword.length > 0) {
 			sendMessage(`/pw ${addPassword}`);
 			setAddPassword("");
-
-			// update room everywhere needed
-			// ...
-			console.log('need to update protected info');
-			if (room?.protected)
-				room.protected = true;
-
-			// refresh portal
-			// portal();
 		}
 	};
 
@@ -49,15 +36,6 @@ export default function OwnerPw({
 			setCurrentPassword("");
 			setNewPassword("");
 			setErrorMsg("");
-
-			// update room everywhere needed
-			// ...
-			console.log('need to update protected info');
-			if (room?.protected)
-				room.protected = true;
-
-			// refresh portal
-			// portal();
 		}
 	};
 
@@ -70,15 +48,6 @@ export default function OwnerPw({
 			sendMessage(`/pw ${currentPassword}`);
 			setCurrentPassword("");
 			setErrorMsg("");
-
-			// update room everywhere needed
-			// ...
-			console.log('need to update protected info');
-			if (room?.protected)
-				room.protected = true;
-
-			// refresh portal
-			// portal();
 		}
 	};
 
@@ -86,7 +55,7 @@ export default function OwnerPw({
 	return (
 		<div className="mb-6 w-full py-2">
 
-			{room?.protected === false &&
+			{room?.pw === false &&
 				(<form onSubmit={handleAddPassword}>
 					<label className="">
 						Add a password
