@@ -4,20 +4,22 @@ import classNames from "classnames";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
 
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { UseGameDto } from "../Game/dto/useGame.dto";
 
 interface BurgerButtonProps {
   loginer: UseLoginDto;
+  gamer: UseGameDto;
   openedMenu: string;
   setOpenedMenu: Function;
 }
 
 export default function BurgerButton({
   loginer,
+  gamer,
   openedMenu,
   setOpenedMenu,
 }: BurgerButtonProps) {
   //
-
   const handleClick = () => {
     if (openedMenu == "burger") {
       setOpenedMenu("");
@@ -78,19 +80,21 @@ export default function BurgerButton({
                 : " text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white  md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white"
             )}
           >
-            Start
+            Start game
           </Link>
-          <Link
-            to="/game"
-            className={classNames(
-              "block rounded py-2 pl-3 pr-4 md:p-0",
-              location.pathname == "/game"
-                ? "bg-cyan-500 text-white dark:text-white md:bg-transparent md:text-cyan-500"
-                : " text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white  md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white"
-            )}
-          >
-            Game
-          </Link>
+          {gamer.gameId != -1 && gamer.gameArea.current?.ended === false && (
+            <Link
+              to="/game"
+              className={classNames(
+                "block rounded py-2 pl-3 pr-4 md:p-0",
+                location.pathname == "/game"
+                  ? "bg-cyan-500 text-white dark:text-white md:bg-transparent md:text-cyan-500"
+                  : " text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white  md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white"
+              )}
+            >
+              Game
+            </Link>
+          )}
           <Link
             to="/friends"
             className={classNames(

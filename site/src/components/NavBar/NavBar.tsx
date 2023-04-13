@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import React, { useState } from "react";
+import { UseGameDto } from "../Game/dto/useGame.dto";
 import { Link } from "react-router-dom";
 import BurgerButton from "./BurgerButton";
 import ProfileButton from "./ProfileButton";
@@ -8,12 +9,14 @@ import { UseLoginDto } from "../Log/dto/useLogin.dto";
 
 interface NavBarProps {
   loginer: UseLoginDto;
+  gamer: UseGameDto;
   openedMenu: string;
   setOpenedMenu: Function;
 }
 
 export default function NavBar({
   loginer,
+  gamer,
   openedMenu,
   setOpenedMenu,
 }: NavBarProps) {
@@ -50,6 +53,7 @@ export default function NavBar({
           {loginer.logged && (
             <BurgerButton
               loginer={loginer}
+              gamer={gamer}
               openedMenu={openedMenu}
               setOpenedMenu={setOpenedMenu}
             />
