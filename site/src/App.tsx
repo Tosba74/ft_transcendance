@@ -56,6 +56,7 @@ export default function App() {
     <Router>
       <NavBar
         loginer={loginer}
+        gamer={gamer}
         openedMenu={openedMenu}
         setOpenedMenu={setOpenedMenu}
       />
