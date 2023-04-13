@@ -55,7 +55,7 @@ export default function FriendsPage({
     <div
       className={`${
         effect2 && "animate-spin"
-      } mx-auto h-full max-w-md bg-white p-6 shadow-md dark:border-gray-700 dark:bg-gray-800 dark:text-white md:h-max`}
+      } mx-auto h-full h-max max-w-md bg-white p-6 shadow-md dark:border-gray-700 dark:bg-gray-800 dark:text-white`}
     >
       <div className="flex items-baseline">
         <h1 className="grow pb-4 text-center text-3xl">Friends List</h1>
