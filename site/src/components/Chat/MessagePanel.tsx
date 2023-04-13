@@ -5,6 +5,8 @@ import MessageInput from "./MessageInput";
 import { UseChatDto } from "./dto/useChat.dto";
 import { UseGameDto } from "../Game/dto/useGame.dto";
 import React from "react";
+import { ParticipantDto } from "src/_shared_dto/participant.dto";
+import OwnerCommands from "./OwnerCommands";
 
 interface MessagePanelProps {
   selfId: number;
@@ -30,7 +32,7 @@ export default function MessagePanel({
       (participant) => participant.id === selfId
     );
     if (me !== undefined) {
-      if (me.roleId > 1) setRole(` ${me.roleName}`);
+      if (me.roleId > 1) setRole(me.roleName);
     }
   }, [room, selfId]);
 
@@ -38,7 +40,16 @@ export default function MessagePanel({
     <>
       <div className="mt-2 grid h-10 w-full grid-cols-1 items-center justify-center rounded-t bg-gray-200 text-center dark:bg-gray-700 dark:text-white">
         <div className="mr-2 items-center justify-center overflow-x-hidden whitespace-nowrap">
-          {room?.name || "No room selected"} <small>{role}</small>
+          {room?.name || "No room selected"}
+          {(role === "owner" && (
+            <OwnerCommands
+              loginer={loginer}
+              sendMessage={sendMessage}
+              participants={room?.participants || []}
+              role={role}
+              room={room}
+            />
+          )) || <small className="pl-1"> {role}</small>}
         </div>
         <div className="content=[' '] mx-auto w-[80%] border-t border-black dark:border-gray-100"></div>
       </div>

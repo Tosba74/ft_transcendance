@@ -77,8 +77,6 @@ const useGame = ({ loginer }: useGameProps) => {
         "joinGame",
         { game_id: game_id },
         (response: WsResponseDto<number>) => {
-          console.log("rese", response);
-
           if (errorFct && response.error !== undefined) {
             errorFct(`Error: ${response.error}`);
           } //
