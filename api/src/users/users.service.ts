@@ -350,7 +350,7 @@ export class UsersService {
     if (games.length > 0) {
       stats.win_rate = Math.round(games.filter(game => {
         return game.user1?.id === id && game.user1_score > game.user2_score ||
-          game.user2?.id === id && game.user1_score > game.user2_score;
+          game.user2?.id === id && game.user2_score > game.user1_score;
       }).length / games.length * 100);
     }
     else {
