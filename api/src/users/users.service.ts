@@ -315,9 +315,11 @@ export class UsersService {
 
 
         points.set(game.user1?.id || -1, (points.get(game.user1?.id || -1) || 0) + game.user1_score - game.user2_score);
+        points.set(game.user2?.id || -1, (points.get(game.user2?.id || -1) || 0) + 0);
       } //
       else {
         points.set(game.user2?.id || -1, (points.get(game.user2?.id || -1) || 0) + game.user2_score - game.user1_score);
+        points.set(game.user1?.id || -1, (points.get(game.user1?.id || -1) || 0) + 0);
 
       }
     });
