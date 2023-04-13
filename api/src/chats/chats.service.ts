@@ -246,6 +246,8 @@ export class ChatsService {
       newroom.id = room_id;
       newroom.name = room.name.toString();
       newroom.type = room.type.id;
+      if (newroom.type === ChatTypeModel.PUBLIC_TYPE)
+        newroom.protected = await this.isPasswordProtected(newroom.id);
 
       //Get all messages from the db
       newroom.messages = [];

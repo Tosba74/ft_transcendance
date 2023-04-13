@@ -1,4 +1,4 @@
-import React, { useEffect, SyntheticEvent } from "react";
+import React, { SyntheticEvent } from "react";
 import { createPortal } from "react-dom";
 import classNames from "classnames";
 import axios from "axios";
@@ -7,6 +7,9 @@ import { UseLoginDto } from "../Log/dto/useLogin.dto";
 import { ParticipantDto } from "src/_shared_dto/participant.dto";
 import { UseChatDto } from "./dto/useChat.dto";
 import { ChatRoomDto } from "src/_shared_dto/chat-room.dto";
+
+import OwnerInvite from "./OwnerInvite"
+import OwnerPw from "./OwnerPw";
 
 const startEL = document.getElementById("root");
 
@@ -25,36 +28,10 @@ export default function OwnerCommands({
   role,
   room,
 }: OwnerCommandsProps) {
-  const [users, setUsers] = React.useState<ParticipantDto[]>([]);
   const [portal, setPortal] = React.useState(false);
   const [effect, setEffect] = React.useState(false);
 
-  const [invite, setInvite] = React.useState("");
-  const [password, setPassword] = React.useState("");
-
   const ref = React.useRef<HTMLDivElement | null>(null);
-
-  React.useEffect(() => {
-    axios
-      .get("/api/users", loginer.get_headers())
-      .then((res) => {
-        if (res.status === 200) {
-          const allUsers = res.data as ParticipantDto[];
-          setUsers(
-            allUsers.filter((value) => {
-              return (
-                participants.find((parti) => {
-                  return parti.id === value.id;
-                }) === undefined
-              );
-            })
-          );
-
-          return;
-        }
-      })
-      .catch((error) => {});
-  }, [participants]);
 
   const handleClickPortal = (event: SyntheticEvent) => {
     event.preventDefault();
@@ -62,20 +39,7 @@ export default function OwnerCommands({
     setPortal(true);
   };
 
-  const handleClickInvite = (event: SyntheticEvent) => {
-    event.preventDefault();
-    if (invite.length > 0) {
-      sendMessage(`/invite ${invite}`);
-      setInvite("");
-    }
-  };
-
-  const handleClickPassword = (event: SyntheticEvent) => {
-    event.preventDefault();
-    // ...
-  };
-
-  useEffect(() => {
+  React.useEffect(() => {
     const checkIfClickedOutside = (e: any) => {
       if (ref) {
         if (portal && !ref.current?.contains(e.target)) {
@@ -91,7 +55,7 @@ export default function OwnerCommands({
     };
   }, [portal]);
 
-  console.log(room);
+
   return (
     <>
       <button className="pl-1 hover:underline" onClick={handleClickPortal}>
@@ -123,91 +87,10 @@ export default function OwnerCommands({
           >
             <h3 className="text-center text-xl">Owner settings</h3>
 
-
-			{room?.type === 3 && (
-            <div className="mb-6 h-16 w-full py-2">
-              <label className="">Invite user</label>
-              <div className="flex h-full w-full items-center justify-around gap-4 rounded-full bg-cyan-500 shadow-lg transition duration-500 ease-in-out hover:bg-blue-400 focus:outline-none">
-                <select
-                  defaultValue={""}
-                  onChange={(event) => {
-                    setInvite(event.target.value);
-                  }}
-                  className="ml-2 w-full rounded-full bg-gray-200 p-1 px-4 text-gray-600 placeholder-gray-600 focus:placeholder-gray-400 focus:outline-none"
-                >
-                  <option id='defaultOption' key={-1} value="">
-                    Pseudo
-                  </option>
-                  ;
-                  {users.map((user) => {
-                    return (
-                      <option key={user.id} value={user.id}>
-                        {user.pseudo}
-                      </option>
-                    );
-                  })}
-                </select>
-
-                <button className="mr-1 text-white" onClick={handleClickInvite}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
-                    className="ml-1 h-10 w-10"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M12.75 15l3-3m0 0l-3-3m3 3h-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </div>
-			)
-
-
-			|| room?.type === 2 && (
-            <div className="mb-6 h-16 w-full py-2">
-              <label className="">
-                Change password <small>(leave empty to remove)</small>
-              </label>
-              <div className="flex h-full w-full items-center justify-around gap-4 rounded-full bg-cyan-500 shadow-lg transition duration-500 ease-in-out hover:bg-blue-400 focus:outline-none">
-                <input
-                  type="text"
-                  placeholder="New password"
-                  value={password}
-                  onChange={(event) => {
-                    setPassword(event.target.value);
-                  }}
-                  className="ml-2 w-full rounded-full bg-gray-200 p-1 px-4 text-gray-600 placeholder-gray-600 focus:placeholder-gray-400 focus:outline-none"
-                />
-
-                <button
-                  className="mr-1 text-white"
-                  onClick={handleClickPassword}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
-                    className="ml-1 h-10 w-10"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M12.75 15l3-3m0 0l-3-3m3 3h-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </div>
-			)}
-
+			{room?.type === 3 && 
+				<OwnerInvite loginer={loginer} sendMessage={sendMessage} participants={participants} />
+			|| room?.type === 2 && 
+				<OwnerPw loginer={loginer} sendMessage={sendMessage} participants={participants} role={role} room={room} />}
 
           </div>,
           startEL

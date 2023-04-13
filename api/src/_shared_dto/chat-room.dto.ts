@@ -5,6 +5,7 @@ export class ChatRoomDto {
 	id: number;
 	name: string;
 	type: number;
+	protected?: boolean;
 
 	messages: ChatMessageDto[];
 	participants: UserDto[];

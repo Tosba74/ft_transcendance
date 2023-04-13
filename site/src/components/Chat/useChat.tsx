@@ -155,6 +155,11 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
               );
             }
           );
+
+          // socketRef.current &&
+          // socketRef.current.on(
+          //   "updatePassword",({})
+          // );
       });
     } //
     else if (logged === false) {
