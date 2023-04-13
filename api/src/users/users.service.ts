@@ -315,9 +315,11 @@ export class UsersService {
 
 
         points.set(game.user1?.id || -1, (points.get(game.user1?.id || -1) || 0) + game.user1_score - game.user2_score);
+        points.set(game.user2?.id || -1, (points.get(game.user2?.id || -1) || 0) + 0);
       } //
       else {
         points.set(game.user2?.id || -1, (points.get(game.user2?.id || -1) || 0) + game.user2_score - game.user1_score);
+        points.set(game.user1?.id || -1, (points.get(game.user1?.id || -1) || 0) + 0);
 
       }
     });
@@ -343,14 +345,14 @@ export class UsersService {
     const ranking = await this.getRanking();
     const userRank = ranking.indexOf(id);
 
-    stats.rank = userRank !== -1 && `${userRank} / ${ranking.length}` || 'unranked';
+    stats.rank = userRank !== -1 && `${userRank + 1} / ${ranking.length}` || 'unranked';
 
     stats.last_games = games;
 
     if (games.length > 0) {
       stats.win_rate = Math.round(games.filter(game => {
         return game.user1?.id === id && game.user1_score > game.user2_score ||
-          game.user2?.id === id && game.user1_score > game.user2_score;
+          game.user2?.id === id && game.user2_score > game.user1_score;
       }).length / games.length * 100);
     }
     else {

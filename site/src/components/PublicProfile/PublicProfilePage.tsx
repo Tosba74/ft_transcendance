@@ -110,7 +110,7 @@ export default function ProfilePublic({ loginer, chats }: UserListPageProps) {
       .catch((e) => {
         setError(e.message);
       });
-  }, []);
+  }, [id]);
 
   return (
     <>
