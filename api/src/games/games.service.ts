@@ -162,7 +162,7 @@ export class GamesService {
 
     if (this.currentGames[game_id.toString()] !== undefined) {
       console.log('game already created');
-      return;
+      return -1;
     }
 
     this.currentGames[game_id.toString()] = new GameRoom();
@@ -183,9 +183,6 @@ export class GamesService {
     this.currentGames[game_id.toString()].timer = setInterval(() => { game_function() }, 1000 / module_const.fps);
 
     this.connectGameRoom(server, client, user_id, game_id);
-
-
-    console.log('create');
   }
 
 
