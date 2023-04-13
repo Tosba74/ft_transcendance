@@ -34,9 +34,16 @@ export default function MessagePanel({
   return (
     <>
       <div className="mt-2 flex h-10 w-full items-center justify-center rounded-t bg-gray-200 text-center dark:bg-gray-700 dark:text-white">
-        <div className="shadow-b mr-2 h-8 items-center justify-center overflow-x-hidden border-b border-gray-900 px-20 whitespace-nowrap">
+        <div className="shadow-b mr-2 h-8 items-center justify-center overflow-x-hidden whitespace-nowrap border-b border-gray-900 px-20">
           {room?.name || "No room selected"}
-          {role === 'owner' && (<OwnerCommands role={role} />) || <small className="pl-1"> {role}</small>}
+          {(role === "owner" && (
+            <OwnerCommands
+              loginer={loginer}
+              sendMessage={sendMessage}
+              participants={room?.participants || []}
+              role={role}
+            />
+          )) || <small className="pl-1"> {role}</small>}
         </div>
       </div>
       <div className="scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch mb-2 h-0 flex-grow overflow-y-scroll rounded-b bg-gray-200 shadow-lg dark:bg-gray-700 dark:text-white">
