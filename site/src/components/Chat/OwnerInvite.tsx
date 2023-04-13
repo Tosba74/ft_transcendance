@@ -39,7 +39,7 @@ export default function OwnerInvite({
         }
       })
       .catch((error) => {});
-  }, [participants]);
+  }, [participants, loginer]);
 
   const handleClickInvite = (event: SyntheticEvent) => {
     event.preventDefault();
@@ -58,7 +58,7 @@ export default function OwnerInvite({
           onChange={(event) => {
             setInvite(event.target.value);
           }}
-          className="w-full mx-auto rounded-lg border border-gray-300 bg-gray-50 p-1.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+          className="mx-auto w-full rounded-lg border border-gray-300 bg-gray-50 p-1.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 dark:focus:border-blue-500 dark:focus:ring-blue-500"
         >
           <option id="defaultOption" key={-1} value="">
             Pseudo

@@ -1,5 +1,4 @@
 import React, { SyntheticEvent } from "react";
-import { UseLoginDto } from "../Log/dto/useLogin.dto";
 import { ChatRoomDto } from "src/_shared_dto/chat-room.dto";
 
 interface OwnerPwProps {
@@ -64,7 +63,7 @@ export default function OwnerPw({ sendMessage, room }: OwnerPwProps) {
               onChange={(event) => {
                 setAddPassword(event.target.value);
               }}
-              className="w-full mx-auto rounded-lg border border-gray-300 bg-gray-50 p-1.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              className="mx-auto w-full rounded-lg border border-gray-300 bg-gray-50 p-1.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 dark:focus:border-blue-500 dark:focus:ring-blue-500"
             />
           </div>
           <button
@@ -86,7 +85,7 @@ export default function OwnerPw({ sendMessage, room }: OwnerPwProps) {
                 onChange={(event) => {
                   setCurrentPassword(event.target.value);
                 }}
-                className="w-full mx-auto rounded-lg border border-gray-300 bg-gray-50 p-1.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                className="mx-auto w-full rounded-lg border border-gray-300 bg-gray-50 p-1.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 dark:focus:border-blue-500 dark:focus:ring-blue-500"
               />
             </div>
 
@@ -99,7 +98,7 @@ export default function OwnerPw({ sendMessage, room }: OwnerPwProps) {
                 onChange={(event) => {
                   setNewPassword(event.target.value);
                 }}
-                className="w-full mx-auto rounded-lg border border-gray-300 bg-gray-50 p-1.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                className="mx-auto w-full rounded-lg border border-gray-300 bg-gray-50 p-1.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 dark:focus:border-blue-500 dark:focus:ring-blue-500"
               />
             </div>
             <button

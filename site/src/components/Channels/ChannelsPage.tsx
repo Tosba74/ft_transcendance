@@ -40,7 +40,7 @@ export default function ChannelsPage({ loginer, chats }: ChannelsPageProps) {
             <div
               onClick={() => setSelectedMenu("public")}
               className={classNames(
-                "inline-block w-full rounded-l-lg p-4 dark:bg-gray-700 dark:text-white border-0",
+                "inline-block w-full rounded-l-lg border-0 p-4 dark:bg-gray-700 dark:text-white",
                 selectedMenu === "public" ? activeStyle : inactiveStyle
               )}
             >
@@ -51,7 +51,7 @@ export default function ChannelsPage({ loginer, chats }: ChannelsPageProps) {
             <div
               onClick={() => setSelectedMenu("banned")}
               className={classNames(
-                "inline-block w-full p-4 dark:bg-gray-700 dark:text-white border-0",
+                "inline-block w-full border-0 p-4 dark:bg-gray-700 dark:text-white",
                 selectedMenu === "banned" ? activeStyle : inactiveStyle
               )}
             >
@@ -62,7 +62,7 @@ export default function ChannelsPage({ loginer, chats }: ChannelsPageProps) {
             <div
               onClick={() => setSelectedMenu("current")}
               className={classNames(
-                "inline-block w-full rounded-r-lg p-4 dark:bg-gray-700 dark:text-white border-0",
+                "inline-block w-full rounded-r-lg border-0 p-4 dark:bg-gray-700 dark:text-white",
                 selectedMenu === "current" ? activeStyle : inactiveStyle
               )}
             >

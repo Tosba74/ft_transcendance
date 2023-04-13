@@ -5,7 +5,6 @@ import MessageInput from "./MessageInput";
 import { UseChatDto } from "./dto/useChat.dto";
 import { UseGameDto } from "../Game/dto/useGame.dto";
 import React from "react";
-import { ParticipantDto } from "src/_shared_dto/participant.dto";
 import OwnerCommands from "./OwnerCommands";
 
 interface MessagePanelProps {

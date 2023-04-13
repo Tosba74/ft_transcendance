@@ -1,11 +1,9 @@
 import React, { SyntheticEvent } from "react";
 import { createPortal } from "react-dom";
 import classNames from "classnames";
-import axios from "axios";
 
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
 import { ParticipantDto } from "src/_shared_dto/participant.dto";
-import { UseChatDto } from "./dto/useChat.dto";
 import { ChatRoomDto } from "src/_shared_dto/chat-room.dto";
 
 import OwnerInvite from "./OwnerInvite";
