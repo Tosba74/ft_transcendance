@@ -76,7 +76,7 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 
 	@SubscribeMessage('createGame')
-	async createGame(client: Socket, body: CreateGameDto): Promise<WsResponseDto<undefined>> {
+	async createGame(client: Socket, body: CreateGameDto): Promise<WsResponseDto<number>> {
 
 		if (client.data.loggedId === undefined) {
 			throw new WsException('Not identified');
@@ -107,7 +107,7 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		}
 		
 		this.gamesService.createGame(this.server, client, client.data.loggedId, body.invited_id, newGame.id, game_function, body.fun_mode, body.points_objective);
-		return { error: undefined, value: undefined };
+		return { error: undefined, value: newGame.id };
 	}
 
 

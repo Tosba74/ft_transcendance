@@ -110,7 +110,7 @@ export default function ProfilePublic({ loginer, chats }: UserListPageProps) {
       .catch((e) => {
         setError(e.message);
       });
-  }, []);
+  }, [id]);
 
   return (
     <>
@@ -128,7 +128,7 @@ export default function ProfilePublic({ loginer, chats }: UserListPageProps) {
       )}
 
       {user && (
-        <section className="bg-blueGray-200">
+        <section className="bg-blueGray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white">
           <div className="h-100 mt-5 w-full rounded-lg border border-gray-200 bg-white p-10 shadow dark:border-gray-700 dark:bg-gray-800">
             <div className="flex flex-wrap justify-center">
               <div className="flex w-full justify-center px-4">
@@ -156,7 +156,7 @@ export default function ProfilePublic({ loginer, chats }: UserListPageProps) {
               </div>
 
               <div className="text-center">
-                <h3 className="text-blueGray-700 mb-2 text-4xl font-semibold leading-normal">
+                <h3 className="text-blueGray-700 mb-2 text-4xl font-semibold leading-normal ">
                   {user.pseudo}
                 </h3>
               </div>

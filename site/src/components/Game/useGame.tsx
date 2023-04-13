@@ -24,6 +24,9 @@ const useGame = ({ loginer }: useGameProps) => {
   const [user1, setUser1] = React.useState<UserDto | undefined>(undefined);
   const [user2, setUser2] = React.useState<UserDto | undefined>(undefined);
 
+  let localUser1: boolean | undefined;
+  let localUser2: boolean | undefined;
+
   const identify = () => {
     // Send identify to register websocket user
     gameSocketRef.current &&
@@ -56,9 +59,9 @@ const useGame = ({ loginer }: useGameProps) => {
           force_points: force_points,
           invited_id: invited_id,
         },
-        (response: WsResponseDto<undefined>) => {
+        (response: WsResponseDto<number>) => {
           if (response.error === undefined && callbackFct !== undefined) {
-            callbackFct();
+            callbackFct(response.value);
           }
         }
       );
@@ -73,7 +76,7 @@ const useGame = ({ loginer }: useGameProps) => {
       gameSocketRef.current.emit(
         "joinGame",
         { game_id: game_id },
-        (response: WsResponseDto<undefined>) => {
+        (response: WsResponseDto<number>) => {
           if (errorFct && response.error !== undefined) {
             errorFct(`Error: ${response.error}`);
           } //
@@ -137,24 +140,31 @@ const useGame = ({ loginer }: useGameProps) => {
               gameArea.current?.import(game);
               gameArea.current?.render();
 
-              setUser1(
-                (old) =>
-                  old && {
-                    ...old,
-                    status: gameArea.current?.playerOne.ready
-                      ? "ready"
-                      : "unready",
-                  }
-              );
-              setUser2(
-                (old) =>
-                  old && {
-                    ...old,
-                    status: gameArea.current?.playerTwo.ready
-                      ? "ready"
-                      : "unready",
-                  }
-              );
+              if (localUser1 !== gameArea.current?.playerOne.ready) {
+                localUser1 = gameArea.current?.playerOne.ready;
+                setUser1(
+                  (old) =>
+                    old && {
+                      ...old,
+                      status: gameArea.current?.playerOne.ready
+                        ? "ready"
+                        : "unready",
+                    }
+                );
+              }
+
+              if (localUser2 !== gameArea.current?.playerTwo.ready) {
+                localUser2 = gameArea.current?.playerTwo.ready;
+                setUser2(
+                  (old) =>
+                    old && {
+                      ...old,
+                      status: gameArea.current?.playerTwo.ready
+                        ? "ready"
+                        : "unready",
+                    }
+                );
+              }
             }
           );
 

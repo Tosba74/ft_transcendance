@@ -12,7 +12,7 @@ export default function SettingsPage({ loginer }: SettingsPageProps) {
   //
   return (
     <div className="h-full w-full p-2 md:flex md:justify-center">
-      <div className="flex h-5/6 w-full flex-col gap-2 rounded border border-gray-300 bg-gray-200 p-2 shadow-xl dark:border-gray-700 dark:bg-gray-700 md:w-5/6 lg:w-full lg:flex-row">
+      <div className="flex h-4/6 w-full flex-col gap-2 rounded border border-gray-300 bg-gray-200 p-2 shadow-xl dark:border-gray-700 dark:bg-gray-700 md:w-5/6 lg:w-full lg:flex-row">
         <div className="h-1/2 w-full lg:h-full lg:w-2/3">
           <Avatar loginer={loginer} />
           <Pseudo loginer={loginer} />

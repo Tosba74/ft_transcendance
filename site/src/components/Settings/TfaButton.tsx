@@ -96,7 +96,9 @@ export default function TfaButton({ loginer }: TfaButtonProps) {
     <div className="flex w-full justify-center p-2 dark:text-white">
       <div className="justify-center dark:text-white">
         <form onSubmit={handleSubmit}>
-          <label>Two factor authentication is {tfaLabelMessage} . </label>
+          <label className="text-center">Two factor authentication is {tfaLabelMessage} . </label>
+          <div className="w-full flex mt-2 justify-center">
+
           <button
             id="tfa_enable"
             className="mr-2 rounded bg-cyan-500 px-3 py-1 text-white"
@@ -104,9 +106,10 @@ export default function TfaButton({ loginer }: TfaButtonProps) {
             name="tfa_enable"
             value={tfaInput}
             disabled={buttonDisabled}
-          >
+            >
             {tfaButtonMessage}
           </button>
+            </div>
         </form>
         {qrCode !== "" && (
           <TfaConfirmation
@@ -116,7 +119,7 @@ export default function TfaButton({ loginer }: TfaButtonProps) {
             setTfaMessage={setTfaMessage}
           />
         )}
-        <div>{tfaMessage}</div>
+        <div className="text-center mt-2">{tfaMessage}</div>
       </div>
     </div>
   );

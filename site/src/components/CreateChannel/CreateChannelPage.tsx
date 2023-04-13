@@ -48,7 +48,7 @@ export default function CreateChannelPage({ loginer }: CreateChannelPageProps) {
   };
 
   return (
-    <div className="mx-auto max-w-md">
+    <div className="mx-auto p-20 flex h-max max-w-[600px] flex-col bg-white py-6 text-center shadow-md dark:border-gray-700 dark:bg-gray-800 dark:text-white">
       <h1 className="pb-4 text-center text-3xl">Create Channel</h1>
       <form>
         <div className="mb-6 flex items-start">
@@ -73,7 +73,7 @@ export default function CreateChannelPage({ loginer }: CreateChannelPageProps) {
             id="channelName"
             value={channelName}
             onChange={(e) => setChannelName(e.target.value)}
-            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+            className="block w-full  rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
             placeholder="Name"
             required
           />
@@ -95,7 +95,7 @@ export default function CreateChannelPage({ loginer }: CreateChannelPageProps) {
         )}
         <button
           onClick={handleSubmit}
-          className="w-full w-auto rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          className="w-36 rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         >
           Create
         </button>

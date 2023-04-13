@@ -25,7 +25,11 @@ export default function ProfileButton({
   React.useEffect(() => {
     const checkIfClickedOutside = (e: any) => {
       if (ref) {
-        if (openedMenu && !ref.current?.contains(e.target)) {
+        if (
+          openedMenu &&
+          openedMenu === "profile" &&
+          !ref.current?.contains(e.target)
+        ) {
           setOpenedMenu("");
         }
       }
@@ -78,7 +82,7 @@ export default function ProfileButton({
             {loginer.logged && (
               <>
                 <Link
-                  to={"/players/" + loginer.userInfos?.id}
+                  to={`/players/${loginer.userInfos?.id}`}
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
                 >
                   My profile
@@ -120,8 +124,4 @@ export default function ProfileButton({
       )}
     </div>
   );
-}
-
-{
-  /* isOpen && <div className="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600" id="user-dropdown"> */
 }

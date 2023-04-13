@@ -66,7 +66,9 @@ export default function BannedList({ loginer, reload }: BannedListProps) {
                 className="text-blueGray-700 mb-2 flex text-lg"
               >
                 <div className="flex basis-5/6">
-                  <li className="w-14 basis-5/6 truncate">{channel.name}</li>
+                  <li title={channel.name} className="w-14 basis-5/6 truncate">
+                    {channel.name}
+                  </li>
                   <IconSwitch channel={channel} />
                 </div>
                 <div className="basis-1/4 self-center rounded bg-blue-500 font-bold text-white hover:bg-blue-700"></div>

@@ -1,11 +1,10 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import "./App.css";
 
 import ReactPage from "./components/ReactPage";
 import HomePage from "./components/Home/HomePage";
-import ProfilePage from "./components/Settings/SettingsPage";
 import LogPage from "./components/Log/LogPage";
 
 import NavBar from "./components/NavBar/NavBar";
@@ -56,6 +55,7 @@ export default function App() {
     <Router>
       <NavBar
         loginer={loginer}
+        gamer={gamer}
         openedMenu={openedMenu}
         setOpenedMenu={setOpenedMenu}
       />
@@ -88,7 +88,9 @@ export default function App() {
               />
               <Route
                 path="/friends"
-                element={<FriendsPage loginer={loginer} />}
+                element={
+                  <FriendsPage loginer={loginer} chats={chats} gamer={gamer} />
+                }
               />
               <Route
                 path="/channels"
@@ -139,6 +141,7 @@ export default function App() {
         setOpenedMenu={setOpenedMenu}
         loginer={loginer}
         chats={chats}
+        gamer={gamer}
       />
     </Router>
   );
