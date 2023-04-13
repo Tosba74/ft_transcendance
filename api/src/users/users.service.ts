@@ -343,7 +343,7 @@ export class UsersService {
     const ranking = await this.getRanking();
     const userRank = ranking.indexOf(id);
 
-    stats.rank = userRank !== -1 && `${userRank} / ${ranking.length}` || 'unranked';
+    stats.rank = userRank !== -1 && `${userRank + 1} / ${ranking.length}` || 'unranked';
 
     stats.last_games = games;
 
