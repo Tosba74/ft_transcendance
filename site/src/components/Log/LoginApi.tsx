@@ -1,7 +1,6 @@
 import React from "react";
 import axios from "axios";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import TfaCode from "./TfaCodePage";
 import { UseLoginDto } from "./dto/useLogin.dto";
 
 interface LoginApiProps {
@@ -33,7 +32,6 @@ export default function LoginApi({ loginer }: LoginApiProps) {
           state: state,
         })
         .then((res) => {
-          console.log(res.data);
           if (res.status === 201 && res.data["access_token"]) {
             localStorage.setItem("token", res.data["access_token"]);
             loginer.setToken(res.data["access_token"]);
@@ -42,9 +40,8 @@ export default function LoginApi({ loginer }: LoginApiProps) {
             setTimeout(() => {
               navigate("/");
             }, 3000);
-            // loginUser();
           } //
-          else if (res.status == 206 && res.data["id"] !== undefined) {
+          else if (res.status === 206 && res.data["id"] !== undefined) {
             loginer.tfaUserId.current = res.data["id"];
 
             setPageMessage("Tfa needed, redirecting...");
@@ -61,7 +58,7 @@ export default function LoginApi({ loginer }: LoginApiProps) {
     else {
       setPageMessage("Error missing infos for 42 API");
     }
-  }, []);
+  }, [code, loginer, navigate, state]);
 
   return (
     <>

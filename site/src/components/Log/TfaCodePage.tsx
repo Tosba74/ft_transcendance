@@ -27,7 +27,7 @@ export default function TfaCodePage({ loginer }: TfaCodePageProps) {
         tfa_code: tfaCode,
       })
       .then((res) => {
-        if (res.status == 201 && res.data["access_token"]) {
+        if (res.status === 201 && res.data["access_token"]) {
           localStorage.setItem("token", res.data["access_token"]);
           loginer.setToken(res.data["access_token"]);
 
@@ -38,7 +38,7 @@ export default function TfaCodePage({ loginer }: TfaCodePageProps) {
         } //
       })
       .catch((error) => {
-        if (error.response.status == 408) {
+        if (error.response.status === 408) {
           setPageMessage("Login timeout, retry login...");
           setTimeout(() => {
             navigate("/");

@@ -1,8 +1,6 @@
 import classNames from "classnames";
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ParticipantDto } from "src/_shared_dto/participant.dto";
-import { UserDto } from "src/_shared_dto/user.dto";
 
 interface UserListProps {
   users: ParticipantDto[];

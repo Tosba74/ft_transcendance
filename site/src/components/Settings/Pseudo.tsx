@@ -52,7 +52,7 @@ export default function Pseudo({ loginer }: PseudoProps) {
           }
         })
         .catch((error) => {
-          var message: string;
+          let message = "";
           if (error.response.status === 401)
             message = error.response.data.message;
           else

@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import React, { useState } from "react";
+import React from "react";
 import { UseGameDto } from "../Game/dto/useGame.dto";
 import { Link } from "react-router-dom";
 import BurgerButton from "./BurgerButton";
@@ -21,7 +21,7 @@ export default function NavBar({
   setOpenedMenu,
 }: NavBarProps) {
   const handleClick = () => {
-    if (openedMenu == "burger") {
+    if (openedMenu === "burger") {
       if (!loginer.logged) setOpenedMenu("");
     } else {
       if (!loginer.logged) setOpenedMenu("burger");
@@ -33,7 +33,7 @@ export default function NavBar({
       if (ref && !loginer.logged) {
         if (
           openedMenu &&
-          openedMenu == "burger" &&
+          openedMenu === "burger" &&
           !ref.current?.contains(e.target)
         ) {
           setOpenedMenu("");
@@ -45,7 +45,7 @@ export default function NavBar({
     return () => {
       document.removeEventListener("mousedown", checkIfClickedOutside);
     };
-  }, [openedMenu]);
+  }, [openedMenu, loginer.logged, setOpenedMenu]);
   //
   return (
     <header className="top-0 z-50 w-full">

@@ -1,8 +1,7 @@
-import React, { SyntheticEvent, useState } from "react";
+import React, { SyntheticEvent } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-import TfaCode from "./TfaCodePage";
 import { UseLoginDto } from "./dto/useLogin.dto";
 
 interface LogPageProps {
@@ -27,7 +26,7 @@ export default function LogPage({ loginer }: LogPageProps) {
         password: password,
       })
       .then((res) => {
-        if (res.status == 201 && res.data["access_token"]) {
+        if (res.status === 201 && res.data["access_token"]) {
           localStorage.setItem("token", res.data["access_token"]);
           loginer.setToken(res.data["access_token"]);
 
@@ -36,7 +35,7 @@ export default function LogPage({ loginer }: LogPageProps) {
             navigate("/");
           }, 3000);
         } //
-        else if (res.status == 206 && res.data["id"] !== undefined) {
+        else if (res.status === 206 && res.data["id"] !== undefined) {
           loginer.tfaUserId.current = res.data["id"];
 
           setPageMessage("Tfa needed, redirecting...");

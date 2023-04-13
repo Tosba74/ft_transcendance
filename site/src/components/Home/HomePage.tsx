@@ -1,5 +1,3 @@
-import React from "react";
-import ChatIcon from "../Chat/ChatIcon";
 import { Link } from "react-router-dom";
 
 export default function HomePage() {
@@ -9,12 +7,12 @@ export default function HomePage() {
         Home page
       </h1>
       <p className="text-center text-gray-500 dark:text-gray-400">
-        This is our <a className="text-blue-600">ft_transcendance</a>, HF and GL
-        for your games.
+        This is our <span className="text-blue-600">ft_transcendance</span>, HF
+        and GL for your games.
       </p>
       <i className="text-center text-sm text-gray-500 dark:text-gray-400">
-        To start a game, you need to <a className="text-blue-600">log in</a>{" "}
-        first!
+        To start a game, you need to{" "}
+        <span className="text-blue-600">log in</span> first!
       </i>
       <p className="text-center text-gray-500 dark:text-gray-400">Made by</p>
       <div className="mt-4 flex flex-row justify-center text-center">

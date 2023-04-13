@@ -35,7 +35,7 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
         "identify",
         {},
         (response: WsResponseDto<undefined>) => {
-          if (response.error != undefined) {
+          if (response.error !== undefined) {
             console.log("identify error", response.error);
           }
 
@@ -57,7 +57,7 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
         "connectRoom",
         { room: room_id },
         (response: WsResponseDto<ChatRoomDto>) => {
-          if (response.error == undefined && response.value) {
+          if (response.error === undefined && response.value) {
             let room: ChatRoomDto = response.value;
 
             console.log("connected", room.id);
@@ -168,7 +168,7 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
     else if (logged === false) {
       console.log("socket not connected not logged");
     }
-  }, [logged]);
+  }, [logged, token]);
 
   return {
     rooms,

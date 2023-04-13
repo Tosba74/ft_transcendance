@@ -17,7 +17,7 @@ export default function HistoryGames({ loginer }: { loginer: UseLoginDto }) {
         }
       })
       .catch((error) => {});
-  }, []);
+  }, [loginer]);
 
   return (
     <>

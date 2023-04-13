@@ -94,6 +94,7 @@ export default function Avatar({ loginer }: AvatarProps) {
     <form className="h-2/3 w-full" onSubmit={handleSubmit}>
       <div className="flex h-2/3 w-full items-center justify-center">
         <img
+          alt="avatar"
           className="h-32 w-32 rounded-full object-cover shadow-xl lg:h-64 lg:w-64"
           src={avatarUrl}
         />

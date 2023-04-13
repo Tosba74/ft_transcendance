@@ -26,7 +26,7 @@ export default function PlayersPage({ loginer, chats }: PlayersPageProps) {
         }
       })
       .catch((error) => {});
-  }, []);
+  }, [loginer]);
 
   // React.useEffect(() => {
   //   axios

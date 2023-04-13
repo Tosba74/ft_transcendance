@@ -4,7 +4,7 @@ import React from "react";
 
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
 
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { UseGameDto } from "../Game/dto/useGame.dto";
 
 interface BurgerButtonProps {
@@ -34,7 +34,7 @@ export default function BurgerButton({
       if (ref) {
         if (
           openedMenu &&
-          openedMenu == "burger" &&
+          openedMenu === "burger" &&
           !ref.current?.contains(e.target)
         ) {
           setOpenedMenu("");
@@ -46,7 +46,7 @@ export default function BurgerButton({
     return () => {
       document.removeEventListener("mousedown", checkIfClickedOutside);
     };
-  }, [openedMenu]);
+  }, [openedMenu, setOpenedMenu]);
 
   const location = useLocation();
   return (
@@ -85,7 +85,7 @@ export default function BurgerButton({
             to="/"
             className={classNames(
               "block rounded py-2 pl-3 pr-4 md:p-0",
-              location.pathname == "/"
+              location.pathname === "/"
                 ? "bg-cyan-500 text-white dark:text-white md:bg-transparent md:text-cyan-500"
                 : " text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white  md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white"
             )}
@@ -96,19 +96,19 @@ export default function BurgerButton({
             to="/start"
             className={classNames(
               "block rounded py-2 pl-3 pr-4 md:p-0",
-              location.pathname == "/start"
+              location.pathname === "/start"
                 ? "bg-cyan-500 text-white dark:text-white md:bg-transparent md:text-cyan-500"
                 : " text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white  md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white"
             )}
           >
             Start game
           </Link>
-          {gamer.gameId != -1 && gamer.gameArea.current?.ended === false && (
+          {gamer.gameId !== -1 && gamer.gameArea.current?.ended === false && (
             <Link
               to="/game"
               className={classNames(
                 "block rounded py-2 pl-3 pr-4 md:p-0",
-                location.pathname == "/game"
+                location.pathname === "/game"
                   ? "bg-cyan-500 text-white dark:text-white md:bg-transparent md:text-cyan-500"
                   : " text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white  md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white"
               )}
@@ -120,7 +120,7 @@ export default function BurgerButton({
             to="/friends"
             className={classNames(
               "block rounded py-2 pl-3 pr-4 md:p-0",
-              location.pathname == "/friends"
+              location.pathname === "/friends"
                 ? "bg-cyan-500 text-white dark:text-white md:bg-transparent md:text-cyan-500"
                 : " text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white  md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white"
             )}
@@ -131,7 +131,7 @@ export default function BurgerButton({
             to="/channels"
             className={classNames(
               "block rounded py-2 pl-3 pr-4 md:p-0",
-              location.pathname == "/channels"
+              location.pathname === "/channels"
                 ? "bg-cyan-500 text-white dark:text-white md:bg-transparent md:text-cyan-500"
                 : " text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white  md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white"
             )}
@@ -142,7 +142,7 @@ export default function BurgerButton({
             to="/players"
             className={classNames(
               "block rounded py-2 pl-3 pr-4 md:p-0",
-              location.pathname == "/players"
+              location.pathname === "/players"
                 ? "bg-cyan-500 text-white dark:text-white md:bg-transparent md:text-cyan-500"
                 : " text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white  md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white"
             )}

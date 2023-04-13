@@ -1,7 +1,3 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { UserDto } from "src/_shared_dto/user.dto";
-
 import { MdKey } from "react-icons/md";
 import { MdOutlineEmail } from "react-icons/md";
 import { MdPublic } from "react-icons/md";

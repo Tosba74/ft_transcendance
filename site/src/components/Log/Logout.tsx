@@ -1,6 +1,5 @@
-import axios from "axios";
-import React, { SyntheticEvent, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 import { UseChatDto } from "../Chat/dto/useChat.dto";
 import { UseGameDto } from "../Game/dto/useGame.dto";
@@ -17,7 +16,7 @@ export default function Logout({ loginer, chats, gamer }: LogoutProps) {
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    if (loginer.token != undefined && loginer.token != "") {
+    if (loginer.token !== undefined && loginer.token !== "") {
       localStorage.clear();
       chats.deco();
       gamer.deco();
@@ -32,7 +31,7 @@ export default function Logout({ loginer, chats, gamer }: LogoutProps) {
         navigate("/");
       }, 3000);
     }
-  }, [loginer.token]);
+  }, [loginer.token, chats, gamer, loginer, navigate]);
 
   return <div className="mt-3 h-6 text-center text-sm">{pageMessage}</div>;
 }

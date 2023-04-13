@@ -1,7 +1,6 @@
-import AddFriend from "../Friends/AddFriend";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
 import axios from "axios";
-import React, { useState } from "react";
+import React from "react";
 import { useParams } from "react-router-dom";
 
 import { UserDto } from "src/_shared_dto/user.dto";
@@ -110,7 +109,7 @@ export default function ProfilePublic({ loginer, chats }: UserListPageProps) {
       .catch((e) => {
         setError(e.message);
       });
-  }, [id]);
+  }, [id, loginer]);
 
   return (
     <>
@@ -183,7 +182,7 @@ export default function ProfilePublic({ loginer, chats }: UserListPageProps) {
                 </div>
               </div>
 
-              {loginer.userInfos && user.id != loginer.userInfos.id && (
+              {loginer.userInfos && user.id !== loginer.userInfos.id && (
                 <div className="mt-5 mb-5">
                   <button
                     type="button"

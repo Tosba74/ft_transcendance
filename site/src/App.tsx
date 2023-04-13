@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import "./App.css";
 
-import ReactPage from "./components/ReactPage";
 import HomePage from "./components/Home/HomePage";
 import LogPage from "./components/Log/LogPage";
 

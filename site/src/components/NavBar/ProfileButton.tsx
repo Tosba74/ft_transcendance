@@ -39,7 +39,7 @@ export default function ProfileButton({
     return () => {
       document.removeEventListener("mousedown", checkIfClickedOutside);
     };
-  }, [openedMenu]);
+  }, [openedMenu, setOpenedMenu]);
 
   return (
     <div className="flex items-center md:order-2">

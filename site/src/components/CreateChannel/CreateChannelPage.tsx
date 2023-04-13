@@ -1,8 +1,7 @@
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
-import React, { SyntheticEvent, useState } from "react";
+import React, { SyntheticEvent } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { type } from "os";
 
 interface CreateChannelPageProps {
   loginer: UseLoginDto;
@@ -24,7 +23,7 @@ export default function CreateChannelPage({ loginer }: CreateChannelPageProps) {
   const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
 
-    if (channelName.length == 0) setPageMessage("Name cannot be empty");
+    if (channelName.length === 0) setPageMessage("Name cannot be empty");
     else {
       axios
         .post(
@@ -37,7 +36,7 @@ export default function CreateChannelPage({ loginer }: CreateChannelPageProps) {
           loginer.get_headers()
         )
         .then((res) => {
-          if (res.status == 201) {
+          if (res.status === 201) {
             setPageMessage("Channel created, redirecting...");
             navigate("/channels");
           } //

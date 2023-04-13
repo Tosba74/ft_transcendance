@@ -17,7 +17,7 @@ export default function BannedList({ loginer, reload }: BannedListProps) {
   const [channels, setChannels] = React.useState<ChannelDto[]>([]);
   const [effect, setEffect] = React.useState(false);
 
-  function refreshData() {
+  const refreshData = React.useCallback(() => {
     setEffect(true);
 
     axios
@@ -34,11 +34,11 @@ export default function BannedList({ loginer, reload }: BannedListProps) {
     setTimeout(() => {
       setEffect(false);
     }, 1000);
-  }
+  }, [loginer]);
 
   React.useEffect(() => {
     refreshData();
-  }, [reload]);
+  }, [refreshData]);
 
   return (
     <div className="border-blueGray-200 mt-2 flex h-full flex-row flex-wrap border-b pt-1 shadow">

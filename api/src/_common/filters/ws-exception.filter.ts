@@ -16,7 +16,7 @@ export class WebsocketExceptionsFilter extends BaseWsExceptionFilter {
 		const status = (error as any).statusCode;
 		const message = (error as any).message;
 
-		this.logger.warn(`${status} ${message}`);
+		// this.logger.warn(`${status} ${message}`);
 
 		
 		let res: WsResponseDto<undefined> = {error: `${status} ${message}`, value: undefined} 
