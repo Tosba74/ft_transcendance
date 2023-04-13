@@ -26,7 +26,7 @@ export default function ProfileButton({
     const checkIfClickedOutside = (e: any) => {
       if (ref) {
         if (openedMenu && !ref.current?.contains(e.target)) {
-			setOpenedMenu("");
+          setOpenedMenu("");
         }
       }
     };
@@ -64,7 +64,7 @@ export default function ProfileButton({
         <div
           className="absolute top-20 right-2 z-40 w-40 list-none divide-y divide-gray-100 rounded-lg bg-white text-base shadow-lg dark:divide-gray-600 dark:bg-gray-700"
           id="user-dropdown"
-		  ref={ref}
+          ref={ref}
         >
           <div className="px-4 py-3">
             <span className="block text-sm text-gray-900 dark:text-white">
@@ -78,7 +78,7 @@ export default function ProfileButton({
             {loginer.logged && (
               <>
                 <Link
-                  to={"/players/"+loginer.userInfos?.id}
+                  to={"/players/" + loginer.userInfos?.id}
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
                 >
                   My profile

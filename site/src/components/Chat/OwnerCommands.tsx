@@ -6,6 +6,7 @@ import axios from "axios";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
 import { ParticipantDto } from "src/_shared_dto/participant.dto";
 import { UseChatDto } from "./dto/useChat.dto";
+import { ChatRoomDto } from "src/_shared_dto/chat-room.dto";
 
 const startEL = document.getElementById("root");
 
@@ -14,6 +15,7 @@ interface OwnerCommandsProps {
   sendMessage: Function;
   participants: ParticipantDto[];
   role: string;
+  room: ChatRoomDto | undefined;
 }
 
 export default function OwnerCommands({
@@ -21,6 +23,7 @@ export default function OwnerCommands({
   sendMessage,
   participants,
   role,
+  room,
 }: OwnerCommandsProps) {
   const [users, setUsers] = React.useState<ParticipantDto[]>([]);
   const [portal, setPortal] = React.useState(false);
@@ -61,12 +64,10 @@ export default function OwnerCommands({
 
   const handleClickInvite = (event: SyntheticEvent) => {
     event.preventDefault();
-
     if (invite.length > 0) {
       sendMessage(`/invite ${invite}`);
       setInvite("");
     }
-    // ...
   };
 
   const handleClickPassword = (event: SyntheticEvent) => {
@@ -90,6 +91,7 @@ export default function OwnerCommands({
     };
   }, [portal]);
 
+  console.log(room);
   return (
     <>
       <button className="pl-1 hover:underline" onClick={handleClickPortal}>
@@ -119,8 +121,10 @@ export default function OwnerCommands({
               if (!effect) setPortal(false);
             }}
           >
-            <h3 className="text-center text-xl">Actions</h3>
+            <h3 className="text-center text-xl">Owner settings</h3>
 
+
+			{room?.type === 3 && (
             <div className="mb-6 h-16 w-full py-2">
               <label className="">Invite user</label>
               <div className="flex h-full w-full items-center justify-around gap-4 rounded-full bg-cyan-500 shadow-lg transition duration-500 ease-in-out hover:bg-blue-400 focus:outline-none">
@@ -131,7 +135,7 @@ export default function OwnerCommands({
                   }}
                   className="ml-2 w-full rounded-full bg-gray-200 p-1 px-4 text-gray-600 placeholder-gray-600 focus:placeholder-gray-400 focus:outline-none"
                 >
-                  <option key={-1} value="">
+                  <option id='defaultOption' key={-1} value="">
                     Pseudo
                   </option>
                   ;
@@ -162,7 +166,10 @@ export default function OwnerCommands({
                 </button>
               </div>
             </div>
+			)
 
+
+			|| room?.type === 2 && (
             <div className="mb-6 h-16 w-full py-2">
               <label className="">
                 Change password <small>(leave empty to remove)</small>
@@ -199,6 +206,9 @@ export default function OwnerCommands({
                 </button>
               </div>
             </div>
+			)}
+
+
           </div>,
           startEL
         )}

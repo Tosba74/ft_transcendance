@@ -30,7 +30,6 @@ export default function MessagePanel({
     }
   }, [room]);
 
-  console.log(`|${role}|`);
   return (
     <>
       <div className="mt-2 flex h-10 w-full items-center justify-center rounded-t bg-gray-200 text-center dark:bg-gray-700 dark:text-white">
@@ -42,6 +41,7 @@ export default function MessagePanel({
               sendMessage={sendMessage}
               participants={room?.participants || []}
               role={role}
+              room={room}
             />
           )) || <small className="pl-1"> {role}</small>}
         </div>
