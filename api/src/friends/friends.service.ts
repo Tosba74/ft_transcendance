@@ -1,4 +1,4 @@
-import { ConsoleLogger, Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { ConsoleLogger, Injectable, NotFoundException, BadRequestException, forwardRef, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -16,6 +16,7 @@ export class FriendsService {
 
   constructor(
     @InjectRepository(FriendModel) private friendsRepository: Repository<FriendModel>,
+    @Inject(forwardRef(() => UsersService))
     private usersService: UsersService,
   ) { }
 

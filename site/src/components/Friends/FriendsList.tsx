@@ -24,13 +24,10 @@ export default function FriendsList({
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    // console.log("loadgin", reload);
-
     axios
       .get("/api/me/friends", loginer.get_headers())
       .then((res) => {
         if (res.status === 200 && res.data) {
-          // console.log(res.data);
           setLoading(false);
           setUsers(res.data as UserDto[]);
           return;
@@ -49,7 +46,10 @@ export default function FriendsList({
         user={user}
         doReload={doReload}
       >
-        <UserStatus status={user.status} />
+        <UserStatus
+          classes={"mr-1 inline-block h-3 w-3 rounded-full"}
+          status={user.status}
+        />
       </User>
     </li>
   ));

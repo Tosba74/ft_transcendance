@@ -112,13 +112,13 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 
 	@SubscribeMessage('joinGame')
-	async joinGame(client: Socket, body: { game_id: number }): Promise<void> {
+	async joinGame(client: Socket, body: { game_id: number }): Promise<WsResponseDto<undefined>> {
 
 		if (client.data.loggedId === undefined) {
 			throw new WsException('Not identified');
 		}
 
-		this.gamesService.joinGame(this.server, client, client.data.loggedId, body.game_id);
+		return this.gamesService.joinGame(this.server, client, client.data.loggedId, body.game_id);
 	}
 
 

@@ -1,16 +1,17 @@
 import React from "react";
+
 import { ChatMessageDto } from "src/_shared_dto/chat-message.dto";
+import { UseLoginDto } from "../Log/dto/useLogin.dto";
 import MessageBulleRecv from "./MessageBulleRecv";
 import MessageBulleSend from "./MessageBulleSend";
 import MessageServer from "./MessageServer";
-import { UseLoginDto } from "../Log/dto/useLogin.dto";
 import { UseChatDto } from "./dto/useChat.dto";
 import { UseGameDto } from "../Game/dto/useGame.dto";
 
 interface MessageConvProps {
+  loginer: UseLoginDto;
   selfId: number;
   messages: ChatMessageDto[];
-  loginer: UseLoginDto;
   chats: UseChatDto;
   gamer: UseGameDto;
 }
@@ -41,7 +42,7 @@ export default function MessageConv({
     } else {
       scrollToBottom();
     }
-  }, [messages]);
+  }, [messages, first]);
 
   return (
     <>

@@ -1,11 +1,3 @@
-import ChatBulleRecv from "./MessageBulleRecv";
-import ChatBulleSend from "./MessageBulleSend";
-
-import UserList from "./ChannelUserList";
-import { useState } from "react";
-
-import MessageConv from "./MessagePanel";
-import MessageInput from "./MessageInput";
 import ChannelPanel from "./ChannelPanel";
 import ChatMode from "./ChatMode";
 import MessagePanel from "./MessagePanel";
@@ -76,6 +68,7 @@ export default function ChatMenu({
           >
             {!chats.modeChannel && (
               <MessagePanel
+                loginer={loginer}
                 selfId={loginer.userInfos?.id || -1}
                 sendMessage={sendMessage}
                 room={chats.rooms && chats.rooms[chats.currChannel.toString()]}

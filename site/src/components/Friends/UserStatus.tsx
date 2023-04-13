@@ -1,4 +1,10 @@
-export default function UserStatus({ status }: { status: string }) {
+export default function UserStatus({
+  status,
+  classes,
+}: {
+  status: string;
+  classes: string;
+}) {
   let color: string;
   let statusName: string;
 
@@ -27,10 +33,7 @@ export default function UserStatus({ status }: { status: string }) {
 
   return (
     <>
-      <span
-        title={statusName}
-        className={`mr-1 inline-block h-3 w-3 rounded-full ${color}`}
-      ></span>
+      <span title={statusName} className={`${classes} ${color}`}></span>
     </>
   );
 }

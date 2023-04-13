@@ -8,19 +8,19 @@ import { ChatMessageDto } from "src/_shared_dto/chat-message.dto";
 import { useNavigate } from "react-router-dom";
 
 interface MessageBulleRecvProps {
+  loginer: UseLoginDto;
   user: UserDto;
   chats: UseChatDto;
   gamer: UseGameDto;
   message: ChatMessageDto;
-  loginer: UseLoginDto;
 }
 
 export default function MessageBulleRecv({
+  loginer,
   user,
   chats,
   gamer,
   message,
-  loginer,
 }: MessageBulleRecvProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [target, setTarget] = React.useState<any>(undefined);
@@ -116,7 +116,10 @@ export default function MessageBulleRecv({
                   Watch
                 </button>
               </>
-            )) || <>{message.content}</>}
+            )) ||
+          (loginer.userInfos?.blockeds.indexOf(user.id) !== -1 && (
+            <>&lt;Message blocked&gt;</>
+          )) || <>{message.content}</>}
       </div>
       {isOpen && (
         <ModalUser

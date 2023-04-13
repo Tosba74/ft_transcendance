@@ -1,9 +1,10 @@
 import { ChatRoomDto } from "src/_shared_dto/chat-room.dto";
+import { UseLoginDto } from "../Log/dto/useLogin.dto";
 import MessageConv from "./MessageConv";
 import MessageInput from "./MessageInput";
-import { UseLoginDto } from "../Log/dto/useLogin.dto";
 import { UseChatDto } from "./dto/useChat.dto";
 import { UseGameDto } from "../Game/dto/useGame.dto";
+import React from "react";
 
 interface MessagePanelProps {
   selfId: number;
@@ -22,11 +23,27 @@ export default function MessagePanel({
   chats,
   gamer,
 }: MessagePanelProps) {
+  const [role, setRole] = React.useState("");
+
+  React.useEffect(() => {
+    const me = room?.participants.find(
+      (participant) => participant.id === selfId
+    );
+    if (me !== undefined) {
+      if (me.roleId > 1) setRole(` ${me.roleName}`);
+    }
+  }, [room, selfId]);
+
   return (
     <>
+      {/* <<<<<<< HEAD
       <div className="mt-2 grid h-10 w-full grid-cols-1 items-center justify-center rounded-t bg-gray-200 text-center dark:bg-gray-700 dark:text-white">
         <div className="mr-2 items-center justify-center overflow-x-hidden whitespace-nowrap">
           {room?.name || "No room selected"}
+======= */}
+      <div className="mt-2 flex h-10 w-full items-center justify-center rounded-t bg-gray-200 text-center dark:bg-gray-700 dark:text-white">
+        <div className="shadow-b mr-2 h-8 items-center justify-center overflow-x-hidden border-b border-gray-900 px-20">
+          {room?.name || "No room selected"} <small>{role}</small>
         </div>
         <div className="content=[' '] mx-auto w-[80%] border-t border-black dark:border-gray-100"></div>
       </div>

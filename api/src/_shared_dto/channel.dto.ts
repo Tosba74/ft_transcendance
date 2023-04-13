@@ -5,6 +5,7 @@ export class ChannelDto {
   name: string;
   password: boolean;
   type: number;
+  role?: number;
 }
 /*type
 1 chat
