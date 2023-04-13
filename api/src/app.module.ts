@@ -6,7 +6,6 @@ import config from './_typeorm/ormconfig';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
-import { ChatModule } from './chat/chat.module';
 import { UsersModule } from './users/users.module';
 import { FriendTypesModule } from './friend_types/friend_types.module';
 import { FriendsModule } from './friends/friends.module';
@@ -33,7 +32,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     TypeOrmModule.forRoot(config),
     UsersModule, FriendTypesModule, FriendsModule, FriendTypesModule, BlockedsModule,
     ChatTypesModule, ChatRolesModule, ChatsModule, ChatMessagesModule, ChatParticipantsModule,
-    GamesModule, ChatModule,
+    GamesModule,
     AuthModule, TfaModule, MeModule,
     ScheduleModule.forRoot(),
   ],
