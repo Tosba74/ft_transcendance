@@ -48,9 +48,7 @@ export default function User(props: UserProps) {
   return (
     <>
       {props.children}
-      <button className="modalRef" onClick={handleClick}>
-        {props.user.pseudo}
-      </button>
+      <button onClick={handleClick}>{props.user.pseudo}</button>
       {isOpen && (
         <ModalUser
           type={props.type}

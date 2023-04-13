@@ -37,6 +37,10 @@ export default function MessageBulleRecv({
     setPosY(event.target.y - 80);
   };
 
+  const handleOpen = () => {
+    setIsOpen(!isOpen);
+  };
+
   React.useEffect(() => {
     const handleScroll = (event: any) => {
       event.preventDefault();
@@ -60,22 +64,22 @@ export default function MessageBulleRecv({
         .getElementById("chat")
         ?.removeEventListener("scroll", handleScroll);
     };
-  }, [isOpen]);
+  }, [target]);
 
-  React.useEffect(() => {
-    const checkIfClickedOutside = (e: any) => {
-      if (modalRef) {
-        if (isOpen && !modalRef.current?.contains(e.target)) {
-          setIsOpen(false);
-        }
-      }
-    };
-    document.addEventListener("mousedown", checkIfClickedOutside);
+  // React.useEffect(() => {
+  //   const checkIfClickedOutside = (e: any) => {
+  //     if (modalRef) {
+  //       if (isOpen && !modalRef.current?.contains(e.target)) {
+  //         setIsOpen(false);
+  //       }
+  //     }
+  //   };
+  //   document.addEventListener("mousedown", checkIfClickedOutside);
 
-    return () => {
-      document.removeEventListener("mousedown", checkIfClickedOutside);
-    };
-  }, [isOpen]);
+  //   return () => {
+  //     document.removeEventListener("mousedown", checkIfClickedOutside);
+  //   };
+  // }, [isOpen]);
 
   return (
     <div className="my-1 flex w-full flex-row-reverse items-end justify-end pl-2">
@@ -92,7 +96,7 @@ export default function MessageBulleRecv({
           posX={posX}
           posY={posY}
           type={null}
-          doReload={handleClick}
+          doReload={handleOpen}
         />
       )}
       <img

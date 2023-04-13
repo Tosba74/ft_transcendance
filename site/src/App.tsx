@@ -75,7 +75,9 @@ export default function App() {
               />
               <Route
                 path="/friends"
-                element={<FriendsPage loginer={loginer} chats={chats} />}
+                element={
+                  <FriendsPage loginer={loginer} chats={chats} gamer={gamer} />
+                }
               />
               <Route
                 path="/channels"
@@ -120,6 +122,7 @@ export default function App() {
         setOpenedMenu={setOpenedMenu}
         loginer={loginer}
         chats={chats}
+        gamer={gamer}
       />
     </Router>
   );
