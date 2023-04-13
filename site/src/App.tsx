@@ -64,6 +64,18 @@ export default function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
 
+          {!loginer.logged && (
+            <>
+              <Route path="/start" element={<p></p>} />
+              <Route path="/players/:id" element={<p></p>} />
+              <Route path="/friends" element={<p></p>} />
+              <Route path="/channels" element={<p></p>} />
+              <Route path="/players" element={<p></p>} />
+              <Route path="/channels/new" element={<p></p>} />
+              <Route path="/settings" element={<p></p>} />
+              <Route path="/game" element={<p></p>} />
+            </>
+          )}
           {loginer.logged && (
             <>
               <Route
@@ -95,7 +107,6 @@ export default function App() {
                 element={<SettingsPage loginer={loginer} />}
               />
               <Route path="/game" element={<GamePage gamer={gamer} />} />
-              <Route path="/history" element={<ReactPage />} />
             </>
           )}
           <Route path="/login" element={<LogPage loginer={loginer} />} />

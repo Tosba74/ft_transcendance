@@ -89,13 +89,17 @@ export class ChatParticipantsService {
       },
     });
 
-    return myChats.map(chat => {
+    const ret = await Promise.all(myChats.map(async chat => {
+      const myRole = await this.get_role(id, chat.room.id);
       return {
         ...chat.room,
         password: chat.room.password != undefined && chat.room.password.length > 0,
         type: chat.room.type.id,
+        role: myRole,
       }
-    });
+    }));
+
+    return ret;
   }
 
 
