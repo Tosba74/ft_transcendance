@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException, forwardRef, Inject, PreconditionFailedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 
 import { UsersService } from 'src/users/users.service';
 import { MeService } from 'src/me/me.service';
@@ -17,6 +17,7 @@ import { ChatTypeModel } from 'src/chat_types/models/chat_type.model';
 import { ChatRoleModel } from 'src/chat_roles/models/chat_role.model';
 
 import { UserDto } from 'src/_shared_dto/user.dto';
+import { UserParticipantDto } from './dto/user-participant.dto';
 import { LoggedUserDto } from 'src/auth/dto/logged_user.dto';
 import { WsResponseDto } from 'src/_shared_dto/ws-response.dto';
 import { ChatRoomDto } from 'src/_shared_dto/chat-room.dto';
@@ -221,7 +222,7 @@ export class ChatsService {
   }
 
 
-  async connectRoom(user: UserDto, client: Socket, room_id: number): Promise<WsResponseDto<ChatRoomDto>> {
+  async connectRoom(server: Server, user: UserDto, client: Socket, room_id: number): Promise<WsResponseDto<ChatRoomDto>> {
 
     let res = new WsResponseDto<ChatRoomDto>();
 
@@ -262,12 +263,16 @@ export class ChatsService {
       newroom.participants = [];
 
       room.participants.forEach(value => {
-        let usr: UserDto = value.participant.toUserDto();
+        let usr: UserParticipantDto = {
+          ...value.participant.toUserDto(),
+          roleId: value.role.id, roleName: value.role.name
+        }
 
         newroom.participants.push(usr);
 
       });
 
+      // console.log(newroom);
       res.value = newroom;
     }
     else {
@@ -336,7 +341,26 @@ export class ChatsService {
   }
 
 
-  async adminCommand(user: UserDto, client: Socket, room_id: number, message: string): Promise<ChatMessageDto | undefined> {
+  async updateParticipants(server: Server, room_id: number) {
+
+    const room = await this.findOneById(room_id);
+
+    let participants: UserParticipantDto[] = [];
+
+    room.participants.forEach(value => {
+      let usr: UserParticipantDto = {
+        ...value.participant.toUserDto(),
+        roleId: value.role.id, roleName: value.role.name
+      }
+
+      participants.push(usr);
+    });
+
+    server.to(room_id.toString()).emit("updateParticipants", { room_id: room_id, participants: participants })
+  }
+
+
+  async adminCommand(server: Server, user: UserDto, client: Socket, room_id: number, message: string): Promise<ChatMessageDto | undefined> {
 
     let responseMessage = new ChatMessageDto();
 
@@ -346,7 +370,7 @@ export class ChatsService {
     if (room.participants.some(element => {
       return element.participant.id === user.id &&
         (element.role.id == ChatRoleModel.OWNER_ROLE || element.role.id == ChatRoleModel.ADMIN_ROLE)
-    })) {
+    }) || message.startsWith("/gameinvite")) {
 
       let command = message.split(" ");
       function isNotBlank(elem: string) {
@@ -373,24 +397,43 @@ export class ChatsService {
         // minimum Admin permission required
         case "/invite":
           responseMessage.content = await this.inviteCommand(room, user, command);
+          this.updateParticipants(server, room.id);
           break;
         case "/promote":
           responseMessage.content = await this.promoteCommand(room, user, command);
+          this.updateParticipants(server, room.id);
           break;
         case "/demote":
           responseMessage.content = await this.demoteCommand(room, user, command);
+          this.updateParticipants(server, room.id);
           break;
         case "/kick":
           responseMessage.content = await this.kickCommand(room, user, command);
           break;
         case "/ban":
           responseMessage.content = await this.banCommand(room, user, command);
+          this.updateParticipants(server, room.id);
           break;
         case "/unban":
           responseMessage.content = await this.unbanCommand(room, user, command);
+          this.updateParticipants(server, room.id);
           break;
         case "/role":
           responseMessage.content = await this.roleCommand(room, user, command);
+          break;
+
+        // special case
+        case "/gameinvite":
+
+          const gameInvite = await this.gameInvite(room, user, command);
+
+          if (gameInvite === undefined) {
+            responseMessage.content = 'Game invite error';
+          } //
+          else {
+            return gameInvite;
+          }
+
           break;
 
         default:
@@ -661,7 +704,7 @@ export class ChatsService {
       promoteMessage.id = -this.serverMsgId;
       promoteMessage.sender = new UserDto();
       promoteMessage.sender.id = -1;
-      promoteMessage.content = promoteMessage.sender.pseudo + ' named you Admin of this channel';
+      promoteMessage.content = user.pseudo + ' named you admin of this channel';
       this.serverMsgId++;
 
       clientsToPromote.forEach(value => {
@@ -701,7 +744,7 @@ export class ChatsService {
       demoteMessage.id = -this.serverMsgId;
       demoteMessage.sender = new UserDto();
       demoteMessage.sender.id = -1;
-      demoteMessage.content = demoteMessage.sender.pseudo + ' removed your Admin status';
+      demoteMessage.content = user.pseudo + ' removed your Admin status';
       this.serverMsgId++;
 
       clientsToDemote.forEach(value => {
@@ -846,4 +889,26 @@ export class ChatsService {
     }
   }
 
+
+  async gameInvite(room: ChatModel, user: UserDto, command: string[]): Promise<ChatMessageDto | undefined> {
+    if (command.length !== 3) {
+      return undefined;
+    }
+
+    var targetUser = parseInt(command[1]);
+    var targetGame = parseInt(command[2]);
+
+    let invite = new ChatMessageDto();
+    invite.id = -this.serverMsgId;
+    invite.sender = user;
+
+    invite.invite_id = targetUser;
+    invite.invite_pseudo = (await this.usersService.findOneById(targetUser)).pseudo;
+    invite.invite_game_id = targetGame;
+    
+    invite.content = '';
+    this.serverMsgId++;
+
+    return invite;
+  }
 }

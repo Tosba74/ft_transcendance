@@ -1,6 +1,6 @@
 import { Controller, HttpCode, Param, Body, Get, Post, Put, Delete, UseFilters, ParseIntPipe, } from '@nestjs/common';
 import { ApiOkResponse, ApiNotFoundResponse, ApiNoContentResponse, ApiCreatedResponse, ApiUnprocessableEntityResponse, ApiTags, ApiBadRequestResponse } from '@nestjs/swagger';
-import { AllowLogged } from 'src/auth/auth.decorators';
+import { AllowLogged, AllowPublic } from 'src/auth/auth.decorators';
 import { HttpExceptionFilter } from 'src/_common/filters/http-exception.filter';
 
 import { GamesService } from './games.service';
@@ -19,13 +19,20 @@ export class GamesController {
     return this.gamesService.findAll();
   }
 
+  @AllowPublic()
+  @Get('recent')
+  @ApiOkResponse({ description: 'Games retrieved successfully', type: GameModel, isArray: true})
+  public findRecent(): Promise<GameModel[]> {
+    return this.gamesService.findRecent();
+  }
+
   @Get(':id')
   @ApiOkResponse({ description: 'Game retrieved successfully', type: GameModel })
   @ApiNotFoundResponse({ description: 'Game not found' })
   @ApiBadRequestResponse({ description: 'Game validation error' })
   public findOne(@Param('id', ParseIntPipe) id: number): Promise<GameModel> {
     return this.gamesService.findOneById(id);
-  }
+  }  
 
 
 

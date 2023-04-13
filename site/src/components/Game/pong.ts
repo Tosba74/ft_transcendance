@@ -30,8 +30,6 @@ export class GameArea {
     this.playerOne = new Paddle();
     this.playerTwo = new Paddle();
 
-    console.log("dasd");
-
     // this.interval = setInterval(() => { this.update(); this.render(); }, 1000 / 50); //50 fps
   }
 

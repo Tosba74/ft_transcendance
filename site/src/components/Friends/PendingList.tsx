@@ -4,15 +4,21 @@ import React from "react";
 import { UserDto } from "src/_shared_dto/user.dto";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
 import { FiUserPlus, FiClock } from "react-icons/fi";
+import { UseChatDto } from "../Chat/dto/useChat.dto";
+import { UseGameDto } from "../Game/dto/useGame.dto";
 
 export default function PendingList({
   loginer,
+  gamer,
   reload,
   doReload,
+  chats,
 }: {
   loginer: UseLoginDto;
+  gamer: UseGameDto;
   reload: boolean;
   doReload: Function;
+  chats: UseChatDto;
 }) {
   const [usersRecv, setUsersRecv] = React.useState<UserDto[]>([]);
   const [usersSent, setUsersSent] = React.useState<UserDto[]>([]);
@@ -23,20 +29,10 @@ export default function PendingList({
       .then((res) => {
         if (res.status === 201) {
           doReload();
-          // console.log(res.data);
           return;
         }
       })
       .catch((error) => {});
-
-    // console.log(
-    //   "should accept " +
-    //     user.login_name +
-    //     "(" +
-    //     user.id +
-    //     ")" +
-    //     " from pending list"
-    // );
   };
 
   React.useEffect(() => {
@@ -58,11 +54,18 @@ export default function PendingList({
         }
       })
       .catch((error) => {});
-  }, [reload]);
+  }, [reload, loginer]);
 
   let content: JSX.Element[] = usersRecv.map((user) => (
     <li className="flex items-center" key={user.id}>
-      <User type={"ask"} loginer={loginer} user={user} doReload={doReload}>
+      <User
+        chats={chats}
+        type={"ask"}
+        loginer={loginer}
+        gamer={gamer}
+        user={user}
+        doReload={doReload}
+      >
         <FiUserPlus
           onClick={() => handlePending(user)}
           className="mr-1 inline-block cursor-pointer"
@@ -74,10 +77,17 @@ export default function PendingList({
   content = content.concat(
     usersSent.map((user) => (
       <li className="flex items-center" key={user.id}>
-        <User type={"sent"} loginer={loginer} user={user} doReload={doReload}>
+        <User
+          chats={chats}
+          type={"sent"}
+          loginer={loginer}
+          gamer={gamer}
+          user={user}
+          doReload={doReload}
+        >
           <FiClock
             // onClick={() => handlePending(user)}
-            className="mr-1 inline-block"
+            className="mr-1 inline-block cursor-pointer"
           />
         </User>
       </li>

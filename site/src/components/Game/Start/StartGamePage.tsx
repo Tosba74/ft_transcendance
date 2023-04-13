@@ -12,13 +12,13 @@ interface StartGamePageProps {
 
 export default function StartGamePage({ loginer, gamer }: StartGamePageProps) {
   return (
-    <div className="mx-auto flex h-max max-w-md flex-col bg-white p-6 text-center shadow-md dark:border-gray-700 dark:bg-gray-800 dark:text-white">
+    <div className="mx-auto flex h-max max-w-[600px] flex-col bg-white py-6 text-center shadow-md dark:border-gray-700 dark:bg-gray-800 dark:text-white">
       <h1 id="startPage" className="text-2xl">
         Game
       </h1>
       <QuickPlay loginer={loginer} gamer={gamer} />
       <div className="w-sm mx-auto flex flex-col">
-        <JoinGame loginer={loginer} />
+        <JoinGame loginer={loginer} gamer={gamer} />
         <HistoryGames loginer={loginer} />
       </div>
     </div>

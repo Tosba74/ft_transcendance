@@ -19,8 +19,8 @@ export default function ChatIcon({
 
   return (
     <>
-      {openedMenu != "chat" && (
-        <div className="absolute right-2 bottom-10 z-40 ">
+      {openedMenu !== "chat" && (
+        <div className="absolute right-2 bottom-10 z-50 ">
           <div className="justify-content-end right-2 flex justify-end rounded-full lg:pr-2">
             <div>
               <button

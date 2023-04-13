@@ -11,6 +11,10 @@ export interface LoggedUserDto {
 
   tfa_enabled: boolean;
   is_admin: boolean;
+
+  asked: number[];
+  friends: number[];
+  blockeds: number[];
 }
 
 export interface UseLoginDto {

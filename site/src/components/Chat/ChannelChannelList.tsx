@@ -34,7 +34,7 @@ export default function ChannelChannelList({
 
   // const [channels] = useState<Channel[]>(Mock_Channel);
   return (
-    <div className="scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-1 scrolling-touch mt-2 h-1/3 w-full overflow-y-scroll rounded rounded-b bg-gray-400 bg-gray-300 py-1 px-4 shadow-inner dark:bg-gray-800 dark:text-white">
+    <div className="scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-1 scrolling-touch mt-2 h-1/3 w-full overflow-y-scroll rounded rounded-b bg-gray-400 py-1 px-4 shadow-inner dark:bg-gray-600 dark:text-white">
       {lstChannel &&
         Object.keys(lstChannel).map((key) => {
           return (
@@ -50,21 +50,22 @@ export default function ChannelChannelList({
                   //   {lstChannel[key].password && (
                   <MdKey className="" title="Protected" />
                 )}
-                {!lstChannel[key] && lstChannel[key].type == 1 && (
+                {!lstChannel[key] && lstChannel[key].type === 1 && (
                   //   {!lstChannel[key].password && lstChannel[key].type == 1 && (
                   <MdOutlineEmail className="" title="Chat" />
                 )}
-                {!lstChannel[key] && lstChannel[key].type == 2 && (
+                {!lstChannel[key] && lstChannel[key].type === 2 && (
                   //   {!lstChannel[key].password && lstChannel[key].type == 2 && (
                   <MdPublic className="" title="Public" />
                 )}
-                {!lstChannel[key] && lstChannel[key].type == 3 && (
+                {!lstChannel[key] && lstChannel[key].type === 3 && (
                   //   {!lstChannel[key].password && lstChannel[key].type == 3 && (
                   <FiLock className="" title="Private" />
                 )}
               </li>
               <button
-                className="flex w-5/6 justify-start dark:text-white"
+                className="flex w-5/6 justify-start dark:text-white truncate"
+                title={lstChannel[key].name}
                 type="button"
                 onClick={() => {
                   handleShow(lstChannel[key]);

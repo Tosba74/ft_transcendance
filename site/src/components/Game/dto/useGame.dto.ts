@@ -15,4 +15,5 @@ export interface UseGameDto {
   createGame: Function;
   joinGame: Function;
   playGame: Function;
+  deco: Function;
 }
