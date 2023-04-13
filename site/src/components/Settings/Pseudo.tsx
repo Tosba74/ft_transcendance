@@ -86,19 +86,3 @@ export default function Pseudo({ loginer }: PseudoProps) {
     </form>
   );
 }
-
-{
-  /* <div className="flex h-10 items-center justify-center gap-2">
-<label className="dark:text-white">Change avatar: </label>
-<input
-  className="w-96 bg-slate-300 dark:bg-gray-800 dark:text-white"
-  type="file"
-  ref={fileInput}
-/>
-<button
-  type="submit"
-  className="rounded bg-cyan-500 px-3 py-1 text-white"
->
-  Save
-</button> */
-}

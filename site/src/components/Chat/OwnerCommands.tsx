@@ -90,7 +90,7 @@ export default function OwnerCommands({
 			{room?.type === 3 && 
 				<OwnerInvite loginer={loginer} sendMessage={sendMessage} participants={participants} />
 			|| room?.type === 2 && 
-				<OwnerPw loginer={loginer} sendMessage={sendMessage} participants={participants} role={role} room={room} />}
+				<OwnerPw loginer={loginer} sendMessage={sendMessage} room={room} />}
 
           </div>,
           startEL
