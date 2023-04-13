@@ -1,8 +1,5 @@
-import React from "react";
-import { UserDto } from "src/_shared_dto/user.dto";
 import ChannelChannelList from "./ChannelChannelList";
 import ChannelUserList from "./ChannelUserList";
-import ChatIcon from "./ChatIcon";
 import { UseChatDto } from "./dto/useChat.dto";
 
 interface ChannelPanelProps {

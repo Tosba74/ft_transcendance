@@ -11,16 +11,16 @@ interface IconSwitchProps {
 export default function IconSwitch({ channel }: IconSwitchProps) {
   return (
     <>
-      {channel.type == 1 && (
+      {channel.type === 1 && (
         <MdOutlineEmail className="basis-1/6 self-center" title="Chat" />
       )}
-      {channel.password && channel.type == 2 && (
+      {channel.password && channel.type === 2 && (
         <MdKey className="basis-1/6 self-center " title="Password Required" />
       )}
-      {!channel.password && channel.type == 2 && (
+      {!channel.password && channel.type === 2 && (
         <MdPublic className="basis-1/6 self-center" title="Public" />
       )}
-      {channel.type == 3 && (
+      {channel.type === 3 && (
         <FiLock className="basis-1/6 self-center" title="Private" />
       )}
     </>
