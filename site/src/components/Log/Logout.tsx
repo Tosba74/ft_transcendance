@@ -23,7 +23,7 @@ export default function Logout({ loginer, chats, gamer }: LogoutProps) {
       gamer.deco();
 
       loginer.setToken(localStorage.getItem("token") || "");
-    } // 
+    } //
     else {
       setPageMessage("Logout successful, redirecting...");
       loginer.getUserData();

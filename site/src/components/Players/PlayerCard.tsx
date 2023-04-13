@@ -69,7 +69,7 @@ export default function PlayerCard({ loginer, chats, user }: PlayerCardProps) {
             {user.pseudo}
           </h5>
 
-          {loginer.userInfos?.id !== user.id && (
+          {loginer.userInfos && loginer.userInfos?.id !== user.id && (
             <div className="mt-4 flex space-x-3 md:mt-6">
               <button
                 type="button"
