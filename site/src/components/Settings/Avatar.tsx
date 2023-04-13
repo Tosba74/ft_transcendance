@@ -113,7 +113,9 @@ export default function Avatar({ loginer }: AvatarProps) {
           Save
         </button>
       </div>
-      <div className="h-8 w-4/6 text-center dark:text-white">{avatarMessage}</div>
+      <div className="flex text-white items-center justify-center">
+      {avatarMessage}
+      </div>
     </form>
   );
 }
