@@ -114,7 +114,7 @@ export default function Avatar({ loginer }: AvatarProps) {
           Save
         </button>
       </div>
-      <div>{avatarMessage}</div>
+      <div className="h-8 w-4/6 text-center dark:text-white">{avatarMessage}</div>
     </form>
   );
 }

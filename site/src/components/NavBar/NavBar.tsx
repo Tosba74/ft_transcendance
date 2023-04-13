@@ -32,7 +32,7 @@ export default function NavBar({
     <header className="top-0 z-50 w-full">
       <nav
         className={classNames(
-          "px-2 py-2.5 shadow-lg sm:px-4",
+          "z-50 px-2 py-2.5 shadow-lg sm:px-4",
           globalThis.colorTheme
         )}
       >
