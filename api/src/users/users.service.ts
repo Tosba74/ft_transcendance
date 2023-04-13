@@ -5,12 +5,12 @@ import * as bcrypt from 'bcrypt';
 
 import { UserModel } from "./models/user.model";
 
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdatePseudoDto } from '../me/dto/update-pseudo.dto';
 import * as fs from 'fs';
-import { extname } from 'path';
+
 import { GamesService } from 'src/games/games.service';
 import { UserDto } from 'src/_shared_dto/user.dto';
+import { UserStatsDto } from '../_shared_dto/user-stats.dto';
+import { FriendsService } from 'src/friends/friends.service';
 
 @Injectable()
 export class UsersService {
@@ -18,7 +18,9 @@ export class UsersService {
   constructor(
     @InjectRepository(UserModel) private usersRepository: Repository<UserModel>,
     @Inject(forwardRef(() => GamesService))
-    private gamesService: GamesService
+    private gamesService: GamesService,
+    @Inject(forwardRef(() => FriendsService))
+    private friendsService: FriendsService,
   ) { }
 
 
@@ -88,7 +90,7 @@ export class UsersService {
 
     return this.gamesService.getUserStatus(id);
   }
-  
+
   async findOneByPseudo(pseudo: string): Promise<UserModel> {
     try {
       const user = await this.usersRepository.findOneOrFail({
@@ -180,7 +182,7 @@ export class UsersService {
     try {
       const user: UserModel = await this.findOneById(id) as UserModel;
       // await this.usersRepository.delete(user);
-      await this.usersRepository.delete(id).catch((err: any) => {
+      await this.usersRepository.delete(id).catch(() => {
         throw new BadRequestException('Delete user error');
       });
     }
@@ -208,58 +210,45 @@ export class UsersService {
   // }
 
   async updatePseudo(id: number, pseudo: string): Promise<boolean> {
-    try {
-      let user: UserModel = await this.findOneById(id) as UserModel;
-      
-      const user_exist = await this.usersRepository.findOne({
-        where: { pseudo: pseudo }
-      });
-      if (user_exist)
-        throw new UnauthorizedException()
+    var user: UserModel = await this.findOneById(id) as UserModel;
 
-      user.pseudo = pseudo;
-      await this.usersRepository.save(user).catch((err: any) => {
-        throw new BadRequestException('User pseudo update error');
-      });
-      return true;
-    }
-    catch (error) {
-      if (error instanceof UnauthorizedException)
-        throw new UnauthorizedException('Pseudo already used')
-      throw new NotFoundException('User id not found');
-    }
+    const pseudo_exist = await this.usersRepository.findOne({
+      where: { pseudo: pseudo }
+    })
+    if (pseudo_exist)
+      throw new UnauthorizedException('Pseudo already used')
+
+    user.pseudo = pseudo;
+    await this.usersRepository.save(user).catch(() => {
+      throw new BadRequestException('User pseudo update error');
+    });
+    return true;
   }
+
 
   async updateAvatar(id: number, filename: string): Promise<string> {
-    try {
-      let user: UserModel = await this.findOneById(id) as UserModel;
+    var user: UserModel = await this.findOneById(id) as UserModel;
 
-      // remove l'ancienne image de la memoire du volume
-      const prevAvatarUrl: string = user.avatar_url;
-      if (prevAvatarUrl.indexOf('https://cdn.intra.42.fr') === -1 &&
-        prevAvatarUrl.indexOf('default-avatar') === -1) {
-        const i: number = prevAvatarUrl.lastIndexOf('/');
-        const prevFilename: string = prevAvatarUrl.substring(i + 1);
-        const prevFile: string = `../app-datas/avatars/${prevFilename}`;
-        fs.unlink(prevFile, (err) => {
-          // garder console.log, si on throw une erreur ca terminera pas la fonction et on a besoin du return
-          if (err)
-            console.log(`Could not remove the old file ${prevFile} from user ${user.id}`);
-          // file removed!
-        })
-      }
+    // remove l'ancienne image de la memoire du volume
+    const prevAvatarUrl: string = user.avatar_url;
+    if (prevAvatarUrl.indexOf('https://cdn.intra.42.fr') === -1 &&
+      prevAvatarUrl.indexOf('default-avatar') === -1) {
+      const i: number = prevAvatarUrl.lastIndexOf('/');
+      const prevFilename: string = prevAvatarUrl.substring(i + 1);
+      const prevFile: string = `../app-datas/avatars/${prevFilename}`;
+      fs.unlink(prevFile, (err) => {
+        if (err)
+          console.log(`Could not remove the old file ${prevFile} from user ${user.id}`);
+        // file removed!
+      })
+    }
 
-      user.avatar_url = `/avatars/${filename}`;
-      await this.usersRepository.save(user).catch((err: any) => {
-        throw new BadRequestException('User avatar update error');
-      });
-      return user.avatar_url;
-    }
-    catch (error) {
-      throw new NotFoundException('User id not found');
-    }
+    user.avatar_url = `/avatars/${filename}`;
+    await this.usersRepository.save(user).catch((err: any) => {
+      throw new BadRequestException('User avatar update error');
+    });
+    return user.avatar_url;
   }
-
 
 
   /* 
@@ -313,4 +302,63 @@ export class UsersService {
     }
   }
 
+
+
+  async getRanking(): Promise<number[]> {
+
+    const games = await this.gamesService.findFinished();
+
+    const points = new Map<number, number>();
+
+    games.forEach(game => {
+      if (game.user1_score > game.user2_score) {
+
+
+        points.set(game.user1?.id || -1, (points.get(game.user1?.id || -1) || 0) + game.user1_score - game.user2_score);
+        points.set(game.user2?.id || -1, (points.get(game.user2?.id || -1) || 0) + 0);
+      } //
+      else {
+        points.set(game.user2?.id || -1, (points.get(game.user2?.id || -1) || 0) + game.user2_score - game.user1_score);
+        points.set(game.user1?.id || -1, (points.get(game.user1?.id || -1) || 0) + 0);
+
+      }
+    });
+
+    const pointsToSort = Array.from(points);
+    pointsToSort.sort((a, b) => {
+      return (b[1] - a[1]);
+    });
+
+    return pointsToSort.map(value => value[0]);
+  }
+
+
+  async getStats(id: number): Promise<UserStatsDto> {
+
+    const stats = new UserStatsDto();
+
+    stats.friends_count = (await this.friendsService.findFriends(id)).length;
+
+    const games = await this.gamesService.findFinishedFor(id);
+    stats.games_count = games.length;
+
+    const ranking = await this.getRanking();
+    const userRank = ranking.indexOf(id);
+
+    stats.rank = userRank !== -1 && `${userRank + 1} / ${ranking.length}` || 'unranked';
+
+    stats.last_games = games;
+
+    if (games.length > 0) {
+      stats.win_rate = Math.round(games.filter(game => {
+        return game.user1?.id === id && game.user1_score > game.user2_score ||
+          game.user2?.id === id && game.user2_score > game.user1_score;
+      }).length / games.length * 100);
+    }
+    else {
+      stats.win_rate = 100;
+    }
+
+    return stats;
+  }
 }

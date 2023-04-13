@@ -31,7 +31,7 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage('createGame')
-	async createGame(client: Socket, body: { }): Promise<void> {
+	async createGame(client: Socket, body: {}): Promise<void> {
 
 		console.log('wring')
 	}
@@ -52,13 +52,13 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@SubscribeMessage('connectRoom')
 	async connectRoom(client: Socket, body: { room: number }): Promise<WsResponseDto<ChatRoomDto>> {
 
-		
+
 		const loggedUser = this.chatsService.isIdentifed(client);
-		
+
 		if (loggedUser == undefined) {
 			throw new WsException('Not identified');
 		}
-		
+
 		// const loggedUser: LoggedUserDto = {
 		// 	id: 1,
 		// 	login_name: 'ada',
@@ -67,7 +67,7 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		// 	is_admin: false,
 		// }
 
-		return (this.chatsService.connectRoom(loggedUser, client, body.room))
+		return (this.chatsService.connectRoom(this.server, loggedUser, client, body.room))
 	}
 
 
@@ -78,7 +78,8 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	async createMessage(client: Socket, body: { room_id: number, message: string }) {
 
 
-		console.log('message arrived');
+		console.log(`message arrived :\n${body.message}`);
+		// console.log('message arrived');
 
 		if (body == undefined || body.room_id == undefined || body.message == undefined) {
 			throw new WsException('Not identified');
@@ -107,7 +108,7 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 		if (body.message.startsWith("/") == true) {
 
-			let messageObj = await this.chatsService.adminCommand(loggedUser, client, body.room_id, body.message);
+			let messageObj = await this.chatsService.adminCommand(this.server, loggedUser, client, body.room_id, body.message);
 
 			if (messageObj != undefined)
 				this.server.to(body.room_id.toString()).emit('broadcastMessage', { room_id: body.room_id.toString(), message: messageObj });

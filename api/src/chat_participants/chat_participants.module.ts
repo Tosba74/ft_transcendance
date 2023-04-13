@@ -6,10 +6,12 @@ import { ChatParticipantsController } from './chat_participants.controller';
 import { ChatParticipantModel } from './models/chat_participant.model';
 import { ChatsModule } from 'src/chats/chats.module';
 
+import { UsersModule } from 'src/users/users.module';
+
 @Module({
-  imports: [TypeOrmModule.forFeature([ChatParticipantModel]), forwardRef(() => ChatsModule)],
+  imports: [TypeOrmModule.forFeature([ChatParticipantModel]), forwardRef(() => ChatsModule), UsersModule],
   providers: [ChatParticipantsService],
   controllers: [ChatParticipantsController],
   exports: [ChatParticipantsService],
 })
-export class ChatParticipantsModule {}
+export class ChatParticipantsModule { }

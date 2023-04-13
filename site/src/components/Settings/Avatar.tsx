@@ -25,9 +25,10 @@ export default function Avatar({ loginer }: AvatarProps) {
     if (
       fileInput.current.files[0].type !== "image/png" &&
       fileInput.current.files[0].type !== "image/jpg" &&
-      fileInput.current.files[0].type !== "image/jpeg"
+      fileInput.current.files[0].type !== "image/jpeg" &&
+      fileInput.current.files[0].type !== "image/gif"
     ) {
-      setAvatarMessage("Error: the image must be jpg or png");
+      setAvatarMessage("Error: the image must be jpg or png or a funny gif");
       return false;
     }
 
@@ -113,7 +114,7 @@ export default function Avatar({ loginer }: AvatarProps) {
           Save
         </button>
       </div>
-      <div>{avatarMessage}</div>
+      <div className="h-8 w-4/6 text-center dark:text-white">{avatarMessage}</div>
     </form>
   );
 }

@@ -5,13 +5,20 @@ import { UseLoginDto } from "../Log/dto/useLogin.dto";
 import PendingList from "./PendingList";
 import React from "react";
 import { FiRefreshCw } from "react-icons/fi";
+import { UseChatDto } from "../Chat/dto/useChat.dto";
+import { UseGameDto } from "../Game/dto/useGame.dto";
 
 interface UserListPageProps {
   loginer: UseLoginDto;
-  //   refreshUserInfos: Function;
+  chats: UseChatDto;
+  gamer: UseGameDto;
 }
 
-export default function FriendsPage({ loginer }: UserListPageProps) {
+export default function FriendsPage({
+  loginer,
+  chats,
+  gamer,
+}: UserListPageProps) {
   const [reload, setReload] = React.useState(false);
   const [effect, setEffect] = React.useState(false);
   const [effect2, setEffect2] = React.useState(false);
@@ -48,7 +55,7 @@ export default function FriendsPage({ loginer }: UserListPageProps) {
     <div
       className={`${
         effect2 && "animate-spin"
-      } mx-auto h-full max-w-md bg-white p-6 shadow-md dark:border-gray-700 dark:bg-gray-800 dark:text-white md:h-max`}
+      } mx-auto h-full h-max max-w-md bg-white p-6 shadow-md dark:border-gray-700 dark:bg-gray-800 dark:text-white`}
     >
       <div className="flex items-baseline">
         <h1 className="grow pb-4 text-center text-3xl">Friends List</h1>
@@ -61,9 +68,27 @@ export default function FriendsPage({ loginer }: UserListPageProps) {
         />
       </div>
       <div className="flex flex-col px-4">
-        <FriendsList loginer={loginer} reload={reload} doReload={doReload} />
-        <PendingList loginer={loginer} reload={reload} doReload={doReload} />
-        <BannedList loginer={loginer} reload={reload} doReload={doReload} />
+        <FriendsList
+          chats={chats}
+          loginer={loginer}
+          gamer={gamer}
+          reload={reload}
+          doReload={doReload}
+        />
+        <PendingList
+          chats={chats}
+          loginer={loginer}
+          gamer={gamer}
+          reload={reload}
+          doReload={doReload}
+        />
+        <BannedList
+          chats={chats}
+          loginer={loginer}
+          gamer={gamer}
+          reload={reload}
+          doReload={doReload}
+        />
         <AddFriend loginer={loginer} doReload={doReload} />
       </div>
     </div>

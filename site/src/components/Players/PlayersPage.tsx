@@ -2,50 +2,18 @@ import axios from "axios";
 import React from "react";
 
 import { UserDto } from "src/_shared_dto/user.dto";
+import { UseChatDto } from "../Chat/dto/useChat.dto";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
-import UserCard from "./UserCard";
+import UserCard from "./PlayerCard";
 
-interface UserListPageProps {
+interface PlayersPageProps {
   loginer: UseLoginDto;
+  chats: UseChatDto;
   //   refreshUserInfos: Function;
 }
 
-export default function UserListPage({ loginer }: UserListPageProps) {
+export default function PlayersPage({ loginer, chats }: PlayersPageProps) {
   let [users, setUsers] = React.useState<UserDto[]>([]);
-  // let users: UserDto[] = [
-  //   {
-  //     id: 1,
-  //     login_name: "jjaqueme",
-  //     pseudo: "jerome",
-  //     color: 10,
-  //     avatar_url: ".",
-  //     is_admin: false,
-  //   },
-  //   {
-  //     id: 2,
-  //     login_name: "jjaqueme",
-  //     pseudo: "jerome",
-  //     color: 10,
-  //     avatar_url: ".",
-  //     is_admin: false,
-  //   },
-  //   {
-  //     id: 3,
-  //     login_name: "jjaqueme",
-  //     pseudo: "jerome",
-  //     color: 10,
-  //     avatar_url: ".",
-  //     is_admin: false,
-  //   },
-  //   {
-  //     id: 4,
-  //     login_name: "jjaqueme",
-  //     pseudo: "jerome",
-  //     color: 10,
-  //     avatar_url: ".",
-  //     is_admin: false,
-  //   },
-  // ];
 
   React.useEffect(() => {
     axios
@@ -77,10 +45,10 @@ export default function UserListPage({ loginer }: UserListPageProps) {
   return (
     <>
       <div className="h-full w-full justify-center p-2">
-        <div className="flex flex-wrap gap-2">
+        <div className="mx-auto flex flex-wrap justify-center gap-2">
           {users.map((user) => (
             <div key={user.id}>
-              <UserCard user={user} />
+              <UserCard loginer={loginer} chats={chats} user={user} />
             </div>
           ))}
         </div>

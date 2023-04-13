@@ -10,6 +10,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 
 import { AllowLogged } from '../auth/auth.decorators';
 import { UserDto } from 'src/_shared_dto/user.dto';
+import { UserStatsDto } from '../_shared_dto/user-stats.dto';
 
 // import { extname } from 'path';
 // import { createReadStream } from 'fs';
@@ -78,4 +79,10 @@ export class UsersController {
   */
 
 
+  @AllowLogged()
+  @Get(':id/stats')
+  @ApiOkResponse({ description: 'Game retrieved successfully', type: UserStatsDto })
+  public recentGames(@Param('id', ParseIntPipe) id: number): Promise<UserStatsDto> {
+    return this.usersService.getStats(id);
+  }
 }

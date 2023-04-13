@@ -10,9 +10,12 @@ export default function MessageInput({ sendMessage }: MessageInputProps) {
   async function handleSend(event: SyntheticEvent) {
     event.preventDefault();
 
-    console.log(message);
-    sendMessage(message);
-    setMessage("");
+    const messageTrimmed = message.trim();
+    if (messageTrimmed !== "") {
+      console.log(messageTrimmed);
+      sendMessage(messageTrimmed);
+      setMessage("");
+    }
   }
 
   return (

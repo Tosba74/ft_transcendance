@@ -8,15 +8,14 @@ import { MuteParticipantDto } from './dto/mute-participant';
 import { UpdateRoleDto } from './dto/update-role';
 import { ChatParticipantModel } from "./models/chat_participant.model";
 
-
 @Controller('api/chat_participant')
 @ApiTags('api/chat_participant')
 @UseFilters(HttpExceptionFilter)
 export class ChatParticipantsController {
   constructor(private readonly chatParticipantsService: ChatParticipantsService) { }
-  
+
   @Get()
-  @ApiOkResponse({ description: 'Chat participants retrieved successfully', type: ChatParticipantModel, isArray: true})
+  @ApiOkResponse({ description: 'Chat participants retrieved successfully', type: ChatParticipantModel, isArray: true })
   public findAll(): Promise<ChatParticipantModel[]> {
     return this.chatParticipantsService.findAll();
   }
@@ -36,11 +35,18 @@ export class ChatParticipantsController {
     return this.chatParticipantsService.create(createMessageDto.user_id, createMessageDto.chat_id, createMessageDto.role_id);
   }
 
+  // @Patch(':id/change_role')
+  // @ApiOkResponse({ description: 'New role updated successfully', type: ChatParticipantModel })
+  // @ApiBadRequestResponse({ description: 'New role validation error' })
+  // public update_role(@Param('id', ParseIntPipe) id: number, @Body() updateRoleDto: UpdateRoleDto): Promise<ChatParticipantModel> {
+  //   return this.chatParticipantsService.update_role(id, updateRoleDto);
+  // }
   @Patch(':id/change_role')
   @ApiOkResponse({ description: 'New role updated successfully', type: ChatParticipantModel })
   @ApiBadRequestResponse({ description: 'New role validation error' })
-  public update_role(@Param('id', ParseIntPipe) id: number, @Body() updateRoleDto: UpdateRoleDto): Promise<ChatParticipantModel> {
-    return this.chatParticipantsService.update_role(id, updateRoleDto);
+  public update_role(@Param('id', ParseIntPipe) id: number, @Body() updateRoleDto: UpdateRoleDto): Promise<ChatParticipantModel | null> {
+    updateRoleDto.participantId = id;
+    return this.chatParticipantsService.update_role(updateRoleDto);
   }
 
   @Patch(':id/mute')
@@ -52,9 +58,9 @@ export class ChatParticipantsController {
 
   @Delete(':id')
   @HttpCode(204)
-	@ApiNoContentResponse({ description: 'Chat participant deleted successfully.'})
-	@ApiNotFoundResponse({ description: 'Chat participant not found.' })
-	public delete(@Param('id', ParseIntPipe) id: number): Promise<void> {  
-		return this.chatParticipantsService.delete(id);
-	}
+  @ApiNoContentResponse({ description: 'Chat participant deleted successfully.' })
+  @ApiNotFoundResponse({ description: 'Chat participant not found.' })
+  public delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    return this.chatParticipantsService.delete(id);
+  }
 }

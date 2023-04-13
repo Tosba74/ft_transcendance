@@ -24,7 +24,7 @@ export class AuthController {
 
         if (process.env.BUILD_TYPE != "Production") {
 
-            const user = req.user as LoggedUserDto;
+            const user = req.user;
 
             if (user.tfa_enabled === false)
                 return this.authService.login(user);
@@ -51,13 +51,13 @@ export class AuthController {
     }
 
 
-    @Get('refresh_token')
-    @AllowLogged()
-    async refreshToken(@Request() req: any): Promise<any> {
-        delete req.user.exp;
-        delete req.user.iat;
-        return this.authService.login(req.user as LoggedUserDto);
-    }
+    // @Get('refresh_token')
+    // @AllowLogged()
+    // async refreshToken(@Request() req: any): Promise<any> {
+    //     delete req.user.exp;
+    //     delete req.user.iat;
+    //     return this.authService.login(req.user);
+    // }
 
 
     @Get('apisignin')

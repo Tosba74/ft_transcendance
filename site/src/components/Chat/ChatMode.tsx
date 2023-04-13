@@ -4,12 +4,14 @@ interface ChatModeProps {
   chats: UseChatDto;
   setOpenedMenu: Function;
   modeChannel: boolean;
+  handleAnimation: Function;
 }
 
 export default function ChatMode({
   chats,
   setOpenedMenu,
   modeChannel,
+  handleAnimation,
 }: ChatModeProps) {
   return (
     <>
@@ -26,7 +28,10 @@ export default function ChatMode({
       <button
         className="w-10"
         type="button"
-        onClick={() => chats.setChatOpen(false)}
+        onClick={() => {
+          // chats.setChatOpen("");
+          handleAnimation();
+        }}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

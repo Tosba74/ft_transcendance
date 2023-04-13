@@ -1,22 +1,30 @@
 import axios from "axios";
 import React, { SyntheticEvent, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
+
+import { UseChatDto } from "../Chat/dto/useChat.dto";
+import { UseGameDto } from "../Game/dto/useGame.dto";
 import { UseLoginDto } from "./dto/useLogin.dto";
 
 interface LogoutProps {
   loginer: UseLoginDto;
+  chats: UseChatDto;
+  gamer: UseGameDto;
 }
 
-export default function Logout({ loginer }: LogoutProps) {
+export default function Logout({ loginer, chats, gamer }: LogoutProps) {
   const [pageMessage, setPageMessage] = React.useState("Logout");
   const navigate = useNavigate();
 
   React.useEffect(() => {
     if (loginer.token != undefined && loginer.token != "") {
       localStorage.clear();
+      chats.deco();
+      gamer.deco();
 
       loginer.setToken(localStorage.getItem("token") || "");
-    } else {
+    } //
+    else {
       setPageMessage("Logout successful, redirecting...");
       loginer.getUserData();
 

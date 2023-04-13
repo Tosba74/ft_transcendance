@@ -14,6 +14,7 @@ import { GameSetterDto } from 'src/_shared_dto/gamesetter.dto';
 import { UsersService } from 'src/users/users.service';
 import { GameStatusModel } from 'src/game_status/models/game_status.model';
 import { UserModel } from 'src/users/models/user.model';
+import { WsResponseDto } from 'src/_shared_dto/ws-response.dto';
 
 export class GameRoom {
   // host: WebsocketUser | undefined;
@@ -57,9 +58,49 @@ export class GamesService {
     return this.gamesRepository.find();
   }
 
-  async findOneById(id: number): Promise<GameModel> {
+
+  findFinished(): Promise<GameModel[]> {
+    const games = this.gamesRepository.find({
+      where: { status: { id: GameStatusModel.FINISHED_STATUS } },
+      relations: { user1: true, user2: true },
+    });
+    return games;
+  }
+
+  findFinishedFor(id: number): Promise<GameModel[]> {
+    const games = this.gamesRepository.find({
+      where: [
+        {
+          status: { id: GameStatusModel.FINISHED_STATUS },
+          user1: { id: id },
+        },
+        {
+          status: { id: GameStatusModel.FINISHED_STATUS },
+          user2: { id: id },
+        },
+      ],
+      relations: { user1: true, user2: true },
+    });
+    return games;
+  }
+
+  findRecent(): Promise<GameModel[]> {
+    const games = this.gamesRepository.find({
+      where: {
+        status: { id: GameStatusModel.FINISHED_STATUS },
+      },
+      order: {
+        created_at: "DESC",
+      },
+      take: 7,
+      relations: { user1: true, user2: true },
+    });
+    return games;
+  }
+
+  findOneById(id: number): Promise<GameModel> {
     try {
-      const games = await this.gamesRepository.findOneOrFail({
+      const games = this.gamesRepository.findOneOrFail({
         where: { id }
       });
       return games;
@@ -87,9 +128,6 @@ export class GamesService {
     else {
       res.user2 = null;
     }
-
-    res.started_at = new Date();
-    res.ended_at = new Date();
 
     res.status = new GameStatusModel(GameStatusModel.CREATED_STATUS);
 
@@ -162,7 +200,7 @@ export class GamesService {
 
     if (this.currentGames[game_id.toString()] !== undefined) {
       console.log('game already created');
-      return;
+      return -1;
     }
 
     this.currentGames[game_id.toString()] = new GameRoom();
@@ -183,9 +221,6 @@ export class GamesService {
     this.currentGames[game_id.toString()].timer = setInterval(() => { game_function() }, 1000 / module_const.fps);
 
     this.connectGameRoom(server, client, user_id, game_id);
-
-
-    console.log('create');
   }
 
 
@@ -252,18 +287,15 @@ export class GamesService {
   }
 
 
-  async joinGame(server: Server, client: Socket, user_id: number, game_id: number) {
+  async joinGame(server: Server, client: Socket, user_id: number, game_id: number): Promise<WsResponseDto<undefined>> {
 
 
     if (this.currentGames[game_id.toString()] == undefined) {
-      console.log('joined game not exists');
-      return;
+      return { error: "Game not running", value: undefined };
     }
-
+    
     this.connectGameRoom(server, client, user_id, game_id);
-
-    console.log('join');
-
+    return { error: undefined, value: undefined };
   }
 
 
@@ -272,7 +304,6 @@ export class GamesService {
   playGame(user_id: number, game_id: number, actions: string[]) {
 
     if (this.currentGames[game_id.toString()] == undefined) {
-      console.log('played game not exists', game_id);
       return;
     }
 
@@ -293,7 +324,6 @@ export class GamesService {
   async gameLife(server: Server, game_id: number) {
 
     if (this.currentGames[game_id.toString()] == undefined) {
-      console.log('life not existing')
       return;
     }
 
@@ -325,7 +355,6 @@ export class GamesService {
         gameToSave.user1_score = gameRoom.game.playerOne.score;
         gameToSave.user2_score = gameRoom.game.playerTwo.score;
 
-        gameToSave.ended_at = new Date();
         gameToSave.status = new GameStatusModel(GameStatusModel.FINISHED_STATUS);
 
         this.gamesRepository.save(gameToSave);
@@ -347,7 +376,6 @@ export class GamesService {
 
       try {
         const gameToSave = await this.findOneById(game_id);
-        gameToSave.ended_at = new Date();
         gameToSave.status = new GameStatusModel(GameStatusModel.CLOSED_STATUS);
 
         this.gamesRepository.save(gameToSave);
