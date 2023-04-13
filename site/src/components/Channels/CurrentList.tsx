@@ -37,7 +37,7 @@ export default function CurrentList({
           return;
         }
       })
-      .catch((error) => { });
+      .catch((error) => {});
 
     setTimeout(() => {
       setEffect(false);
@@ -77,7 +77,7 @@ export default function CurrentList({
                 className="text-blueGray-700 mb-2 flex text-lg"
               >
                 <div className="flex basis-5/6">
-                  <li className="w-14 basis-5/6 truncate">
+                  <li title={channel.name} className="w-14 basis-5/6 truncate">
                     {channel.name} <small>{role}</small>
                   </li>
                   <IconSwitch channel={channel} />

@@ -133,7 +133,9 @@ export default function PublicList({
                 className="text-blueGray-700 mb-2 flex text-lg"
               >
                 <div className="flex basis-5/6">
-                  <li className="w-14 basis-5/6 truncate">{channel.name}</li>
+                  <li title={channel.name} className="w-14 basis-5/6 truncate">
+                    {channel.name}
+                  </li>
                   <IconSwitch channel={channel} />
                 </div>
                 <button
