@@ -5,6 +5,7 @@ import { UseChatDto } from "./dto/useChat.dto";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
 import classNames from "classnames";
 import { UseGameDto } from "../Game/dto/useGame.dto";
+import React from "react";
 
 interface ChatMenuProps {
   openedMenu: string;
@@ -21,7 +22,7 @@ export default function ChatMenu({
   chats,
   gamer,
 }: ChatMenuProps) {
-  const [animation, setAnimation] = useState(true);
+  const [animation, setAnimation] = React.useState(true);
 
   const sendMessage = (text: string) => {
     chats.sendMessage(text, chats.currChannel);
@@ -68,7 +69,6 @@ export default function ChatMenu({
           >
             {!chats.modeChannel && (
               <MessagePanel
-                loginer={loginer}
                 selfId={loginer.userInfos?.id || -1}
                 sendMessage={sendMessage}
                 room={chats.rooms && chats.rooms[chats.currChannel.toString()]}

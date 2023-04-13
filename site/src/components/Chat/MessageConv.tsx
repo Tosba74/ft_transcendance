@@ -37,8 +37,8 @@ export default function MessageConv({
     if (first) {
       setTimeout(() => {
         scrollToBottom();
+        setFirst(false);
       }, 500);
-      setFirst(false);
     } else {
       scrollToBottom();
     }
