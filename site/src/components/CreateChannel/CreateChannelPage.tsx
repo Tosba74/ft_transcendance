@@ -48,7 +48,7 @@ export default function CreateChannelPage({ loginer }: CreateChannelPageProps) {
   };
 
   return (
-    <div className="mx-auto p-20 flex h-max max-w-[600px] flex-col bg-white py-6 text-center shadow-md dark:border-gray-700 dark:bg-gray-800 dark:text-white">
+    <div className="mx-auto flex h-max max-w-[600px] flex-col bg-white p-20 py-6 text-center shadow-md dark:border-gray-700 dark:bg-gray-800 dark:text-white">
       <h1 className="pb-4 text-center text-3xl">Create Channel</h1>
       <form>
         <div className="mb-6 flex items-start">

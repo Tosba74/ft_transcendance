@@ -64,7 +64,7 @@ export default function ChannelChannelList({
                 )}
               </li>
               <button
-                className="flex w-5/6 justify-start dark:text-white truncate"
+                className="flex w-5/6 justify-start truncate dark:text-white"
                 title={lstChannel[key].name}
                 type="button"
                 onClick={() => {

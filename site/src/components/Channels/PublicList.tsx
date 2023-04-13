@@ -161,7 +161,6 @@ export default function PublicList({
         {portal &&
           startEL !== null &&
           createPortal(
-
             <div
               style={css}
               ref={ref}
@@ -179,10 +178,14 @@ export default function PublicList({
                 }
               }}
             >
-              <form className="items-center grid grid-cols-1  gap-2" onSubmit={(e: any) => { e.preventDefault(); handleSubmit(channelID); }}>
-                <h3 className="col-span-2 text-center text-xl">
-                  Password
-                </h3>
+              <form
+                className="grid grid-cols-1 items-center  gap-2"
+                onSubmit={(e: any) => {
+                  e.preventDefault();
+                  handleSubmit(channelID);
+                }}
+              >
+                <h3 className="col-span-2 text-center text-xl">Password</h3>
 
                 <label className="relative right-2 ml-auto cursor-pointer">
                   Password
