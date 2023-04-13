@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 
 import HomePage from "./components/Home/HomePage";
-import LogPage from "./components/Log/LogPage";
+// import LogPage from "./components/Log/LogPage";
 
 import NavBar from "./components/NavBar/NavBar";
 import ChatIcon from "./components/Chat/ChatIcon";
@@ -110,7 +110,7 @@ export default function App() {
               <Route path="/game" element={<GamePage gamer={gamer} />} />
             </>
           )}
-          <Route path="/login" element={<LogPage loginer={loginer} />} />
+          {/* <Route path="/login" element={<LogPage loginer={loginer} />} /> */}
           <Route path="/loginapi" element={<LoginApi loginer={loginer} />} />
           <Route
             path="/login_tfa"
