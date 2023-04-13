@@ -82,7 +82,9 @@ export default function Pseudo({ loginer }: PseudoProps) {
           Save
         </button>
       </div>
-      <div className="h-8 w-4/6 text-center dark:text-white">{pseudoInputMessage}</div>
+      <div className="flex h-10 text-white items-center justify-center">
+        {pseudoInputMessage}
+      </div>
     </form>
   );
 }
