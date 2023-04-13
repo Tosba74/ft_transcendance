@@ -48,7 +48,6 @@ export default function PublicList({
         loginer.get_headers()
       )
       .then((res) => {
-        console.log(res.status);
         if (res.status == 201) {
           setPageMessage("");
           doReload();
@@ -155,60 +154,61 @@ export default function PublicList({
                 >
                   join
                 </button>
-                {portal &&
-                  startEL !== null &&
-                  createPortal(
-                    <div
-                      style={css}
-                      ref={ref}
-                      className={classNames(
-                        "absolute left-1/2 mt-36 grid w-auto min-w-[250px] max-w-md -translate-x-1/2 grid-cols-2 items-center gap-2 rounded-lg bg-gray-100 p-4 px-16 shadow-lg dark:bg-gray-700 dark:text-white",
-                        effect
-                          ? "opacity-1 animate-fadeIn"
-                          : "animate-fadeOut opacity-0"
-                      )}
-                      onAnimationEnd={() => {
-                        if (!effect) {
-                          setPageMessage("");
-                          setPassword("");
-                          setChannelID(0);
-                        }
-                      }}
-                    >
-                      <h3 className="col-span-2 text-center text-xl">
-                        Password
-                      </h3>
-
-                      <label className="relative right-2 ml-auto cursor-pointer">
-                        Password
-                      </label>
-                      <input
-                        type="text"
-                        id="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="right-0 ml-auto mr-2 max-w-[100px] rounded-lg border border-gray-300 bg-gray-50 p-1.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                        placeholder="Type here"
-                      />
-
-                      <button
-                        onClick={() => {
-                          handleSubmit(channelID);
-                        }}
-                        className="col-span-2 mx-auto mt-3 whitespace-nowrap rounded-lg bg-cyan-500 px-4 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                      >
-                        Join
-                      </button>
-                      <div className="col-span-2 text-center text-sm">
-                        {pageMessage}
-                      </div>
-                    </div>,
-                    startEL
-                  )}
               </div>
             );
           })}
         </ul>
+        {portal &&
+          startEL !== null &&
+          createPortal(
+
+            <div
+              style={css}
+              ref={ref}
+              className={classNames(
+                "absolute left-1/2 mt-36 w-auto min-w-[250px] max-w-md -translate-x-1/2 items-center rounded-lg bg-gray-300 p-4 px-16 shadow-lg dark:bg-gray-700 dark:text-white",
+                effect
+                  ? "opacity-1 animate-fadeIn"
+                  : "animate-fadeOut opacity-0"
+              )}
+              onAnimationEnd={() => {
+                if (!effect) {
+                  setPageMessage("");
+                  setPassword("");
+                  setChannelID(0);
+                }
+              }}
+            >
+              <form className="items-center grid grid-cols-1  gap-2" onSubmit={(e: any) => { e.preventDefault(); handleSubmit(channelID); }}>
+                <h3 className="col-span-2 text-center text-xl">
+                  Password
+                </h3>
+
+                <label className="relative right-2 ml-auto cursor-pointer">
+                  Password
+                </label>
+                <input
+                  type="text"
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="right-0 ml-auto mr-2 max-w-[100px] rounded-lg border border-gray-300 bg-gray-50 p-1.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                  placeholder="Type here"
+                />
+
+                <button
+                  type="submit"
+                  className="col-span-2 mx-auto mt-3 whitespace-nowrap rounded-lg bg-cyan-500 px-4 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                >
+                  Join
+                </button>
+                <div className="col-span-2 text-center text-sm">
+                  {pageMessage}
+                </div>
+              </form>
+            </div>,
+            startEL
+          )}
       </div>
     </div>
   );
