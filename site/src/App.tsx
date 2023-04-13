@@ -1,11 +1,10 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import "./App.css";
 
 import ReactPage from "./components/ReactPage";
 import HomePage from "./components/Home/HomePage";
-import ProfilePage from "./components/Settings/SettingsPage";
 import LogPage from "./components/Log/LogPage";
 
 import NavBar from "./components/NavBar/NavBar";

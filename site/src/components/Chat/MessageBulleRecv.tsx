@@ -66,40 +66,57 @@ export default function MessageBulleRecv({
         .getElementById("chat")
         ?.removeEventListener("scroll", handleScroll);
     };
-  }, [target]);
-
-  // React.useEffect(() => {
-  //   const checkIfClickedOutside = (e: any) => {
-  //     if (modalRef) {
-  //       if (isOpen && !modalRef.current?.contains(e.target)) {
-  //         setIsOpen(false);
-  //       }
-  //     }
-  //   };
-  //   document.addEventListener("mousedown", checkIfClickedOutside);
-
-  //   return () => {
-  //     document.removeEventListener("mousedown", checkIfClickedOutside);
-  //   };
-  // }, [isOpen]);
+  }, [target, isOpen, clientH]);
 
   const navigate = useNavigate();
 
   return (
     <div className="my-1 flex w-full flex-row-reverse items-end justify-end pl-2">
       <div className="mx-2 break-all rounded-lg bg-gray-300 p-2 px-4 text-xs text-gray-600">
-        {loginer.userInfos && message.invite_id === loginer.userInfos.id && message.invite_game_id !== -1 && message.invite_pseudo !== "" && (
-          <>
-            {message.sender.pseudo} invited you to play <button onClick={() => { gamer.joinGame(message.invite_game_id, () => { navigate("/game"); }, undefined); }} className="bg-green-400 rounded p-1">Play</button>
-          </>
-        ) || loginer.userInfos && message.invite_id !== loginer.userInfos.id && message.invite_game_id !== -1 && message.invite_pseudo !== "" && (
-          <>
-            {message.sender.pseudo} invited {message.invite_pseudo} to play <button onClick={() => { gamer.joinGame(message.invite_game_id, () => { navigate("/game"); }, undefined); }} className="bg-green-400 rounded p-1">Watch</button>
-          </>
-        ) || (
-            <>{message.content}</>
-          )
-        }
+        {(loginer.userInfos &&
+          message.invite_id === loginer.userInfos.id &&
+          message.invite_game_id !== -1 &&
+          message.invite_pseudo !== "" && (
+            <>
+              {message.sender.pseudo} invited you to play{" "}
+              <button
+                onClick={() => {
+                  gamer.joinGame(
+                    message.invite_game_id,
+                    () => {
+                      navigate("/game");
+                    },
+                    undefined
+                  );
+                }}
+                className="rounded bg-green-400 p-1"
+              >
+                Play
+              </button>
+            </>
+          )) ||
+          (loginer.userInfos &&
+            message.invite_id !== loginer.userInfos.id &&
+            message.invite_game_id !== -1 &&
+            message.invite_pseudo !== "" && (
+              <>
+                {message.sender.pseudo} invited {message.invite_pseudo} to play{" "}
+                <button
+                  onClick={() => {
+                    gamer.joinGame(
+                      message.invite_game_id,
+                      () => {
+                        navigate("/game");
+                      },
+                      undefined
+                    );
+                  }}
+                  className="rounded bg-green-400 p-1"
+                >
+                  Watch
+                </button>
+              </>
+            )) || <>{message.content}</>}
       </div>
       {isOpen && (
         <ModalUser

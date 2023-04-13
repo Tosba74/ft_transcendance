@@ -28,19 +28,10 @@ export default function BannedList({
       .then((res) => {
         if (res.status === 204) {
           doReload();
-          // console.log(res);
           return;
         }
       })
       .catch((error) => {});
-    // console.log(
-    //   "should remove " +
-    //     user.login_name +
-    //     "(" +
-    //     user.id +
-    //     ")" +
-    //     " from ban list"
-    // );
   };
 
   React.useEffect(() => {
@@ -48,14 +39,13 @@ export default function BannedList({
       .get("/api/me/blockeds", loginer.get_headers())
       .then((res) => {
         if (res.status === 200) {
-          // console.log(res.data as UserDto[]);
           setUsers(res.data as UserDto[]);
 
           return;
         }
       })
       .catch((error) => {});
-  }, [reload]);
+  }, [reload, loginer]);
 
   const content: JSX.Element[] = users.map((user) => (
     <li className="flex items-center text-slate-500" key={user.id}>

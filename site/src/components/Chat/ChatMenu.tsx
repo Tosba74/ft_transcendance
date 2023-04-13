@@ -50,7 +50,7 @@ export default function ChatMenu({
               ? "animate-slideInChat"
               : "animate-slideOutChat opacity-0",
             "sm:resize-x sm:overflow-x-auto sm:overflow-y-hidden",
-            "absolute top-16 bottom-10 z-50 flex w-full max-w-[98%] flex-col rounded-lg bg-gray-300 p-2 shadow-lg dark:bg-gray-800 sm:min-w-[325px] md:top-20 md:right-2 md:w-1/2 lg:top-20 lg:w-1/3"
+            "absolute top-16 bottom-10 z-50 flex w-full min-w-full max-w-[98%] flex-col rounded-lg bg-gray-300 p-2 shadow-lg dark:bg-gray-800 sm:min-w-[325px] md:top-20 md:right-2 md:w-1/2 lg:top-20 lg:w-1/3"
           )}
           onAnimationEnd={() => {
             if (!animation) {

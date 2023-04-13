@@ -54,7 +54,7 @@ export default function PendingList({
         }
       })
       .catch((error) => {});
-  }, [reload]);
+  }, [reload, loginer]);
 
   let content: JSX.Element[] = usersRecv.map((user) => (
     <li className="flex items-center" key={user.id}>

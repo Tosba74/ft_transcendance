@@ -37,7 +37,7 @@ export default function FriendsList({
         }
       })
       .catch((error) => {});
-  }, [reload]);
+  }, [reload, loginer]);
 
   const content: JSX.Element[] = users.map((user) => (
     <li key={user.id} className="flex items-center">

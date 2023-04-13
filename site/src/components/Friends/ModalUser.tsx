@@ -131,9 +131,9 @@ export default function ModalUser({
       >
         MP
       </ModalLink>,
-      <ModalLink key={`modalUserPlay-${user.id}`} onClick={() => handlePlay()}>
-        Play
-      </ModalLink>,
+      // <ModalLink key={`modalUserPlay-${user.id}`} onClick={() => handlePlay()}>
+      //   Play
+      // </ModalLink>,
       <ModalLink
         key={`modalUserRemove-${user.id}`}
         onClick={() => handleRemove(loginer, user, doReload)}
@@ -155,9 +155,9 @@ export default function ModalUser({
       >
         MP
       </ModalLink>,
-      <ModalLink key={`modalUserPlay-${user.id}`} onClick={() => handlePlay()}>
-        Play
-      </ModalLink>,
+      // <ModalLink key={`modalUserPlay-${user.id}`} onClick={() => handlePlay()}>
+      //   Play
+      // </ModalLink>,
       <ModalLink
         key={`modalUserAccept-${user.id}`}
         onClick={() => handleAccept(loginer, user, doReload)}
@@ -185,9 +185,9 @@ export default function ModalUser({
       >
         MP
       </ModalLink>,
-      <ModalLink key={`modalUserPlay-${user.id}`} onClick={() => handlePlay()}>
-        Play
-      </ModalLink>,
+      // <ModalLink key={`modalUserPlay-${user.id}`} onClick={() => handlePlay()}>
+      //   Play
+      // </ModalLink>,
       <ModalLink
         key={`modalUserRemove-${user.id}`}
         onClick={() => handleRemove(loginer, user, doReload)}
@@ -220,19 +220,19 @@ export default function ModalUser({
       </ModalLink>,
       <ModalLink key={`modalUserPlay-${user.id}`} onClick={() => handlePlay()}>
         Play
-      </ModalLink>,
-      <ModalLink
-        key={`modalUserAdd-${user.id}`}
-        onClick={() => handleAdd(loginer, user, doReload)}
-      >
-        Add
-      </ModalLink>,
-      <ModalLink
-        key={`modalUserBlock-${user.id}`}
-        onClick={() => handleBlock(loginer, user, doReload)}
-      >
-        Block
       </ModalLink>
+      // <ModalLink
+      //   key={`modalUserAdd-${user.id}`}
+      //   onClick={() => handleAdd(loginer, user, doReload)}
+      // >
+      //   Add
+      // </ModalLink>,
+      // <ModalLink
+      //   key={`modalUserBlock-${user.id}`}
+      //   onClick={() => handleBlock(loginer, user, doReload)}
+      // >
+      //   Block
+      // </ModalLink>
     );
   }
 
@@ -280,11 +280,21 @@ export default function ModalUser({
   const handleClickSearch = () => {
     setEffect(false);
 
-    gamer.createGame(mode.isFun, true, mode.points, mode.force, user.id, (game_id: number) => {
-      chats.sendMessage(`/gameinvite ${user.id} ${game_id}`, chats.currChannel);
-      navigate("/game");
-      setIsSearch(true);
-    });
+    gamer.createGame(
+      mode.isFun,
+      true,
+      mode.points,
+      mode.force,
+      user.id,
+      (game_id: number) => {
+        chats.sendMessage(
+          `/gameinvite ${user.id} ${game_id}`,
+          chats.currChannel
+        );
+        navigate("/game");
+        setIsSearch(true);
+      }
+    );
   };
 
   React.useEffect(() => {
