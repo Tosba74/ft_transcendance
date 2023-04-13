@@ -67,7 +67,7 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		// 	is_admin: false,
 		// }
 
-		return (this.chatsService.connectRoom(loggedUser, client, body.room))
+		return (this.chatsService.connectRoom(this.server, loggedUser, client, body.room))
 	}
 
 
@@ -108,7 +108,7 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 		if (body.message.startsWith("/") == true) {
 
-			let messageObj = await this.chatsService.adminCommand(loggedUser, client, body.room_id, body.message);
+			let messageObj = await this.chatsService.adminCommand(this.server, loggedUser, client, body.room_id, body.message);
 
 			if (messageObj != undefined)
 				this.server.to(body.room_id.toString()).emit('broadcastMessage', { room_id: body.room_id.toString(), message: messageObj });

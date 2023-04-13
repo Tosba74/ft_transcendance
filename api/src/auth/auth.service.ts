@@ -16,8 +16,8 @@ export class AuthService {
     constructor(private usersService: UsersService, private jwtService: JwtService, @Inject(forwardRef(() => TfaService)) private tfaService: TfaService) { }
     private states: Array<string> = [];
 
-    async validateUser(loginname: string, password: string): Promise<LoggedUserDto | null> {
-        
+    async validateUser(loginname: string, password: string): Promise<UserModel | null> {
+
         const user: UserModel = await this.usersService.findOneByLoginName(loginname);
 
         if (user && user.password && await bcrypt.compare(password, user.password)) {
@@ -34,18 +34,18 @@ export class AuthService {
             //     is_admin: user.is_admin,
             // };
 
-            return user as LoggedUserDto;
+            return user;
         }
 
         return null;
     }
 
-    async signin(loginname: string, password: string): Promise<LoggedUserDto | null> {
-    
+    async signin(loginname: string, password: string): Promise<UserModel | null> {
+
         return this.usersService.create(loginname, loginname, password);
     }
 
-    async validateOrCreateUser(loginname: string, infos: any = {}): Promise<LoggedUserDto | null> {
+    async validateOrCreateUser(loginname: string, infos: any = {}): Promise<UserModel | null> {
 
         try {
             const user = await this.usersService.findOneByLoginName(loginname);
@@ -60,7 +60,7 @@ export class AuthService {
             //     is_admin: user.is_admin,
             // };
 
-            return user as LoggedUserDto;
+            return user;
         }
         catch (NotFoundException) {
 
@@ -109,12 +109,12 @@ export class AuthService {
             //     is_admin: user.is_admin,
             // };
 
-            return user as LoggedUserDto;
+            return user;
         }
         return null;
     }
 
-    async login(user: LoggedUserDto) {
+    async login(user: UserModel): Promise<{ access_token: string }> {
         const access_token = this.jwtService.sign({ id: user.id, login_name: user.login_name, is_admin: user.is_admin });
         return { access_token: access_token };
     }

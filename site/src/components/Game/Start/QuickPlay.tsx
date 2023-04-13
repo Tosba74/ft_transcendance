@@ -35,19 +35,6 @@ export default function QuickPlay({
     top: `${document.getElementById("startPage")?.offsetTop}px`,
   };
 
-  const handleClickSearch = () => {
-    setEffect(false);
-
-    gamer.createGame(mode.isFun, true, mode.points, mode.force, -1, () => {
-      setIsSearch(true);
-    });
-  };
-
-  const handleClickPortal = () => {
-    setEffect(true);
-    setPortal(true);
-  };
-
   const handleFun = (e: any) => {
     setMode((old) => {
       return { ...old, isFun: e.target.checked };
@@ -70,6 +57,19 @@ export default function QuickPlay({
         return { ...old, points: e.target.valueAsNumber };
       });
     }
+  };
+
+  const handleClickSearch = () => {
+    setEffect(false);
+
+    gamer.createGame(mode.isFun, true, mode.points, mode.force, -1, () => {
+      setIsSearch(true);
+    });
+  };
+
+  const handleClickPortal = () => {
+    setEffect(true);
+    setPortal(true);
   };
 
   useEffect(() => {

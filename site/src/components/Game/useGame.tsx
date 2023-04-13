@@ -56,20 +56,31 @@ const useGame = ({ loginer }: useGameProps) => {
           force_points: force_points,
           invited_id: invited_id,
         },
-        (response: WsResponseDto<undefined>) => {
-          if (response.error === undefined && callbackFct !== undefined) {
-            callbackFct();
+        (response: WsResponseDto<number>) => {
+          if (response.error === undefined && callbackFct !== undefined && response.value !== undefined) {
+            callbackFct(response.value);
           }
         }
       );
   };
 
-  const joinGame = (game_id: number) => {
+  const joinGame = (
+    game_id: number,
+    successFct: Function | undefined = undefined,
+    errorFct: Function | undefined = undefined
+  ) => {
     gameSocketRef.current &&
       gameSocketRef.current.emit(
         "joinGame",
         { game_id: game_id },
-        (response: void) => {}
+        (response: WsResponseDto<undefined>) => {
+          if (errorFct && response.error !== undefined) {
+            errorFct(`Error: ${response.error}`);
+          } //
+          else if (successFct !== undefined) {
+            successFct();
+          }
+        }
       );
   };
 
@@ -92,6 +103,12 @@ const useGame = ({ loginer }: useGameProps) => {
         { game_id: gameId, actions: actions },
         (response: void) => {}
       );
+  };
+
+  const deco = () => {
+    gameSocketRef.current && gameSocketRef.current.disconnect();
+
+    gameSocketRef.current = undefined;
   };
 
   React.useEffect(() => {
@@ -158,7 +175,8 @@ const useGame = ({ loginer }: useGameProps) => {
             }
           );
       });
-    } else {
+    } //
+    else if (loginer.logged === false) {
       console.log("game socket not connected not logged");
     }
   }, [loginer.logged]);
@@ -187,6 +205,7 @@ const useGame = ({ loginer }: useGameProps) => {
     createGame,
     joinGame,
     playGame,
+    deco,
   };
 };
 

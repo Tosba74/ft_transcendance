@@ -4,13 +4,19 @@ import axios from "axios";
 import React from "react";
 import { UserDto } from "src/_shared_dto/user.dto";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
+import { UseChatDto } from "../Chat/dto/useChat.dto";
+import { UseGameDto } from "../Game/dto/useGame.dto";
 
 export default function FriendsList({
   loginer,
+  chats,
+  gamer,
   reload,
   doReload,
 }: {
   loginer: UseLoginDto;
+  chats: UseChatDto;
+  gamer: UseGameDto;
   reload: boolean;
   doReload: Function;
 }) {
@@ -18,25 +24,32 @@ export default function FriendsList({
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    // console.log("loadgin", reload);
-
     axios
       .get("/api/me/friends", loginer.get_headers())
       .then((res) => {
         if (res.status === 200 && res.data) {
-          // console.log(res.data);
           setLoading(false);
           setUsers(res.data as UserDto[]);
           return;
         }
       })
       .catch((error) => {});
-  }, [reload]);
+  }, [reload, loginer]);
 
   const content: JSX.Element[] = users.map((user) => (
     <li key={user.id} className="flex items-center">
-      <User type={"friend"} loginer={loginer} user={user} doReload={doReload}>
-        <UserStatus status={user.status} />
+      <User
+        chats={chats}
+        type={"friend"}
+        loginer={loginer}
+        gamer={gamer}
+        user={user}
+        doReload={doReload}
+      >
+        <UserStatus
+          classes={"mr-1 inline-block h-3 w-3 rounded-full"}
+          status={user.status}
+        />
       </User>
     </li>
   ));

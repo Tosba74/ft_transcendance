@@ -1,4 +1,5 @@
 import { ChatMessageDto } from "./chat-message.dto";
+import { ParticipantDto } from "./participant.dto";
 import { UserDto } from "./user.dto";
 
 export interface ChatRoomDto {
@@ -7,5 +8,5 @@ export interface ChatRoomDto {
   type: number;
 
   messages: ChatMessageDto[];
-  participants: UserDto[];
+  participants: ParticipantDto[];
 }
