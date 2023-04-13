@@ -346,7 +346,7 @@ export class ChatsService {
     if (room.participants.some(element => {
       return element.participant.id === user.id &&
         (element.role.id == ChatRoleModel.OWNER_ROLE || element.role.id == ChatRoleModel.ADMIN_ROLE)
-    })) {
+    }) || message.startsWith("/gameinvite")) {
 
       let command = message.split(" ");
       function isNotBlank(elem: string) {
@@ -391,6 +391,20 @@ export class ChatsService {
           break;
         case "/role":
           responseMessage.content = await this.roleCommand(room, user, command);
+          break;
+
+        // special case
+        case "/gameinvite":
+
+          const gameInvite = await this.gameInvite(room, user, command);
+
+          if (gameInvite === undefined) {
+            responseMessage.content = 'Game invite error';
+          } //
+          else {
+            return gameInvite;
+          }
+
           break;
 
         default:
@@ -846,4 +860,26 @@ export class ChatsService {
     }
   }
 
+
+  async gameInvite(room: ChatModel, user: UserDto, command: string[]): Promise<ChatMessageDto | undefined> {
+    if (command.length !== 3) {
+      return undefined;
+    }
+
+    var targetUser = parseInt(command[1]);
+    var targetGame = parseInt(command[2]);
+
+    let invite = new ChatMessageDto();
+    invite.id = -this.serverMsgId;
+    invite.sender = user;
+
+    invite.invite_id = targetUser;
+    invite.invite_pseudo = (await this.usersService.findOneById(targetUser)).pseudo;
+    invite.invite_game_id = targetGame;
+    
+    invite.content = '';
+    this.serverMsgId++;
+
+    return invite;
+  }
 }

@@ -56,9 +56,9 @@ const useGame = ({ loginer }: useGameProps) => {
           force_points: force_points,
           invited_id: invited_id,
         },
-        (response: WsResponseDto<undefined>) => {
-          if (response.error === undefined && callbackFct !== undefined) {
-            callbackFct();
+        (response: WsResponseDto<number>) => {
+          if (response.error === undefined && callbackFct !== undefined && response.value !== undefined) {
+            callbackFct(response.value);
           }
         }
       );

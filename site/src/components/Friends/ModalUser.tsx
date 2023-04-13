@@ -280,7 +280,9 @@ export default function ModalUser({
   const handleClickSearch = () => {
     setEffect(false);
 
-    gamer.createGame(mode.isFun, true, mode.points, mode.force, -1, () => {
+    gamer.createGame(mode.isFun, true, mode.points, mode.force, user.id, (game_id: number) => {
+      chats.sendMessage(`/gameinvite ${user.id} ${game_id}`, chats.currChannel);
+      navigate("/game");
       setIsSearch(true);
     });
   };

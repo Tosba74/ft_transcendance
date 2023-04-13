@@ -52,13 +52,14 @@ export default function MessageConv({
           <MessageBulleSend
             key={message.id}
             user={message.sender}
-            text={message.content}
+            gamer={gamer}
+            message={message}
           />
         ) : (
           <MessageBulleRecv
             key={message.id}
             user={message.sender}
-            text={message.content}
+            message={message}
             loginer={loginer}
             chats={chats}
             gamer={gamer}

@@ -4,12 +4,14 @@ import React from "react";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
 import { UseChatDto } from "./dto/useChat.dto";
 import { UseGameDto } from "../Game/dto/useGame.dto";
+import { ChatMessageDto } from "src/_shared_dto/chat-message.dto";
+import { useNavigate } from "react-router-dom";
 
 interface MessageBulleRecvProps {
   user: UserDto;
   chats: UseChatDto;
   gamer: UseGameDto;
-  text: string;
+  message: ChatMessageDto;
   loginer: UseLoginDto;
 }
 
@@ -17,7 +19,7 @@ export default function MessageBulleRecv({
   user,
   chats,
   gamer,
-  text,
+  message,
   loginer,
 }: MessageBulleRecvProps) {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -81,10 +83,23 @@ export default function MessageBulleRecv({
   //   };
   // }, [isOpen]);
 
+  const navigate = useNavigate();
+
   return (
     <div className="my-1 flex w-full flex-row-reverse items-end justify-end pl-2">
       <div className="mx-2 break-all rounded-lg bg-gray-300 p-2 px-4 text-xs text-gray-600">
-        {text}
+        {loginer.userInfos && message.invite_id === loginer.userInfos.id && message.invite_game_id !== -1 && message.invite_pseudo !== "" && (
+          <>
+            {message.sender.pseudo} invited you to play <button onClick={() => { gamer.joinGame(message.invite_game_id, () => { navigate("/game"); }, undefined); }} className="bg-green-400 rounded p-1">Play</button>
+          </>
+        ) || loginer.userInfos && message.invite_id !== loginer.userInfos.id && message.invite_game_id !== -1 && message.invite_pseudo !== "" && (
+          <>
+            {message.sender.pseudo} invited {message.invite_pseudo} to play <button onClick={() => { gamer.joinGame(message.invite_game_id, () => { navigate("/game"); }, undefined); }} className="bg-green-400 rounded p-1">Watch</button>
+          </>
+        ) || (
+            <>{message.content}</>
+          )
+        }
       </div>
       {isOpen && (
         <ModalUser
