@@ -16,6 +16,9 @@ export default function Colorer(login: string | undefined): string {
       return "bg-red-700 dark:bg-red-900";
     case "kdi-noce":
       return "bg-[#14b8a6] dark:bg-[#7dd3fc]";
+    // Inspired by PornHub color palette
+    case "hsabir":
+      return "bg-[#292929] dark:bg-[#ffa31a]"
     default:
       return "bg-cyan-500 dark:bg-gray-700";
   }
