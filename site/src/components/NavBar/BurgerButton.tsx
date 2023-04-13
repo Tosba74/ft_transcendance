@@ -21,7 +21,7 @@ export default function BurgerButton({
 }: BurgerButtonProps) {
   //
   const handleClick = () => {
-    if (openedMenu == "burger") {
+    if (openedMenu === "burger") {
       setOpenedMenu("");
     } else {
       setOpenedMenu("burger");
