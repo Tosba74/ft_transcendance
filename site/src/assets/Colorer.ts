@@ -14,6 +14,8 @@ export default function Colorer(login: string | undefined): string {
       return "bg-emerald-600 dark:bg-emerald-900";
     case "ktrosset":
       return "bg-red-700 dark:bg-red-900";
+    case "kdi-noce":
+      return "bg-[#14b8a6] dark:bg-[#7dd3fc]";
     default:
       return "bg-cyan-500 dark:bg-gray-700";
   }
