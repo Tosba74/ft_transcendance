@@ -34,7 +34,7 @@ export default function MessagePanel({
   return (
     <>
       <div className="mt-2 flex h-10 w-full items-center justify-center rounded-t bg-gray-200 text-center dark:bg-gray-700 dark:text-white">
-        <div className="shadow-b mr-2 h-8 items-center justify-center overflow-x-hidden border-b border-gray-900 px-20">
+        <div className="shadow-b mr-2 h-8 items-center justify-center overflow-x-hidden border-b border-gray-900 px-20 whitespace-nowrap">
           {room?.name || "No room selected"}
           {role === 'owner' && (<OwnerCommands role={role} />) || <small className="pl-1"> {role}</small>}
         </div>
