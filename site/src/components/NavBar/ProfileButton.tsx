@@ -25,7 +25,7 @@ export default function ProfileButton({
   React.useEffect(() => {
     const checkIfClickedOutside = (e: any) => {
       if (ref) {
-        if (openedMenu && !ref.current?.contains(e.target)) {
+        if (openedMenu && openedMenu == "profile" && !ref.current?.contains(e.target)) {
           setOpenedMenu("");
         }
       }

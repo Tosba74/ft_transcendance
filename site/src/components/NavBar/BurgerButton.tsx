@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import classNames from "classnames";
+import React from "react";
 
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
 
@@ -27,9 +28,27 @@ export default function BurgerButton({
       setOpenedMenu("burger");
     }
   };
+  const ref = React.useRef<HTMLDivElement | null>(null);
+  React.useEffect(() => {
+    const checkIfClickedOutside = (e: any) => {
+      if (ref) {
+        if (openedMenu && openedMenu == "burger" && !ref.current?.contains(e.target)) {
+          setOpenedMenu("");
+        }
+      }
+    };
+    document.addEventListener("mousedown", checkIfClickedOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", checkIfClickedOutside);
+    };
+  }, [openedMenu]);
+
   const location = useLocation();
   return (
-    <div>
+    <div
+	id="user-dropdown"
+	ref={ref}>
       <button
         data-collapse-toggle="mobile-menu"
         type="button"

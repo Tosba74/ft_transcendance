@@ -22,11 +22,28 @@ export default function NavBar({
 }: NavBarProps) {
   const handleClick = () => {
     if (openedMenu == "burger") {
-      setOpenedMenu("");
+		if (!loginer.logged)
+      		setOpenedMenu("");
     } else {
-      setOpenedMenu("burger");
+		if (!loginer.logged)
+     		 setOpenedMenu("burger");
     }
   };
+  const ref = React.useRef<HTMLDivElement | null>(null);
+  React.useEffect(() => {
+    const checkIfClickedOutside = (e: any) => {
+      if (ref && !loginer.logged) {
+        if (openedMenu && openedMenu == "burger" && !ref.current?.contains(e.target)) {
+          setOpenedMenu("");
+        }
+      }
+    };
+    document.addEventListener("mousedown", checkIfClickedOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", checkIfClickedOutside);
+    };
+  }, [openedMenu]);
   //
   return (
     <header className="top-0 z-50 w-full">
@@ -59,13 +76,14 @@ export default function NavBar({
             />
           )}
           {!loginer.logged && (
-            <div>
+            <div
+			ref={ref}>
               <button
-                data-collapse-toggle="mobile-menu"
+                data-collapse-toggle="mobile-menu2"
                 type="button"
                 onClick={handleClick}
                 className="ml-1 inline-flex items-center justify-end rounded-lg p-2 text-sm text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600 md:hidden"
-                aria-controls="mobile-menu"
+                aria-controls="mobile-menu2"
                 aria-expanded="false"
               >
                 <span className="sr-only">Open main menu</span>
