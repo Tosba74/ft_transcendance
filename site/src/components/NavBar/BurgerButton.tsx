@@ -32,7 +32,11 @@ export default function BurgerButton({
   React.useEffect(() => {
     const checkIfClickedOutside = (e: any) => {
       if (ref) {
-        if (openedMenu && openedMenu == "burger" && !ref.current?.contains(e.target)) {
+        if (
+          openedMenu &&
+          openedMenu == "burger" &&
+          !ref.current?.contains(e.target)
+        ) {
           setOpenedMenu("");
         }
       }
@@ -46,9 +50,7 @@ export default function BurgerButton({
 
   const location = useLocation();
   return (
-    <div
-	id="user-dropdown"
-	ref={ref}>
+    <div id="user-dropdown" ref={ref}>
       <button
         data-collapse-toggle="mobile-menu"
         type="button"

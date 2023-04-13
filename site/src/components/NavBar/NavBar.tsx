@@ -22,18 +22,20 @@ export default function NavBar({
 }: NavBarProps) {
   const handleClick = () => {
     if (openedMenu == "burger") {
-		if (!loginer.logged)
-      		setOpenedMenu("");
+      if (!loginer.logged) setOpenedMenu("");
     } else {
-		if (!loginer.logged)
-     		 setOpenedMenu("burger");
+      if (!loginer.logged) setOpenedMenu("burger");
     }
   };
   const ref = React.useRef<HTMLDivElement | null>(null);
   React.useEffect(() => {
     const checkIfClickedOutside = (e: any) => {
       if (ref && !loginer.logged) {
-        if (openedMenu && openedMenu == "burger" && !ref.current?.contains(e.target)) {
+        if (
+          openedMenu &&
+          openedMenu == "burger" &&
+          !ref.current?.contains(e.target)
+        ) {
           setOpenedMenu("");
         }
       }
@@ -76,8 +78,7 @@ export default function NavBar({
             />
           )}
           {!loginer.logged && (
-            <div
-			ref={ref}>
+            <div ref={ref}>
               <button
                 data-collapse-toggle="mobile-menu2"
                 type="button"
