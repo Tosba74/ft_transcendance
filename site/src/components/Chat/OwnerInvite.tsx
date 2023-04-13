@@ -11,42 +11,42 @@ interface OwnerCommandsProps {
 }
 
 export default function OwnerInvite({
-	loginer, 
-	sendMessage, 
+	loginer,
+	sendMessage,
 	participants
 }: OwnerCommandsProps) {
 
 	const [users, setUsers] = React.useState<ParticipantDto[]>([]);
-	
+
 	const [invite, setInvite] = React.useState("");
 
 	React.useEffect(() => {
 		axios
-		  .get("/api/users", loginer.get_headers())
-		  .then((res) => {
-			if (res.status === 200) {
-			  const allUsers = res.data as ParticipantDto[];
-			  setUsers(
-				allUsers.filter((value) => {
-				  return (
-					participants.find((parti) => {
-					  return parti.id === value.id;
-					}) === undefined
-				  );
-				})
-			  );
-	
-			  return;
-			}
-		  })
-		  .catch((error) => {});
-	  }, [participants]);
+			.get("/api/users", loginer.get_headers())
+			.then((res) => {
+				if (res.status === 200) {
+					const allUsers = res.data as ParticipantDto[];
+					setUsers(
+						allUsers.filter((value) => {
+							return (
+								participants.find((parti) => {
+									return parti.id === value.id;
+								}) === undefined
+							);
+						})
+					);
+
+					return;
+				}
+			})
+			.catch((error) => { });
+	}, [participants]);
 
 	const handleClickInvite = (event: SyntheticEvent) => {
 		event.preventDefault();
 		if (invite.length > 0) {
-		  sendMessage(`/invite ${invite}`);
-		  setInvite("");
+			sendMessage(`/invite ${invite}`);
+			setInvite("");
 		}
 	};
 
@@ -83,14 +83,14 @@ export default function OwnerInvite({
 						stroke="currentColor"
 						className="ml-1 h-10 w-10"
 					>
-					<path
-						strokeLinecap="round"
-						strokeLinejoin="round"
-						d="M12.75 15l3-3m0 0l-3-3m3 3h-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-					/>
+						<path
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							d="M12.75 15l3-3m0 0l-3-3m3 3h-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+						/>
 					</svg>
 				</button>
 			</div>
-	  	</div>
+		</div>
 	);
 }

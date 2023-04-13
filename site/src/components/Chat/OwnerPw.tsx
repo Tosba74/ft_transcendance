@@ -6,12 +6,14 @@ interface OwnerPwProps {
 	loginer: UseLoginDto;
 	sendMessage: Function;
 	room: ChatRoomDto | undefined;
+	portal: Function;
 }
 
-export default function OwnerPw({ 
-	loginer, 
-	sendMessage, 
+export default function OwnerPw({
+	loginer,
+	sendMessage,
 	room,
+	portal
 }: OwnerPwProps) {
 
 	const [addPassword, setAddPassword] = React.useState("");
@@ -22,8 +24,13 @@ export default function OwnerPw({
 			setAddPassword("");
 
 			// update room everywhere needed
-			// refresh portal
 			// ...
+			console.log('need to update protected info');
+			if (room?.protected)
+				room.protected = true;
+
+			// refresh portal
+			// portal();
 		}
 	};
 
@@ -44,8 +51,13 @@ export default function OwnerPw({
 			setErrorMsg("");
 
 			// update room everywhere needed
-			// refresh portal
 			// ...
+			console.log('need to update protected info');
+			if (room?.protected)
+				room.protected = true;
+
+			// refresh portal
+			// portal();
 		}
 	};
 
@@ -60,8 +72,13 @@ export default function OwnerPw({
 			setErrorMsg("");
 
 			// update room everywhere needed
-			// refresh portal
 			// ...
+			console.log('need to update protected info');
+			if (room?.protected)
+				room.protected = true;
+
+			// refresh portal
+			// portal();
 		}
 	};
 
@@ -69,7 +86,7 @@ export default function OwnerPw({
 	return (
 		<div className="mb-6 w-full py-2">
 
-			{room?.protected === false && 
+			{room?.protected === false &&
 				(<form onSubmit={handleAddPassword}>
 					<label className="">
 						Add a password
@@ -90,56 +107,56 @@ export default function OwnerPw({
 						Change
 					</button>
 				</form>)
-				
-			|| <>
-				<form onSubmit={handleUpdatePassword}>
-					<label className="">
-						Confirm current password
-					</label>
-					<div className="flex h-full w-full items-center justify-around gap-4 rounded-full bg-cyan-500 shadow-lg transition duration-500 ease-in-out hover:bg-blue-400 focus:outline-none">
-						<input
-							type="password"
-							placeholder="Current password"
-							value={currentPassword}
-							onChange={(event) => {
-								setCurrentPassword(event.target.value);
-							}}
-							className="ml-2 w-full rounded-full bg-gray-200 p-1 px-4 text-gray-600 placeholder-gray-600 focus:placeholder-gray-400 focus:outline-none"
-						/>
 
-					</div>
+				|| <>
+					<form onSubmit={handleUpdatePassword}>
+						<label className="">
+							Confirm current password
+						</label>
+						<div className="flex h-full w-full items-center justify-around gap-4 rounded-full bg-cyan-500 shadow-lg transition duration-500 ease-in-out hover:bg-blue-400 focus:outline-none">
+							<input
+								type="password"
+								placeholder="Current password"
+								value={currentPassword}
+								onChange={(event) => {
+									setCurrentPassword(event.target.value);
+								}}
+								className="ml-2 w-full rounded-full bg-gray-200 p-1 px-4 text-gray-600 placeholder-gray-600 focus:placeholder-gray-400 focus:outline-none"
+							/>
 
-					<label className="">
-						Set a new password
-					</label>
-					<div className="flex h-full w-full items-center justify-around gap-4 rounded-full bg-cyan-500 shadow-lg transition duration-500 ease-in-out hover:bg-blue-400 focus:outline-none">
-						<input
-							type="password"
-							placeholder="New password"
-							value={newPassword}
-							onChange={(event) => {
-								setNewPassword(event.target.value);
-							}}
-							className="ml-2 w-full rounded-full bg-gray-200 p-1 px-4 text-gray-600 placeholder-gray-600 focus:placeholder-gray-400 focus:outline-none"
-						/>
+						</div>
 
-					</div>
-					<button type="submit" className="w-14 basis-1/4 rounded bg-blue-500 font-bold text-white hover:bg-blue-700">
-						Change
-					</button>
-				</form>
+						<label className="">
+							Set a new password
+						</label>
+						<div className="flex h-full w-full items-center justify-around gap-4 rounded-full bg-cyan-500 shadow-lg transition duration-500 ease-in-out hover:bg-blue-400 focus:outline-none">
+							<input
+								type="password"
+								placeholder="New password"
+								value={newPassword}
+								onChange={(event) => {
+									setNewPassword(event.target.value);
+								}}
+								className="ml-2 w-full rounded-full bg-gray-200 p-1 px-4 text-gray-600 placeholder-gray-600 focus:placeholder-gray-400 focus:outline-none"
+							/>
 
-				<form onSubmit={handleRemovePassword}>
-					<label className="">
-						Remove password
-					</label>
-					<button type="submit" className="w-14 block basis-1/4 rounded bg-blue-500 font-bold text-white hover:bg-blue-700">
-						Remove password
-					</button>
-				</form>
+						</div>
+						<button type="submit" className="w-14 basis-1/4 rounded bg-blue-500 font-bold text-white hover:bg-blue-700">
+							Change
+						</button>
+					</form>
 
-				<div className="text-orange-400">{errorMsg}</div>
-			</>}
+					<form onSubmit={handleRemovePassword}>
+						<label className="">
+							Remove password
+						</label>
+						<button type="submit" className="w-14 block basis-1/4 rounded bg-blue-500 font-bold text-white hover:bg-blue-700">
+							Remove password
+						</button>
+					</form>
+
+					<div className="text-orange-400">{errorMsg}</div>
+				</>}
 
 		</div>
 	);
