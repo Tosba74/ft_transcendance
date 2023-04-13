@@ -360,7 +360,7 @@ export class ChatsService {
 
     const pw: Boolean | undefined = await this.isPasswordProtected(room_id);
 
-    server.to(room_id.toString()).emit("updateParticipants", { room_id: room_id, participants: participants, pw: pw});
+    server.to(room_id.toString()).emit("updateParticipants", { room_id: room_id, participants: participants, pw: pw });
   }
 
 

@@ -118,12 +118,12 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
                 (oldRooms) =>
                   (oldRooms &&
                     oldRooms[room_id] && {
-                      ...oldRooms,
-                      [room_id]: {
-                        ...oldRooms[room_id],
-                        messages: [...oldRooms[room_id].messages, message],
-                      },
-                    }) ||
+                    ...oldRooms,
+                    [room_id]: {
+                      ...oldRooms[room_id],
+                      messages: [...oldRooms[room_id].messages, message],
+                    },
+                  }) ||
                   oldRooms
               );
             }
@@ -147,22 +147,22 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
                 (oldRooms) =>
                   (oldRooms &&
                     oldRooms[room_id] && {
-                      ...oldRooms,
-                      [room_id]: {
-                        ...oldRooms[room_id],
-                        participants: participants,
-                        pw: pw,
-                      },
-                    }) ||
+                    ...oldRooms,
+                    [room_id]: {
+                      ...oldRooms[room_id],
+                      participants: participants,
+                      pw: pw,
+                    },
+                  }) ||
                   oldRooms
               );
             }
           );
 
-          // socketRef.current &&
-          // socketRef.current.on(
-          //   "updatePassword",({})
-          // );
+        // socketRef.current &&
+        // socketRef.current.on(
+        //   "updatePassword",({})
+        // );
       });
     } //
     else if (logged === false) {

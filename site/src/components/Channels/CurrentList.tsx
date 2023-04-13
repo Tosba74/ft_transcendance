@@ -37,7 +37,7 @@ export default function CurrentList({
           return;
         }
       })
-      .catch((error) => {});
+      .catch((error) => { });
 
     setTimeout(() => {
       setEffect(false);
