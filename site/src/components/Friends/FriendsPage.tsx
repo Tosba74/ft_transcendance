@@ -85,6 +85,7 @@ export default function FriendsPage({
         <BannedList
           chats={chats}
           loginer={loginer}
+          gamer={gamer}
           reload={reload}
           doReload={doReload}
         />

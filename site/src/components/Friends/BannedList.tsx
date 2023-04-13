@@ -5,14 +5,17 @@ import { FiUserX } from "react-icons/fi";
 import { UserDto } from "src/_shared_dto/user.dto";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
 import { UseChatDto } from "../Chat/dto/useChat.dto";
+import { UseGameDto } from "../Game/dto/useGame.dto";
 
 export default function BannedList({
   loginer,
+  gamer,
   reload,
   doReload,
   chats,
 }: {
   loginer: UseLoginDto;
+  gamer: UseGameDto;
   reload: boolean;
   doReload: Function;
   chats: UseChatDto;
@@ -58,6 +61,7 @@ export default function BannedList({
     <li className="flex items-center text-slate-500" key={user.id}>
       <User
         chats={chats}
+        gamer={gamer}
         type={"ban"}
         loginer={loginer}
         user={user}
