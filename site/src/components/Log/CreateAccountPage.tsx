@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useState } from "react";
+import React, { SyntheticEvent } from "react";
 import axios from "axios";
 
 export default function CreateAccountPage() {
@@ -17,7 +17,7 @@ export default function CreateAccountPage() {
         password: password,
       })
       .then((res) => {
-        if (res.status == 201) {
+        if (res.status === 201) {
           setPageMessage("Creation successful, redirecting...");
         } //
       })

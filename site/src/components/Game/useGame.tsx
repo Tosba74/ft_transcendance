@@ -24,8 +24,8 @@ const useGame = ({ loginer }: useGameProps) => {
   const [user1, setUser1] = React.useState<UserDto | undefined>(undefined);
   const [user2, setUser2] = React.useState<UserDto | undefined>(undefined);
 
-  let localUser1: boolean | undefined;
-  let localUser2: boolean | undefined;
+  const localUser1 = React.useRef<boolean | undefined>(undefined);
+  const localUser2 = React.useRef<boolean | undefined>(undefined);
 
   const identify = () => {
     // Send identify to register websocket user
@@ -60,10 +60,7 @@ const useGame = ({ loginer }: useGameProps) => {
           invited_id: invited_id,
         },
         (response: WsResponseDto<number>) => {
-          if (
-            response.error === undefined &&
-            callbackFct !== undefined
-          ) {
+          if (response.error === undefined && callbackFct !== undefined) {
             callbackFct(response.value);
           }
         }
@@ -80,8 +77,7 @@ const useGame = ({ loginer }: useGameProps) => {
         "joinGame",
         { game_id: game_id },
         (response: WsResponseDto<number>) => {
-
-          console.log('rese', response)
+          console.log("rese", response);
 
           if (errorFct && response.error !== undefined) {
             errorFct(`Error: ${response.error}`);
@@ -110,7 +106,7 @@ const useGame = ({ loginer }: useGameProps) => {
       gameSocketRef.current.emit(
         "sendAction",
         { game_id: gameId, actions: actions },
-        (response: void) => { }
+        (response: void) => {}
       );
   };
 
@@ -146,8 +142,8 @@ const useGame = ({ loginer }: useGameProps) => {
               gameArea.current?.import(game);
               gameArea.current?.render();
 
-              if (localUser1 !== gameArea.current?.playerOne.ready) {
-                localUser1 = gameArea.current?.playerOne.ready;
+              if (localUser1.current !== gameArea.current?.playerOne.ready) {
+                localUser1.current = gameArea.current?.playerOne.ready;
                 setUser1(
                   (old) =>
                     old && {
@@ -159,8 +155,8 @@ const useGame = ({ loginer }: useGameProps) => {
                 );
               }
 
-              if (localUser2 !== gameArea.current?.playerTwo.ready) {
-                localUser2 = gameArea.current?.playerTwo.ready;
+              if (localUser2.current !== gameArea.current?.playerTwo.ready) {
+                localUser2.current = gameArea.current?.playerTwo.ready;
                 setUser2(
                   (old) =>
                     old && {
@@ -186,7 +182,7 @@ const useGame = ({ loginer }: useGameProps) => {
                 (loginer.userInfos &&
                   (gameSetter.userInfos1.id === loginer.userInfos.id ||
                     gameSetter.userInfos2.id === loginer.userInfos.id)) ||
-                false
+                  false
               );
             }
           );
@@ -195,7 +191,7 @@ const useGame = ({ loginer }: useGameProps) => {
     else if (loginer.logged === false) {
       console.log("game socket not connected not logged");
     }
-  }, [loginer.logged]);
+  }, [loginer.logged, loginer.userInfos, loginer.token]);
 
   React.useEffect(() => {
     setAmReady(
@@ -206,9 +202,9 @@ const useGame = ({ loginer }: useGameProps) => {
           (user2 &&
             user2.id === loginer.userInfos.id &&
             gameArea.current?.playerTwo.ready))) ||
-      false
+        false
     );
-  }, [user1, user2]);
+  }, [user1, user2, loginer.userInfos]);
 
   return {
     gameArea,

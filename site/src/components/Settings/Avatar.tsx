@@ -94,7 +94,8 @@ export default function Avatar({ loginer }: AvatarProps) {
     <form className="h-2/3 w-full" onSubmit={handleSubmit}>
       <div className="flex h-2/3 w-full items-center justify-center">
         <img
-          className="h-32 w-32 lg:w-64 lg:h-64 rounded-full object-cover shadow-xl"
+          alt="avatar"
+          className="h-32 w-32 rounded-full object-cover shadow-xl lg:h-64 lg:w-64"
           src={avatarUrl}
         />
       </div>
@@ -114,8 +115,8 @@ export default function Avatar({ loginer }: AvatarProps) {
           Save
         </button>
       </div>
-      <div className="flex text-white h-10 items-center justify-center">
-      {avatarMessage}
+      <div className="flex h-10 items-center justify-center text-white">
+        {avatarMessage}
       </div>
     </form>
   );

@@ -8,7 +8,6 @@ import { FiRefreshCw } from "react-icons/fi";
 import { ChannelDto } from "src/_shared_dto/channel.dto";
 import { UseLoginDto } from "../Log/dto/useLogin.dto";
 import IconSwitch from "./IconSwitch";
-import { useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
 
 const startEL = document.getElementById("root");
@@ -30,7 +29,6 @@ export default function PublicList({
     top: `${document.getElementById("startPage")?.offsetTop}px`,
   };
   const ref = React.useRef<HTMLDivElement | null>(null);
-  const navigate = useNavigate();
   const [pageMessage, setPageMessage] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [channelID, setChannelID] = React.useState(0);
@@ -48,7 +46,7 @@ export default function PublicList({
         loginer.get_headers()
       )
       .then((res) => {
-        if (res.status == 201) {
+        if (res.status === 201) {
           setPageMessage("");
           doReload();
           setPortal(false);
@@ -60,7 +58,7 @@ export default function PublicList({
     // }
   };
 
-  function refreshData() {
+  const refreshData = React.useCallback(() => {
     setEffect(true);
 
     axios
@@ -85,7 +83,7 @@ export default function PublicList({
     setTimeout(() => {
       setEffect(false);
     }, 1000);
-  }
+  }, [doReload, loginer, setErrorMessage]);
 
   React.useEffect(() => {
     const checkIfClickedOutside = (e: any) => {
@@ -104,7 +102,7 @@ export default function PublicList({
 
   React.useEffect(() => {
     refreshData();
-  }, [reload]);
+  }, [reload, refreshData]);
 
   return (
     <div className="border-blueGray-200 mt-2 flex h-full flex-row flex-wrap border-b pt-1 shadow">
@@ -161,7 +159,6 @@ export default function PublicList({
         {portal &&
           startEL !== null &&
           createPortal(
-
             <div
               style={css}
               ref={ref}
@@ -179,10 +176,14 @@ export default function PublicList({
                 }
               }}
             >
-              <form className="items-center grid grid-cols-1  gap-2" onSubmit={(e: any) => { e.preventDefault(); handleSubmit(channelID); }}>
-                <h3 className="col-span-2 text-center text-xl">
-                  Password
-                </h3>
+              <form
+                className="grid grid-cols-1 items-center  gap-2"
+                onSubmit={(e: any) => {
+                  e.preventDefault();
+                  handleSubmit(channelID);
+                }}
+              >
+                <h3 className="col-span-2 text-center text-xl">Password</h3>
 
                 <label className="relative right-2 ml-auto cursor-pointer">
                   Password

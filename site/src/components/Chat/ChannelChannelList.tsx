@@ -1,6 +1,3 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { UserDto } from "src/_shared_dto/user.dto";
 
 import { MdKey } from "react-icons/md";
 import { MdOutlineEmail } from "react-icons/md";
@@ -64,7 +61,7 @@ export default function ChannelChannelList({
                 )}
               </li>
               <button
-                className="flex w-5/6 justify-start dark:text-white truncate"
+                className="flex w-5/6 justify-start truncate dark:text-white"
                 title={lstChannel[key].name}
                 type="button"
                 onClick={() => {

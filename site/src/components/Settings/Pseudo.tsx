@@ -52,11 +52,11 @@ export default function Pseudo({ loginer }: PseudoProps) {
           }
         })
         .catch((error) => {
+          let message = "";
           if (error.response.status === 401)
-            var message: string = error.response.data.message;
+            message = error.response.data.message;
           else
-            var message: string =
-              "Error while contacting the API. Retry after reloging.";
+            message = "Error while contacting the API. Retry after reloging.";
           setPseudoInputMessage(message);
         });
     }
@@ -82,25 +82,9 @@ export default function Pseudo({ loginer }: PseudoProps) {
           Save
         </button>
       </div>
-      <div className="flex h-10 text-white items-center justify-center">
+      <div className="flex h-10 items-center justify-center text-white">
         {pseudoInputMessage}
       </div>
     </form>
   );
-}
-
-{
-  /* <div className="flex h-10 items-center justify-center gap-2">
-<label className="dark:text-white">Change avatar: </label>
-<input
-  className="w-96 bg-slate-300 dark:bg-gray-800 dark:text-white"
-  type="file"
-  ref={fileInput}
-/>
-<button
-  type="submit"
-  className="rounded bg-cyan-500 px-3 py-1 text-white"
->
-  Save
-</button> */
 }

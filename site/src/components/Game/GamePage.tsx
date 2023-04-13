@@ -16,7 +16,7 @@ export default function GamePage({ gamer }: GamePageProps) {
   const [effect, setEffect] = React.useState(false);
   const [minSize, setMinSize] = React.useState("1200");
 
-  function handleResize() {
+  const handleResize = React.useCallback(() => {
     let around = document.getElementById("around");
 
     if (gamer.gameArea.current && gamer.gameArea.current?.canvas && around) {
@@ -30,7 +30,7 @@ export default function GamePage({ gamer }: GamePageProps) {
 
       gamer.gameArea.current?.render();
     }
-  }
+  }, [gamer.gameArea]);
 
   useEffect(() => {
     gamer.gameArea.current?.get_elements();
@@ -38,7 +38,7 @@ export default function GamePage({ gamer }: GamePageProps) {
 
     handleResize();
     window.addEventListener("resize", handleResize);
-  }, [gamer.gameArea.current]);
+  }, [gamer.gameArea, handleResize]);
 
   window.onkeyup = (e: KeyboardEvent): any => {
     if (controls.indexOf(e.key) === -1) return;

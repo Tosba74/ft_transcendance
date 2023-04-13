@@ -1,13 +1,6 @@
 import axios from "axios";
 import React from "react";
-import { io, Socket } from "socket.io-client";
-import { UserDto } from "src/_shared_dto/user.dto";
 import { LoggedUserDto, UseLoginDto } from "./dto/useLogin.dto";
-
-interface useChatProps {
-  logged: boolean;
-  token: string;
-}
 
 const useLogin = (): UseLoginDto => {
   const [logged, setLogged] = React.useState(false);
@@ -17,16 +10,16 @@ const useLogin = (): UseLoginDto => {
 
   let tfaUserId = React.useRef(-1);
 
-  function get_headers(): any {
+  const get_headers = React.useCallback(() => {
     return {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     };
-  }
+  }, [token]);
 
-  function getUserData() {
-    if (token && token.length != 0) {
+  const getUserData = React.useCallback(() => {
+    if (token && token.length !== 0) {
       axios
         .get("/api/me", get_headers())
         .then((res) => {
@@ -40,13 +33,13 @@ const useLogin = (): UseLoginDto => {
     }
     setLogged(false);
     setUserInfos({} as LoggedUserDto);
-  }
+  }, [token, get_headers]);
 
   React.useEffect(() => {
-    if (logged == false) {
+    if (logged === false) {
       getUserData();
     }
-  }, [token]);
+  }, [token, getUserData, get_headers, logged]);
 
   // // Au moment du refresh verifier aussi d'abord si le token est toujours valable (pseudo code en dessous)
   // // si non: setLogged a false + setUserInfos a {}

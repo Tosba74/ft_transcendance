@@ -27,7 +27,7 @@ export default function ProfileButton({
       if (ref) {
         if (
           openedMenu &&
-          openedMenu == "profile" &&
+          openedMenu === "profile" &&
           !ref.current?.contains(e.target)
         ) {
           setOpenedMenu("");
@@ -39,7 +39,7 @@ export default function ProfileButton({
     return () => {
       document.removeEventListener("mousedown", checkIfClickedOutside);
     };
-  }, [openedMenu]);
+  }, [openedMenu, setOpenedMenu]);
 
   return (
     <div className="flex items-center md:order-2">
@@ -124,8 +124,4 @@ export default function ProfileButton({
       )}
     </div>
   );
-}
-
-{
-  /* isOpen && <div className="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600" id="user-dropdown"> */
 }

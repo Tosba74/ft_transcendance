@@ -46,23 +46,23 @@ export default function TfaConfirmation(props: TfaConfirmationProps) {
   }
 
   return (
-    <form className="flex flex-col mt-4 lg:mt-16 items-center justify-center">
+    <form className="mt-4 flex flex-col items-center justify-center lg:mt-16">
       <label className="text-center">Scan this qrcode and confirm</label>
-      <img className="mt-2 h-48 w-48" src={qrCode} />
+      <img alt="qrcode" className="mt-2 h-48 w-48" src={qrCode} />
       <label className="mt-2 text-center">Confirmation:</label>
-        <input
-          className="w-64 bg-slate-300 px-3 py-1"
-          type="text"
-          placeholder="_ _ _ _ _ _"
-          value={codeInput}
-          onChange={(e) => handleUpdate(e.target.value)}
-        />
-        <button
-          onClick={handleSubmit}
-          className="mt-2 rounded bg-cyan-500 px-3 py-1 text-white"
-        >
-          Confirm
-        </button>
+      <input
+        className="w-64 bg-slate-300 px-3 py-1"
+        type="text"
+        placeholder="_ _ _ _ _ _"
+        value={codeInput}
+        onChange={(e) => handleUpdate(e.target.value)}
+      />
+      <button
+        onClick={handleSubmit}
+        className="mt-2 rounded bg-cyan-500 px-3 py-1 text-white"
+      >
+        Confirm
+      </button>
     </form>
   );
 }
