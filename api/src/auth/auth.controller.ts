@@ -80,7 +80,13 @@ export class AuthController {
     @Post('apicallback')
     @AllowPublic()
     async apiLogin(@Body() oauth2Dto: Oauth2Dto, @Res({ passthrough: true }) response: any): Promise<any> {
-        this.authService.checkState(oauth2Dto.state);
+        try {
+            this.authService.checkState(oauth2Dto.state);
+        }
+        catch (error) {
+            response.status(203);
+            return {};
+        }
 
         try {
             const token_request: any = await axios.post('https://api.intra.42.fr/oauth/token', {

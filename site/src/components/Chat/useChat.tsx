@@ -140,7 +140,6 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
               participants: ParticipantDto[];
               pw: Boolean | undefined;
             }) => {
-
               setRooms(
                 (oldRooms) =>
                   (oldRooms &&

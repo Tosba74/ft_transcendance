@@ -25,7 +25,11 @@ export default function LoginApi({ loginer }: LoginApiProps) {
   // };
 
   React.useEffect(() => {
-    if (code != null && state != null) {
+    if (
+      code != null &&
+      state != null &&
+      (loginer.token === undefined || loginer.token === "")
+    ) {
       axios
         .post("/api/login/apicallback", {
           code: code,
@@ -49,13 +53,18 @@ export default function LoginApi({ loginer }: LoginApiProps) {
               navigate("/login_tfa");
             }, 3000);
           } //
+          else if (res.status === 203) {
+            // setPageMessage("Login successful, redirecting...");
+          } //
           else {
             setPageMessage("Error contacting 42 API");
           }
-        });
+        })
+        .catch(() => { });
+
       // .catch((error) => {setPageMessage('wait...'); console.log(error)}); /* en strict mode envoie 2 requetes, 1 qui throw une erreur */
     } //
-    else {
+    else if (code == null && state == null) {
       setPageMessage("Error missing infos for 42 API");
     }
   }, [code, loginer, navigate, state]);

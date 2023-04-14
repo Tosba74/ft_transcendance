@@ -13,6 +13,7 @@ interface LogoutProps {
 
 export default function Logout({ loginer, chats, gamer }: LogoutProps) {
   const [pageMessage, setPageMessage] = React.useState("Logout");
+  const [redirecting, setRedirecting] = React.useState(false);
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -23,15 +24,16 @@ export default function Logout({ loginer, chats, gamer }: LogoutProps) {
 
       loginer.setToken(localStorage.getItem("token") || "");
     } //
-    else {
+    else if (redirecting === false) {
       setPageMessage("Logout successful, redirecting...");
       loginer.getUserData();
 
       setTimeout(() => {
         navigate("/");
       }, 3000);
+      setRedirecting(true);
     }
-  }, [loginer.token, chats, gamer, loginer, navigate]);
+  }, [loginer.token, chats, gamer, loginer, navigate, redirecting]);
 
   return <div className="mt-3 h-6 text-center text-sm">{pageMessage}</div>;
 }

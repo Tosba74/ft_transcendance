@@ -66,7 +66,7 @@ export default function ProfileButton({
       </button>
       {openedMenu === "profile" && (
         <div
-          className="absolute top-20 right-2 z-40 w-40 list-none divide-y divide-gray-100 rounded-lg bg-white text-base shadow-lg dark:divide-gray-600 dark:bg-gray-700"
+          className="absolute top-20 right-2 z-50 w-40 list-none divide-y divide-gray-100 rounded-lg bg-white text-base shadow-lg dark:divide-gray-600 dark:bg-gray-700"
           id="user-dropdown"
           ref={ref}
         >
