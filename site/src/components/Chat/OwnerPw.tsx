@@ -20,7 +20,6 @@ export default function OwnerPw({ sendMessage, room }: OwnerPwProps) {
   const handleAddPassword = (event: SyntheticEvent) => {
     event.preventDefault();
     if (addPassword.length > 0) {
-      hashPw(newPassword);
       sendMessage(`/pw ${hashPw(newPassword)}`);
       setAddPassword("");
     }
@@ -38,8 +37,7 @@ export default function OwnerPw({ sendMessage, room }: OwnerPwProps) {
         setErrorMsg("");
       }, 3000);
     } else if (currentPassword.length > 0 && newPassword.length > 0) {
-      hashPw(newPassword);
-      sendMessage(`/pw ${currentPassword} ${hashPw(newPassword)}`);
+      sendMessage(`/pw ${hashPw(currentPassword)} ${hashPw(newPassword)}`);
       setCurrentPassword("");
       setNewPassword("");
       setErrorMsg("");
