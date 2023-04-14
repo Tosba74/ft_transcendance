@@ -185,6 +185,21 @@ export class ChatParticipantsService {
     return created;
   }
 
+  async mute(participantId: number, roomId: number, timeOutInSec: number): Promise<ChatParticipantModel> {
+	const destUser = await this.findParticipant(participantId, roomId);
+
+    let end = new Date();
+    end.setSeconds(end.getSeconds() + timeOutInSec);
+
+    destUser.muted_until = end;
+
+    const created = await this.chatParticipantsRepository.save(destUser).catch((err: any) => {
+      throw new BadRequestException('Chat participant mute error');
+    });
+
+    return created;
+  }
+
 
   async delete(id: number): Promise<void> {
     try {
