@@ -36,7 +36,7 @@ export default function MessageBulleRecv({
     if (innerChat !== null) setClientH(innerChat.clientHeight);
     setIsOpen(true);
     setPosX(35);
-    setPosY(event.target.y - 80);
+    setPosY(event.clientY - 90);
   };
 
   const handleOpen = () => {
@@ -47,10 +47,10 @@ export default function MessageBulleRecv({
     const handleScroll = (event: any) => {
       event.preventDefault();
       if (isOpen) {
-        if (target === undefined) {
+        if (!navigator.userAgent.includes("Firefox") && target === undefined) {
           setIsOpen(false);
         } else {
-          setPosY(target.y - 80);
+          setPosY(target.y - 90);
           if (target.y + 90 > clientH || target.y < 175) {
             setIsOpen(false);
           }
@@ -66,7 +66,7 @@ export default function MessageBulleRecv({
         .getElementById("chat")
         ?.removeEventListener("scroll", handleScroll);
     };
-  }, [target, isOpen, clientH]);
+  }, [target, isOpen, clientH, posY]);
 
   const navigate = useNavigate();
 
