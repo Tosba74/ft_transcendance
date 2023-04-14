@@ -13,6 +13,7 @@ then
     yarn add --dev prettier prettier-plugin-tailwindcss
     yarn add jwt-decode
     yarn add randomstring
+	yarn add bcrypt
 
     # For testing auth module
     yarn add --dev bootstrap
