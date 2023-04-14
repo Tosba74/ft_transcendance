@@ -426,10 +426,10 @@ export class ChatsService {
           responseMessage.content = await this.muteCommand(room, user, command);
         //   this.updateParticipants(server, room.id);
           break;
-        // case "/unmute":
-        //   responseMessage.content = await this.unmuteCommand(room, user, command);
-        // //   this.updateParticipants(server, room.id);
-        //   break;
+        case "/unmute":
+          responseMessage.content = await this.unmuteCommand(room, user, command);
+        //   this.updateParticipants(server, room.id);
+          break;
         case "/role":
           responseMessage.content = await this.roleCommand(room, user, command);
           break;
