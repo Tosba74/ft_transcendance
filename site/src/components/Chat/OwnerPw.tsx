@@ -1,28 +1,30 @@
 import React, { SyntheticEvent } from "react";
 import { ChatRoomDto } from "src/_shared_dto/chat-room.dto";
 
-// import * as bcrypt from 'bcrypt';
-
 interface OwnerPwProps {
   sendMessage: Function;
   room: ChatRoomDto | undefined;
 }
 
 export default function OwnerPw({ sendMessage, room }: OwnerPwProps) {
-  const hashPw = (password: string): string => {
-    const bcrypt = require("bcrypt");
-    const saltRounds: number = 10;
-    const hash: string = bcrypt.hash(password, saltRounds);
-    return hash;
-  };
+  
+  function containsWhitespace(password: string): Boolean {
+	return /\s/.test(password);
+  }
 
   const [addPassword, setAddPassword] = React.useState("");
   const handleAddPassword = (event: SyntheticEvent) => {
     event.preventDefault();
-    if (addPassword.length > 0) {
-      sendMessage(`/pw ${hashPw(newPassword)}`);
+    if (addPassword.length > 0 && containsWhitespace(newPassword) === false) {
+      sendMessage(`/pw ${addPassword}`);
       setAddPassword("");
     }
+	else if (containsWhitespace(newPassword) === true) {
+		setErrorMsg("No white space in password");
+		setTimeout(() => {
+		  setErrorMsg("");
+		}, 3000);
+	}
   };
 
   const [currentPassword, setCurrentPassword] = React.useState("");
@@ -36,12 +38,18 @@ export default function OwnerPw({ sendMessage, room }: OwnerPwProps) {
       setTimeout(() => {
         setErrorMsg("");
       }, 3000);
-    } else if (currentPassword.length > 0 && newPassword.length > 0) {
-      sendMessage(`/pw ${hashPw(currentPassword)} ${hashPw(newPassword)}`);
+    } else if (currentPassword.length > 0 && newPassword.length > 0 && containsWhitespace(newPassword) === false) {
+      sendMessage(`/pw ${currentPassword} ${newPassword}`);
       setCurrentPassword("");
       setNewPassword("");
       setErrorMsg("");
     }
+	else if (containsWhitespace(newPassword) === true) {
+		setErrorMsg("No white space in password");
+		setTimeout(() => {
+		  setErrorMsg("");
+		}, 3000);
+	}
   };
 
   const handleRemovePassword = (event: SyntheticEvent) => {
