@@ -21,7 +21,6 @@ fi
 
 # Download node_modules
 yarn install
-yarn prettier
 
 
 if [ "$BUILD_TYPE" = "Production" ];
@@ -33,6 +32,7 @@ then
     serve -s build
 
 else
+    yarn prettier
     yarn start
 fi
 

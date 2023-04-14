@@ -9,7 +9,6 @@ import { UseGameDto } from "../Game/dto/useGame.dto";
 import React from "react";
 import { createPortal } from "react-dom";
 import classNames from "classnames";
-import { ParticipantDto } from "src/_shared_dto/participant.dto";
 
 interface ModalProps {
   type: string | null;
