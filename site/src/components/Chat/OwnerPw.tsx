@@ -10,10 +10,7 @@ interface OwnerPwProps {
 
 export default function OwnerPw({ sendMessage, room }: OwnerPwProps) {
   
-  function hashPw(password: string): string {
-	
-	// return /\s/.test(password); // checkk space
-
+  const hashPw = (password: string): string => {
 	const bcrypt = require('bcrypt');
 	const saltRounds: number = 10;
 	const hash: string = bcrypt.hash(password, saltRounds);
