@@ -426,10 +426,10 @@ export class ChatsService {
           responseMessage.content = await this.muteCommand(room, user, command);
         //   this.updateParticipants(server, room.id);
           break;
-        // case "/unmute":
-        //   responseMessage.content = await this.unmuteCommand(room, user, command);
-        // //   this.updateParticipants(server, room.id);
-        //   break;
+        case "/unmute":
+          responseMessage.content = await this.unmuteCommand(room, user, command);
+        //   this.updateParticipants(server, room.id);
+          break;
         case "/role":
           responseMessage.content = await this.roleCommand(room, user, command);
           break;
@@ -868,34 +868,34 @@ export class ChatsService {
 
   async unmuteCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
 
-	let userToMute = parseInt(command[1]);
+	let userToUnmute = parseInt(command[1]);
 
-	const permission = await this.roleCommandsPermission(room, command, user.id, userToMute);
+	const permission = await this.roleCommandsPermission(room, command, user.id, userToUnmute);
     if (permission !== undefined)
       return permission
 
     let clientsToMute = this.clients.filter(value => {
-      return value.user.id == userToMute
+      return value.user.id == userToUnmute
     });
 
 	if (clientsToMute.length > 0) {
-		let muteMessage = new ChatMessageDto();
-		muteMessage.id = -this.serverMsgId;
-		muteMessage.sender = new UserDto();
-		muteMessage.sender.id = -1;
-		muteMessage.content = 'You have been unmuted';
+		let unmuteMessage = new ChatMessageDto();
+		unmuteMessage.id = -this.serverMsgId;
+		unmuteMessage.sender = new UserDto();
+		unmuteMessage.sender.id = -1;
+		unmuteMessage.content = 'You have been unmuted';
 		this.serverMsgId++;
   
 		clientsToMute.forEach(value => {
 		  if (value.socket.rooms.has(room.id.toString())) {
   
-			value.socket.emit('broadcastMessage', { room_id: room.id, message: muteMessage });
+			value.socket.emit('broadcastMessage', { room_id: room.id, message: unmuteMessage });
 			value.socket.leave(room.id.toString());
 		  }
 		});
 	}
 
-	await this.chatParticipantsService.mute(userToMute, room.id, 0).catch((err: any) => {
+	await this.chatParticipantsService.mute(userToUnmute, room.id, 0).catch((err: any) => {
 		return "unmute: user not found or not in this channel";
 	});
 	return "unmute: done";
