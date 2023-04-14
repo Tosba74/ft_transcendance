@@ -20,7 +20,6 @@ export default function TfaButton({ loginer }: TfaButtonProps) {
 
   // charge les messages correct au premier rendu de la page
   React.useEffect(() => {
-
     loginer.userInfos?.tfa_enabled === false
       ? setTfaInput("no")
       : setTfaInput("yes");

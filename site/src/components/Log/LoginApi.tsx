@@ -60,7 +60,7 @@ export default function LoginApi({ loginer }: LoginApiProps) {
             setPageMessage("Error contacting 42 API");
           }
         })
-        .catch(() => { });
+        .catch(() => {});
 
       // .catch((error) => {setPageMessage('wait...'); console.log(error)}); /* en strict mode envoie 2 requetes, 1 qui throw une erreur */
     } //

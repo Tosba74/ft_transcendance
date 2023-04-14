@@ -271,7 +271,7 @@ export default function ProfilePublic({ loginer, chats }: UserListPageProps) {
                   <h3 className="text-blueGray-700 mb-5 text-4xl font-semibold leading-normal">
                     Matchs History
                   </h3>
-                  <div className="text-blueGray-700 mx-10 grid max-h-[200px] grid-cols-[minmax(0,_1fr)_50px_minmax(0,_1fr)] overflow-y-auto whitespace-nowrap border text-center text-lg leading-relaxed">
+                  <div className="text-blueGray-700 text-md mx-10 grid max-h-[200px] grid-cols-[minmax(0,_1fr)_50px_minmax(0,_1fr)] overflow-y-auto whitespace-nowrap border text-center leading-relaxed">
                     {(stats &&
                       stats.last_games.length > 0 &&
                       stats.last_games.map((game) => {

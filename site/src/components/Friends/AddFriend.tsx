@@ -21,6 +21,7 @@ export default function AddFriend({
           setLoginName("");
           setError("");
           doReload();
+          loginer.getUserData();
           // setUsers(res.data as UserDto[]);
           return;
         }

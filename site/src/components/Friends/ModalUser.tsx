@@ -9,6 +9,7 @@ import { UseGameDto } from "../Game/dto/useGame.dto";
 import React from "react";
 import { createPortal } from "react-dom";
 import classNames from "classnames";
+import { ParticipantDto } from "src/_shared_dto/participant.dto";
 
 interface ModalProps {
   type: string | null;
@@ -51,6 +52,7 @@ function handleRemove(loginer: UseLoginDto, user: UserDto, doReload: Function) {
     .then((res) => {
       if (res.status === 204) {
         doReload();
+        loginer.getUserData();
         return;
       }
     })
@@ -63,6 +65,7 @@ function handleAdd(loginer: UseLoginDto, user: UserDto, doReload: Function) {
     .then((res) => {
       if (res.status === 201) {
         doReload();
+        loginer.getUserData();
         return;
       }
     })
@@ -79,6 +82,7 @@ function handleBlock(loginer: UseLoginDto, user: UserDto, doReload: Function) {
     .then((res) => {
       if (res.status === 201) {
         handleRemove(loginer, user, doReload);
+        loginer.getUserData();
         return;
       }
     })
@@ -95,6 +99,7 @@ function handleUnblock(
     .then((res) => {
       if (res.status === 204) {
         doReload();
+        loginer.getUserData();
         return;
       }
     })
@@ -209,6 +214,42 @@ export default function ModalUser({
         Unblock
       </ModalLink>
     );
+  } else if (type === "chat") {
+    content.push(
+      <ModalLink
+        key={`modalUserKick-${user.id}`}
+        onClick={() => handleKick(loginer, user, doReload)}
+      >
+        Kick
+      </ModalLink>,
+      (user as ParticipantDto).roleName !== "ban" ? (
+        <ModalLink
+          key={`modalUserBan-${user.id}`}
+          onClick={() => handleBan(loginer, user, doReload)}
+        >
+          Ban
+        </ModalLink>
+      ) : (
+        <ModalLink
+          key={`modalUserUnban-${user.id}`}
+          onClick={() => handleUnban(loginer, user, doReload)}
+        >
+          Unban
+        </ModalLink>
+      ),
+      <ModalLink
+        key={`modalUserMute-${user.id}`}
+        onClick={() => handleMute(loginer, user, doReload)}
+      >
+        Mute 10min
+      </ModalLink>,
+      <ModalLink
+        key={`modalUserUnmute-${user.id}`}
+        onClick={() => handleUnmute(loginer, user, doReload)}
+      >
+        Unmute
+      </ModalLink>
+    );
   } else {
     content.push(
       <ModalLink
@@ -274,6 +315,46 @@ export default function ModalUser({
         return { ...old, points: e.target.valueAsNumber };
       });
     }
+  };
+
+  const handleKick = (
+    loginer: UseLoginDto,
+    user: UserDto,
+    doReload: Function
+  ) => {
+    chats.sendMessage(`/kick ${user.id}`, chats.currChannel);
+  };
+
+  const handleBan = (
+    loginer: UseLoginDto,
+    user: UserDto,
+    doReload: Function
+  ) => {
+    chats.sendMessage(`/ban ${user.id}`, chats.currChannel);
+  };
+
+  const handleUnban = (
+    loginer: UseLoginDto,
+    user: UserDto,
+    doReload: Function
+  ) => {
+    chats.sendMessage(`/unban ${user.id}`, chats.currChannel);
+  };
+
+  const handleMute = (
+    loginer: UseLoginDto,
+    user: UserDto,
+    doReload: Function
+  ) => {
+    chats.sendMessage(`/mute ${user.id}`, chats.currChannel);
+  };
+
+  const handleUnmute = (
+    loginer: UseLoginDto,
+    user: UserDto,
+    doReload: Function
+  ) => {
+    chats.sendMessage(`/unmute ${user.id}`, chats.currChannel);
   };
 
   const handleClickSearch = () => {

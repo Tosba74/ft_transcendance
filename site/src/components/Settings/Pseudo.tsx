@@ -73,7 +73,9 @@ export default function Pseudo({ loginer }: PseudoProps) {
           type="text"
           name="pseudo"
           value={`${pseudoInput}`}
-          onChange={(event) => setPseudoInput(event.target.value)}
+          onChange={(event) =>
+            setPseudoInput(event.target.value.substring(0, 25))
+          }
         />
         <button
           type="submit"

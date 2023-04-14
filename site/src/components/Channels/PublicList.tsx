@@ -169,6 +169,7 @@ export default function PublicList({
               )}
               onAnimationEnd={() => {
                 if (!effect) {
+                  setPortal(false);
                   setPageMessage("");
                   setPassword("");
                   setChannelID(0);

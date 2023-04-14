@@ -218,7 +218,7 @@ export class UsersService {
     if (pseudo_exist)
       throw new UnauthorizedException('Pseudo already used')
 
-    user.pseudo = pseudo;
+    user.pseudo = pseudo.substring(0, 25);
     await this.usersRepository.save(user).catch(() => {
       throw new BadRequestException('User pseudo update error');
     });

@@ -38,27 +38,6 @@ export default function ChannelChannelList({
               className="mt-1 flex w-full flex-row items-center justify-center gap-2"
               key={lstChannel[key].id}
             >
-              <li
-                className="w-6 list-none items-center justify-center"
-                key={lstChannel[key].id}
-              >
-                {lstChannel[key] && (
-                  //   {lstChannel[key].password && (
-                  <MdKey className="" title="Protected" />
-                )}
-                {!lstChannel[key] && lstChannel[key].type === 1 && (
-                  //   {!lstChannel[key].password && lstChannel[key].type == 1 && (
-                  <MdOutlineEmail className="" title="Chat" />
-                )}
-                {!lstChannel[key] && lstChannel[key].type === 2 && (
-                  //   {!lstChannel[key].password && lstChannel[key].type == 2 && (
-                  <MdPublic className="" title="Public" />
-                )}
-                {!lstChannel[key] && lstChannel[key].type === 3 && (
-                  //   {!lstChannel[key].password && lstChannel[key].type == 3 && (
-                  <FiLock className="" title="Private" />
-                )}
-              </li>
               <button
                 className="flex w-5/6 justify-start truncate dark:text-white"
                 title={lstChannel[key].name}
