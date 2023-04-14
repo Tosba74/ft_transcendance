@@ -23,6 +23,8 @@ import { WsResponseDto } from 'src/_shared_dto/ws-response.dto';
 import { ChatRoomDto } from 'src/_shared_dto/chat-room.dto';
 import { ChatMessageDto } from 'src/_shared_dto/chat-message.dto';
 
+import { MuteParticipantDto } from 'src/chat_participants/dto/mute-participant';
+
 import * as bcrypt from 'bcrypt';
 
 interface WebsocketUser {
@@ -420,6 +422,14 @@ export class ChatsService {
           responseMessage.content = await this.unbanCommand(room, user, command);
           this.updateParticipants(server, room.id);
           break;
+        case "/mute":
+          responseMessage.content = await this.muteCommand(room, user, command);
+        //   this.updateParticipants(server, room.id);
+          break;
+        case "/unmute":
+          responseMessage.content = await this.unmuteCommand(room, user, command);
+        //   this.updateParticipants(server, room.id);
+          break;
         case "/role":
           responseMessage.content = await this.roleCommand(room, user, command);
           break;
@@ -793,6 +803,79 @@ export class ChatsService {
     else {
       return "kick: user not found or connected";
     }
+  }
+
+
+  async muteCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
+
+	let userToMute = parseInt(command[1]);
+
+	const permission = await this.roleCommandsPermission(room, command, user.id, userToMute);
+    if (permission !== undefined)
+      return permission
+
+    let clientsToMute = this.clients.filter(value => {
+      return value.user.id == userToMute
+    });
+
+	if (clientsToMute.length > 0) {
+		let muteMessage = new ChatMessageDto();
+		muteMessage.id = -this.serverMsgId;
+		muteMessage.sender = new UserDto();
+		muteMessage.sender.id = -1;
+		muteMessage.content = 'You have been muted';
+		this.serverMsgId++;
+  
+		clientsToMute.forEach(value => {
+		  if (value.socket.rooms.has(room.id.toString())) {
+  
+			value.socket.emit('broadcastMessage', { room_id: room.id, message: muteMessage });
+			value.socket.leave(room.id.toString());
+		  }
+		});
+	}
+
+	const timeOutInSec = 600;
+	await this.chatParticipantsService.mute(userToMute, room.id, timeOutInSec).catch((err: any) => {
+		return "mute: user not found or not in this channel";
+	});
+	return "mute: done";
+  }
+
+
+  async unmuteCommand(room: ChatModel, user: UserDto, command: string[]): Promise<string> {
+
+	let userToUnmute = parseInt(command[1]);
+
+	const permission = await this.roleCommandsPermission(room, command, user.id, userToUnmute);
+    if (permission !== undefined)
+      return permission
+
+    let clientsToMute = this.clients.filter(value => {
+      return value.user.id == userToUnmute
+    });
+
+	if (clientsToMute.length > 0) {
+		let unmuteMessage = new ChatMessageDto();
+		unmuteMessage.id = -this.serverMsgId;
+		unmuteMessage.sender = new UserDto();
+		unmuteMessage.sender.id = -1;
+		unmuteMessage.content = 'You have been unmuted';
+		this.serverMsgId++;
+  
+		clientsToMute.forEach(value => {
+		  if (value.socket.rooms.has(room.id.toString())) {
+  
+			value.socket.emit('broadcastMessage', { room_id: room.id, message: unmuteMessage });
+			value.socket.leave(room.id.toString());
+		  }
+		});
+	}
+
+	await this.chatParticipantsService.mute(userToUnmute, room.id, 0).catch((err: any) => {
+		return "unmute: user not found or not in this channel";
+	});
+	return "unmute: done";
   }
 
 
