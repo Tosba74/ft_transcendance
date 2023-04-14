@@ -840,29 +840,6 @@ export class ChatsService {
 		return "mute: user not found or not in this channel";
 	});
 	return "mute: done";
-
-    // // Search if user is in the room and not banned
-    // let participant = room.participants.find(element => {
-    //   return (
-    //     element.participant.id === userToMute &&
-    //     element.role.id != ChatRoleModel.BAN_ROLE
-    //   )
-    // });
-
-	// // if (participant)
-	// // 	participant.muted_until = (new Date()).
-
-	// let mute = new MuteParticipantDto();
-	// mute.timeout = 600;
-	// if (participant) {
-	// 	await this.chatParticipantsService.mute(userToMute, room.id, mute).catch((err: any) => {
-	// 		throw new BadRequestException('mute: user not found or not in this channel');
-	// 	});
-	// 	return "mute: done";
-	// }
-	// else {
-	// 	return "mute: user not found or not in this channel";
-	// }
   }
 
 
