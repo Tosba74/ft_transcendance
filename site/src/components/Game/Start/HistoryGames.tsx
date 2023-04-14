@@ -25,7 +25,7 @@ export default function HistoryGames({ loginer }: { loginer: UseLoginDto }) {
         Last games
       </h3>
 
-      <div className="text-blueGray-700 text-md grid grid-cols-[minmax(0,_1fr)_50px_minmax(0,_1fr)] whitespace-nowrap border p-4 text-center leading-relaxed">
+      <div className="text-blueGray-700 text-md grid grid-cols-[minmax(0,_1fr)_50px_minmax(0,_1fr)] border p-4 text-center leading-relaxed">
         {(history.length > 0 &&
           history.map((histo) => {
             return (
