@@ -1,7 +1,3 @@
-import { MdKey } from "react-icons/md";
-import { MdOutlineEmail } from "react-icons/md";
-import { MdPublic } from "react-icons/md";
-import { FiLock } from "react-icons/fi";
 
 import { ChatRoomDto } from "src/_shared_dto/chat-room.dto";
 
