@@ -164,7 +164,6 @@ export class ChatParticipantsService {
     const created = await this.chatParticipantsRepository.save(destUser).catch((err: any) => {
       throw new BadRequestException('Chat participant role update error');
     });
-
     return created;
   }
 
@@ -186,13 +185,77 @@ export class ChatParticipantsService {
   }
 
 
-  async delete(id: number): Promise<void> {
-    try {
-      const participant = await this.findOneById(id);
-      this.chatParticipantsRepository.delete(id);
-    }
-    catch (error) {
-      throw new NotFoundException('Chat participant id not found');
+  async delete(participantId: number, roomId: number): Promise<void> {
+    const participant = await this.findParticipant(participantId, roomId);
+    await this.chatParticipantsRepository.delete(participant.id).catch(() => {
+      throw new BadRequestException('Delete participant error');
+    });
+  }
+
+
+  async deleteOne(id: number): Promise<void> {
+    this.chatParticipantsRepository.delete(id).catch(() => {
+      throw new BadRequestException('Delete participant error');
+    });
+  }
+
+
+  async deleteParticipants(roomId: number): Promise<void> {
+    const participants = await this.chatParticipantsRepository.find({
+      where: {
+        room: { id: roomId },
+      },
+      relations: {
+        room: true
+      },
+    });
+
+    if (participants !== null) {
+      await Promise.all(participants.map(async (participant) => {
+        await this.deleteOne(participant.id)
+          .catch(() => {
+            console.log('delete participant error');
+          });
+      }))
+        .catch(() => {
+          console.log('delete participants error');
+        });
     }
   }
+
+  // can be improved by differentiate users by date into the chan
+  async getAnotherOwner(roomId: number): Promise<number> {
+    // 1. search for another admin
+    let newOwner = await this.chatParticipantsRepository.findOne({
+      select: { id: true, participant: { id: true } },
+      where: {
+        room: { id: roomId },
+        role: { id: ChatRoleModel.ADMIN_ROLE },
+      },
+      relations: {
+        participant: true
+      }
+    });
+    if (newOwner !== null)
+      return newOwner.participant.id;
+
+    // 2. if no found, search for another user
+    newOwner = await this.chatParticipantsRepository.findOne({
+      select: { id: true, participant: { id: true } },
+      where: {
+        room: { id: roomId },
+        role: { id: ChatRoleModel.USER_ROLE },
+      },
+      relations: {
+        participant: true
+      }
+    });
+    if (newOwner !== null)
+      return newOwner.participant.id;
+
+    // 3. if no found, tells to delete channel
+    return -1;
+  }
+
+
 }

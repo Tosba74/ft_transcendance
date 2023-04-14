@@ -47,13 +47,34 @@ export class ChatMessagesService {
   }
 
 
-  async delete(id: number): Promise<void> {
-    try {
-      const message = await this.findOneById(id);
-      this.chatMessagesRepository.delete(id);
-    }
-    catch (error) {
-      throw new NotFoundException('Chat message id not found');
+  async deleteOne(id: number): Promise<void> {
+    this.chatMessagesRepository.delete(id).catch(() => {
+      throw new BadRequestException('Delete message error');
+    });
+  }
+
+
+  async deleteMessages(roomId: number): Promise<void> {
+    const messages = await this.chatMessagesRepository.find({
+      where: {
+        room: { id: roomId },
+      },
+      relations: {
+        room: true
+      },
+    });
+
+    if (messages !== null) {
+      await Promise.all(messages.map(async (message) => {
+        await this.deleteOne(message.id)
+          .catch(() => {
+            console.log('delete message error');
+          });
+      }))
+        .catch(() => {
+          console.log('delete messages error');
+        });
     }
   }
+
 }
