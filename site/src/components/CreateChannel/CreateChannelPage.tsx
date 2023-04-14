@@ -8,13 +8,12 @@ interface CreateChannelPageProps {
 }
 
 export default function CreateChannelPage({ loginer }: CreateChannelPageProps) {
-
   const hashPw = (password: string): string => {
-    const bcrypt = require('bcrypt');
+    const bcrypt = require("bcrypt");
     const saltRounds: number = 10;
     const hash: string = bcrypt.hash(password, saltRounds);
     return hash;
-  }
+  };
 
   const [pageMessage, setPageMessage] = React.useState("");
 
@@ -33,8 +32,7 @@ export default function CreateChannelPage({ loginer }: CreateChannelPageProps) {
 
     if (channelName.length === 0) setPageMessage("Name cannot be empty");
     else {
-
-	  const hash = hashPw(password);
+      const hash = hashPw(password);
 
       axios
         .post(

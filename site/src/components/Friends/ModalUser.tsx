@@ -222,21 +222,18 @@ export default function ModalUser({
       >
         Kick
       </ModalLink>,
-      (user as ParticipantDto).roleName !== "ban" ? (
-        <ModalLink
-          key={`modalUserBan-${user.id}`}
-          onClick={() => handleBan(loginer, user, doReload)}
-        >
-          Ban
-        </ModalLink>
-      ) : (
-        <ModalLink
-          key={`modalUserUnban-${user.id}`}
-          onClick={() => handleUnban(loginer, user, doReload)}
-        >
-          Unban
-        </ModalLink>
-      ),
+      <ModalLink
+        key={`modalUserBan-${user.id}`}
+        onClick={() => handleBan(loginer, user, doReload)}
+      >
+        Ban
+      </ModalLink>,
+      <ModalLink
+        key={`modalUserUnban-${user.id}`}
+        onClick={() => handleUnban(loginer, user, doReload)}
+      >
+        Unban
+      </ModalLink>,
       <ModalLink
         key={`modalUserMute-${user.id}`}
         onClick={() => handleMute(loginer, user, doReload)}
