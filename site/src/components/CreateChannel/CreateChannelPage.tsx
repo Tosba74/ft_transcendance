@@ -8,13 +8,6 @@ interface CreateChannelPageProps {
 }
 
 export default function CreateChannelPage({ loginer }: CreateChannelPageProps) {
-  const hashPw = (password: string): string => {
-    const bcrypt = require("bcrypt");
-    const saltRounds: number = 10;
-    const hash: string = bcrypt.hash(password, saltRounds);
-    return hash;
-  };
-
   const [pageMessage, setPageMessage] = React.useState("");
 
   const [typePP, setType] = React.useState(false);
@@ -27,32 +20,41 @@ export default function CreateChannelPage({ loginer }: CreateChannelPageProps) {
     setType((typePP) => !typePP);
   };
 
+  function containsWhitespace(password: string): Boolean {
+	return /\s/.test(password);
+  }
+
   const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
-
-    if (channelName.length === 0) setPageMessage("Name cannot be empty");
-    else {
-      const hash = hashPw(password);
-
-      axios
-        .post(
-          "/api/me/chats/create",
-          {
-            name: channelName,
-            password: hash,
-            type_id: typePP ? 3 : 2,
-          },
-          loginer.get_headers()
-        )
-        .then((res) => {
-          if (res.status === 201) {
-            setPageMessage("Channel created, redirecting...");
-            navigate("/channels");
-          } //
-        })
-        .catch(() => setPageMessage("Create Channel error"));
-      // }
-    }
+	if (containsWhitespace(password) === true) {
+		setPageMessage('No white space in password');
+		setTimeout(() => {
+			setPageMessage("");
+		  }, 3000);
+	}
+	else {
+		if (channelName.length === 0) setPageMessage("Name cannot be empty");
+		else {
+		  axios
+			.post(
+			  "/api/me/chats/create",
+			  {
+				name: channelName,
+				password: password,
+				type_id: typePP ? 3 : 2,
+			  },
+			  loginer.get_headers()
+			)
+			.then((res) => {
+			  if (res.status === 201) {
+				setPageMessage("Channel created, redirecting...");
+				navigate("/channels");
+			  } //
+			})
+			.catch(() => setPageMessage("Create Channel error"));
+		  // }
+		}
+	}
   };
 
   return (
