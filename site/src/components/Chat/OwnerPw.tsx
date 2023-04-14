@@ -49,7 +49,6 @@ export default function OwnerPw({ sendMessage, room }: OwnerPwProps) {
     }
   };
 
-  console.log(room);
   return (
     <div className="w-full py-2">
       {(room?.pw === false && (

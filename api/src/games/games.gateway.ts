@@ -23,8 +23,6 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		private readonly gamesService: GamesService,
 	) { }
 
-	private readonly logger = new Logger('adasd');
-
 	handleConnection(@ConnectedSocket() client: Socket): void {
 
 
@@ -89,8 +87,6 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		if (body.invited_id === -1) {
 
 			const foundMatchmakingGame = await this.gamesService.searchGame(client.data.loggedId, body.fun_mode, body.force_fun, body.points_objective, body.force_points);
-
-			console.log('found ', foundMatchmakingGame);
 
 			if (foundMatchmakingGame !== undefined) {
 				

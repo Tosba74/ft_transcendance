@@ -237,8 +237,9 @@ export class UsersService {
       const prevFilename: string = prevAvatarUrl.substring(i + 1);
       const prevFile: string = `../app-datas/avatars/${prevFilename}`;
       fs.unlink(prevFile, (err) => {
-        if (err)
-          console.log(`Could not remove the old file ${prevFile} from user ${user.id}`);
+        if (err) {
+          // console.log(`Could not remove the old file ${prevFile} from user ${user.id}`);
+        }
         // file removed!
       })
     }

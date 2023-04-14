@@ -228,9 +228,6 @@ export class ChatsService {
 
     const room = await this.findOneById(room_id);
 
-    // console.log('try to connect to room', room_id);
-    // console.log(room);
-    // console.log(room.participants);
 
     if (room.participants.some(element => {
       return element.participant.id === user.id && element.role.id != ChatRoleModel.BAN_ROLE
@@ -278,7 +275,7 @@ export class ChatsService {
       res.value = newroom;
     }
     else {
-      console.log('connect to unauthorized room');
+      // console.log('connect to unauthorized room');
       res.error = "Error: Unauthorized";
     }
 
@@ -389,7 +386,7 @@ export class ChatsService {
       responseMessage.sender.id = -1;
       this.serverMsgId++;
 
-      console.log('admin command splitted:', command);
+      // console.log('admin command splitted:', command);
 
       switch (command[0]) {
 
@@ -866,7 +863,6 @@ export class ChatsService {
     if (command.length == 1)
       var targetUser = user.id;
     else if (command.length == 2) {
-      console.log(parseInt(command[1]));
       var targetUser = parseInt(command[1]);
     }
     else

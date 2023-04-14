@@ -19,9 +19,6 @@ export function paddle_dash(player: Paddle, balls : Ball[]) {
 		closestW = 0;
 	let closestY = module_const.canvas_height / 2;
 	balls.forEach(element => {
-		console.log(closestW);
-		console.log(element.x);
-		console.log("\n");
 		if (player.x < module_const.canvas_width / 2 && closestW > element.x  && element.xunits < 0 && element.goal == false)
 		{
 			closestW = element.x;

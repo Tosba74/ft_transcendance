@@ -35,7 +35,6 @@ const useGame = ({ loginer }: useGameProps) => {
         {},
         (response: WsResponseDto<undefined>) => {
           if (response.error !== undefined) {
-            console.log("identify error", response.error);
           }
         }
       );
@@ -89,7 +88,7 @@ const useGame = ({ loginer }: useGameProps) => {
 
   const playGame = (actions: string[]) => {
     if (gameId === -1) {
-      console.log("You are not inn a game", gameId);
+      // console.log("You are not inn a game", gameId);
       return;
     }
     //
@@ -97,7 +96,7 @@ const useGame = ({ loginer }: useGameProps) => {
       loginer.userInfos === undefined ||
       (user1?.id !== loginer.userInfos.id && user2?.id !== loginer.userInfos.id)
     ) {
-      console.log("You are not the MC");
+      // console.log("You are not the MC");
     }
 
     gameSocketRef.current &&
@@ -128,7 +127,7 @@ const useGame = ({ loginer }: useGameProps) => {
       });
 
       gameSocketRef.current.on("connect", () => {
-        console.log("game connected! front-end");
+        // console.log("game connected! front-end");
 
         // Send authorization header to authentify socket
         identify();
@@ -187,7 +186,7 @@ const useGame = ({ loginer }: useGameProps) => {
       });
     } //
     else if (loginer.logged === false) {
-      console.log("game socket not connected not logged");
+      // console.log("game socket not connected not logged");
     }
   }, [loginer.logged, loginer.userInfos, loginer.token]);
 

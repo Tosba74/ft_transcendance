@@ -70,7 +70,6 @@ export default function PublicList({
         }
       })
       .catch((error) => {
-        console.log(error);
         if (error.response.data.message !== undefined) {
           setErrorMessage(error.response.data.message);
         }

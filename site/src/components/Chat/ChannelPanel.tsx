@@ -7,8 +7,6 @@ interface ChannelPanelProps {
 }
 
 export default function ChannelPanel({ chats }: ChannelPanelProps) {
-  console.log(chats.rooms && chats.rooms[chats.currChannel.toString()]);
-
   return (
     <>
       <ChannelChannelList

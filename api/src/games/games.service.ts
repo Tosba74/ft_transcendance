@@ -199,7 +199,7 @@ export class GamesService {
   async createGame(server: Server, client: Socket, user_id: number, invite_id: number, game_id: number, game_function: Function, fun_mode: boolean, points_objective: number) {
 
     if (this.currentGames[game_id.toString()] !== undefined) {
-      console.log('game already created');
+      // console.log('game already created');
       return -1;
     }
 
@@ -282,8 +282,6 @@ export class GamesService {
 
     // this.connectGameRoom(client, user_id, game_id);
 
-
-    console.log('create');
   }
 
 
@@ -372,7 +370,7 @@ export class GamesService {
 
     else if (gameRoom.inactivity_count > 200) {
 
-      console.log('delete inactivity', game_id)
+      // console.log('delete inactivity', game_id)
 
       try {
         const gameToSave = await this.findOneById(game_id);

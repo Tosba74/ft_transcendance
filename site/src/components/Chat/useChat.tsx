@@ -27,7 +27,7 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
   const [currChannel, setCurrChannel] = React.useState(0);
 
   const identify = () => {
-    console.log("sent iden chat");
+    // console.log("sent iden chat");
 
     // Send identify to register websocket user
     socketRef.current &&
@@ -36,7 +36,6 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
         {},
         (response: WsResponseDto<undefined>) => {
           if (response.error !== undefined) {
-            console.log("identify error", response.error);
           }
 
           // connectRoom(1);
@@ -49,7 +48,7 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
     room_id: number,
     setError: Function | undefined = undefined
   ) => {
-    console.log("try connect", room_id);
+    // console.log("try connect", room_id);
 
     // Try to connect to a room, receive room name and messages on success
     socketRef.current &&
@@ -60,7 +59,7 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
           if (response.error === undefined && response.value) {
             let room: ChatRoomDto = response.value;
 
-            console.log("connected", room.id);
+            // console.log("connected", room.id);
 
             setRooms((oldRooms) => ({
               ...oldRooms,
@@ -104,7 +103,7 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
       });
 
       socketRef.current.on("connect", () => {
-        console.log("connected! front-end");
+        // console.log("connected! front-end");
 
         // Send authorization header to authentify socket
         identify();
@@ -141,7 +140,6 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
               participants: ParticipantDto[];
               pw: Boolean | undefined;
             }) => {
-              console.log("recv udate");
 
               setRooms(
                 (oldRooms) =>
@@ -166,7 +164,7 @@ const useChat = ({ logged, token }: useChatProps): UseChatDto => {
       });
     } //
     else if (logged === false) {
-      console.log("socket not connected not logged");
+      // console.log("socket not connected not logged");
     }
   }, [logged, token]);
 

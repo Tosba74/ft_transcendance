@@ -99,7 +99,6 @@ export default function ProfilePublic({ loginer, chats }: UserListPageProps) {
       .get(`/api/users/${id}/stats`, loginer.get_headers())
       .then((res: any) => {
         if (res.status === 200) {
-          console.log(res.data);
           setStats(res.data as UserStatsDto);
         } //
         else {

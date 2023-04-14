@@ -20,7 +20,7 @@ export default function TfaButton({ loginer }: TfaButtonProps) {
 
   // charge les messages correct au premier rendu de la page
   React.useEffect(() => {
-    console.log(loginer.userInfos);
+
     loginer.userInfos?.tfa_enabled === false
       ? setTfaInput("no")
       : setTfaInput("yes");
@@ -33,8 +33,6 @@ export default function TfaButton({ loginer }: TfaButtonProps) {
   }, [loginer.userInfos]);
 
   function switchTfaOn() {
-    console.log("turn on");
-
     setQrCode("");
     setTfaInput("yes");
     setTfaLabelMessage("enabled");
@@ -48,8 +46,6 @@ export default function TfaButton({ loginer }: TfaButtonProps) {
   }
 
   function switchTfaOff() {
-    console.log("turn off");
-
     setTfaInput("no");
     setTfaLabelMessage("disabled");
     setTfaMessage("Tfa turned off");

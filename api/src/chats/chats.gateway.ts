@@ -30,11 +30,6 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		this.chatsService.disconnect(client);
 	}
 
-	@SubscribeMessage('createGame')
-	async createGame(client: Socket, body: {}): Promise<void> {
-
-		console.log('wring')
-	}
 
 
 	@SubscribeMessage('identify')
@@ -42,8 +37,6 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	async identify(@ConnectedSocket() client: Socket): Promise<WsResponseDto<undefined>> {
 
 		const user = (client.handshake as any).user as LoggedUserDto;
-
-		console.log('chat', user);
 
 		return this.chatsService.identify(user, client);
 	}
@@ -77,9 +70,6 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@SubscribeMessage('createMessage')
 	async createMessage(client: Socket, body: { room_id: number, message: string }) {
 
-
-		console.log(`message arrived :\n${body.message}`);
-		// console.log('message arrived');
 
 		if (body == undefined || body.room_id == undefined || body.message == undefined) {
 			throw new WsException('Not identified');

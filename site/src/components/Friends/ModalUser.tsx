@@ -94,7 +94,6 @@ function handleUnblock(
     .delete(`/api/me/blockeds/${user.id}`, loginer.get_headers())
     .then((res) => {
       if (res.status === 204) {
-        console.log(res);
         doReload();
         return;
       }

@@ -28,20 +28,6 @@ export default function PlayersPage({ loginer, chats }: PlayersPageProps) {
       .catch((error) => {});
   }, [loginer]);
 
-  // React.useEffect(() => {
-  //   axios
-  //     .get("/api/me/friends", loginer.get_headers())
-  //     .then((res) => {
-  //       if (res.status === 200) {
-  //         console.log(res.data);
-  //         // setUsers(res.data as UserDto[]);
-
-  //         return;
-  //       }
-  //     })
-  //     .catch((error) => {});
-  // }, []);
-
   return (
     <>
       <div className="h-full w-full justify-center p-2">

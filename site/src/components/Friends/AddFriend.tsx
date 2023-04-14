@@ -18,7 +18,6 @@ export default function AddFriend({
       .post(`/api/me/friends/slug/${loginName}`, {}, loginer.get_headers())
       .then((res) => {
         if (res.status === 201) {
-          console.log(res.data);
           setLoginName("");
           setError("");
           doReload();
